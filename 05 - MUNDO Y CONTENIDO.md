@@ -1,1 +1,0 @@
-Diseño-del-Mundo.md
