@@ -9,37 +9,24 @@ Los agentes deben trabajar como integrantes de un mismo estudio, respetando la a
 
 ## 2. Organización de los agentes
 
-### CLAUDE 1 — GAMEPLAY & WORLD
+### CLAUDE 1 — CUENTA A: GAMEPLAY & SYSTEMS
 
-Responsabilidad principal:
+Administrada por Zadiel y Jhonn. Responsabilidad principal:
 
-- Movimiento.
-- Combate.
-- Habilidades.
-- Enemigos.
-- Jefes.
-- Mundo.
-- Regiones y zonas.
-- NPC.
-- Misiones.
-- Eventos.
-- Exploración.
-- Contenido jugable.
+- Loop de juego y mecánicas.
+- Inventario, objetos y crafting.
+- Habilidades, progresión y economía.
+- Implementación técnica en Roblox.
 
-### CLAUDE 2 — SYSTEMS & INFRASTRUCTURE
+### CLAUDE 2 — CUENTA B: WORLD & PRESENTATION
 
-Responsabilidad principal:
+Administrada por Michael y Einell. Responsabilidad principal:
 
-- Inventario.
-- Economía.
-- Progresión.
-- Guardado de datos.
-- Arquitectura.
-- Rendimiento.
-- Seguridad.
-- Infraestructura técnica.
+- Mundo, narrativa y personajes.
+- Dirección visual y assets.
+- Contenido y experiencia de usuario (UX).
 
-Ambos agentes pueden colaborar en otras áreas cuando exista una necesidad justificada y coordinación.
+Ambas cuentas pueden colaborar fuera de su área cuando la tarea lo requiera. Cada tarea identifica a una persona responsable y a quien la revisa; los cambios transversales requieren revisión de ambas parejas.
 
 ## 3. Inicio obligatorio de cada tarea
 

@@ -22,36 +22,23 @@ Centralizar las tareas, mejoras, errores y objetivos de desarrollo de Roblox Gam
 
 ## 4. Organización de tareas
 
-### Gameplay & World
-Responsable principal: Claude 1.
+### Cuenta A — Gameplay, systems e implementación técnica
+Responsables de la cuenta: Zadiel y Jhonn.
 
-Áreas:
-- Movimiento.
-- Combate.
-- Habilidades.
-- Enemigos.
-- Jefes.
-- Mundo.
-- Zonas.
-- NPC.
-- Misiones.
-- Exploración.
-- Eventos.
+Áreas principales:
+- Loop, mecánicas, habilidades y crafting.
+- Inventario, progresión y economía.
+- Implementación técnica de Roblox.
 
-### Systems & Infrastructure
-Responsable principal: Claude 2.
+### Cuenta B — World & presentation
+Responsables de la cuenta: Michael y Einell.
 
-Áreas:
-- Inventario.
-- Economía.
-- Progresión.
-- Guardado.
-- Arquitectura.
-- Rendimiento.
-- Seguridad.
-- Infraestructura.
+Áreas principales:
+- Mundo, narrativa y personajes.
+- Dirección visual, assets y contenido.
+- Experiencia de usuario (UX).
 
-Ambos agentes podrán colaborar en otras áreas mediante coordinación y revisión.
+Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Registra una persona responsable y una revisora por tarea; las tareas transversales requieren revisión de ambas parejas.
 
 ## 5. Tareas pendientes
 

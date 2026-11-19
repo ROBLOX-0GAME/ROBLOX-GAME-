@@ -5,67 +5,35 @@
 
 Roblox Game Studio estará compuesto por:
 
-- 3 integrantes humanos.
+- 4 integrantes humanos.
 - 2 agentes de inteligencia artificial mediante Claude Code.
 
 El equipo humano conserva la autoridad sobre las decisiones estratégicas y la aprobación del proyecto.
 
 ## 2. Integrantes humanos
 
-### Integrante 1 — Dirección y coordinación
-
-- Coordinar el desarrollo general.
-- Supervisar el cumplimiento de objetivos.
-- Aprobar decisiones importantes.
-- Coordinar la colaboración entre integrantes y agentes.
-- Supervisar la documentación.
-
-### Integrante 2 — Desarrollo y colaboración
-
-- Participar en el desarrollo del juego.
-- Revisar e implementar tareas.
-- Colaborar con los agentes IA.
-- Documentar cambios importantes.
-
-### Integrante 3 — Desarrollo y colaboración
-
-- Participar en el desarrollo del juego.
-- Revisar e implementar tareas.
-- Colaborar con los agentes IA.
-- Documentar cambios importantes.
-
-Los nombres y especializaciones definitivas de los integrantes están pendientes de registrar.
+- **Zadiel y Jhonn** administran la Cuenta A.
+- **Michael y Einell** administran la Cuenta B.
+- La persona responsable y la pareja revisora se especifican para cada tarea. La división individual de funciones dentro de cada pareja queda a decisión del equipo.
 
 ## 3. Agentes de inteligencia artificial
 
-### Claude 1 — Gameplay & World
+### Claude 1 — Cuenta A: Gameplay & Systems
 
 Responsabilidad principal:
 
-- Movimiento.
-- Combate.
-- Habilidades.
-- Enemigos.
-- Jefes.
-- Mundo.
-- Zonas.
-- NPC.
-- Misiones.
-- Eventos.
-- Exploración.
+- Loop de juego y mecánicas.
+- Inventario, objetos y crafting.
+- Habilidades, progresión y economía.
+- Implementación técnica en Roblox.
 
-### Claude 2 — Systems & Infrastructure
+### Claude 2 — Cuenta B: World & Presentation
 
 Responsabilidad principal:
 
-- Inventario.
-- Economía.
-- Progresión.
-- Guardado de datos.
-- Arquitectura.
-- Rendimiento.
-- Seguridad.
-- Infraestructura.
+- Mundo, narrativa y personajes.
+- Dirección visual y assets.
+- Contenido y experiencia de usuario (UX).
 
 Ambos agentes podrán colaborar en otras áreas mediante coordinación y revisión.
 
