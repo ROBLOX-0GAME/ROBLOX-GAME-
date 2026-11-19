@@ -43,17 +43,17 @@
 
 | Área | Estado |
 |---|---|
-| Visión del juego | Pendiente |
-| Game Design Document | Pendiente |
-| Arquitectura técnica | Pendiente |
-| Sistemas del juego | Pendiente |
-| Mundo y contenido | Pendiente |
-| Interfaz y experiencia | Pendiente |
-| Economía y progresión | Pendiente |
-| Multijugador | Pendiente |
-| Desarrollo | Pendiente |
-| Testing | Pendiente |
-| Documentación de IA | Pendiente |
+| Visión del juego | Base del formulario incorporada; visión final por aprobar |
+| Game Design Document | Propuesta 1.0 preparada para revisión del equipo |
+| Arquitectura técnica | Propuesta inicial preparada; falta vincular el place/proyecto fuente |
+| Sistemas del juego | Loop y mecánicas documentados como propuestas para validar |
+| Mundo y contenido | Premisa base incorporada; canon narrativo y visual por revisar |
+| Interfaz y experiencia | Teclado, mando y toque confirmados; flujos detallados por diseñar |
+| Economía y progresión | Sistemas descritos; cifras y balance por aprobar |
+| Multijugador | Propuestas de robo voluntario y jefe de taller listas para revisión |
+| Desarrollo | Protocolo de trabajo listo para la primera tarea |
+| Testing | Criterios preparados; pruebas del juego aún no ejecutadas |
+| Documentación de IA | Reglas raíz, 13 reglas de carpeta y 13 memorias en propuesta de revisión |
 
 ---
 
@@ -72,3 +72,20 @@
 **Proyecto:** Roblox Game Studio  
 **Estado:** En reconstrucción
 
+## Memoria por área
+
+Consulta la memoria compacta de cada carpeta:
+
+- [[00 - CENTRO DE CONTROL/Memoria-de-Area|00 - CENTRO DE CONTROL]]
+- [[01 - VISION DEL JUEGO/Memoria-de-Area|01 - VISION DEL JUEGO]]
+- [[02 - GAME DESIGN DOCUMENT/Memoria-de-Area|02 - GAME DESIGN DOCUMENT]]
+- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|03 - ARQUITECTURA TECNICA]]
+- [[04 - SISTEMAS DEL JUEGO/Memoria-de-Area|04 - SISTEMAS DEL JUEGO]]
+- [[05 - MUNDO Y CONTENIDO/Memoria-de-Area|05 - MUNDO Y CONTENIDO]]
+- [[06 - INTERFAZ Y EXPERIENCIA/Memoria-de-Area|06 - INTERFAZ Y EXPERIENCIA]]
+- [[07 - ECONOMIA Y PROGRESION/Memoria-de-Area|07 - ECONOMIA Y PROGRESION]]
+- [[08 - MULTIJUGADOR/Memoria-de-Area|08 - MULTIJUGADOR]]
+- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|09 - TAREAS Y DESARROLLO]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]]
+- [[11 - TESTING Y BUGS/Memoria-de-Area|11 - TESTING Y BUGS]]
+- [[12 - RECURSOS Y REFERENCIAS/Memoria-de-Area|12 - RECURSOS Y REFERENCIAS]]

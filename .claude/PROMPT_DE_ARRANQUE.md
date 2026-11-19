@@ -1,0 +1,5 @@
+# Prompt de arranque
+
+Copia y pega al iniciar una tarea:
+
+Antes de actuar, revisa instrucciones raíz, Dashboard, protocolo, Backlog y Registro de Decisiones. Confirma ID y objetivo, resultado esperado, persona responsable, cuenta Claude activa, criterio de aceptación, rutas permitidas y revisor. Carga solo la nota y memoria del área pertinente. Usa las respuestas del formulario para completar instrucciones operativas; no repitas “pendiente” por notas vacías. Si debes crear una mecánica o regla no definida, redacta propuesta completa y justificada para aprobación humana. Antes de editar, confirma con la persona usuaria que las rutas permitidas están libres y que no hay una edición activa. Espera su confirmación explícita; si no puede confirmarse, elige otra tarea. Trabaja en rama task/ID-slug; al cerrar actualiza memoria/changelog, revisa el diff y haz push a esa rama para revisión. Claude aprueba solo redacción y formato. El equipo aprueba decisiones sustantivas. No publiques ni fusiones a main. Informa rutas, rama/PR, verificaciones reales, pendientes y próximo paso.
