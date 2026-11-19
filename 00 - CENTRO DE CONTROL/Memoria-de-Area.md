@@ -10,11 +10,12 @@
 ## Respuestas directas y datos base
 
 - Repo público ROBLOX-0GAME/ROBLOX-GAME-, rama main; la raíz verificada es la bóveda Obsidian con 13 carpetas y 16 notas. La conexión actual funciona; jhonnhughesmadrigal-cmd tiene permiso de administración.
+- Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo. La MacBook queda para Obsidian y tareas escolares.
 - Cuatro personas (Jhonn, Zadiel, Michael, Einell), dos cuentas Claude Code y coordinación diaria/changelog del equipo por WhatsApp. Los bloqueos de edición se confirman con la persona usuaria.
 
 ## Pendientes concretos
 
-- Confirmar escritura de cada cuenta de GitHub y ubicación del place Roblox Studio.
+- Confirmar escritura de cada cuenta de GitHub y registrar la ruta o repositorio del place al abrirlo en una PC Windows de desarrollo.
 
 ## Decisiones aprobadas del área
 

@@ -14,6 +14,13 @@ Definir la estructura técnica del proyecto Roblox Game Studio, sus componentes,
 - **Control de versiones:** Git y GitHub
 - **Documentación:** Obsidian
 
+### Entorno de trabajo por dispositivo
+
+- Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo.
+- La MacBook se usará para Obsidian y tareas escolares; no se planifica el desarrollo de Roblox Studio en ella.
+- El repositorio GitHub conectado actualmente contiene la bóveda de Obsidian, no el place ni el código fuente del juego.
+- Antes de programar, registra aquí la ruta o repositorio del proyecto, confirma que abre en Roblox Studio en una PC de desarrollo y documenta la rama y el flujo de publicación.
+
 ## 3. Arquitectura general
 
 La arquitectura deberá separar claramente:

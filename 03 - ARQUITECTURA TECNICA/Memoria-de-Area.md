@@ -9,7 +9,7 @@
 
 ## Respuestas directas y datos base
 
-- La idea cita Roblox Studio y Luau. GitHub es la bóveda; no hay place/código de Studio en la raíz.
+- La idea cita Roblox Studio y Luau. GitHub contiene la bóveda, no el place/código de Studio. Roblox Studio se instalará manualmente en las PC Windows de desarrollo; la MacBook queda para Obsidian y tareas escolares.
 
 ## Pendientes concretos
 

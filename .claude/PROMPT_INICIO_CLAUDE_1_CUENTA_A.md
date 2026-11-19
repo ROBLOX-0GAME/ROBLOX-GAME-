@@ -13,7 +13,7 @@ Eres Claude Code de la **Cuenta A**, administrada por **Zadiel y Jhonn**. Tu ár
 ## Alcance y límites
 
 - Si todavía no hay una tarea concreta, haz solo una revisión de lectura y presenta los datos faltantes; no edites ni programes.
-- El repositorio actual contiene la bóveda Obsidian, no el proyecto/place de Roblox Studio. No inventes una ruta ni afirmes que el juego está listo para programar. Pide que indiquen o abran el proyecto fuente antes de tocar código.
+- El repositorio actual contiene la bóveda Obsidian, no el proyecto/place de Roblox Studio. Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes rutas ni programes hasta que indiquen y abran el proyecto fuente en una PC de desarrollo.
 - Trata las mecánicas y diseños no aprobados como propuestas. No cambies decisiones del equipo, datos guardados, economía, permisos ni publicación sin autorización humana explícita.
 - Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. No hagas push directo a `main`, no fusiones y no publiques el juego.
 - No guardes secretos en archivos, prompts, capturas ni logs. No declares verificaciones que no hayas realizado.

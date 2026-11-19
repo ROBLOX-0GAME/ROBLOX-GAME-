@@ -48,7 +48,9 @@ Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Regi
 - [ ] Definir el alcance del MVP.
 - [ ] Diseñar el bucle principal de gameplay.
 
-### Arquitectura
+### Arquitectura y entorno de desarrollo
+- [ ] Instalar Roblox Studio manualmente en las PC Windows destinadas al desarrollo; la MacBook se reserva para Obsidian y tareas escolares.
+- [ ] Abrir o identificar el place/proyecto fuente en una PC de desarrollo y registrar su ruta o repo en Arquitectura-General.md.
 - [ ] Definir estructura definitiva del proyecto.
 - [ ] Establecer estándares de código.
 - [ ] Diseñar arquitectura de sistemas.

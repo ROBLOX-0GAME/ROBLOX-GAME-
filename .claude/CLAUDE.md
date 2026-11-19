@@ -35,7 +35,7 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 - Confirma estado local/remoto antes de sincronizar. No uses force push. Resuelve conflictos por prioridad: solicitud humana vigente, Registro de Decisiones, alcance aprobado y main. Si hay desacuerdo sustantivo, conserva vigente la última decisión aprobada en main, registra la alternativa y pausa solo ese cambio hasta que el equipo lo resuelva; sigue tareas independientes. En binarios conserva main salvo autorización expresa para reemplazarlo.
 
 ## Límites y seguridad
-- El repo actual es la bóveda Obsidian; no contiene el place/código de Roblox Studio. No inventes rutas ni digas que modificaste el juego sin la fuente.
+- El repo actual es la bóveda Obsidian; no contiene el place/código de Roblox Studio. Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes rutas ni digas que modificaste el juego sin que la persona usuaria indique y abra el proyecto fuente en una PC de desarrollo.
 - No guardes contraseñas, tokens, cookies, claves privadas ni datos personales innecesarios.
 - Las respuestas directas del formulario son la base operativa. Las decisiones de juego diseñadas por Claude siguen siendo propuestas hasta que las personas responsables las aprueben.
 - No declares pruebas realizadas si no se ejecutaron.

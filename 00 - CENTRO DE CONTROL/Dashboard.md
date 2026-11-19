@@ -45,7 +45,7 @@
 |---|---|
 | Visión del juego | Base del formulario incorporada; visión final por aprobar |
 | Game Design Document | Propuesta 1.0 preparada para revisión del equipo |
-| Arquitectura técnica | Propuesta inicial preparada; falta vincular el place/proyecto fuente |
+| Arquitectura técnica | Propuesta inicial; falta ubicar el proyecto fuente en una PC Windows de desarrollo |
 | Sistemas del juego | Loop y mecánicas documentados como propuestas para validar |
 | Mundo y contenido | Premisa base incorporada; canon narrativo y visual por revisar |
 | Interfaz y experiencia | Teclado, mando y toque confirmados; flujos detallados por diseñar |
