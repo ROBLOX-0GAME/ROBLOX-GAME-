@@ -2,7 +2,7 @@
 # 📚 RECURSOS Y REFERENCIAS
 
 ## 1. Propósito
-
+AMO A MI EX
 Centralizar los recursos, documentación externa, referencias visuales, herramientas y materiales utilizados durante el desarrollo de Roblox Game Studio.
 
 ## 2. Documentación oficial
