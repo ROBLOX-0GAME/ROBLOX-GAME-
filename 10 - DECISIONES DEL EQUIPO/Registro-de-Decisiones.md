@@ -221,3 +221,8 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Sistemas / economía.
 - **Propuesta:** un plot por jugador; el taller y el museo pasan al plot; los relojes exhibidos dan ingreso y suerte (tope 15%); caminadora personal mejorable (×1 a ×6, Turbo ×2); vitrinas mejorables (3 a 15). Detalle en [[GDD]] §15.6.
 - **Sustituye en parte:** las caminadoras compartidas de DEC-008 y el Museo y el Taller compartidos de DEC-003.
+
+#### DEC-011 — Mascotas en cápsulas, recompensas diarias y por tiempo, y mascotas Robux
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Economía / monetización.
+- **Propuesta:** cápsulas en lugar de huevos; racha diaria de 7 días; 5 premios por tiempo jugado al día; Cápsula Cósmica solo con Robux con mascotas de +80% a +150% y probabilidades visibles. Detalle en [[GDD]] §15.7.

@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-009: racha diaria de 250 monedas a Cápsula de Oro; premios por tiempo de 5 a 120 min; Cápsula Cósmica solo Robux (+80/+100/+150%). Propuesta DEC-011.
 - 2026-11-20 · DEV-008: mejoras del plot. Vitrinas: 300 ×2 por nivel, 6 niveles. Caminadora: 400 ×1,75 por nivel, 10 niveles. Suerte de los relojes exhibidos con tope del 15%. Propuesta DEC-010.
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 - 2026-11-20 · DEV-006 (Jhonn, en revisión): el juego se centra en la velocidad, sin fuerza. Caminadoras ×1/×2,5/×6, 6 pases de Robux (algunos «pay to win» por decisión de Jhonn) y 5 productos. Ver [[GDD]] §15.5. Propuesta DEC-008.

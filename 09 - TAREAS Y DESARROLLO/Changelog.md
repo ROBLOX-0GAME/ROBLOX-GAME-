@@ -158,3 +158,23 @@ Reglas:
   - · Verificación: revisión estática ejecutada (21 scripts, 81 `require`, 0 errores).
 - **2026-11-20 · DEV-008 · Paso 5 — Pruebas.** La prueba de las caminadoras compartidas se reemplaza por 4 pruebas nuevas: caminadora y Turbo, adaptación de datos, suerte del plot y vitrinas. **Corrección:** hay **34** bloques de prueba. Los totales anteriores de este Changelog (25, 27, 30 y 35) estaban mal sumados; los reales eran 21, 23, 26 y 31. · Verificación: pendiente en Studio.
 - **2026-11-20 · DEV-008 · Paso 6 — Documentación y cierre.** GDD §15.6, Plan de Pruebas §15, propuesta DEC-010, memorias de las áreas 02, 04 y 07, y Backlog. La fila DEV-008 de ACTIVE_TASKS pasa a Completada. · Verificación: revisión de archivos.
+
+---
+
+## 10. DEV-009 — Cápsulas, recompensas diarias y por tiempo, y mascotas Robux
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Michael o Einell para la interfaz · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-009 · Paso 1 — Dirección y reserva.** Jhonn pide que las mascotas salgan de cápsulas, que se consigan comprándolas, con recompensas diarias o por tiempo, y con Robux (más fuertes). No había reservas activas; la reserva se subió en `82f37ba`. · Verificación: ejecutada.
+- **2026-11-20 · DEV-009 · Paso 2 — Código (`0491286`).**
+  - `GameData`: cápsulas (antes huevos; se conservan los ids), Cápsula Cósmica, 3 mascotas de Robux, rarezas Mítico y Divino, `DailyRewards`, `PlaytimeRewards` y producto `cosmicCapsule`.
+  - `PlayerLogic`: inventario `capsules`, `giveReward`, `openCapsule`, `dailyStatus` / `claimDaily` con racha, `addPlaytime` / `claimPlaytime` por día, y la vista con `now`.
+  - Los productos de Robux y el premio del Cronómetro entregan cápsulas a la Mochila.
+  - Nuevo `RewardService`, que suma el tiempo jugado y avisa de los premios.
+  - `ActionService`: acciones `openCapsule`, `claimDaily` y `claimPlaytime`.
+  - Interfaz: panel «Premios», cápsulas en la Mochila y Criadero con cápsulas.
+  - · Verificación: revisión estática ejecutada (22 scripts, 88 `require`, 0 errores).
+- **2026-11-20 · DEV-009 · Paso 3 — Pruebas.** 3 pruebas nuevas: cápsulas y Cósmica, racha diaria, y tiempo jugado. Se ajustó la de productos, porque la cápsula ahora va a la Mochila. Total: 37 bloques. · Verificación: pendiente en Studio.
+- **2026-11-20 · DEV-009 · Paso 4 — Documentación y cierre.** GDD §15.7, Plan de Pruebas §16, propuesta DEC-011, memorias y Backlog. La fila DEV-009 pasa a Completada. · Verificación: revisión de archivos.

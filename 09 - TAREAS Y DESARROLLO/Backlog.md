@@ -264,7 +264,7 @@ El plot y la caminadora se **mejoran** con monedas: el plot añade vitrinas y la
 - **Revisor:** Zadiel. Michael y Einell revisan la interfaz.
 - **Área:** Sistemas, economía, progresión y monetización.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -280,12 +280,12 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 
 **Criterios de aceptación:**
 
-- [ ] Cápsulas con monedas, inventario de cápsulas y apertura validada en el servidor.
-- [ ] Recompensa diaria una vez por día (UTC), con racha de 7 días que se reinicia si se salta un día.
-- [ ] Recompensas por tiempo jugado: niveles por día que se reclaman una sola vez.
-- [ ] Cápsula Cósmica (Robux) con mascotas exclusivas más fuertes y probabilidades visibles; se entrega una sola vez por compra.
-- [ ] Pruebas automáticas nuevas y revisión estática sin errores.
-- [ ] La fila DEV-009 de ACTIVE_TASKS queda Completada.
+- [x] Cápsulas con monedas, inventario de cápsulas y apertura validada en el servidor.
+- [x] Recompensa diaria una vez por día (UTC), con racha de 7 días que se reinicia si se salta un día.
+- [x] Recompensas por tiempo jugado: niveles por día que se reclaman una sola vez.
+- [x] Cápsula Cósmica (Robux) con mascotas exclusivas más fuertes y probabilidades visibles; se entrega una sola vez por compra.
+- [x] 3 pruebas nuevas (37 bloques en total) y revisión estática sin errores. Pendiente: ejecutarlas en Studio.
+- [x] La fila DEV-009 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-005, DEV-006 y DEV-008 (Completadas).
 

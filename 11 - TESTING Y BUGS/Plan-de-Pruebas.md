@@ -251,3 +251,15 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Entrenar en la caminadora del plot; mejorarla sube el multiplicador del HUD | Manual | Pendiente |
 | Otro jugador no puede usar tu taller, tus vitrinas ni tu caminadora | Multijugador | Pendiente |
 | Al salir, el plot queda «Libre» | Multijugador | Pendiente |
+
+## 16. Pruebas de DEV-009 (cápsulas y recompensas)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`python game/tools/build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 37 bloques de prueba de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| Al entrar avisa de la recompensa diaria; «Premios» → Reclamar da 250 monedas | Manual | Pendiente |
+| A los 5 minutos de juego avisa y se reclama el premio; el botón pasa a «Reclamado» | Manual | Pendiente |
+| Comprar y abrir una Cápsula de Latón en el Criadero | Manual | Pendiente |
+| Abrir una cápsula guardada desde la Mochila | Manual | Pendiente |
+| La Cápsula Cósmica muestra «Próximamente» mientras su ID sea 0 | Manual | Pendiente |

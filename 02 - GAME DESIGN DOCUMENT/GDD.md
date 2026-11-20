@@ -286,3 +286,30 @@ Velocidad = (16 + 2 × nivel de la mejora Velocidad + velocidad entrenada) × mu
 - **Solo el dueño** usa el taller, las vitrinas y la caminadora de su plot; lo valida el servidor.
 - La Tienda sigue vendiendo Mochila, Velocidad, Salto y Suerte. El Criadero y el Cronómetro Maestro siguen compartidos.
 - **Pendiente para la fase de arte:** los modelos del plot y las skins de los dueños de las casas. Se recomiendan personajes originales «al estilo» de famosos de Roblox, como un «Gamer Robot» propio, y no copiar creadores o personajes reales sin permiso.
+
+### 15.7 Mascotas en cápsulas, recompensas y Robux (DEV-009)
+
+> Dirección de Jhonn (2026-11-20). Cifras en propuesta (DEC-011). Sustituye a los «huevos» de §15.4.
+
+**Cómo se consiguen las mascotas:** siempre salen de **cápsulas**. Las cápsulas ganadas o compradas con Robux se guardan en la **Mochila** y se abren cuando quieras.
+
+| Cápsula | Cómo se consigue | Mascotas |
+|---|---|---|
+| Latón | 500 monedas · recompensas | Ratón 60% · Gato 30% · Zorro 10% |
+| Plata | 5.000 monedas · recompensas | Gato 50% · Zorro 35% · Halcón 15% |
+| Oro | 40.000 monedas · recompensas · Robux | Zorro 50% · Halcón 35% · Dragón 15% |
+| **Cósmica** | **Solo Robux** | **Fénix Cronal +80% (60%) · Titán de Cuarzo +100% (30%) · Señor del Tiempo +150% (10%)** |
+
+Las mascotas de la Cápsula Cósmica son exclusivas de Robux y más fuertes que cualquiera de monedas (el Dragón es +60%). Las probabilidades se muestran en el Criadero, como exige Roblox para compras aleatorias pagadas.
+
+**Recompensa diaria** (una vez por día UTC; la racha vuelve al día 1 si saltas un día):
+
+| Día 1 | Día 2 | Día 3 | Día 4 | Día 5 | Día 6 | Día 7 |
+|---|---|---|---|---|---|---|
+| 250 monedas | 1 Latón | 750 monedas | 2 Latón | 2.000 monedas | 1 Plata | 1 Oro |
+
+**Premios por tiempo jugado** (cada día, se reclaman una vez): 5 min → 150 monedas · 15 min → 1 Latón · 30 min → 1.000 monedas · 60 min → 1 Plata · 120 min → 1 Oro.
+
+- El botón **«Premios»** abre el panel. El juego avisa al entrar y cuando hay un premio listo.
+- El premio extra del Cronómetro Maestro ahora es una Cápsula de Latón en la Mochila.
+- **Seguridad:** el servidor controla las fechas (UTC) y el tiempo jugado; el cliente solo pide reclamar.
