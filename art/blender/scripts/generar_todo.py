@@ -56,13 +56,16 @@ MODELOS.update(P1.MODELOS)
 MODELOS.update(P2.MODELOS)
 MODELOS.update(P3.MODELOS)
 
+PBR = ("mdl_reloj_", "mdl_pieza_", "mdl_legado_", "mdl_capsula_")  # modelos con materiales PBR
+
 
 def main():
     # Opcional: generar solo algunos → ... --python generar_todo.py -- mdl_taller mdl_vitrina
-    # Los relojes llevan materiales PBR y los genera relojes_detallados.py (ART-006). Para no
-    # sobrescribirlos con la versión de paleta, aquí solo se generan si se piden por nombre.
+    # Los relojes (relojes_detallados.py, ART-006) y las piezas, el legado y las cápsulas
+    # (piezas_detalladas.py, ART-009) llevan materiales PBR. Para no sobrescribirlos con la
+    # versión de paleta, aquí solo se generan si se piden por nombre.
     pedidos = (sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv
-               else [n for n in MODELOS if not n.startswith("mdl_reloj_")])
+               else [n for n in MODELOS if not n.startswith(PBR)])
     resultados = []
     for nombre in pedidos:
         A.limpiar_escena()

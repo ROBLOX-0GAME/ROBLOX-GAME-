@@ -128,6 +128,34 @@ Archivos de cada material: `tex_<material>_color.png`, `_normal.png` (espacio ta
 4. **Cristal:** en el MeshPart `cristal_zafiro`, sube `Transparency` (entre 0,8 y 0,9, ajústalo a ojo) para que se vea la esfera. Metales, esmaltes, cuero y gemas no necesitan más ajustes: el aspecto lo da el `SurfaceAppearance`.
 5. Comprueba la orientación (frente hacia −Z en Studio); si sale girado, usa el atributo `GiroY` (§5).
 
+### Materiales PBR de piezas, legado y cápsulas (ART-009, DEC-018 aprobada)
+
+`art/blender/scripts/piezas_detalladas.py` reutiliza las funciones de `relojes_detallados.py` (que ya no se ejecuta al importarlo) y exporta 14 modelos con una malla por material, con los **mismos nombres, medidas, origen y frente** que los modelos base. `generar_todo.py` ya no los sobrescribe salvo que se pidan por nombre.
+
+Materiales nuevos (`materiales_pbr.py -- metal_laton metal_plata esmalte_cosmico` genera solo esos):
+
+| Material | Uso | Rugosidad | Metálico |
+|---|---|---|---|
+| `metal_laton` | Cápsula de latón, engranaje | 0,18–0,30 | 1 |
+| `metal_plata` | Cápsula de plata, rotor y marco del legado, base del cristal | 0,10–0,20 | 1 |
+| `esmalte_cosmico` | Cápsula Cósmica (morado y cian) | 0,08–0,16 | 0 |
+
+| Modelo | Triángulos | Mallas (MeshParts) |
+|---|---|---|
+| `mdl_pieza_engranaje` | 562 | latón, oro cepillado, acero, esmalte negro, rubí |
+| `mdl_pieza_resorte` | 776 | acero |
+| `mdl_pieza_tornillo` | 558 | acero, esmalte negro |
+| `mdl_pieza_cristal` | 76 | cristal, plata (en Studio, `Transparency` ≈ 0,3) |
+| `mdl_pieza_correa` | 188 | cuero, acero, oro pulido |
+| `mdl_pieza_rubi` / `_diamante` | 70 / 66 | rubí / diamante |
+| `mdl_legado_espiral` | 714 | oro pulido, plata, diamante |
+| `mdl_legado_corona` | 410 | oro pulido y cepillado, zafiros |
+| `mdl_legado_rotor` | 832 | plata, oro pulido, rubí, diamante, zafiro |
+| `mdl_capsula_laton` / `_plata` / `_oro` | 596 c/u | metal de la cápsula, oro, esmalte blanco y negro, acero |
+| `mdl_capsula_cosmica` | 668 | esmalte cósmico, plata, esmalte blanco y negro, acero, diamante |
+
+**Windows:** Material Maker 1.8 no exporta el nodo `perlin` en esta PC (Intel UHD 630) y necesita rutas con `/`; `materiales_pbr.py` ya pasa las rutas así, reintenta y los materiales nuevos usan el ruido «nube» (`fbm2` con Perlin). Los mapas de ART-006 hechos en la Mac no se tocan.
+
 ## 6. Control de recursos
 
 Según [[Recursos-y-Referencias]] §8, todo recurso externo anota su procedencia, autor, licencia y permisos. Los assets hechos por el equipo o generados por script son propios. Las referencias externas van a `art/referencias/` con su fuente.
@@ -145,17 +173,17 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | `mdl_estacion_tienda`, `_robux`, `_criadero`, `_cronometro`, `_carga` | Mostradores del muro (WorldService) | 14 × 5 × 8, más techo | ✅ Base (216 / 136 / 444 / 524 / 156) |
 | `mdl_muro_frontal`, `mdl_cartel_salida` | Muro frontal | segmentos de 116 × 18 × 2 | ✅ Base (444 / 48) |
 | `mdl_casa_z1` … `mdl_casa_z5`, `mdl_pedestal` | Casas por zona (HouseService) | 26 × 12 × 24 (puerta 8 × 9) | ✅ Base: madera, ladrillo, moderna, mansión y dorada con cúpula (128–336); pedestal 36 |
-| `mdl_pieza_engranaje`, `_resorte`, `_tornillo`, `_cristal`, `_correa`, `_rubi`, `_diamante` | Esferas robables | ≈ 1,4 | ✅ Base (24–480) |
+| `mdl_pieza_engranaje`, `_resorte`, `_tornillo`, `_cristal`, `_correa`, `_rubi`, `_diamante` | Esferas robables | ≈ 1,4 | ✅ PBR (ART-009, 66–776) |
 | `mdl_puerta_velocidad_poste` | Extremos de la barrera de zona (la barrera sigue siendo la pieza del código) | 2 × 2 × 40 | ✅ Base (132) |
 
 **Prioridad 2 — progresión y recompensas**
 
 | Asset | Sustituye a | Estado |
 |---|---|---|
-| `mdl_capsula_laton` | Cápsula (Criadero, Premios) | ✅ Base generada (328 triángulos) |
-| `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | ✅ Base (328 / 328 / 382; la Cósmica lleva estrellas) |
+| `mdl_capsula_laton` | Cápsula (Criadero, Premios) | ✅ PBR (ART-009, 596 triángulos) |
+| `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | ✅ PBR (ART-009: 596 / 596 / 668) |
 | `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | ✅ Detallados con materiales PBR (ART-006): Model con una malla por material, 960–2.090 triángulos |
-| `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | ✅ Base (488 / 272 / 160) |
+| `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | ✅ PBR (ART-009: 714 / 410 / 832) |
 | `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ Base (96–450) |
 | Dueños de las casas | NPC de bloques (OwnerNpc) | Pendiente: personaje R15 con skins originales «al estilo» de Roblox, sin copiar personajes reales |
 

@@ -409,3 +409,11 @@ Reglas:
 - **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
 
 - **2026-11-20 · INFRA-003 · Paso 1 — Equipo y decisiones.** Zadiel indica que Michael y Einell dejan el equipo y que decidirán Zadiel y Jhonn. Se registra **DEC-020** (Aprobada por Zadiel) y Zadiel aprueba **DEC-018** con la ampliación a piezas robables, legado y cápsulas (ART-009). Se actualizan [[OWNERS]], AGENTS.md y `.claude/CLAUDE.md`, que además anota la place oficial **84500108687089** («Reloj creation oficial 1», universo 10778093657; consultada en la API pública de Roblox). ART-008 pasa a En desarrollo. · Verificación: lectura de los cambios y consulta de la API.
+
+## 25. ART-009 — Materiales PBR para piezas, legado y cápsulas
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · ART-009 · Paso 1 — Materiales.** `metal_laton`, `metal_plata` y `esmalte_cosmico` en `materiales_pbr.py`, que ahora acepta nombres para generar solo esos. En Windows, Material Maker necesitaba rutas con `/` y no exporta el nodo `perlin` (tampoco los `.ptex` de ART-006): los materiales nuevos usan «nube» (`fbm2` con Perlin) y el script reintenta y comprueba los archivos. El latón empezó cepillado, pero en la cápsula parecía madera y pasó a pulido. · Verificación: ejecutada (12 mapas de 512 px; metálico medio 1,00 / 1,00 / 0,00; mapas revisados). Commit `463ebaa` y siguientes.
+- **2026-11-20 · ART-009 · Paso 2 — Modelos.** `piezas_detalladas.py`: 7 piezas robables, 3 del legado y 4 cápsulas, una malla por material, con los mismos nombres, medidas y orientación que los modelos base. Triángulos: piezas 66–776, legado 410–832, cápsulas 596–668. `relojes_detallados.py` ya no ejecuta `main()` al importarlo; al regenerar los relojes salen los mismos triángulos (1.456 / 960 / 1.376 / 1.538 / 1.566 / 2.090) y no se suben de nuevo. `generar_todo.py` excluye los modelos PBR. · Verificación: ejecutada (conteos y `py_compile`).
+- **2026-11-20 · ART-009 · Paso 3 — Vistas.** Vistas EEVEE de los 14 modelos y hoja de contactos revisadas; corregidos el latón y el anillo de las cápsulas de latón y plata (oro pulido). · Verificación: ejecutada (revisión visual). Pendiente: importarlos en Studio (ART-008).

@@ -64,7 +64,7 @@ MATERIALES = {
     "gema_diamante":       dict(ruido=("celdas", 4), color=((0.80, 0.86, 0.94), (1.00, 1.00, 1.00)), rug=(0.01, 0.05), metal=0, relieve=1.0),
     "gema_zafiro":         dict(ruido=("celdas", 4), color=((0.04, 0.10, 0.45), (0.16, 0.32, 0.88)), rug=(0.02, 0.08), metal=0, relieve=1.0),
     # ART-009 (DEC-018 aprobada): piezas robables, legado y cápsulas
-    "metal_laton":         dict(ruido=("cepillado", 192), color=((0.62, 0.45, 0.20), (0.82, 0.64, 0.34)), rug=(0.28, 0.42), metal=1, relieve=0.12),
+    "metal_laton":         dict(ruido=("nube", 6, 4), color=((0.62, 0.45, 0.20), (0.84, 0.66, 0.36)), rug=(0.18, 0.30), metal=1, relieve=0.15),
     "metal_plata":         dict(ruido=("nube", 6, 4), color=((0.78, 0.79, 0.82), (0.95, 0.96, 0.98)), rug=(0.10, 0.20), metal=1, relieve=0.2),
     "esmalte_cosmico":     dict(ruido=("nube", 4, 5), color=((0.30, 0.10, 0.55), (0.25, 0.80, 0.90)), rug=(0.08, 0.16), metal=0, relieve=0.15),
 }

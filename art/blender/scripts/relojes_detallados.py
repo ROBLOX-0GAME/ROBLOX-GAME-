@@ -362,4 +362,5 @@ def main():
         print("    " + ", ".join(f"{n} ({t})" for n, t in partes))
 
 
-main()
+if __name__ == "__main__":  # piezas_detalladas.py importa este módulo para reutilizar sus funciones (ART-009)
+    main()

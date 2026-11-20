@@ -661,7 +661,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn (DEC-020).
 - **Área:** Arte / assets.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -669,8 +669,8 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] 3 materiales nuevos generados con Material Maker (12 mapas).
-- [ ] 14 modelos exportados; piezas por debajo de 1.000 triángulos.
-- [ ] `generar_todo.py` no los sobrescribe; los relojes siguen generándose igual.
-- [ ] Vistas EEVEE revisadas; Pipeline, Changelog y memoria del área 12 actualizados.
+- [x] 3 materiales nuevos generados con Material Maker (12 mapas).
+- [x] 14 modelos exportados; piezas por debajo de 1.000 triángulos.
+- [x] `generar_todo.py` no los sobrescribe; los relojes siguen generándose igual.
+- [x] Vistas EEVEE revisadas; Pipeline, Changelog y memoria del área 12 actualizados.
 
