@@ -705,7 +705,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn.
 - **Área:** Centro de control.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -713,6 +713,6 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Nota creada con lo hecho, lo verificado, lo pendiente y las decisiones por aprobar.
-- [ ] Sin secretos: se confirma que no hay ninguna API key en el repositorio.
-- [ ] La fila INFRA-004 de ACTIVE_TASKS queda Completada.
+- [x] Nota creada con lo hecho, lo verificado, lo pendiente y las decisiones por aprobar.
+- [x] Sin secretos: se confirma que no hay ninguna API key en el repositorio.
+- [x] La fila INFRA-004 de ACTIVE_TASKS queda Completada.
