@@ -135,3 +135,26 @@ Reglas:
 - **2026-11-20 · DEV-007 · Paso 4 — Código.** 21 archivos movidos de `juego/` a `game/src/ReplicatedStorage/Shared`, `game/src/ServerScriptService/Server` y `game/src/StarterPlayer/StarterPlayerScripts/Client`. Se retiraron Bootstrap y Placeholder de INFRA-001. `build.py` pasa a `game/tools/build.py`, ahora lee `game/default.project.json` y respeta los servicios con `$path`. · Verificación: revisión estática ejecutada (20 scripts, 73 `require`, 0 errores, XML válido).
 - **2026-11-20 · DEV-007 · Paso 5 — Bóveda.** Se trajeron el GDD §15, el Plan de Pruebas y las memorias con rutas `game/`. En las notas que `main` había cambiado (Arquitectura, Registro, Dashboard, memorias 03 y 09, `.gitignore`) solo se añadieron secciones. Decisiones renumeradas: la antigua DEC-001 queda cubierta por la DEC-001 aprobada y las propuestas pasan a DEC-003 a DEC-008. · Verificación: revisión de archivos.
 - **2026-11-20 · DEV-007 · Paso 6 — Cierre.** La fila DEV-007 de ACTIVE_TASKS.md pasa a Completada en este PR final. Las ramas DEV-001 a DEV-006 no se fusionan: su contenido llega por DEV-007. · Verificación: pendiente de los checks `reservation-check` y `rojo-build` en GitHub y de la prueba en Studio.
+
+---
+
+## 9. DEV-008 — Plot personal con taller, vitrinas y caminadora
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Michael o Einell para la interfaz · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-008 · Paso 1 — Prueba de DEV-007.** Jhonn fusionó DEV-007 (PR #4, con `reservation-check` y `rojo-build` en verde) y probó el juego en Studio. · Verificación: reportada por Jhonn.
+- **2026-11-20 · DEV-008 · Paso 2 — Dirección.** Jhonn pide un plot por jugador. El taller va al fondo, el plot hace de museo con ingreso pasivo y un poco de suerte, y la caminadora va enfrente. El plot y la caminadora se mejoran. Las skins de los dueños de las casas quedan para la fase de arte. · Verificación: ejecutada.
+- **2026-11-20 · DEV-008 · Paso 3 — Reserva.** PR #5 de reserva. Hubo dos conflictos con INFRA-002 en el Backlog y en ACTIVE_TASKS: se acotó la reserva y Zadiel resolvió el último y fusionó. Luego INFRA-002 cambió el flujo a trabajo directo en `main` (DEC-009) y se añadió el Registro de Decisiones a la reserva (`7d78a6a`). · Verificación: ejecutada.
+- **2026-11-20 · DEV-008 · Paso 4 — Código (`fa0e72f`).**
+  - Nuevo `PlotService`: 10 plots, asignación y liberación, cartel del dueño, aparición en el propio plot, taller, panel de vitrinas y caminadora, y solo el dueño puede usarlos.
+  - `TrainingService` usa la caminadora del plot.
+  - `ActionService` valida la cercanía al plot propio (`plotPart`) y tiene la acción `buyPlotUpgrade`.
+  - `WorldService` quita el Taller y el Museo compartidos y amplía la base.
+  - `GameData`: suerte por reloj, mejoras «Vitrinas del plot» y «Caminadora del plot», y el pase Turbo pasa a ×2.
+  - `PlayerLogic`: `plotLuck`, `treadmillMultiplier`, `trainTick(data, segundos)` y adaptación de datos de la Caminadora de Acero al nivel 3.
+  - Interfaz: panel «Tu plot» con las vitrinas y sus mejoras.
+  - · Verificación: revisión estática ejecutada (21 scripts, 81 `require`, 0 errores).
+- **2026-11-20 · DEV-008 · Paso 5 — Pruebas.** La prueba de las caminadoras compartidas se reemplaza por 4 pruebas nuevas: caminadora y Turbo, adaptación de datos, suerte del plot y vitrinas. **Corrección:** hay **34** bloques de prueba. Los totales anteriores de este Changelog (25, 27, 30 y 35) estaban mal sumados; los reales eran 21, 23, 26 y 31. · Verificación: pendiente en Studio.
+- **2026-11-20 · DEV-008 · Paso 6 — Documentación y cierre.** GDD §15.6, Plan de Pruebas §15, propuesta DEC-010, memorias de las áreas 02, 04 y 07, y Backlog. La fila DEV-008 de ACTIVE_TASKS pasa a Completada. · Verificación: revisión de archivos.

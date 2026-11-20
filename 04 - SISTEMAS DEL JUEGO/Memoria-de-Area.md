@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-008: `PlotService` (10 plots, solo el dueño) y `TrainingService` con la caminadora del plot. Se retiraron el Taller, el Museo y las caminadoras compartidos.
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

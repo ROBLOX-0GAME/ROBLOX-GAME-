@@ -231,7 +231,7 @@ Por decisión de Zadiel para todo el equipo, se deja de usar ramas por tarea y P
 - **Revisor:** Zadiel. Michael y Einell revisan `game/src/StarterPlayer/StarterPlayerScripts/` (interfaz).
 - **Área:** Sistemas, economía y progresión.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo (Pull Request de reserva).
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Rama:** `task/DEV-008-plot-personal`.
 - **Fecha de creación:** 2026-11-20.
 
@@ -247,11 +247,11 @@ El plot y la caminadora se **mejoran** con monedas: el plot añade vitrinas y la
 
 **Criterios de aceptación:**
 
-- [ ] Se asigna un plot libre al entrar y se libera al salir; se muestra el nombre del dueño.
-- [ ] Fabricar, exhibir y entrenar solo funcionan en el plot propio (validado en el servidor).
-- [ ] Mejoras de plot y de caminadora con precios crecientes; los datos anteriores se adaptan sin pérdidas.
-- [ ] Pruebas automáticas nuevas y revisión estática y `rojo-build` sin errores.
-- [ ] Al terminar, la fila DEV-008 queda Completada en el Pull Request final.
+- [x] Se asigna un plot libre al entrar y se libera al salir; se muestra el nombre del dueño.
+- [x] Fabricar, exhibir y entrenar solo funcionan en el plot propio (validado en el servidor).
+- [x] Mejoras de plot y de caminadora con precios crecientes; los datos anteriores se adaptan sin pérdidas.
+- [x] 4 pruebas automáticas nuevas (34 en total) y revisión estática sin errores. Pendiente: ejecutarlas en Studio.
+- [x] Al terminar, la fila DEV-008 queda Completada (flujo directo en `main`, DEC-009).
 
 **Dependencias:** DEV-007 (Completada). Para no solaparse con INFRA-002 (en desarrollo), esta tarea no toca `game/README.md` ni el Registro de Decisiones; su decisión se registrará cuando INFRA-002 termine.
 

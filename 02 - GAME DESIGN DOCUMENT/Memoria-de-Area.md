@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-008 (Jhonn): plot personal; el taller va al fondo y el plot hace de museo (ingreso y suerte); caminadora mejorable enfrente. Skins de los dueños en la fase de arte, con personajes originales. [[GDD]] §15.6, DEC-010.
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 - 2026-11-20 · DEV-002 (Jhonn, en revisión): tutorial de 5 objetivos con premios y guía luminosa, implementado como propuesta DEC-004. BUG-001 (mochila sin salida) corregido en DEV-001 con venta y descarte de piezas.
 

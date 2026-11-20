@@ -238,3 +238,16 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Con `STUDIO_GRANT_ALL_PASSES = true`: Mascota Suprema equipada, Turbo disponible, +25% de velocidad | Manual | Pendiente |
 | Compra de prueba de un producto en Studio: se entrega una sola vez | Manual | Pendiente (requiere IDs reales) |
 | Tienda Robux muestra «Próximamente» con IDs en 0 | Manual | Pendiente |
+
+## 15. Pruebas de DEV-008 (plot personal)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`python game/tools/build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 34 bloques de prueba de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| Al entrar se asigna un plot con tu nombre y apareces delante | Manual | Pendiente |
+| Fabricar en el taller del plot; exhibir y retirar en las vitrinas (se ven los relojes) | Manual | Pendiente |
+| Mejorar vitrinas: aparecen 2 vitrinas más | Manual | Pendiente |
+| Entrenar en la caminadora del plot; mejorarla sube el multiplicador del HUD | Manual | Pendiente |
+| Otro jugador no puede usar tu taller, tus vitrinas ni tu caminadora | Multijugador | Pendiente |
+| Al salir, el plot queda «Libre» | Multijugador | Pendiente |

@@ -257,3 +257,32 @@ Velocidad = (16 + 2 × nivel de la mejora Velocidad + velocidad entrenada) × mu
 - Cada producto se entrega una sola vez por compra: se guarda el id de la compra y solo se confirma a Roblox después de guardar.
 - Los IDs se copian del Creator Hub en `Config.GAMEPASS_IDS` y `Config.PRODUCT_IDS`. Mientras valgan 0, la tienda muestra «Próximamente».
 - Para probar en Studio: `Config.STUDIO_GRANT_ALL_PASSES = true` activa todos los pases solo durante esa sesión.
+
+### 15.6 Plot personal (DEV-008)
+
+> Dirección de Jhonn (2026-11-20). Cifras en propuesta (DEC-010).
+
+- **Un plot por jugador** (10 en la base, 5 a cada lado). Se asigna al entrar y se libera al salir. El cartel muestra el nombre del dueño y al reaparecer apareces delante de tu plot.
+- **Taller al fondo del plot:** ahí se fabrican los relojes. Sustituye al Taller compartido.
+- **Vitrinas del plot:** funcionan como el antiguo Museo. Cada reloj exhibido da **ingreso pasivo** cada 10 s y un **pequeño bonus de suerte**, que es probabilidad de robar 2 piezas.
+
+| Reloj | Suerte que da exhibido |
+|---|---|
+| Bolsillo | +0,5% |
+| Pulsera | +1% |
+| Cronógrafo | +2% |
+| Real de rubí | +3% |
+| Millonario | +5% |
+
+  La suerte del plot tiene un tope de 15%, y la suerte total (mejora + plot) de 60%.
+- **Caminadora enfrente del plot:** entrena velocidad. Su multiplicador es 1 + 0,5 por nivel (de ×1 a ×6), y el pase Caminadora Turbo lo multiplica ×2.
+- **Mejoras del plot** (se compran en el panel del propio plot):
+
+| Mejora | Efecto | Niveles | Precio inicial |
+|---|---|---|---|
+| Vitrinas del plot | +2 vitrinas (de 3 a 15) | 6 | 300 (×2 por nivel) |
+| Caminadora del plot | +0,5 al multiplicador | 10 | 400 (×1,75 por nivel) |
+
+- **Solo el dueño** usa el taller, las vitrinas y la caminadora de su plot; lo valida el servidor.
+- La Tienda sigue vendiendo Mochila, Velocidad, Salto y Suerte. El Criadero y el Cronómetro Maestro siguen compartidos.
+- **Pendiente para la fase de arte:** los modelos del plot y las skins de los dueños de las casas. Se recomiendan personajes originales «al estilo» de famosos de Roblox, como un «Gamer Robot» propio, y no copiar creadores o personajes reales sin permiso.
