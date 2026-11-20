@@ -1,4 +1,4 @@
-
+ 
 # 📝 CHANGELOG — BUILD A WATCH!
 
 > **Nota (DEV-007, 2026-11-20):** los pasos de DEV-001 a DEV-006 se hicieron en la carpeta `juego/`; DEV-007 movió el código a `game/` (DEC-001). Los números de decisión de este historial ya están renumerados (las propuestas empiezan en DEC-003).
