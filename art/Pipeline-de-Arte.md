@@ -115,8 +115,8 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 **Regenerar sonido e iconos**
 ```
 python art/audio/sonidos.py
-"C:\Program Files\Blender Foundation\Blender 5.3lender.exe" --background --factory-startup --python art/audio/convertir_ogg.py
-"C:\Program Files\Blender Foundation\Blender 5.3lender.exe" --background --factory-startup --python art/blender/scripts/iconos.py
+"C:\Program Files\Blender Foundation\Blender 5.3\blender.exe" --background --factory-startup --python art/audio/convertir_ogg.py
+"C:\Program Files\Blender Foundation\Blender 5.3\blender.exe" --background --factory-startup --python art/blender/scripts/iconos.py
 ```
 
 ---
