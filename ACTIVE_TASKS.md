@@ -6,7 +6,7 @@ Registro central de rutas reservadas. Usa rutas exactas o patrones relativos a l
 1. Registra la tarea en 09 - TAREAS Y DESARROLLO/Backlog.md.
 2. Crea la rama task/<ID>-<slug>.
 3. Añade una fila con las rutas exactas o patrones y estado En desarrollo.
-4. Abre un Pull Request de reserva que solo modifique Backlog.md y ACTIVE_TASKS.md. Espera su aprobación e integración antes de editar esas rutas.
+4. Abre un Pull Request de reserva que solo modifique Backlog.md y ACTIVE_TASKS.md. Espera su aprobación e integración antes de editar esas rutas. INFRA-001 fue la excepción única de arranque y combinó registro e implementación en un Pull Request; desde la siguiente tarea, reserva primero y espera su integración.
 5. Después de completar el trabajo y las verificaciones, cambia la fila a Completada en el Pull Request final. Si el Pull Request final se integra, la reserva se libera. Los Pull Requests abiertos también se comparan para detectar cambios simultáneos.
 
 ## Estados

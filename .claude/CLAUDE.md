@@ -32,7 +32,7 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 - Obsidian Git: conserva la configuración acordada en los equipos (Automatic, commit/push automáticos desactivados y pull al iniciar activado). Comprueba la configuración actual antes de cambiarla.
 - Usa una rama por tarea con formato task/<ID>-<slug>; no uses ramas permanentes por cuenta.
 - Antes de editar, revisa git status, la rama, ACTIVE_TASKS.md y los Pull Requests abiertos. Las reservas son una puerta de integración, no un bloqueo local: comprueba también que no haya cambios locales sin guardar en las rutas que usarás.
-- Para una tarea nueva, registra primero el encargo y sus rutas en Backlog.md y ACTIVE_TASKS.md mediante un Pull Request de reserva. Espera a que se integre antes de editar esas rutas.
+- Para una tarea nueva, registra primero el encargo y sus rutas en Backlog.md y ACTIVE_TASKS.md mediante un Pull Request de reserva. Espera a que se integre antes de editar esas rutas. La única excepción fue el bootstrap inicial INFRA-001, que creó el sistema y sus primeros registros en un solo Pull Request al no existir aún el mecanismo de reservas.
 - Todo cambio llega a main mediante Pull Request. Requiere una aprobación humana distinta del autor y que pasen coordination / reservation-check y coordination / rojo-build.
 - Cuenta A coordina la integración; solo una persona autorizada integra tras la revisión. No apruebes tu propio Pull Request.
 - No hagas push directo a main ni force push; no fusiones ni publiques el juego desde Claude.

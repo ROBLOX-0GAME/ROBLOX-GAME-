@@ -181,7 +181,7 @@ La velocidad nunca debe estar por encima de la seguridad, la calidad y la conser
 
 - Usa exactamente una rama por tarea: `task/<ID>-<slug>`; las cuentas no mantienen ramas permanentes.
 - Antes de editar, revisa `git status`, la rama, `ACTIVE_TASKS.md`, `OWNERS.md` y los Pull Requests abiertos. Comprueba también que no haya cambios locales sin guardar en las rutas asignadas.
-- Registra el ID en Backlog.md y reserva las rutas exactas o patrones en ACTIVE_TASKS.md. El Pull Request inicial de reserva solo debe cambiar esos dos registros. Espera que se integre antes de editar las rutas reservadas.
+- Registra el ID en Backlog.md y reserva las rutas exactas o patrones en ACTIVE_TASKS.md. El Pull Request inicial de reserva solo debe cambiar esos dos registros. Espera que se integre antes de editar las rutas reservadas. INFRA-001 fue la única excepción de arranque: registró e implementó el scaffold en un solo Pull Request porque el registro y el control todavía no existían.
 - La reserva es un protocolo y un control de integración; no bloquea la edición local. GitHub Actions rechaza cambios fuera de la propia reserva, rutas activas de otra tarea y rutas que se solapen con otro Pull Request abierto.
 - Usa una aprobación humana distinta del autor. Cuenta A coordina la integración, pero no aprueba su propio cambio. Los controles requeridos son `coordination / reservation-check` y `coordination / rojo-build`.
 - La protección efectiva de main debe activarse en GitHub Settings; el workflow por sí solo no impide un push directo.
