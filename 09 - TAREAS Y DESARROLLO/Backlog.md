@@ -502,3 +502,27 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila ART-004 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-003 (Completada).
+### DEV-014 — Conectar el arte al juego (modelos, iconos y sonidos con respaldo)
+
+- **ID:** DEV-014.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel; Michael y Einell revisan la interfaz y el arte.
+- **Área:** Arquitectura técnica e integración de assets.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** el juego usará los modelos de `ReplicatedStorage/Assets` (importados en Studio desde `art/export/modelos`) cuando existan. Se colocan sobre la pieza provisional, que se oculta pero conserva colisiones, avisos y lógica. Si un modelo no existe, se queda la pieza provisional. Los iconos y sonidos se activan al poner sus IDs de Roblox en `Config`.
+
+**Criterios de aceptación:**
+
+- [ ] Módulo compartido `AssetLibrary` con `find` y `dress` (alinear la base, orientar, ocultar la pieza provisional, soldar si se mueve).
+- [ ] Plots, estaciones, muro, salida, casas, pedestales, piezas robables, vitrinas, relojes, mascotas, pieza del legado y dueños usan su asset si existe.
+- [ ] Sonidos (`Config.SOUND_IDS`) en los momentos clave e iconos (`Config.ICON_IDS`) en el HUD, inactivos mientras valgan 0.
+- [ ] Pruebas de `AssetLibrary` y revisión estática sin errores.
+- [ ] Instrucciones de importación actualizadas en [[Pipeline-de-Arte]].
+- [ ] La fila DEV-014 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ART-001 a ART-004 (Completadas). Para verlo en el juego hace falta la place publicada con los assets importados.
