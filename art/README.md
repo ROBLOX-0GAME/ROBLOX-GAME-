@@ -4,6 +4,8 @@ Traspaso a Zadiel (MacBook): [[PROMPT_ARTE_ZADIEL_MAC|Prompt de arte y materiale
 
 Traspaso a la PC Windows con Studio (ART-007): [[PROMPT_ARTE_WINDOWS_STUDIO|Prompt para importar los relojes PBR y seguir el arte]].
 
+Subida de assets con Open Cloud (ART-011): [[PROMPT_SUBIDA_JHONN|Prompt para que Jhonn cree la API key y suba los assets PBR]] · script `art/tools/subir_roblox.py`.
+
 Pipeline completo, estilo, formatos y lista de assets: [[Pipeline-de-Arte|Pipeline de Arte]] (`art/Pipeline-de-Arte.md`).
 
 | Carpeta | Contenido |

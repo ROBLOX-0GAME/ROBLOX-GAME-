@@ -682,7 +682,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn.
 - **Área:** Arte / herramientas.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -690,7 +690,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Script con modo de prueba (`--prueba`) ejecutado sin clave.
-- [ ] Prompt para Jhonn con creación de la API key, ejecución, montaje en Studio y reglas de reserva.
-- [ ] La clave nunca se guarda en el repositorio.
+- [x] Script con modo de prueba (`--prueba`) ejecutado sin clave.
+- [x] Prompt para Jhonn con creación de la API key, ejecución, montaje en Studio y reglas de reserva.
+- [x] La clave nunca se guarda en el repositorio.
 
