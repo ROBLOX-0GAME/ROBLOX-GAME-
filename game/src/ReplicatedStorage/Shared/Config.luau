@@ -36,7 +36,7 @@ local Config = {
 	-- Ingreso pasivo de un reloj exhibido (DEV-011): PLOT_INCOME_PERCENT de su valor
 	-- de venta cada PLOT_INCOME_PERIOD_SECONDS. Vender da el 100% al momento.
 	PLOT_INCOME_PERCENT = 0.30,
-	PLOT_INCOME_PERIOD_SECONDS = 600,
+	PLOT_INCOME_PERIOD_SECONDS = 30, -- DEV-012: cada 30 s (antes 600)
 	LEGACY_CLAIM_DISTANCE = 80, -- distancia máxima a la aparición para recoger la pieza del legado
 
 	-- Robo y persecución (DEV-003)

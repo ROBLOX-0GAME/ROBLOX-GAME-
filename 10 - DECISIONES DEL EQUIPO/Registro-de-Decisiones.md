@@ -237,3 +237,8 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Experiencia de inicio / economía.
 - **Propuesta:** cinemática del abandono y llegada a la ciudad; pieza del legado ficticia, protegida y usable en el Reloj del Legado; tutorial de 6 pasos; ingreso pasivo = 30% del valor cada 10 min. Detalle en [[GDD]] §15.9.
 - **Nota:** se evitan marcas reales (Patek Philippe, Graff) por derechos de marca.
+
+#### DEC-014 — Ingreso pasivo cada 30 segundos
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Economía.
+- **Propuesta:** el 30% del valor del reloj exhibido se paga cada 30 s (antes, cada 10 min en DEC-013). Ajustable en `Config.PLOT_INCOME_PERIOD_SECONDS`.

@@ -360,7 +360,7 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - **Revisor:** Zadiel.
 - **Área:** Economía.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -368,8 +368,8 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 
 **Criterios de aceptación:**
 
-- [ ] `PLOT_INCOME_PERIOD_SECONDS` = 30 y textos coherentes en el tutorial y en el plot.
-- [ ] Pruebas y revisión estática sin errores.
-- [ ] La fila DEV-012 de ACTIVE_TASKS queda Completada.
+- [x] `PLOT_INCOME_PERIOD_SECONDS` = 30 y textos coherentes en el tutorial y en el plot.
+- [x] Pruebas y revisión estática sin errores.
+- [x] La fila DEV-012 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-011 (Completada).

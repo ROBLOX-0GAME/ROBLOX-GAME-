@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-012 (Jhonn): ingreso pasivo del 30% cada 30 s (60% del valor por minuto). Propuesta DEC-014.
 - 2026-11-20 · DEV-011: ingreso pasivo = `PLOT_INCOME_PERCENT` (0,30) del valor cada `PLOT_INCOME_PERIOD_SECONDS` (600), con fracciones acumuladas. Reloj del Legado vendido por 3.000. Propuesta DEC-013.
 - 2026-11-20 · DEV-009: racha diaria de 250 monedas a Cápsula de Oro; premios por tiempo de 5 a 120 min; Cápsula Cósmica solo Robux (+80/+100/+150%). Propuesta DEC-011.
 - 2026-11-20 · DEV-008: mejoras del plot. Vitrinas: 300 ×2 por nivel, 6 niveles. Caminadora: 400 ×1,75 por nivel, 10 niveles. Suerte de los relojes exhibidos con tope del 15%. Propuesta DEC-010.

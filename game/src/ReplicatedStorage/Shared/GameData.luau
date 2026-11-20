@@ -452,7 +452,7 @@ GameData.Tutorial = {
 	},
 	{
 		id = "display",
-		text = "Fabrica otro y exhíbelo en tu plot: da el 30% de su valor cada 10 min",
+		text = "Fabrica otro y exhíbelo en tu plot: da el 30% de su valor cada 30 s",
 		stat = "museum",
 		target = 1,
 		reward = 40,

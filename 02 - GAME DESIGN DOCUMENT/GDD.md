@@ -347,7 +347,9 @@ Las mascotas de la Cápsula Cósmica son exclusivas de Robux y más fuertes que 
 2. Salir por la abertura del muro, robar 5 piezas y volver a la base.
 3. Fabricar un Reloj de bolsillo en el taller al fondo del plot.
 4. Vender un reloj en la Tienda: da todo su valor al momento.
-5. Fabricar otro y exhibirlo en el plot: da el 30% de su valor cada 10 min.
+5. Fabricar otro y exhibirlo en el plot: da el 30% de su valor cada 30 s.
 6. Comprar una mejora: más velocidad abre zonas más ricas.
 
-**Ingreso pasivo:** un reloj exhibido da el **30% de su valor de venta cada 10 minutos**, pagado en fracciones cada 10 s y sin perder decimales. Por ejemplo, un Reloj del millonario (5.000) da 150 monedas por minuto. **Vender** da el 100% al momento (lo activo); **exhibir** paga poco a poco pero sin parar (lo pasivo). El porcentaje y el periodo están en `Config` (`PLOT_INCOME_PERCENT` y `PLOT_INCOME_PERIOD_SECONDS`).
+**Ingreso pasivo:** un reloj exhibido da el **30% de su valor de venta cada 30 segundos** (DEV-012), pagado en fracciones cada 10 s y sin perder decimales. Por ejemplo, un Reloj del millonario (5.000) da 3.000 monedas por minuto. **Vender** da el 100% al momento (lo activo); **exhibir** paga poco a poco pero sin parar (lo pasivo). El porcentaje y el periodo están en `Config` (`PLOT_INCOME_PERCENT` y `PLOT_INCOME_PERIOD_SECONDS`).
+
+> **Actualización DEV-012 (2026-11-20, Jhonn):** el ingreso pasivo pasa a **cada 30 segundos**. Un reloj exhibido da el 30% de su valor cada 30 s (60% por minuto) y recupera su valor de venta en unos 100 s. Por ejemplo, el Reloj del millonario da unas 3.000 monedas por minuto. Ajustable en `Config.PLOT_INCOME_PERIOD_SECONDS`. Propuesta DEC-014.

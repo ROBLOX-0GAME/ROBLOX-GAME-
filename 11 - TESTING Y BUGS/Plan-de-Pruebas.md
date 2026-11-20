@@ -286,3 +286,10 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | La Mochila muestra la herencia sin botones de tirar; la Tienda y el Cronómetro no la ofrecen | Manual | Pendiente |
 | El tutorial empieza en «entrenar» y la guía apunta a tu caminadora | Manual | Pendiente |
 | Al exhibir un reloj, el HUD muestra «+X monedas/min» y las monedas suben poco a poco | Manual | Pendiente |
+
+## 19. Pruebas de DEV-012 (ingreso cada 30 s)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| Exhibir un Reloj de bolsillo (60): el HUD muestra +36 monedas/min y las monedas suben cada 10 s | Manual | Pendiente |

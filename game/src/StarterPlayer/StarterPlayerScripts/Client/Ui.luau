@@ -461,9 +461,9 @@ local function renderMuseum()
 	)
 	addRow(
 		string.format(
-			"Vender da el 100%% del valor al momento. Exhibido, un reloj da el %d%% de su valor cada %d min.",
+			"Vender da el 100%% del valor al momento. Exhibido, un reloj da el %d%% de su valor cada %d s.",
 			math.floor(Config.PLOT_INCOME_PERCENT * 100 + 0.5),
-			Config.PLOT_INCOME_PERIOD_SECONDS // 60
+			Config.PLOT_INCOME_PERIOD_SECONDS
 		)
 	)
 	local anyDisplayed = false

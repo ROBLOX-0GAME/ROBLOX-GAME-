@@ -220,3 +220,15 @@ Reglas:
   - · Verificación: revisión estática (23 scripts, 0 errores).
 - **2026-11-20 · DEV-011 · Paso 4 — Pruebas.** Se actualizan las pruebas del museo y del tutorial y se añaden 3 nuevas: pieza del legado, Reloj del Legado e ingreso del 30%. Total: 40 bloques. · Verificación: pendiente en Studio.
 - **2026-11-20 · DEV-011 · Paso 5 — Cierre.** GDD §15.9, Plan de Pruebas §18, propuesta DEC-013 y memorias. La fila DEV-011 pasa a Completada. · Verificación: revisión de archivos.
+
+---
+
+## 13. DEV-012 — Ingreso pasivo cada 30 segundos
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-012 · Paso 1 — Dirección y reserva.** Jhonn pide que el 30% se pague cada 30 s en lugar de cada 10 min. Se le avisa del efecto: el reloj recupera su valor en unos 100 s. Reserva subida en `f0409e9`. · Verificación: ejecutada.
+- **2026-11-20 · DEV-012 · Paso 2 — Cambio.** `Config.PLOT_INCOME_PERIOD_SECONDS` = 30. Se ajustan los textos del tutorial (paso 5) y del panel del plot, que ahora muestra segundos. · Verificación: revisión estática sin errores. Las pruebas usan los valores de `Config`, así que no cambian (40 bloques, pendientes en Studio).
+- **2026-11-20 · DEV-012 · Paso 3 — Cierre.** GDD §15.9 (nota de actualización), propuesta DEC-014 y memoria de Economía. La fila DEV-012 pasa a Completada. · Verificación: revisión de archivos.
