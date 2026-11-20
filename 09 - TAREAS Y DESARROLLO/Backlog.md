@@ -403,3 +403,34 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - [x] La fila DEV-013 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-012 (Completada).
+### ART-001 — Pipeline de arte (estilo low-poly) y primeros assets de prueba
+
+- **ID:** ART-001.
+- **Cuenta Claude:** Claude 1 — Cuenta A (temporalmente; el arte es área de Cuenta B según OWNERS.md).
+- **Responsable:** Jhonn por ahora; después pasa a Michael y Einell.
+- **Revisor:** Michael y Einell (dirección visual); Zadiel revisa la parte técnica.
+- **Área:** Dirección visual, assets y audio.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+Empezar la parte artística con el estilo que Claude produce mejor, **low-poly colorido tipo simulador de Roblox**, que después se detallará a mano con las herramientas. Se crea el pipeline:
+
+1. Herramientas registradas: Blender 5.3, Krita, Material Maker 1.8 y Audacity 4 (Substance 3D Painter no está instalado).
+2. Carpeta `art/` para fuentes y exportaciones.
+3. Formatos, límites de Roblox, escala y nombres.
+4. Lista priorizada de assets enlazada con las piezas provisionales del juego.
+5. Primeros assets de prueba generados con Blender por script, para validar el proceso.
+
+**Criterios de aceptación:**
+
+- [ ] Nota «Pipeline-de-Arte» con herramientas, estilo, paleta, formatos, límites, nombres, flujo de importación y lista de assets.
+- [ ] Tabla de herramientas actualizada y estilo visual registrado como propuesta.
+- [ ] Carpeta `art/` con estructura documentada y `.gitignore` para archivos temporales.
+- [ ] Al menos un modelo y la paleta exportados por script desde Blender, con su conteo de triángulos.
+- [ ] La fila ART-001 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ninguna (el código del juego ya es funcional).
