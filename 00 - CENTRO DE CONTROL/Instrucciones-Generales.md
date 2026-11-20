@@ -47,6 +47,7 @@ No deben mantenerse versiones independientes de la documentación como fuentes o
 - Validar las acciones importantes en el servidor.
 - Considerar el rendimiento desde el diseño.
 - Probar los cambios antes de integrarlos.
+- TODO LO QUE DIGA PENDIENTE POR DEFINIR LO DEFINE CLAUDE y le pide a los administradores que confirmen o den la idea
 
 ## 6. Reglas para agentes IA
 
@@ -64,7 +65,7 @@ Los agentes deben:
 
 ## 7. Gestión de tareas
 
-Toda tarea importante debe registrarse en [[Backlog]].
+Toda tarea debe registrarse en [[Backlog]].
 
 Debe incluir:
 

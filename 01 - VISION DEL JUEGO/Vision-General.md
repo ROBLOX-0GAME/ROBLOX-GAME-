@@ -3,23 +3,21 @@
 
 ## 1. Identidad del proyecto
 
-- **Nombre del juego:** Pendiente de definir
+- **Nombre del juego:** BUILD A WATCH!
 - **Género:** Pendiente de definir
 - **Plataforma:** Roblox
-- **Público objetivo:** Pendiente de definir
+- **Público objetivo:** Todo publico
 - **Estado:** En desarrollo conceptual
 
 ## 2. Concepto principal
 
-> Describe aquí la idea central del juego en pocas frases.
-
-Pendiente de definir.
+Construir un reloj mediante la obtencion de materiales y objetos
 
 ## 3. Fantasía del jugador
 
 ¿Qué experiencia queremos que viva el jugador?
 
-Pendiente de definir.
+Una experiencia divertida y divertida
 
 ## 4. Pilares fundamentales
 
