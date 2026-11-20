@@ -393,3 +393,14 @@ Reglas:
 
   Enlazado desde `art/README.md`. · Verificación: revisión del archivo y del recuento de MeshParts contra la salida de `relojes_detallados.py`. El script de Luau **no se ha ejecutado** (no hay Studio en la MacBook).
 
+## 23. ART-010 — Iconos del HUD y sonidos (PC Windows)
+
+- **Responsable:** Zadiel · **Revisor:** Michael y Einell · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-008/ART-010 · Paso 1 — Herramientas y reserva.** En la PC Windows (Windows 11, repositorio `Desktop\ROBLOX-GAME-`) había Git 2.56.1, Blender 5.3.0 y Roblox Studio. Con permiso de Zadiel se instalan Python 3.13.17, Krita 5.3.4.1 y Audacity 4.0.2 (winget) y Material Maker 1.8 (zip oficial de GitHub, en `Escritorio\material_maker_1_8_windows`). ART-008 (importar los relojes en Studio) queda **Bloqueada**: no hay place oficial publicada (`servePlaceIds` vacío). ART-009 no se abre: DEC-018 sigue como Propuesta. Reserva de ART-010 en `7a30a76`. · Verificación: ejecutada (`--version` y rutas de cada programa). Material Maker no se ha probado con `materiales_pbr.py`.
+- **2026-11-20 · ART-010 · Paso 2 — Iconos (propuesta).** `iconos.py` añade a cada icono un contorno oscuro de 7 px y una sombra suave (post-proceso con numpy), usa la transformación de color «Standard» con algo de exposición y amplía el encuadre (el puntero de la ruleta salía cortado). Formas nuevas: monedas (dos tonos y una estrella), mochila (tapa, hebilla, bolsillo y correas), carga (cajas apiladas) y robux (gema verde original; el hexágono anterior se parecía al logotipo oficial). Las demás formas siguen en `modelos_prioridad3.py`, que no se toca. · Verificación: ejecutada (8 iconos regenerados y revisados en una lámina a 256, 64 y 32 px sobre fondos claro, oscuro y verde). Commit `22d555c`.
+- **2026-11-20 · ART-010 · Paso 3 — Sonidos.** Duración medida con un script (cabecera Vorbis y última página OGG): `sfx_ruleta` duraba 2,28 s; ahora tiene 14 tics que se frenan y dura 1,65 s. Los demás: 0,04–1,09 s; `sfx_entrenar` 1,01 s (bucle de 1 s). Solo se sube la ruleta; los otros OGG no cambian. · Verificación: ejecutada (medición de los 10 OGG). Commit `3f2754a`. **No** se ha pulido nada en Audacity ni se ha escuchado el bucle de `sfx_entrenar`.
+- **Pendiente (manual):** retoque en Krita de los iconos (`.kra` en `art/texturas/fuentes/`) y pulido en Audacity (`.aup3` en `art/audio/fuentes/`); `sfx_boton` (0,04 s) conviene escucharlo. Subir iconos y sonidos a Roblox cuando exista la place y pegar sus IDs en `Config` dentro de una tarea de código.
+

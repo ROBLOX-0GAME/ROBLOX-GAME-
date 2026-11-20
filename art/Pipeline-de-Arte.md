@@ -164,8 +164,8 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | Asset | Uso | Estado |
 |---|---|---|
 | `mdl_arbol`, `mdl_arbusto`, `mdl_farola`, `mdl_banca`, `mdl_valla`, `mdl_roca`, `mdl_cartel_zona`, `mdl_caja_madera` | Ambiente de la base y de las zonas | ✅ Base (36–126 triángulos) |
-| `ico_monedas`, `ico_velocidad`, `ico_mochila`, `ico_premios`, `ico_ruleta`, `ico_robux`, `ico_ajustes`, `ico_carga` | Iconos del HUD (PNG 256×256 con transparencia, en `art/texturas/export/`) | ✅ Base, renderizados en Blender (`iconos.py`); retocar en Krita |
-| `sfx_robar`, `sfx_alarma_dueno`, `sfx_atrapado`, `sfx_guardar_botin`, `sfx_comprar`, `sfx_abrir_capsula`, `sfx_ruleta`, `sfx_subir_nivel`, `sfx_entrenar` (bucle de 1 s), `sfx_boton` | Efectos (OGG en `art/audio/export/`) | ✅ Base sintetizada (`art/audio/sonidos.py` → `convertir_ogg.py`); pulir en Audacity |
+| `ico_monedas`, `ico_velocidad`, `ico_mochila`, `ico_premios`, `ico_ruleta`, `ico_robux`, `ico_ajustes`, `ico_carga` | Iconos del HUD (PNG 256×256 con transparencia, en `art/texturas/export/`) | ✅ Retocados en ART-010 (propuesta): contorno oscuro de 7 px, sombra suave, transformación «Standard» y formas nuevas en monedas, mochila, carga (cajas apiladas) y robux (gema verde original, sin parecido con el logotipo oficial). Pendiente: retoque manual en Krita (`.kra` en `art/texturas/fuentes/`) |
+| `sfx_robar`, `sfx_alarma_dueno`, `sfx_atrapado`, `sfx_guardar_botin`, `sfx_comprar`, `sfx_abrir_capsula`, `sfx_ruleta`, `sfx_subir_nivel`, `sfx_entrenar` (bucle de 1 s), `sfx_boton` | Efectos (OGG en `art/audio/export/`) | ✅ Base sintetizada (`art/audio/sonidos.py` → `convertir_ogg.py`). ART-010: todos por debajo de 2 s (`sfx_ruleta` pasó de 2,28 a 1,65 s). Pendiente: pulir en Audacity (`.aup3` en `art/audio/fuentes/`) |
 | `mus_base`, `mus_persecucion` | Música | Pendiente: hacerla a mano o con licencia; no se sintetiza |
 
 **Regenerar sonido e iconos**

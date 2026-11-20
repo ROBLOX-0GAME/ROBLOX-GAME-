@@ -627,7 +627,8 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Iconos regenerados, revisados a 256 px y a tamaño pequeño, con el mismo nombre.
+- [x] Iconos regenerados, revisados a 256 px y a tamaño pequeño, con el mismo nombre (`22d555c`; propuesta de estilo).
 - [ ] Fuentes `.kra` en `art/texturas/fuentes/` (retoque manual en Krita).
-- [ ] Sonidos pulidos con su `.aup3` en `art/audio/fuentes/`; todos por debajo de 2 s, medidos con script (hoy `sfx_ruleta` dura 2,28 s).
+- [x] Todos los sonidos por debajo de 2 s, medidos con script (`sfx_ruleta` pasó de 2,28 a 1,65 s, `3f2754a`).
+- [ ] Sonidos pulidos en Audacity con su `.aup3` en `art/audio/fuentes/` (manual).
 - [ ] Pipeline, Memoria de Área 12 y Changelog actualizados; fila de ACTIVE_TASKS Completada.
