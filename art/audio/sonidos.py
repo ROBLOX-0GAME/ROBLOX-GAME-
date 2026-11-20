@@ -95,8 +95,8 @@ EFECTOS = {
     # Abrir cápsula: pop grave + destellos
     "sfx_abrir_capsula": lambda: seguir(mezclar(ruido(0.05, 0.5, 0.04), tono(220, 0.12, "seno", 0.6, freq_fin=80)),
                                         *[tono(NOTAS[n], 0.06, "seno", 0.35, caida=0.05) for n in ("E6", "G6", "C7", "G6", "C7")]),
-    # Ruleta girando: tics que se frenan
-    "sfx_ruleta": lambda: seguir(*[seguir(tono(1800, 0.012, "cuadrada", 0.4, caida=0.008), silencio(0.04 + i * 0.012)) for i in range(16)]),
+    # Ruleta girando: tics que se frenan (ART-010: 14 tics, ≈ 1,64 s, por debajo del límite de 2 s)
+    "sfx_ruleta": lambda: seguir(*[seguir(tono(1800, 0.012, "cuadrada", 0.4, caida=0.008), silencio(0.04 + i * 0.010)) for i in range(14)]),
     # Subir de nivel: fanfarria
     "sfx_subir_nivel": lambda: seguir(*[tono(NOTAS[n], 0.11, "cuadrada", 0.35, caida=0.04) for n in ("C5", "E5", "G5")],
                                       mezclar(tono(NOTAS["C6"], 0.45, "triangular", 0.4, caida=0.35), tono(NOTAS["G5"], 0.45, "triangular", 0.3, caida=0.35))),
