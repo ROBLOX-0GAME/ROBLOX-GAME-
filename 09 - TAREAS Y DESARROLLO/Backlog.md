@@ -169,7 +169,7 @@ Pendiente.
 - **Revisor:** Zadiel. Michael y Einell revisan `game/src/StarterPlayer/StarterPlayerScripts/` (interfaz, ruta de Cuenta B según OWNERS.md).
 - **Área:** Arquitectura técnica, sistemas, economía y progresión.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo (Pull Request de reserva).
+- **Estado:** En revisión (Pull Request final; reserva fusionada en PR #3).
 - **Rama:** `task/DEV-007-integracion-juego`.
 - **Fecha de creación:** 2026-11-20.
 
@@ -186,9 +186,9 @@ Contenido que se integra (todo como propuesta, salvo lo aprobado): bucle de robo
 
 **Criterios de aceptación:**
 
-- [ ] El código vive en `game/src` y `rojo build game/default.project.json` compila (control `rojo-build`).
-- [ ] La revisión estática local no tiene errores y las pruebas automáticas se ejecutan al pulsar Play en Studio.
-- [ ] El diseño y el historial quedan en la bóveda; las decisiones nuevas están renumeradas y siguen como propuestas.
+- [x] El código vive en `game/src`. La compilación con Rojo la confirma el control `rojo-build` de este PR.
+- [x] Revisión estática local sin errores: 20 scripts, 73 `require`. Las 35 pruebas se ejecutan al pulsar Play en Studio y están pendientes de que Jhonn las corra.
+- [x] El diseño (GDD §15), el Changelog, el Plan de Pruebas y las memorias están en la bóveda; las decisiones se renumeraron a DEC-003…DEC-008 y siguen como propuestas.
 - [ ] Michael o Einell revisan la interfaz; Zadiel revisa el resto.
 - [ ] En el Pull Request final, la fila DEV-007 de ACTIVE_TASKS.md queda Completada.
 

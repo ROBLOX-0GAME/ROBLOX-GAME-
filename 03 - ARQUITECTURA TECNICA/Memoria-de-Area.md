@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-007 (Jhonn, en revisión): código del juego en `game/src` (Shared/Server/Client), revisión local con `python game/tools/build.py`, DataStore con bloqueo de sesión y Robux con recibos. Ver [[Arquitectura-General]] §13.
 - INFRA-001 preparó el scaffold en [[game/README|README de Rojo]]; GitHub Actions construyó el proyecto con éxito. No hay place ni conexión en vivo.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

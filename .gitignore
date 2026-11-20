@@ -7,3 +7,8 @@
 
 # Configuración personal de Claude Code
 .claude/settings.local.json
+
+# Bloqueos de Roblox Studio y caché de Python
+*.rbxl.lock
+*.rbxlx.lock
+__pycache__/

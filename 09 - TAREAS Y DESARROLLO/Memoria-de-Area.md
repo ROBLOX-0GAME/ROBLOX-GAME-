@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-007 integra DEV-001 a DEV-006 en `game/` (reserva PR #3). Registro paso a paso en [[Changelog]]. Por indicación de Jhonn, Claude solo programa mecánicas; el arte y el sonido se hacen con Krita, Blender, Audacity y Material Maker.
 - INFRA-001 está en revisión en [PR #1](https://github.com/ROBLOX-0GAME/ROBLOX-GAME-/pull/1); ambos checks pasaron. Lee [[ACTIVE_TASKS]] antes de tomar rutas.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.
