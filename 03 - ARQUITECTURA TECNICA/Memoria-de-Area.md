@@ -4,23 +4,23 @@
 
 ## Notas canónicas
 
-[[03 - ARQUITECTURA TECNICA/Arquitectura-General]]; [[04 - SISTEMAS DEL JUEGO/Lista-de-Sistemas]]
+[[03 - ARQUITECTURA TECNICA/Arquitectura-General]]; [[04 - SISTEMAS DEL JUEGO/Lista-de-Sistemas]]; [[game/README|Proyecto Rojo]]; [[OWNERS]]; [[ACTIVE_TASKS]]
 - Registro: [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]
 
 ## Respuestas directas y datos base
 
-- La idea cita Roblox Studio y Luau. GitHub contiene la bóveda, no el place/código de Studio. Roblox Studio se instalará manualmente en las PC Windows de desarrollo; la MacBook queda para Obsidian y tareas escolares.
+- GitHub contiene la bóveda y el scaffold Luau en game/. Flujo aprobado parcialmente gestionado: código/configuración en Git y place/mundo/assets en Studio. Rojo 7.7.1 está fijado; servePlaceIds vacío bloquea sync en vivo hasta aprobar un placeId. Studio y plugin Rojo se instalarán/conectarán en una PC Windows.
 
 ## Pendientes concretos
 
-- Ruta del place, módulos, datos, publicación y plugins autorizados.
+- Crear el place y aprobar su placeId antes de habilitar servePlaceIds; instalar Rokit/Rojo y el plugin en la PC de desarrollo. Los sistemas de juego y datos siguen pendientes de diseño.
 
 ## Decisiones aprobadas del área
 
-- Añade una decisión solo tras aprobación humana y registro canónico.
+- DEC-001 aprueba código en game/ y flujo parcialmente gestionado con Rojo; consulta el registro canónico antes de modificar el destino.
 
 ## Memoria reciente
 
-- Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- INFRA-001 preparó el scaffold en [[game/README|README de Rojo]]; GitHub Actions construyó el proyecto con éxito. No hay place ni conexión en vivo.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

@@ -120,6 +120,9 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 - [[Registro-de-Decisiones]]
 - [[Plan-de-Pruebas]]
 - [[game/README|Proyecto fuente de Roblox con Rojo]]
+- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|Memoria de Arquitectura]]
+- [[OWNERS]]
+- [[ACTIVE_TASKS]]
 
 ---
 

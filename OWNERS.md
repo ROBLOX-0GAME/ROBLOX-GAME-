@@ -66,3 +66,15 @@ La propiedad de Recursos y Referencias depende del área de la herramienta o mat
 ## Límites de GitHub
 
 La asignación anterior refleja nombres y parejas del equipo. No se inventan usuarios ni equipos de GitHub para CODEOWNERS; el repositorio no tiene esos handles registrados en la documentación revisada. La aprobación general de Pull Requests se configura como mínimo una aprobación humana. Si el equipo comparte sus handles, se podrá añadir una regla CODEOWNERS específica.
+
+
+## Cobertura del repositorio y permisos
+
+- Las rutas listadas arriba asignan áreas. Todo archivo o carpeta no listado se considera compartido hasta que Backlog.md indique responsable y ACTIVE_TASKS.md reserve la ruta.
+- Claude nunca edita la rama main directamente. Los cambios llegan por Pull Request con una aprobación humana y los checks obligatorios.
+- Política de acceso solicitada: solo Jhonn, Zadiel, Michael y Einell deben tener permiso de escritura; limita administración y borrado de repositorio a propietarios autorizados. Esa política todavía requiere ajuste en GitHub Settings y confirmación de los cuatro @handles.
+- Los nombres del equipo no bastan para CODEOWNERS o para cambiar permisos; no se inventan handles.
+
+## Navegación en Obsidian
+
+[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA|Protocolo de trabajo]] · [[09 - TAREAS Y DESARROLLO/Backlog|Backlog]] · [[ACTIVE_TASKS|Reservas activas]]

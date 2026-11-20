@@ -151,6 +151,7 @@ Pendiente.
 - [[Protocolo-de-Trabajo-IA]]
 - [[ACTIVE_TASKS]]
 - [[OWNERS]]
+- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|Memoria de Producción]]
 
 ---
 

@@ -76,6 +76,8 @@ ACTIVE_TASKS.md registra las rutas reservadas; el control de GitHub Actions bloq
 - [[Backlog]]
 - [[ACTIVE_TASKS]]
 - [[OWNERS]]
+- [[ACTIVE_TASKS]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|Memoria de Decisiones]]
 
 ### Plantilla de decisión
 

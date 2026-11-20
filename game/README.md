@@ -27,3 +27,8 @@ El servidor local de Rojo y Roblox Studio deben ejecutarse en la misma PC para u
 - build/: salida local de place, ignorada por Git.
 
 Los archivos Bootstrap y Placeholder no implementan mecánicas. Se retirarán o sustituirán cuando la arquitectura del juego se apruebe.
+
+
+## Navegación en Obsidian
+
+[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[03 - ARQUITECTURA TECNICA/Arquitectura-General|Arquitectura técnica]] · [[OWNERS|Responsables]] · [[ACTIVE_TASKS|Reservas de rutas]]

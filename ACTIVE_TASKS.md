@@ -21,7 +21,7 @@ El control automatizado solo impide integrar Pull Requests incompatibles; no blo
 
 | ID | Cuenta | Responsable | Revisor | Rutas reservadas | Estado |
 |---|---|---|---|---|---|
-| INFRA-001 | Cuenta A | Jhonn y Zadiel | Jhonn y Zadiel; Michael y Einell para revisión transversal | .claude/**<br>.github/**<br>game/**<br>OWNERS.md<br>ACTIVE_TASKS.md<br>.gitignore<br>00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA.md<br>00 - CENTRO DE CONTROL/Dashboard.md<br>03 - ARQUITECTURA TECNICA/Arquitectura-General.md<br>09 - TAREAS Y DESARROLLO/Backlog.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md | En revisión |
+| INFRA-001 | Cuenta A | Jhonn y Zadiel | Jhonn y Zadiel; Michael y Einell para revisión transversal | .claude/**<br>.github/**<br>game/**<br>OWNERS.md<br>ACTIVE_TASKS.md<br>.gitignore<br>00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA.md<br>00 - CENTRO DE CONTROL/Dashboard.md<br>03 - ARQUITECTURA TECNICA/Arquitectura-General.md<br>09 - TAREAS Y DESARROLLO/Backlog.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>00 - CENTRO DE CONTROL/Memoria-de-Area.md<br>03 - ARQUITECTURA TECNICA/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Memoria-de-Area.md<br>10 - DECISIONES DEL EQUIPO/Memoria-de-Area.md | En revisión |
 
 ## Protección efectiva de main
 
@@ -32,3 +32,8 @@ La regla se configura en GitHub Settings → Branches / Rulesets. Requiere:
 - Bloquear actualizaciones directas a main y no permitir bypasses.
 
 La rama main estaba sin protección en la última comprobación. El conector GitHub disponible no permite administrar esa configuración; se activa desde los ajustes del repositorio. El workflow ya está preparado para proporcionar los controles requeridos.
+
+
+## Navegación en Obsidian
+
+[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[09 - TAREAS Y DESARROLLO/Backlog|Backlog]] · [[OWNERS|Propiedad de áreas]] · [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA|Protocolo]]

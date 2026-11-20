@@ -79,16 +79,16 @@
 
 Consulta la memoria compacta de cada carpeta:
 
-- [[00 - CENTRO DE CONTROL/Memoria-de-Area|00 - CENTRO DE CONTROL]]
+- [[00 - CENTRO DE CONTROL/Memoria-de-Area|00 - CENTRO DE CONTROL]] — [[Protocolo-de-Trabajo-IA]] · [[OWNERS]] · [[ACTIVE_TASKS]]
 - [[01 - VISION DEL JUEGO/Memoria-de-Area|01 - VISION DEL JUEGO]]
 - [[02 - GAME DESIGN DOCUMENT/Memoria-de-Area|02 - GAME DESIGN DOCUMENT]]
-- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|03 - ARQUITECTURA TECNICA]]
+- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|03 - ARQUITECTURA TECNICA]] — [[Arquitectura-General]] · [[game/README|Código Rojo]] · [[OWNERS]]
 - [[04 - SISTEMAS DEL JUEGO/Memoria-de-Area|04 - SISTEMAS DEL JUEGO]]
 - [[05 - MUNDO Y CONTENIDO/Memoria-de-Area|05 - MUNDO Y CONTENIDO]]
 - [[06 - INTERFAZ Y EXPERIENCIA/Memoria-de-Area|06 - INTERFAZ Y EXPERIENCIA]]
 - [[07 - ECONOMIA Y PROGRESION/Memoria-de-Area|07 - ECONOMIA Y PROGRESION]]
 - [[08 - MULTIJUGADOR/Memoria-de-Area|08 - MULTIJUGADOR]]
-- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|09 - TAREAS Y DESARROLLO]]
-- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]]
+- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|09 - TAREAS Y DESARROLLO]] — [[Backlog]] · [[ACTIVE_TASKS]] · [[OWNERS]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]] — [[Registro-de-Decisiones]] · [[OWNERS]] · [[ACTIVE_TASKS]]
 - [[11 - TESTING Y BUGS/Memoria-de-Area|11 - TESTING Y BUGS]]
 - [[12 - RECURSOS Y REFERENCIAS/Memoria-de-Area|12 - RECURSOS Y REFERENCIAS]]

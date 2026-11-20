@@ -4,23 +4,23 @@
 
 ## Notas canónicas
 
-[[09 - TAREAS Y DESARROLLO/Backlog]]; [[00 - CENTRO DE CONTROL/Dashboard]]
+[[09 - TAREAS Y DESARROLLO/Backlog]]; [[00 - CENTRO DE CONTROL/Dashboard]]; [[ACTIVE_TASKS]]; [[OWNERS]]; [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA]]
 - Registro: [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]
 
 ## Respuestas directas y datos base
 
-- WhatsApp diario para asignar tareas y compartir changelog; Backlog para ID, responsable, rutas, revisor y estado. La disponibilidad de rutas se confirma con la persona usuaria.
+- El Backlog registra ID, cuenta, responsable, revisor, rutas y criterios. Cada tarea usa task/<ID>-<slug>; ACTIVE_TASKS.md registra reservas. reservation-check valida rutas reservadas y solapamientos entre PR abiertos.
 
 ## Pendientes concretos
 
-- Prioridades y disponibilidad individual.
+- Activar protección de main para exigir PR, aprobación y los checks requeridos. La reserva remota no bloquea escrituras locales si el hook compartido no está cargado.
 
 ## Decisiones aprobadas del área
 
-- Añade una decisión solo tras aprobación humana y registro canónico.
+- DEC-002 fija ramas por tarea, PR obligatorio y una aprobación humana; consulta el registro de decisiones.
 
 ## Memoria reciente
 
-- Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- INFRA-001 está en revisión en [PR #1](https://github.com/ROBLOX-0GAME/ROBLOX-GAME-/pull/1); ambos checks pasaron. Lee [[ACTIVE_TASKS]] antes de tomar rutas.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.
