@@ -652,3 +652,25 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] DEC-020 registrada como Aprobada (Zadiel) y DEC-018 marcada como Aprobada.
 - [x] OWNERS.md, AGENTS.md y `.claude/CLAUDE.md` reflejan el equipo nuevo (y `.claude/CLAUDE.md` anota la place oficial 84500108687089).
 - [x] Fila de ACTIVE_TASKS Completada.
+
+### ART-009 — Materiales PBR para piezas robables, legado y cápsulas
+
+- **ID:** ART-009.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn (DEC-020).
+- **Área:** Arte / assets.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** con DEC-018 aprobada, las 7 piezas robables, las 3 piezas del legado y las 4 cápsulas pasan a materiales PBR (una malla por material, como los relojes). Materiales nuevos: `metal_laton`, `metal_plata` y `esmalte_cosmico`; el resto reutiliza los 11 existentes. Script `art/blender/scripts/piezas_detalladas.py`, con los mismos nombres, medidas y orientación que los modelos base.
+
+**Criterios de aceptación:**
+
+- [ ] 3 materiales nuevos generados con Material Maker (12 mapas).
+- [ ] 14 modelos exportados; piezas por debajo de 1.000 triángulos.
+- [ ] `generar_todo.py` no los sobrescribe; los relojes siguen generándose igual.
+- [ ] Vistas EEVEE revisadas; Pipeline, Changelog y memoria del área 12 actualizados.
+
