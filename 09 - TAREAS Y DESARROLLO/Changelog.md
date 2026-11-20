@@ -377,3 +377,19 @@ Reglas:
 - **2026-11-20 · ART-006 · Paso 6 — Vistas previas.** `vista_previa.py` usa EEVEE (cielo en degradado y luz de área) en los `.blend` marcados con `render_pbr`. Primera revisión: el cristal tapaba la esfera y la corona de la pulsera salía suelta; corregidos y revisados de nuevo. Hoja de contactos actualizada. · Verificación: ejecutada (revisión visual de las 6 vistas). Pendiente: importar en Studio y montar los `SurfaceAppearance` (PC Windows).
 - **2026-11-20 · ART-006 · Paso 7 — Documentación.** [[Pipeline-de-Arte]] (comandos de macOS y sección «Materiales PBR de los relojes» con el montaje en Studio), `art/README.md`, memoria del área 12, propuestas DEC-018 y DEC-019 en [[Registro-de-Decisiones]] y nota en [[Arquitectura-General]].
 
+## 22. ART-007 — Traspaso a la PC Windows (Studio)
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn; Michael y Einell · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-007 · Paso 1 — Prompt de traspaso.** Zadiel pide seguir el trabajo en la PC Windows con Roblox Studio. Se crea `art/PROMPT_ARTE_WINDOWS_STUDIO.md` con:
+  - las reglas del equipo;
+  - la verificación de herramientas en Windows;
+  - la importación de los 6 relojes PBR en `ReplicatedStorage/Assets`, la subida de los 44 mapas (IDs en `art/texturas/ids_roblox.md`) y un script de barra de comandos que monta los `SurfaceAppearance` (31 MeshParts);
+  - la prueba en Play;
+  - el tratamiento PBR de piezas robables, legado y cápsulas, solo si se aprueba DEC-018;
+  - el retoque de iconos (Krita) y sonidos (Audacity).
+
+  Enlazado desde `art/README.md`. · Verificación: revisión del archivo y del recuento de MeshParts contra la salida de `relojes_detallados.py`. El script de Luau **no se ha ejecutado** (no hay Studio en la MacBook).
+

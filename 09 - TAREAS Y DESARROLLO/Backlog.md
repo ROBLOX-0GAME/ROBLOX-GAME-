@@ -579,7 +579,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn (quien importa en Windows); Michael y Einell (dueños del arte).
 - **Área:** Coordinación de arte.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -587,6 +587,6 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Prompt con reglas, verificación de herramientas en Windows, importación en Studio, tratamiento PBR condicionado a DEC-018, iconos, sonidos e informe.
-- [ ] Enlazado desde `art/README.md` y registrado en el Changelog.
-- [ ] La fila ART-007 de ACTIVE_TASKS queda Completada.
+- [x] Prompt con reglas, verificación de herramientas en Windows, importación en Studio, tratamiento PBR condicionado a DEC-018, iconos, sonidos e informe.
+- [x] Enlazado desde `art/README.md` y registrado en el Changelog.
+- [x] La fila ART-007 de ACTIVE_TASKS queda Completada.

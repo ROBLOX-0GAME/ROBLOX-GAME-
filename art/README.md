@@ -2,6 +2,8 @@
 
 Traspaso a Zadiel (MacBook): [[PROMPT_ARTE_ZADIEL_MAC|Prompt de arte y materiales]].
 
+Traspaso a la PC Windows con Studio (ART-007): [[PROMPT_ARTE_WINDOWS_STUDIO|Prompt para importar los relojes PBR y seguir el arte]].
+
 Pipeline completo, estilo, formatos y lista de assets: [[Pipeline-de-Arte|Pipeline de Arte]] (`art/Pipeline-de-Arte.md`).
 
 | Carpeta | Contenido |
