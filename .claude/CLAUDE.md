@@ -29,15 +29,13 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 
 ## GitHub y sincronización
 - Repositorio: https://github.com/ROBLOX-0GAME/ROBLOX-GAME-.git. La rama estable es main.
-- Obsidian Git: conserva la configuración acordada en los equipos (Automatic, commit/push automáticos desactivados y pull al iniciar activado). Comprueba la configuración actual antes de cambiarla.
-- Usa una rama por tarea con formato task/<ID>-<slug>; no uses ramas permanentes por cuenta.
-- Antes de editar, revisa git status, la rama, ACTIVE_TASKS.md y los Pull Requests abiertos. El hook compartido de `.claude/settings.json` bloquea las herramientas Edit/Write en main, rutas sin reserva propia o rutas ocupadas; requiere que la reserva ya esté integrada en main. No lo evadas escribiendo con Bash ni con un editor externo. Este hook protege las herramientas de Claude Code, mientras GitHub Actions y la protección de ramas controlan la integración.
-- Para una tarea nueva, registra primero el encargo y sus rutas en Backlog.md y ACTIVE_TASKS.md mediante un Pull Request de reserva. Espera a que se integre antes de editar esas rutas. La única excepción fue el bootstrap inicial INFRA-001, que creó el sistema y sus primeros registros en un solo Pull Request al no existir aún el mecanismo de reservas.
-- Todo cambio llega a main mediante Pull Request. Requiere una aprobación humana distinta del autor y que pasen reservation-check y rojo-build.
-- Cuenta A coordina la integración; solo una persona autorizada integra tras la revisión. No apruebes tu propio Pull Request.
-- No hagas push directo a main ni force push; no fusiones ni publiques el juego desde Claude.
-- La protección efectiva de main debe exigir Pull Request, una aprobación y ambos controles. Se configura en GitHub Settings; que exista un workflow no activa por sí solo esa protección.
-- Confirma el estado local y remoto antes de sincronizar. No descartes cambios ajenos. Si hay desacuerdo sustantivo, conserva la última decisión aprobada y consulta al responsable mientras avanzas tareas independientes.
+- Flujo vigente (DEC-009, reemplaza a DEC-002): se trabaja directamente en `main`, sin ramas por tarea ni Pull Requests. `main` no tiene protección de rama.
+- Obsidian Git en todos los equipos: commit, push y pull automáticos cada 5 minutos, pull al abrir la bóveda y push activado. No cambies de rama desde Obsidian.
+- Antes de editar: `git pull` en main, revisa git status y ACTIVE_TASKS.md. Registra la tarea en Backlog.md, reserva sus rutas en ACTIVE_TASKS.md, haz commit y `git push` de la reserva, y escribe el ID en `.claude/tarea-activa` (archivo local). El hook de `.claude/settings.json` solo deja editar en main las rutas reservadas por esa tarea y bloquea las reservadas por otra. No lo evadas con Bash ni con un editor externo.
+- Mientras trabajas, cada avance que se pueda anotar va a la memoria de Obsidian: Memoria-de-Area.md del área, Backlog.md y, si hay una decisión, Registro-de-Decisiones.md (como propuesta si el equipo no la ha aprobado). Haz commit descriptivo y `git push` a main al completar cada avance, sin esperar al cierre.
+- Antes de cada push, haz `git pull` para integrar los cambios de Obsidian y del resto del equipo. Nunca uses force push ni descartes cambios ajenos; si hay un conflicto que no sea trivial, detente y consulta a la persona usuaria.
+- Al cerrar, marca la fila de ACTIVE_TASKS.md como Completada y súbelo para liberar la reserva. No publiques el juego desde Claude.
+- Si hay desacuerdo sustantivo, conserva la última decisión aprobada y consulta al responsable mientras avanzas tareas independientes.
 
 ## Límites y seguridad
 - El repositorio contiene la bóveda Obsidian y el scaffold de código fuente en game/. El place aún no existe; no inventes un placeId ni afirmes que modificaste un place. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares.

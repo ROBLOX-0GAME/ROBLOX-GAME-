@@ -204,7 +204,7 @@ Contenido que se integra (todo como propuesta, salvo lo aprobado): bucle de robo
 - **Revisor:** Jhonn; Michael y Einell como revisión transversal (afecta a ambas cuentas).
 - **Área:** Coordinación, Git y Obsidian.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Rama:** `task/INFRA-002-sync-directo-main` (solo para aplicar este cambio; después se trabaja en `main`).
 - **Fecha de creación:** 2026-11-20.
 
@@ -214,11 +214,11 @@ Por decisión de Zadiel para todo el equipo, se deja de usar ramas por tarea y P
 
 **Criterios de aceptación:**
 
-- [ ] El hook de `.claude/settings.json` permite editar en `main` y sigue bloqueando rutas reservadas por otra tarea.
-- [ ] `.claude/CLAUDE.md`, el Protocolo, OWNERS.md, AGENTS.md, ACTIVE_TASKS.md, las reglas y los prompts describen el flujo nuevo.
-- [ ] DEC-009 queda registrada y DEC-002 marcada como Reemplazada.
-- [ ] Obsidian Git de la Mac de Zadiel sincroniza cada 5 minutos en ambos sentidos.
-- [ ] La fila INFRA-002 de ACTIVE_TASKS.md queda Completada.
+- [x] El hook de `.claude/settings.json` permite editar en `main` y sigue bloqueando rutas reservadas por otra tarea (6 casos probados localmente).
+- [x] `.claude/CLAUDE.md`, el Protocolo, OWNERS.md, AGENTS.md, ACTIVE_TASKS.md, las reglas y los prompts describen el flujo nuevo.
+- [x] DEC-009 queda registrada y DEC-002 marcada como Reemplazada.
+- [x] Obsidian Git de la Mac de Zadiel configurado para sincronizar cada 5 minutos en ambos sentidos (pendiente de recargar Obsidian). Faltan las PC de Jhonn, Michael y Einell.
+- [x] La fila INFRA-002 de ACTIVE_TASKS.md queda Completada.
 
 **Dependencias:** INFRA-001 y DEV-007 (Completadas).
 

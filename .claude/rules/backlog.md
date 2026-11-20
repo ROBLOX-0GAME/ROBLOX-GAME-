@@ -15,7 +15,7 @@ Responsable operativo: Cuenta A mantiene el índice operativo; cada responsable 
 
 ## Instrucciones por nota
 - Backlog.md: Cada tarea anunciada al equipo lleva ID, objetivo, responsable, cuenta Claude, rutas, revisor, prioridad, dependencias, criterio de aceptación y estado.
-- ACTIVE_TASKS.md: Reserva rutas por ID y rama de tarea; abre primero un Pull Request de reserva y espera a que se integre. El control de GitHub Actions valida conflictos en Pull Requests, pero no bloquea la edición local.
+- ACTIVE_TASKS.md: Reserva rutas por ID y sube la reserva a main antes de editar (DEC-009). El hook local bloquea a Claude en rutas reservadas por otra tarea; Obsidian y los editores externos no quedan bloqueados.
 
 
 ## Mantenimiento

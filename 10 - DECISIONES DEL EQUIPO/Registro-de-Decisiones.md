@@ -58,7 +58,7 @@ La MacBook sigue dedicada a Obsidian; Rojo y Roblox Studio se instalarán en las
 ### DEC-002 — Ramas por tarea y revisión obligatoria
 
 - **Fecha:** 2026-11-19.
-- **Estado:** Aprobada para implementar por la persona usuaria responsable del proyecto.
+- **Estado:** Reemplazada por DEC-009 (2026-11-20).
 - **Responsable:** Cuenta A (Jhonn/Zadiel).
 - **Área:** GitHub y coordinación de agentes.
 
@@ -77,6 +77,32 @@ ACTIVE_TASKS.md registra las rutas reservadas; el control de GitHub Actions bloq
 - [[ACTIVE_TASKS]]
 - [[OWNERS]]
 - [[ACTIVE_TASKS]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|Memoria de Decisiones]]
+
+### DEC-009 — Trabajo directo en main con sincronización automática de Obsidian
+
+- **Fecha:** 2026-11-20.
+- **Estado:** Aprobada por Zadiel para todo el equipo.
+- **Responsable:** Cuenta A (Zadiel).
+- **Área:** GitHub, Obsidian y coordinación de agentes.
+- **Reemplaza:** DEC-002.
+
+**Decisión:**
+
+Se trabaja directamente en `main`, sin ramas por tarea, sin Pull Requests y sin protección de rama. Cada vez que Claude avanza en algo que se pueda anotar, lo registra en la memoria de Obsidian (Memoria-de-Area.md del área, Backlog y, si hay una decisión, este registro) y lo sube a `main`. Obsidian Git hace commit, subida y bajada cada 5 minutos en todos los equipos.
+
+Se mantienen las reservas de rutas en [[ACTIVE_TASKS]]: antes de editar se reserva y se sube la reserva a `main`; al terminar se marca Completada. El hook de Claude Code bloquea las rutas reservadas por otra tarea.
+
+**Consecuencias:**
+
+Los cambios llegan a todos en minutos, pero ya no hay revisión previa: se revisa sobre lo ya subido. Nunca se usa force push. Si dos personas editan la misma nota a la vez, Obsidian Git puede generar un conflicto que hay que resolver a mano; las reservas sirven para evitarlo. No se cambia de rama desde Obsidian.
+
+**Documentos afectados:**
+
+- [[Protocolo-de-Trabajo-IA]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+- [[Backlog]]
 - [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|Memoria de Decisiones]]
 
 ### Plantilla de decisión

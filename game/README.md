@@ -4,9 +4,9 @@ Código fuente de BUILD A WATCH! (mecánicas, DEV-001 a DEV-007). El place ofici
 
 ## Coordinación de edición entre los dos Claude Code
 
-La configuración compartida `.claude/settings.json` ejecuta un control antes de las herramientas Edit/Write. Bloquea ediciones en `main`, fuera de una reserva integrada en ACTIVE_TASKS.md, o sobre rutas ocupadas por otra tarea. Primero registra la tarea en el [[09 - TAREAS Y DESARROLLO/Backlog]] y [[ACTIVE_TASKS|ACTIVE_TASKS]], abre un PR de reserva y espera a que se integre. El hook consulta el registro en `main` y falla de forma cerrada si no puede leerlo.
+La configuración compartida `.claude/settings.json` ejecuta un control antes de las herramientas Edit/Write. Se trabaja directamente en `main` (DEC-009). El hook bloquea ediciones fuera de la reserva de tu tarea o sobre rutas ocupadas por otra tarea. Primero registra la tarea en el [[09 - TAREAS Y DESARROLLO/Backlog]] y [[ACTIVE_TASKS|ACTIVE_TASKS]], sube la reserva a `main` y escribe su ID en `.claude/tarea-activa`.
 
-Este control actúa sobre Edit/Write de Claude Code. No bloquea programas externos ni comandos Bash que escriban archivos; la regla de Pull Request, GitHub Actions y la protección de `main` son las barreras de integración. En la PC Windows se necesita Git for Windows con Bash y Python 3.10 o posterior para que el hook funcione. No se debe usar un editor externo para evadir una reserva.
+Este control actúa sobre Edit/Write de Claude Code. No bloquea programas externos ni comandos Bash que escriban archivos. En la PC Windows se necesita Git for Windows con Bash y Python 3.10 o posterior para que el hook funcione. No se debe usar un editor externo para evadir una reserva.
 
 [[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[OWNERS|Propiedad de áreas]] · [[ACTIVE_TASKS|Reservas activas]]
 
@@ -16,7 +16,7 @@ default.project.json declara servePlaceIds como una lista vacía. Rojo solo sinc
 
 Cuando el equipo cree el place:
 1. Registra el placeId aprobado en 03 - ARQUITECTURA TECNICA/Arquitectura-General.md.
-2. Añade ese ID a servePlaceIds en default.project.json mediante un Pull Request revisado.
+2. Añade ese ID a servePlaceIds en default.project.json y súbelo a `main`.
 3. Clona o actualiza el repositorio en la PC Windows destinada al desarrollo.
 4. Instala Rokit y ejecuta rokit install desde game/.
 5. Instala el plugin con rojo plugin install.

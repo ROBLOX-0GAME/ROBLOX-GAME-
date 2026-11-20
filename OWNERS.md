@@ -1,6 +1,6 @@
 # Propiedad de áreas y rutas
 
-Este archivo asigna responsabilidad de trabajo; no concede permiso para saltarse la reserva de rutas. ACTIVE_TASKS.md y el control de Pull Requests se aplican a cada cambio.
+Este archivo asigna responsabilidad de trabajo; no concede permiso para saltarse la reserva de rutas. Las reservas de ACTIVE_TASKS.md se aplican a cada cambio, que se sube directamente a main (DEC-009).
 
 ## Cuenta A — Claude 1
 
@@ -42,7 +42,7 @@ Rutas principales:
 
 - Cuenta A lidera sistemas y técnica; Cuenta B revisa claridad, impacto para el jugador y experiencia.
 - Cuenta B lidera mundo, narrativa y UX; Cuenta A revisa dependencias técnicas, seguridad y rendimiento.
-- La persona responsable y su revisor se identifican en Backlog.md y en el Pull Request.
+- La persona responsable y su revisor se identifican en Backlog.md. La revisión se hace sobre los commits ya subidos a main.
 - Las tareas que afectan ambas áreas requieren revisión de ambas parejas.
 
 ## Rutas compartidas
@@ -70,7 +70,7 @@ La asignación anterior refleja nombres y parejas del equipo. No se inventan usu
 ## Cobertura del repositorio y permisos
 
 - Las rutas listadas arriba asignan áreas. Todo archivo o carpeta no listado se considera compartido hasta que Backlog.md indique responsable y ACTIVE_TASKS.md reserve la ruta.
-- Claude nunca edita la rama `main` directamente. Los cambios llegan por Pull Request con una aprobación humana y los checks `reservation-check` y `rojo-build`.
+- Por DEC-009, Claude y el equipo trabajan directamente en `main`, sin Pull Request, respetando las reservas de ACTIVE_TASKS.md. `main` no tiene protección de rama; nunca se usa force push.
 - La política solicitada es que solo Jhonn, Zadiel, Michael y Einell tengan permiso de escritura. Asigna Write únicamente a sus cuatro cuentas, configura el permiso base de la organización como Read, y limita Admin a las personas necesarias de ese mismo grupo. Los propietarios de la organización conservan privilegios administrativos.
 - Para evitar borrado por miembros, la organización debe desactivar el permiso de miembros para borrar o transferir repositorios; el ajuste es organizacional y los propietarios de la organización pueden seguir borrándolos. Para impedir borrar la rama `main`, activa la protección de rama o ruleset contra eliminación.
 - Estado comprobado para INFRA-001: el repositorio es público; GitHub confirmó a Zadiel (`zadiel799-lang`) y Jhonn (`jhonnhughesmadrigal-cmd`) como administradores del repositorio. `main` no tenía protección activa. La conexión no expone la lista de colaboradores ni permite cambiar los permisos, reglas de rama o ajustes de borrado.

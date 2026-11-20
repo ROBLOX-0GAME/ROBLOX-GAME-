@@ -32,16 +32,37 @@ LOCAL_LOCKED_STATUSES = {
 }
 
 
+ACTIVE_TASK_FILE = ".claude/tarea-activa"
+TASK_ID_PATTERN = re.compile(r"^[A-Z]+-\d+$")
+
+
+def read_active_task(root: Path) -> str | None:
+    """ID de la tarea declarada para trabajar en main (archivo local que no se sube)."""
+    path = root / ACTIVE_TASK_FILE
+    if not path.is_file():
+        return None
+    value = path.read_text(encoding="utf-8").strip().upper()
+    return value if TASK_ID_PATTERN.match(value) else None
+
+
 def validate_file_edit(
-    branch: str, relative_path: str, reservations: list
+    branch: str, relative_path: str, reservations: list, active_task: str | None = None
 ) -> tuple[bool, str]:
-    if branch == "main":
-        return False, "No se permiten ediciones directas en main; crea una rama task/<ID>-<slug>."
-    task_id = extract_task_id(branch)
-    if not task_id:
-        return False, "La edición requiere una rama task/<ID>-<slug>."
+    if relative_path == ACTIVE_TASK_FILE:
+        return True, "Archivo local que declara la tarea activa."
     if relative_path in REGISTRY_PATHS:
-        return True, "Ruta del registro central; CI limita las filas que puede cambiar cada tarea."
+        return True, "Ruta del registro central de tareas y reservas."
+    if branch == "main":
+        task_id = active_task
+        if not task_id:
+            return False, (
+                "Para editar en main: reserva las rutas en ACTIVE_TASKS.md, súbelas a main "
+                f"y escribe el ID de la tarea en {ACTIVE_TASK_FILE}."
+            )
+    else:
+        task_id = extract_task_id(branch)
+        if not task_id:
+            return False, "Trabaja en main o en una rama task/<ID>-<slug>."
 
     own_rows = [row for row in reservations if row.task_id == task_id]
     if len(own_rows) != 1:
@@ -82,6 +103,11 @@ def repository_name(root: Path) -> str:
 
 
 def fetch_main_reservations(root: Path, branch: str) -> str:
+    if branch == "main":
+        # En main, el registro local es el de main: Claude y Obsidian hacen pull antes de editar.
+        local_file = root / "ACTIVE_TASKS.md"
+        if local_file.is_file():
+            return local_file.read_text(encoding="utf-8")
     repository = repository_name(root)
     url = f"https://raw.githubusercontent.com/{repository}/main/ACTIVE_TASKS.md"
     request = urllib.request.Request(url, headers={"User-Agent": "Roblox-Game-Reservation-Guard"})
@@ -130,6 +156,7 @@ def main() -> int:
             branch,
             relative_path,
             parse_reservations(fetch_main_reservations(root, branch)),
+            read_active_task(root) if branch == "main" else None,
         )
         if not allowed:
             print(reason, file=sys.stderr)

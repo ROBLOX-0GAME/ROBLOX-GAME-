@@ -29,9 +29,9 @@ Estas reglas rigen al abrir Codex desde la raíz de la bóveda. Las reglas de .C
 
 ## GitHub y sincronización
 - Repositorio: https://github.com/ROBLOX-0GAME/ROBLOX-GAME-.git. Rama estable existente: main.
-- Configura Obsidian Git en todos los equipos: Automatic con intervalos separados, Auto commit interval = 0, Auto push interval = 0 y Auto pull interval = 1. En Sync, Push on commit-and-sync apagado y Pull on startup activado. Codex hace push al cerrar una tarea asignada.
-- Usa una rama task/ID-slug. Al terminar, sube a esa rama y abre/actualiza una solicitud de revisión hacia main. La pareja responsable revisa; el equipo aprueba cambios sustantivos y una persona humana autorizada los fusiona.
-- Codex nunca hace push directo a main, merge, publica el juego ni cambia permisos.
+- Configura Obsidian Git en todos los equipos: commit, push y pull automáticos cada 5 minutos, push activado y Pull on startup activado. No cambies de rama desde Obsidian.
+- Flujo vigente (DEC-009): se trabaja directamente en main, sin ramas por tarea ni Pull Requests. Reserva las rutas en ACTIVE_TASKS.md y súbelas a main antes de editar; anota cada avance en la Memoria-de-Area.md del área, haz `git pull`, commit y push a main; al cerrar, marca la reserva como Completada.
+- Codex nunca usa force push, publica el juego ni cambia permisos.
 - Confirma estado local/remoto antes de sincronizar. No uses force push. Resuelve conflictos por prioridad: solicitud humana vigente, Registro de Decisiones, alcance aprobado y main. Si hay desacuerdo sustantivo, conserva vigente la última decisión aprobada en main, registra la alternativa y pausa solo ese cambio hasta que el equipo lo resuelva; sigue tareas independientes. En binarios conserva main salvo autorización expresa para reemplazarlo.
 
 ## Límites y seguridad

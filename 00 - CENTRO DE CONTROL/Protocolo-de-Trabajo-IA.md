@@ -101,13 +101,16 @@ Antes de trabajar:
 - Obtener los cambios remotos.
 - Confirmar que no existen conflictos.
 
-Al finalizar:
+Durante el trabajo y al finalizar (DEC-009: se trabaja directo en main):
 
-- Revisar los archivos modificados.
-- Comprobar que no se incluyen archivos sensibles.
-- Crear un commit descriptivo en la rama de la tarea.
-- Publicar los cambios en esa rama y abrir un Pull Request hacia main cuando esté autorizado; no hacer push directo a main ni force push.
-- Informar del commit y del Pull Request.
+- Reservar las rutas en [[ACTIVE_TASKS]] y subir la reserva a main antes de editar.
+- Anotar cada avance en la memoria de Obsidian (Memoria-de-Area.md del área, Backlog y, si aplica, Registro-de-Decisiones).
+- Revisar los archivos modificados y comprobar que no se incluyen archivos sensibles.
+- Hacer `git pull`, crear un commit descriptivo y subirlo directamente a main.
+- Al cerrar, marcar la tarea como Completada en ACTIVE_TASKS.md y subirlo.
+- Informar de los commits realizados.
+
+Obsidian Git sincroniza solo cada 5 minutos (commit, subida y bajada), así que los demás ven los cambios sin hacer nada.
 
 Nunca utilizar force push para solucionar conflictos.
 
