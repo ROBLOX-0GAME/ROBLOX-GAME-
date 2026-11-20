@@ -1,6 +1,6 @@
 # art/ — fuentes y exportaciones de arte
 
-Pipeline completo, estilo, formatos y lista de assets: [[12 - RECURSOS Y REFERENCIAS/Pipeline-de-Arte|Pipeline de Arte]].
+Pipeline completo, estilo, formatos y lista de assets: [[Pipeline-de-Arte|Pipeline de Arte]] (`art/Pipeline-de-Arte.md`).
 
 | Carpeta | Contenido |
 |---|---|

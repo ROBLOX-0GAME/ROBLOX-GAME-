@@ -285,3 +285,22 @@ Reglas:
 - **2026-11-20 · ART-002 · Paso 3 — Revisión visual.** Hoja de contactos revisada: casas por zona distinguibles, estaciones con cartel y Cronómetro con esfera, y piezas reconocibles. La primera hoja salió con fondo negro y colores oscuros por la transparencia; se corrigió. · Verificación: ejecutada.
 - **2026-11-20 · ART-002 · Paso 4 — Cierre.** Lista de assets de [[Pipeline-de-Arte]] actualizada, con notas de importación (frente hacia −Y, casas con `PreciseConvexDecomposition`, piezas pequeñas sin colisión). Memoria del área 12 actualizada. La fila ART-002 pasa a Completada. · Verificación: revisión de archivos.
 
+---
+
+## 17. ART-003 — Modelos low-poly de prioridad 2
+
+- **Responsable:** Jhonn · **Revisor:** Michael y Einell; Zadiel (técnica) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-003 · Paso 1 — Reserva.** Subida en `c9ce1e9`. · Verificación: ejecutada.
+- **2026-11-20 · ART-003 · Paso 2 — Generadores (`e0cf589`).** Nuevo `modelos_prioridad2.py`:
+  - cápsulas de Plata, Oro y Cósmica (con estrellas);
+  - 6 relojes con esfera, agujas y detalles (sub-esferas, rubíes, diamantes, bisel);
+  - 3 piezas del legado ficticias (espiral, corona, rotor arcoíris);
+  - 9 mascotas (ratón de cuerda, gato engranaje, zorro con monóculo, halcón, dragón, fénix, titán, Señor del Tiempo y Mascota Suprema).
+
+  · Verificación: **ejecutada con Blender 5.3**. 21 modelos de 72 a 488 triángulos (48 en total). Hoja de contactos revisada.
+- **2026-11-20 · ART-003 · Paso 3 — Nota movida.** Zadiel movió desde Obsidian la nota del pipeline a `art/Pipeline-de-Arte.md` (`c66f57e`). Se respeta la nueva ubicación: la lista se actualiza allí y se corrige el enlace de `art/README.md`. Los enlaces `[[Pipeline-de-Arte]]` siguen funcionando porque buscan la nota por nombre. · Verificación: ejecutada (`git log`, `git diff -M`).
+- **2026-11-20 · ART-003 · Paso 4 — Cierre.** La fila ART-003 pasa a Completada. · Verificación: revisión de archivos.
+

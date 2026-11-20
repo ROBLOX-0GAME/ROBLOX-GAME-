@@ -97,10 +97,10 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | Asset | Sustituye a | Estado |
 |---|---|---|
 | `mdl_capsula_laton` | Cápsula (Criadero, Premios) | ✅ Base generada (328 triángulos) |
-| `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | Pendiente (mismo generador, otro color) |
-| `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | Pendiente |
-| `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | Pendiente |
-| `mdl_mascota_*` (9) | Esferas de mascota (PetService) | Pendiente |
+| `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | ✅ Base (328 / 328 / 382; la Cósmica lleva estrellas) |
+| `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | ✅ Base (72–452) |
+| `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | ✅ Base (488 / 272 / 160) |
+| `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ Base (96–450) |
 | Dueños de las casas | NPC de bloques (OwnerNpc) | Pendiente: personaje R15 con skins originales «al estilo» de Roblox, sin copiar personajes reales |
 
 **Prioridad 3 — ambiente, interfaz y sonido**
