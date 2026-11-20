@@ -168,6 +168,10 @@ function AssetLibrary.place(name, position, facing, parent, options)
 	anchor.Size = Vector3.new(1, 1, 1)
 	anchor.CFrame = CFrame.new(position + Vector3.new(0, 0.5, 0))
 	local clone = AssetLibrary.dress(anchor, name, { folder = options.folder, facing = facing, parent = parent })
+	-- Sin `parent`, dress deja la copia dentro del ancla: hay que sacarla antes de destruir el ancla (DEV-015)
+	if clone and clone.Parent == anchor then
+		clone.Parent = nil
+	end
 	anchor:Destroy()
 	return clone
 end

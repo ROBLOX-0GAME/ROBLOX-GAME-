@@ -127,6 +127,9 @@ def rel(node):
 LONG_OPEN = re.compile(r"\[(=*)\[")
 
 
+UNCLOSED_STRINGS = []  # líneas con cadenas sin cerrar del último strip_code (DEV-015)
+
+
 def strip_code(source):
     """Reemplaza comentarios y textos por espacios, conservando los saltos de línea."""
     out = []
@@ -163,6 +166,9 @@ def strip_code(source):
                 if source[j] == "\\":
                     j += 1
                 j += 1
+            if j >= n or source[j] == "\n":
+                # Cadena sin cerrar en su línea: en Luau es «Malformed string» (DEV-015)
+                UNCLOSED_STRINGS.append(source.count("\n", 0, i) + 1)
             out.append(ch + blank(source[i + 1 : j]) + ch)
             i = j + 1
             continue
@@ -339,7 +345,10 @@ def main():
     scripts = [n for n in tree.walk() if n.source is not None]
     errors, warnings = [], []
     for node in scripts:
+        UNCLOSED_STRINGS.clear()
         code = strip_code(node.source)
+        for line in UNCLOSED_STRINGS:
+            errors.append(f"{rel(node)}:{line}: cadena sin cerrar (salto de línea dentro de comillas; usa \\n)")
         check_blocks(node, code, errors)
         check_use_before_local(node, code, errors)
     requires = check_requires_and_fields(tree, errors, warnings)

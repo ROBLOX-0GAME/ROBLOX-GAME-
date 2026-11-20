@@ -763,8 +763,7 @@ local function renderBackpack()
 					end
 				end
 				addRow(string.format(
-					"<b>%s</b> (herencia)
-<font color=\"#aaaab9\">%s Úsala en el Reloj del Legado o guárdala.</font>",
+					"<b>%s</b> (herencia)\n<font color=\"#aaaab9\">%s Úsala en el Reloj del Legado o guárdala.</font>",
 					variant and variant.name or part.name,
 					variant and variant.desc or ""
 				))
