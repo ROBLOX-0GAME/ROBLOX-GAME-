@@ -10,6 +10,7 @@ from check_file_reservations import (
     reservation_paths_overlap,
     other_task_reservations,
     without_task_section,
+    backlog_edit_is_scoped,
 )
 
 
@@ -57,6 +58,14 @@ class ReservationTests(unittest.TestCase):
         altered_other = "### INFRA-001 — Setup\n- Estado: Completada\n\n### GAME-002 — Sistema\n- Estado: En progreso\n"
         self.assertEqual(without_task_section(before, "INFRA-001"), without_task_section(after, "INFRA-001"))
         self.assertNotEqual(without_task_section(before, "INFRA-001"), without_task_section(altered_other, "INFRA-001"))
+
+    def test_backlog_changes_must_stay_in_own_task_section_after_bootstrap(self):
+        before = "### GAME-001 — First\n- Status: Pending\n\n### GAME-002 — Second\n- Status: Pending\n"
+        after_own = "### GAME-001 — First\n- Status: Complete\n\n### GAME-002 — Second\n- Status: Pending\n"
+        after_other = "### GAME-001 — First\n- Status: Complete\n\n### GAME-002 — Second\n- Status: Active\n"
+        self.assertTrue(backlog_edit_is_scoped(before, after_own, "GAME-001"))
+        self.assertFalse(backlog_edit_is_scoped(before, after_other, "GAME-001"))
+        self.assertTrue(backlog_edit_is_scoped(before, after_other, "INFRA-001", True))
 
     def test_reservation_registry_comparison_excludes_only_own_task(self):
         before = "| ID | Cuenta | Responsable | Revisor | Rutas reservadas | Estado |\n|---|---|---|---|---|---|\n| INFRA-001 | A | X | Y | .claude/** | En desarrollo |\n| GAME-001 | B | M | E | game/** | En desarrollo |\n"

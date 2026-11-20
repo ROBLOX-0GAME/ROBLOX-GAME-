@@ -143,6 +143,12 @@ def without_task_section(markdown: str, task_id: str) -> str:
     return section.sub("", markdown)
 
 
+def backlog_edit_is_scoped(
+    before: str, after: str, task_id: str, initial_bootstrap: bool = False
+) -> bool:
+    return initial_bootstrap or without_task_section(before, task_id) == without_task_section(after, task_id)
+
+
 def task_pr_state(task_id: str, pull_requests: list[dict[str, Any]]) -> str:
     matches = [
         pr for pr in pull_requests
@@ -319,7 +325,13 @@ def main() -> int:
         else:
             base_backlog_text = base_backlog.stdout
         head_backlog_text = Path(backlog_path).read_text(encoding="utf-8")
-        if without_task_section(base_backlog_text, task_id) != without_task_section(head_backlog_text, task_id):
+        initial_bootstrap = (
+            task_id == "INFRA-001"
+            and not any(row.task_id == task_id for row in parse_reservations(base_text))
+        )
+        if not backlog_edit_is_scoped(
+            base_backlog_text, head_backlog_text, task_id, initial_bootstrap
+        ):
             print(f"El Pull Request solo puede crear o actualizar la sección {task_id} en Backlog.md.")
             return 1
     own_rows = [row for row in head_rows if row.task_id == task_id]
