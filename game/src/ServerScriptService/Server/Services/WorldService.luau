@@ -39,29 +39,17 @@ local ZONE_START = 30 -- Z donde empieza la zona 1
 local ZONE_LENGTH = 140 -- distancia entre el inicio de dos zonas
 local ZONE_DEPTH = 130 -- largo útil de cada zona
 local MAP_END = ZONE_START + #GameData.Zones * ZONE_LENGTH
-local MAP_BACK = -100
+local MAP_BACK = -130 -- base más grande para los 10 plots (DEV-008)
 
+-- Estaciones compartidas. El Taller y el Museo pasaron al plot de cada
+-- jugador (DEV-008); el Jefe y el Criadero los crean BossService y PetService.
 local STATIONS = {
-	{
-		id = "workshop",
-		title = "Taller",
-		action = "Fabricar relojes",
-		position = Vector3.new(-35, 0, -25),
-		color = Color3.fromRGB(196, 134, 72),
-	},
 	{
 		id = "shop",
 		title = "Tienda",
 		action = "Vender y mejorar",
-		position = Vector3.new(35, 0, -25),
+		position = Vector3.new(0, 0, -25),
 		color = Color3.fromRGB(74, 160, 96),
-	},
-	{
-		id = "museum",
-		title = "Museo",
-		action = "Exhibir relojes",
-		position = Vector3.new(0, 0, -65),
-		color = Color3.fromRGB(92, 120, 200),
 	},
 }
 

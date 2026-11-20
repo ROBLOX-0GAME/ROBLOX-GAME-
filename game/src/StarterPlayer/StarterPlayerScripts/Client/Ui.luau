@@ -41,9 +41,9 @@ local COLORS = {
 }
 
 local PANEL_TITLES = {
-	workshop = "Taller — Fabricar relojes",
+	workshop = "Taller de tu plot — Fabricar relojes",
 	shop = "Tienda — Vender y mejorar",
-	museum = "Museo — Exhibir relojes",
+	plot = "Tu plot — Vitrinas y mejoras",
 	backpack = "Mochila",
 	boss = "Cronómetro Maestro — Reparación",
 	pets = "Criadero — Huevos y mascotas",
@@ -253,9 +253,11 @@ local function addHeader(text)
 end
 
 -- Parte de una estación por id (etiqueta "Station" que pone el servidor).
+-- Las estaciones de los plots (DEV-008) llevan OwnerUserId: solo vale la propia.
 local function stationById(stationId)
 	for _, part in CollectionService:GetTagged("Station") do
-		if part:GetAttribute("StationId") == stationId then
+		local owner = part:GetAttribute("OwnerUserId")
+		if part:GetAttribute("StationId") == stationId and (owner == nil or owner == player.UserId) then
 			return part
 		end
 	end
@@ -381,51 +383,8 @@ local function renderShop()
 		addRow("No tienes piezas sueltas.")
 	end
 
-	addHeader("Caminadoras de entrenamiento")
-	for _, treadmillId in GameData.TreadmillOrder do
-		local treadmill = GameData.Treadmills[treadmillId]
-		local status = "Gratis"
-		local buttons = nil
-		if treadmill.pass then
-			status = "Pase de Robux «" .. GameData.GamePasses[treadmill.pass].name .. "»"
-			if state.passes[treadmill.pass] then
-				status = "Tienes el pase"
-			end
-		elseif treadmill.cost > 0 then
-			if state.treadmills[treadmillId] then
-				status = "Desbloqueada"
-			else
-				status = formatNumber(treadmill.cost) .. " monedas"
-				buttons = {
-					{
-						text = "Desbloquear",
-						enabled = state.coins >= treadmill.cost,
-						onActivated = function()
-							request("buyTreadmill", treadmillId)
-						end,
-					},
-				}
-			end
-		end
-		addRow(
-			string.format(
-				"<b>%s</b> — entrena ×%s\n<font color=\"#aaaab9\">%s</font>",
-				treadmill.name,
-				tostring(treadmill.multiplier),
-				status
-			),
-			buttons
-		)
-	end
-	addRow(
-		string.format(
-			"Velocidad entrenada: %.1f / %d. Las caminadoras están a la izquierda de la base.",
-			state.trained,
-			Config.MAX_TRAINED
-		)
-	)
-
 	addHeader("Mejoras")
+	addRow("Las vitrinas y la caminadora se mejoran en el panel de tu plot.")
 	for _, upgradeId in GameData.UpgradeOrder do
 		local upgrade = GameData.Upgrades[upgradeId]
 		local level = state.upgrades[upgradeId] or 0
@@ -443,6 +402,41 @@ local function renderShop()
 				onActivated = function()
 					if cost then
 						request("buyUpgrade", upgradeId)
+					end
+				end,
+			},
+		})
+	end
+end
+
+local function renderPlotUpgrades()
+	addHeader("Mejoras del plot")
+	addRow(
+		string.format(
+			"Caminadora ×%.1f · velocidad entrenada %.1f / %d · suerte del plot +%.1f%%",
+			state.treadmillMultiplier,
+			state.trained,
+			Config.MAX_TRAINED,
+			state.plotLuck * 100
+		)
+	)
+	for _, upgradeId in GameData.PlotUpgradeOrder do
+		local upgrade = GameData.Upgrades[upgradeId]
+		local level = state.upgrades[upgradeId] or 0
+		local cost = state.upgradeCosts[upgradeId]
+		local buttonText = "Máximo"
+		local enabled = false
+		if cost then
+			buttonText = "Comprar " .. formatNumber(cost)
+			enabled = state.coins >= cost
+		end
+		addRow(string.format("<b>%s</b>  (nivel %d/%d)\n%s", upgrade.name, level, upgrade.maxLevel, upgrade.desc), {
+			{
+				text = buttonText,
+				enabled = enabled,
+				onActivated = function()
+					if cost then
+						request("buyPlotUpgrade", upgradeId)
 					end
 				end,
 			},
@@ -641,7 +635,7 @@ local function renderBackpack()
 		local watch = GameData.Watches[watchId]
 		addRow(
 			string.format(
-				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%d en el museo)</font>",
+				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%d en tu plot)</font>",
 				watch.name,
 				state.watches[watchId] or 0,
 				state.museum[watchId] or 0
@@ -806,7 +800,10 @@ end
 local RENDERERS = {
 	workshop = renderWorkshop,
 	shop = renderShop,
-	museum = renderMuseum,
+	plot = function()
+		renderMuseum()
+		renderPlotUpgrades()
+	end,
 	backpack = renderBackpack,
 	boss = renderBoss,
 	pets = renderPets,
@@ -920,7 +917,12 @@ local function updateHud()
 	else
 		hud.loot.Visible = false
 	end
-	hud.museum.Text = string.format("Museo: +%d cada %d s", state.museumIncome, Config.MUSEUM_TICK_SECONDS)
+	hud.museum.Text = string.format(
+		"Plot: +%d cada %d s · suerte +%.1f%%",
+		state.museumIncome,
+		Config.MUSEUM_TICK_SECONDS,
+		state.plotLuck * 100
+	)
 
 	local tutorial = state.tutorial
 	if tutorial then
@@ -1172,12 +1174,11 @@ local function watchDistance()
 			task.wait(0.5)
 			updateGuide()
 			updateGates()
-			local treadmillId = player:GetAttribute("Training")
-			if treadmillId and GameData.Treadmills[treadmillId] and state then
+			if player:GetAttribute("Training") and state then
 				hud.training.Visible = true
 				hud.training.Text = string.format(
-					"Entrenando ×%s: %.1f / %d (pulsa la caminadora para parar)",
-					tostring(GameData.Treadmills[treadmillId].multiplier),
+					"Entrenando ×%.1f: %.1f / %d (pulsa la caminadora para parar)",
+					state.treadmillMultiplier,
 					state.trained,
 					Config.MAX_TRAINED
 				)

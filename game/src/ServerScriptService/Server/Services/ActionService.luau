@@ -12,6 +12,7 @@ local Players = game:GetService("Players")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
 local PlayerLogic = require(Shared.PlayerLogic)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
@@ -20,6 +21,7 @@ local CharacterService = require(script.Parent.CharacterService)
 local BossService = require(script.Parent.BossService)
 local PetService = require(script.Parent.PetService)
 local MonetizationService = require(script.Parent.MonetizationService)
+local PlotService = require(script.Parent.PlotService)
 
 local random = Random.new()
 
@@ -27,8 +29,9 @@ local ActionService = {}
 
 -- acción → estación requerida y función que la ejecuta
 local ACTIONS = {
+	-- station: estación compartida · plotPart: parte del plot PROPIO (DEV-008)
 	craft = {
-		station = "workshop",
+		plotPart = "workshop",
 		run = function(data, id)
 			local ok, message = PlayerLogic.craft(data, id)
 			return ok, message
@@ -55,6 +58,9 @@ local ACTIONS = {
 	buyUpgrade = {
 		station = "shop",
 		run = function(data, id)
+			if not table.find(GameData.UpgradeOrder, id) then
+				return false, "Esa mejora se compra en tu plot."
+			end
 			return PlayerLogic.buyUpgrade(data, id)
 		end,
 	},
@@ -90,13 +96,18 @@ local ACTIONS = {
 			return PlayerLogic.releasePet(data, id)
 		end,
 	},
-	-- Caminadoras y Robux (DEV-006)
-	buyTreadmill = {
-		station = "shop",
+	-- Mejoras del plot (vitrinas y caminadora), solo en el plot propio (DEV-008)
+	buyPlotUpgrade = {
+		plotPart = "plot",
+		refreshPlot = true,
 		run = function(data, id)
-			return PlayerLogic.buyTreadmill(data, id)
+			if not table.find(GameData.PlotUpgradeOrder, id) then
+				return false, "Esa mejora no es del plot."
+			end
+			return PlayerLogic.buyUpgrade(data, id)
 		end,
 	},
+	-- Robux (DEV-006)
 	buyPass = {
 		run = function(data, id, _, player)
 			return MonetizationService.promptPass(player, data, id)
@@ -114,13 +125,15 @@ local ACTIONS = {
 		end,
 	},
 	display = {
-		station = "museum",
+		plotPart = "plot",
+		refreshPlot = true,
 		run = function(data, id)
 			return PlayerLogic.display(data, id)
 		end,
 	},
 	withdraw = {
-		station = "museum",
+		plotPart = "plot",
+		refreshPlot = true,
 		run = function(data, id)
 			return PlayerLogic.withdraw(data, id)
 		end,
@@ -166,6 +179,9 @@ local function handle(player, actionName, id, amount)
 	if action.station and not WorldService.isNearStation(player, action.station, Config.STATION_DISTANCE) then
 		return reply(false, "Acércate a la estación para hacer eso.")
 	end
+	if action.plotPart and not PlotService.isNear(player, action.plotPart, Config.STATION_DISTANCE) then
+		return reply(false, "Acércate a tu plot para hacer eso.")
+	end
 
 	local ok, message = action.run(data, id, amount or 1, player)
 	if ok then
@@ -175,6 +191,9 @@ local function handle(player, actionName, id, amount)
 		end
 		if action.affectsCharacter then
 			PetService.refresh(player)
+		end
+		if action.refreshPlot then
+			PlotService.refresh(player)
 		end
 	end
 	return reply(ok, message)

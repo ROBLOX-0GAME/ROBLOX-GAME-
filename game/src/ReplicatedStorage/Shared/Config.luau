@@ -22,7 +22,7 @@ local Config = {
 	BASE_WALKSPEED = 16,
 	MAX_WALKSPEED = 80, -- tope de seguridad para la física
 	BASE_JUMPHEIGHT = 7.2,
-	BASE_MUSEUM_SLOTS = 3,
+	BASE_MUSEUM_SLOTS = 3, -- vitrinas iniciales del plot
 	MAX_WATCHES_PER_TYPE = 999,
 
 	-- Progresión: subir del nivel n al n+1 cuesta XP_PER_LEVEL_STEP * n
@@ -53,6 +53,11 @@ local Config = {
 	-- Mascotas (DEV-005)
 	MAX_PETS = 50,
 	MAX_EQUIPPED_PETS = 3,
+
+	-- Plot personal (DEV-008)
+	PLOT_COUNT = 10, -- uno por jugador (servidor de 10)
+	MAX_PLOT_LUCK = 0.15, -- tope de suerte que dan los relojes exhibidos
+	MAX_EXTRA_PART_CHANCE = 0.6, -- tope total de probabilidad de robar 2 piezas
 
 	-- Entrenamiento de velocidad en caminadoras (DEV-006)
 	TRAIN_RATE = 0.01, -- velocidad permanente ganada por segundo con multiplicador ×1

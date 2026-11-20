@@ -1,37 +1,28 @@
 --[[
-	TrainingService — caminadoras para entrenar velocidad permanente (DEV-006).
+	TrainingService — entrenamiento de velocidad en la caminadora del plot
+	(DEV-006, rehecho en DEV-008).
 
-	Pulsa el botón de una caminadora para empezar a entrenar y otra vez para
-	parar. Mientras entrenas el personaje no se mueve y cada segundo ganas
-	Config.TRAIN_RATE × multiplicador de la caminadora (hasta Config.MAX_TRAINED).
-	Alejarse, reaparecer o salir del juego detiene el entrenamiento.
-
-	Las piezas son marcadores funcionales; el modelo final se hará aparte.
-	Etiqueta "Treadmill" con atributo TreadmillId.
+	Cada jugador entrena en la caminadora de SU plot. Pulsa para empezar y otra
+	vez para parar; mientras entrena no se mueve. Cada segundo gana
+	Config.TRAIN_RATE × multiplicador de su caminadora (mejora «treadmill» y
+	pase Caminadora Turbo), hasta Config.MAX_TRAINED. Alejarse, reaparecer o
+	salir del juego detiene el entrenamiento.
 ]]
 
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
-local GameData = require(Shared.GameData)
 local PlayerLogic = require(Shared.PlayerLogic)
 local CharacterService = require(script.Parent.CharacterService)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
-local WorldService = require(script.Parent.WorldService)
+local PlotService = require(script.Parent.PlotService)
 
 local TrainingService = {}
 
-local training = {} -- [Player] = { id = treadmillId, part = BasePart }
-
-local POSITIONS = {
-	basic = Vector3.new(-80, 0, 5),
-	advanced = Vector3.new(-80, 0, -10),
-	turbo = Vector3.new(-80, 0, -25),
-}
+local training = {} -- [Player] = true
 
 local function getRoot(player)
 	local character = player.Character
@@ -50,15 +41,11 @@ function TrainingService.stop(player, message)
 	end
 end
 
-local function start(player, treadmillId, part)
+local function start(player)
 	local data = DataService.get(player)
 	local root = getRoot(player)
-	if not data or not root then
-		return
-	end
-	local ok, reason = PlayerLogic.canUseTreadmill(data, treadmillId)
-	if not ok then
-		Net.notify(player, reason, "error")
+	local plot = PlotService.getPlot(player)
+	if not data or not root or not plot then
 		return
 	end
 	if data.trained >= Config.MAX_TRAINED then
@@ -69,62 +56,25 @@ local function start(player, treadmillId, part)
 		Net.notify(player, "Guarda tu botín antes de entrenar.", "error")
 		return
 	end
-	training[player] = { id = treadmillId, part = part }
-	player:SetAttribute("Training", treadmillId)
-	root.CFrame = CFrame.new(part.Position + Vector3.new(0, 3.5, 0))
+	training[player] = true
+	player:SetAttribute("Training", true)
+	root.CFrame = CFrame.new(plot.treadmill.Position + Vector3.new(0, 3.5, 0))
 	CharacterService.apply(player)
-	local treadmill = GameData.Treadmills[treadmillId]
 	Net.notify(
 		player,
-		string.format("Entrenando en la %s (×%s). Pulsa otra vez para parar.", treadmill.name, tostring(treadmill.multiplier)),
+		string.format("Entrenando ×%.1f. Pulsa la caminadora otra vez para parar.", PlayerLogic.treadmillMultiplier(data)),
 		"ok"
 	)
 end
 
-local function buildTreadmill(folder, treadmill)
-	local position = POSITIONS[treadmill.id]
-	local part = WorldService.makePart({
-		Name = treadmill.name,
-		Size = Vector3.new(5, 1, 8),
-		Position = position + Vector3.new(0, 0.5, 0),
-		Color = Color3.fromRGB(60, 60, 70),
-		Material = Enum.Material.Metal,
-	})
-	part:SetAttribute("TreadmillId", treadmill.id)
-	CollectionService:AddTag(part, "Treadmill")
-	local subtitle = string.format("Entrena velocidad ×%s", tostring(treadmill.multiplier))
-	if treadmill.cost > 0 then
-		subtitle ..= string.format(" · %d monedas", treadmill.cost)
-	elseif treadmill.pass then
-		subtitle ..= " · pase de Robux"
-	end
-	WorldService.makeSign(part, treadmill.name, subtitle, 5, 100)
-
-	local prompt = Instance.new("ProximityPrompt")
-	prompt.ActionText = "Entrenar / parar"
-	prompt.ObjectText = treadmill.name
-	prompt.HoldDuration = 0
-	prompt.MaxActivationDistance = 10
-	prompt.RequiresLineOfSight = false
-	prompt.Parent = part
-	prompt.Triggered:Connect(function(player)
+function TrainingService.init()
+	PlotService.onTreadmill(function(player)
 		if training[player] then
 			TrainingService.stop(player, "Dejaste de entrenar.")
 		else
-			start(player, treadmill.id, part)
+			start(player)
 		end
 	end)
-	part.Parent = folder
-end
-
-function TrainingService.init()
-	local folder = Instance.new("Model")
-	folder.Name = "Caminadoras"
-	folder.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
-	folder.Parent = WorldService.Folder
-	for _, treadmillId in GameData.TreadmillOrder do
-		buildTreadmill(folder, GameData.Treadmills[treadmillId])
-	end
 
 	local function watchPlayer(player)
 		player.CharacterAdded:Connect(function()
@@ -142,14 +92,12 @@ function TrainingService.init()
 	task.spawn(function()
 		while true do
 			task.wait(Config.TRAIN_TICK_SECONDS)
-			for player, info in training do
+			for player in training do
 				local data = DataService.get(player)
-				local root = getRoot(player)
-				if not data or not root or (root.Position - info.part.Position).Magnitude > Config.TREADMILL_DISTANCE then
+				if not data or not PlotService.isNear(player, "treadmill", Config.TREADMILL_DISTANCE) then
 					TrainingService.stop(player, "Dejaste de entrenar.")
 				else
-					local gained = PlayerLogic.trainTick(data, info.id, Config.TRAIN_TICK_SECONDS)
-					if gained > 0 then
+					if PlayerLogic.trainTick(data, Config.TRAIN_TICK_SECONDS) > 0 then
 						DataService.replicate(player)
 					end
 					if data.trained >= Config.MAX_TRAINED then

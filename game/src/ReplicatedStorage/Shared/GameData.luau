@@ -75,15 +75,9 @@ GameData.Pets = {
 -- Orden de menor a mayor bonus (la Suprema siempre es la mejor)
 GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon", "supreme" }
 
--- Caminadoras de entrenamiento de velocidad (DEV-006, PROPUESTA)
--- multiplier: multiplica Config.TRAIN_RATE · cost: monedas para desbloquear
--- pass: pase de Robux necesario
-GameData.Treadmills = {
-	basic = { id = "basic", name = "Caminadora Básica", multiplier = 1, cost = 0 },
-	advanced = { id = "advanced", name = "Caminadora de Acero", multiplier = 2.5, cost = 2500 },
-	turbo = { id = "turbo", name = "Caminadora Turbo", multiplier = 6, cost = 0, pass = "turboTreadmill" },
-}
-GameData.TreadmillOrder = { "basic", "advanced", "turbo" }
+-- Caminadora personal del plot (DEV-008). Multiplicador de entrenamiento =
+-- 1 + nivel de la mejora «treadmill» × 0.5; el pase Caminadora Turbo lo multiplica.
+GameData.TURBO_TREADMILL_FACTOR = 2
 
 -- Pases de juego (compra única con Robux, permanentes). DEV-006, PROPUESTA.
 -- Por decisión de Jhonn incluyen ventajas fuertes de velocidad.
@@ -96,7 +90,7 @@ GameData.GamePasses = {
 	turboTreadmill = {
 		id = "turboTreadmill",
 		name = "Caminadora Turbo",
-		desc = "Acceso a la caminadora que entrena velocidad ×6",
+		desc = "Tu caminadora del plot entrena ×2 más rápido",
 	},
 	runner = {
 		id = "runner",
@@ -170,10 +164,11 @@ GameData.EggOrder = { "brass", "silver", "gold" }
 
 -- Relojes que se fabrican en el taller.
 -- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender
--- income: monedas por ciclo del museo mientras está exhibido · cost: piezas necesarias
+-- income: monedas por ciclo mientras está exhibido en el plot · cost: piezas necesarias
 GameData.Watches = {
 	pocket = {
 		id = "pocket",
+		luck = 0.005, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj de bolsillo",
 		level = 1,
 		xp = 10,
@@ -183,6 +178,7 @@ GameData.Watches = {
 	},
 	wrist = {
 		id = "wrist",
+		luck = 0.01, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj de pulsera",
 		level = 2,
 		xp = 25,
@@ -192,6 +188,7 @@ GameData.Watches = {
 	},
 	chrono = {
 		id = "chrono",
+		luck = 0.02, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Cronógrafo",
 		level = 4,
 		xp = 60,
@@ -201,6 +198,7 @@ GameData.Watches = {
 	},
 	royal = {
 		id = "royal",
+		luck = 0.03, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj real de rubí",
 		level = 6,
 		xp = 150,
@@ -210,6 +208,7 @@ GameData.Watches = {
 	},
 	millionaire = {
 		id = "millionaire",
+		luck = 0.05, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj del millonario",
 		level = 8,
 		xp = 400,
@@ -259,17 +258,31 @@ GameData.Upgrades = {
 		growth = 2.2,
 		step = 0.075,
 	},
+	-- Mejoras del plot personal (DEV-008). El id «museum» se conserva para no
+	-- perder datos guardados: ahora son las vitrinas del plot.
 	museum = {
 		id = "museum",
-		name = "Vitrinas del museo",
-		desc = "+1 vitrina para exhibir relojes",
-		maxLevel = 5,
+		name = "Vitrinas del plot",
+		desc = "+2 vitrinas en tu plot para exhibir relojes",
+		maxLevel = 6,
 		baseCost = 300,
 		growth = 2,
-		step = 1,
+		step = 2,
+	},
+	treadmill = {
+		id = "treadmill",
+		name = "Caminadora del plot",
+		desc = "+0.5 al multiplicador de entrenamiento de tu caminadora",
+		maxLevel = 10,
+		baseCost = 400,
+		growth = 1.75,
+		step = 0.5,
 	},
 }
-GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck", "museum" }
+-- Mejoras que se compran en la Tienda
+GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck" }
+-- Mejoras que se compran en el propio plot
+GameData.PlotUpgradeOrder = { "museum", "treadmill" }
 
 -- Zonas de robo (DEV-003, PROPUESTA). Se recorren en línea recta desde la base.
 -- minSpeed: velocidad necesaria para cruzar la puerta de la zona y robar en ella
@@ -338,7 +351,7 @@ GameData.Tutorial = {
 	},
 	{
 		id = "craft",
-		text = "Fabrica un reloj de bolsillo en el Taller",
+		text = "Fabrica un reloj de bolsillo en el taller de tu plot",
 		stat = "crafted",
 		target = 1,
 		reward = 30,
@@ -354,11 +367,11 @@ GameData.Tutorial = {
 	},
 	{
 		id = "display",
-		text = "Fabrica otro reloj y exhíbelo en el Museo",
+		text = "Fabrica otro reloj y exhíbelo en tu plot",
 		stat = "museum",
 		target = 1,
 		reward = 40,
-		guide = "museum",
+		guide = "plot",
 	},
 	{
 		id = "upgrade",

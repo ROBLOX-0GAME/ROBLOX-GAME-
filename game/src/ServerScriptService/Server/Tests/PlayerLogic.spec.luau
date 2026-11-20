@@ -403,27 +403,65 @@ return function(t)
 		t.ok(PlayerLogic.canEnterZone(fresh, 2), "un zorro (+20%) abre el Barrio Obrero")
 	end)
 
-	t.test("DEV-006: entrenar en caminadoras", function()
+	t.test("DEV-008: caminadora del plot, mejoras y pase Turbo", function()
 		local data = PlayerLogic.newData()
 		local before = PlayerLogic.walkSpeed(data)
-		local gained = PlayerLogic.trainTick(data, "basic", 10)
-		t.ok(math.abs(gained - Config.TRAIN_RATE * 10) < 1e-9, "la básica entrena ×1")
+		t.eq(PlayerLogic.treadmillMultiplier(data), 1, "nivel 0 entrena ×1")
+		local gained = PlayerLogic.trainTick(data, 10)
+		t.ok(math.abs(gained - Config.TRAIN_RATE * 10) < 1e-9, "gana TRAIN_RATE por segundo")
 		t.ok(PlayerLogic.walkSpeed(data) > before, "entrenar sube la velocidad")
-		t.eq(PlayerLogic.trainTick(data, "advanced", 10), 0, "la de acero exige desbloquearla")
-		t.eq(PlayerLogic.trainTick(data, "turbo", 10), 0, "la turbo exige el pase")
-		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "sin monedas no la desbloquea")
-		data.coins = GameData.Treadmills.advanced.cost
-		t.ok(PlayerLogic.buyTreadmill(data, "advanced"), "desbloquea la de acero")
-		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "no la compra dos veces")
-		t.ok(not PlayerLogic.buyTreadmill(data, "turbo"), "la turbo no se compra con monedas")
-		local advanced = PlayerLogic.trainTick(data, "advanced", 10)
-		t.ok(math.abs(advanced - Config.TRAIN_RATE * 10 * GameData.Treadmills.advanced.multiplier) < 1e-9, "×2.5")
-		PlayerLogic.trainTick(data, "basic", 10 ^ 7)
+		data.coins = 10 ^ 7
+		t.ok(PlayerLogic.buyUpgrade(data, "treadmill"), "mejora la caminadora")
+		local step = GameData.Upgrades.treadmill.step
+		t.eq(PlayerLogic.treadmillMultiplier(data), 1 + step, "el nivel sube el multiplicador")
+		PlayerLogic.setPasses(data, { turboTreadmill = true })
+		t.eq(PlayerLogic.treadmillMultiplier(data), (1 + step) * GameData.TURBO_TREADMILL_FACTOR, "el pase Turbo lo multiplica")
+		PlayerLogic.trainTick(data, 10 ^ 7)
 		t.eq(data.trained, Config.MAX_TRAINED, "tope de velocidad entrenada")
 		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad total")
 		t.eq(PlayerLogic.reconcile({ trained = -5 }).trained, 0, "repara entrenamiento negativo")
 		t.eq(PlayerLogic.reconcile({ trained = 999 }).trained, Config.MAX_TRAINED, "limita entrenamiento")
-		t.eq(PlayerLogic.reconcile({ treadmills = { advanced = true, falsa = true } }).treadmills.falsa, nil, "descarta caminadoras falsas")
+	end)
+
+	t.test("DEV-008: datos de caminadoras antiguas se adaptan al plot", function()
+		local migrated = PlayerLogic.reconcile({ treadmills = { advanced = true } })
+		t.eq(migrated.upgrades.treadmill, 3, "la de Acero equivale al nivel 3")
+		t.eq(migrated.treadmills, nil, "se elimina el dato viejo")
+		local kept = PlayerLogic.reconcile({ treadmills = { advanced = true }, upgrades = { treadmill = 7 } })
+		t.eq(kept.upgrades.treadmill, 7, "no baja un nivel mayor")
+		t.eq(PlayerLogic.reconcile({}).upgrades.treadmill, nil, "sin caminadora vieja no regala niveles")
+	end)
+
+	t.test("DEV-008: el plot da suerte con tope y las mejoras están separadas", function()
+		local data = PlayerLogic.newData()
+		t.eq(PlayerLogic.plotLuck(data), 0, "plot vacío sin suerte")
+		data.watches.chrono = 1
+		PlayerLogic.display(data, "chrono")
+		t.ok(math.abs(PlayerLogic.plotLuck(data) - GameData.Watches.chrono.luck) < 1e-9, "suerte del reloj exhibido")
+		t.ok(PlayerLogic.extraPartChance(data) > 0, "la suerte del plot ayuda a robar 2 piezas")
+		data.museum = { millionaire = 100 }
+		t.eq(PlayerLogic.plotLuck(data), Config.MAX_PLOT_LUCK, "tope de suerte del plot")
+		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		t.ok(PlayerLogic.extraPartChance(data) <= Config.MAX_EXTRA_PART_CHANCE, "tope total de suerte")
+		for _, watchId in GameData.WatchOrder do
+			t.ok(type(GameData.Watches[watchId].luck) == "number", watchId .. " tiene suerte definida")
+		end
+		for _, upgradeId in GameData.PlotUpgradeOrder do
+			t.ok(GameData.Upgrades[upgradeId] ~= nil, "mejora de plot existe: " .. upgradeId)
+			t.ok(not table.find(GameData.UpgradeOrder, upgradeId), upgradeId .. " no se vende en la Tienda")
+		end
+		local view = PlayerLogic.buildView(PlayerLogic.newData())
+		t.ok(view.upgradeCosts.treadmill ~= nil and view.upgradeCosts.museum ~= nil, "la vista trae precios del plot")
+	end)
+
+	t.test("DEV-008: más vitrinas al mejorar el plot", function()
+		local data = PlayerLogic.newData()
+		local base = PlayerLogic.museumSlots(data)
+		data.coins = 10 ^ 7
+		PlayerLogic.buyUpgrade(data, "museum")
+		t.eq(PlayerLogic.museumSlots(data), base + GameData.Upgrades.museum.step, "+2 vitrinas")
+		data.upgrades.museum = GameData.Upgrades.museum.maxLevel
+		t.ok(PlayerLogic.museumSlots(data) <= 15, "caben en las 3 filas de 5 vitrinas del plot")
 	end)
 
 	t.test("DEV-006: pases de velocidad, monedas, mochila y ranura", function()

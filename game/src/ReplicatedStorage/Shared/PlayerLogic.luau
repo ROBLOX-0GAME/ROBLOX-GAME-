@@ -33,7 +33,6 @@ function PlayerLogic.newData()
 		stats = { collected = 0, crafted = 0, sold = 0, earned = 0 },
 		tutorial = 1, -- paso actual del tutorial; #GameData.Tutorial + 1 = terminado
 		trained = 0, -- velocidad permanente ganada en caminadoras (DEV-006)
-		treadmills = {}, -- [treadmillId] = true si la desbloqueó con monedas
 		passes = {}, -- [passId] = true; SOLO de la sesión: se consulta a Roblox al entrar
 		receipts = {}, -- últimas compras con Robux entregadas (evita entregar dos veces)
 	}
@@ -129,15 +128,12 @@ function PlayerLogic.reconcile(data)
 		trained = 0
 	end
 	data.trained = math.min(trained, Config.MAX_TRAINED)
-	local treadmills = {}
-	if type(data.treadmills) == "table" then
-		for id, owned in data.treadmills do
-			if GameData.Treadmills[id] and owned == true then
-				treadmills[id] = true
-			end
-		end
+	-- DEV-008: las caminadoras compartidas pasan a la caminadora del plot.
+	-- Quien había desbloqueado la de Acero (×2.5) empieza con su equivalente (nivel 3).
+	if type(data.treadmills) == "table" and data.treadmills.advanced == true then
+		data.upgrades.treadmill = math.max(data.upgrades.treadmill or 0, 3)
 	end
-	data.treadmills = treadmills
+	data.treadmills = nil
 	local receipts = {}
 	if type(data.receipts) == "table" then
 		for _, receipt in data.receipts do
@@ -282,9 +278,28 @@ function PlayerLogic.jumpHeight(data)
 	return Config.BASE_JUMPHEIGHT + PlayerLogic.upgradeLevel(data, "jump") * GameData.Upgrades.jump.step
 end
 
--- Probabilidad (0-1) de robar 2 piezas en vez de 1.
+-- Suerte que dan los relojes exhibidos en el plot (DEV-008), con tope.
+function PlayerLogic.plotLuck(data)
+	local luck = 0
+	for watchId, amount in data.museum do
+		luck += (GameData.Watches[watchId].luck or 0) * amount
+	end
+	return math.min(Config.MAX_PLOT_LUCK, luck)
+end
+
+-- Probabilidad (0-1) de robar 2 piezas en vez de 1: mejora Suerte + plot.
 function PlayerLogic.extraPartChance(data)
-	return PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step
+	local chance = PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step + PlayerLogic.plotLuck(data)
+	return math.min(Config.MAX_EXTRA_PART_CHANCE, chance)
+end
+
+-- Multiplicador de entrenamiento de la caminadora del plot (DEV-008).
+function PlayerLogic.treadmillMultiplier(data)
+	local multiplier = 1 + PlayerLogic.upgradeLevel(data, "treadmill") * GameData.Upgrades.treadmill.step
+	if PlayerLogic.hasPass(data, "turboTreadmill") then
+		multiplier *= GameData.TURBO_TREADMILL_FACTOR
+	end
+	return multiplier
 end
 
 function PlayerLogic.museumSlots(data)
@@ -412,7 +427,7 @@ end
 function PlayerLogic.buildView(data)
 	local level, levelXp, levelNeed = PlayerLogic.levelInfo(data.xp)
 	local upgradeCosts = {}
-	for _, upgradeId in GameData.UpgradeOrder do
+	for upgradeId in GameData.Upgrades do
 		upgradeCosts[upgradeId] = PlayerLogic.upgradeCost(data, upgradeId) or false
 	end
 	local petBonuses = {}
@@ -458,7 +473,9 @@ function PlayerLogic.buildView(data)
 		speedMultiplier = PlayerLogic.speedMultiplier(data),
 		baseSpeed = PlayerLogic.baseSpeed(data),
 		trained = data.trained,
-		treadmills = table.clone(data.treadmills),
+		treadmillMultiplier = PlayerLogic.treadmillMultiplier(data),
+		plotLuck = PlayerLogic.plotLuck(data),
+		extraPartChance = PlayerLogic.extraPartChance(data),
 		passes = table.clone(data.passes),
 		coinMultiplier = PlayerLogic.coinMultiplier(data),
 		upgradeCosts = upgradeCosts,
@@ -649,11 +666,11 @@ function PlayerLogic.display(data, watchId)
 		return false, "No tienes ese reloj en tu inventario."
 	end
 	if PlayerLogic.museumCount(data) >= PlayerLogic.museumSlots(data) then
-		return false, "No quedan vitrinas libres. Mejora el museo o retira un reloj."
+		return false, "No quedan vitrinas libres. Mejora tu plot o retira un reloj."
 	end
 	removeCount(data.watches, watchId, 1)
 	data.museum[watchId] = (data.museum[watchId] or 0) + 1
-	return true, string.format("%s exhibido en el museo.", watch.name)
+	return true, string.format("%s exhibido en tu plot.", watch.name)
 end
 
 function PlayerLogic.withdraw(data, watchId)
@@ -669,7 +686,7 @@ function PlayerLogic.withdraw(data, watchId)
 	end
 	removeCount(data.museum, watchId, 1)
 	data.watches[watchId] = (data.watches[watchId] or 0) + 1
-	return true, string.format("%s retirado del museo.", watch.name)
+	return true, string.format("%s retirado de tu plot.", watch.name)
 end
 
 -- Completa todos los pasos del tutorial ya cumplidos y entrega sus premios.
@@ -897,44 +914,13 @@ function PlayerLogic.setPasses(data, owned)
 	end
 end
 
-function PlayerLogic.canUseTreadmill(data, treadmillId)
-	local treadmill = GameData.Treadmills[treadmillId]
-	if not treadmill then
-		return false, "Esa caminadora no existe."
-	end
-	if treadmill.pass and not PlayerLogic.hasPass(data, treadmill.pass) then
-		return false, string.format("Necesitas el pase «%s».", GameData.GamePasses[treadmill.pass].name)
-	end
-	if treadmill.cost > 0 and not data.treadmills[treadmillId] then
-		return false, string.format("Desbloquéala en la Tienda por %d monedas.", treadmill.cost)
-	end
-	return true, ""
-end
-
-function PlayerLogic.buyTreadmill(data, treadmillId)
-	local treadmill = GameData.Treadmills[treadmillId]
-	if not treadmill or treadmill.cost <= 0 then
-		return false, "Esa caminadora no se compra con monedas."
-	end
-	if data.treadmills[treadmillId] then
-		return false, "Ya tienes la " .. treadmill.name .. "."
-	end
-	if data.coins < treadmill.cost then
-		return false, string.format("Te faltan %d monedas.", treadmill.cost - data.coins)
-	end
-	data.coins -= treadmill.cost
-	data.treadmills[treadmillId] = true
-	return true, treadmill.name .. " desbloqueada."
-end
-
--- Entrena en una caminadora durante `seconds`. Devuelve la velocidad ganada.
-function PlayerLogic.trainTick(data, treadmillId, seconds)
-	if not PlayerLogic.canUseTreadmill(data, treadmillId) then
-		return 0
-	end
-	local multiplier = GameData.Treadmills[treadmillId].multiplier
+-- Entrena en la caminadora del plot durante `seconds`. Devuelve la velocidad ganada.
+function PlayerLogic.trainTick(data, seconds)
 	local before = data.trained
-	data.trained = math.min(Config.MAX_TRAINED, before + Config.TRAIN_RATE * seconds * multiplier)
+	data.trained = math.min(
+		Config.MAX_TRAINED,
+		before + Config.TRAIN_RATE * seconds * PlayerLogic.treadmillMultiplier(data)
+	)
 	return data.trained - before
 end
 
