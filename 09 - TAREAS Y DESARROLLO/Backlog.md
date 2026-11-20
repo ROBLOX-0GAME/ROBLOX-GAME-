@@ -570,3 +570,23 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila ART-006 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-003 (relojes base), DEV-014 (`AssetLibrary` acepta Models). No toca `game/src`.
+
+### ART-007 — Traspaso a la PC Windows: importar los relojes PBR en Studio y seguir el arte
+
+- **ID:** ART-007.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn (quien importa en Windows); Michael y Einell (dueños del arte).
+- **Área:** Coordinación de arte.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** prompt de traspaso `art/PROMPT_ARTE_WINDOWS_STUDIO.md` para que Claude Code siga en la PC Windows con Roblox Studio: importar los 6 relojes de ART-006 y montar sus `SurfaceAppearance`; si se aprueba DEC-018, aplicar materiales PBR a piezas robables, pieza del legado y cápsulas; después retocar iconos (Krita) y sonidos (Audacity).
+
+**Criterios de aceptación:**
+
+- [ ] Prompt con reglas, verificación de herramientas en Windows, importación en Studio, tratamiento PBR condicionado a DEC-018, iconos, sonidos e informe.
+- [ ] Enlazado desde `art/README.md` y registrado en el Changelog.
+- [ ] La fila ART-007 de ACTIVE_TASKS queda Completada.
