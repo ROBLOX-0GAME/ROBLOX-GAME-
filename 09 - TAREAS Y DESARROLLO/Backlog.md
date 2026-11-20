@@ -674,3 +674,23 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] `generar_todo.py` no los sobrescribe; los relojes siguen generándose igual.
 - [x] Vistas EEVEE revisadas; Pipeline, Changelog y memoria del área 12 actualizados.
 
+### ART-011 — Subida de assets con Open Cloud (script y prompt para Jhonn)
+
+- **ID:** ART-011.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arte / herramientas.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** la place oficial es de Jhonn (Lubu465), así que los assets deben subirse con una API key suya para que carguen en la experiencia. Se crea `art/tools/subir_roblox.py` (Open Cloud Assets API: 56 PNG como Image y 20 FBX como Model; guarda los IDs en `art/texturas/ids_roblox.json` y genera `art/tools/montar_assets.luau`) y `art/PROMPT_SUBIDA_JHONN.md` para que Jhonn cree la clave y lo ejecute con su Claude. La importación en Studio y la prueba en Play siguen en ART-008.
+
+**Criterios de aceptación:**
+
+- [ ] Script con modo de prueba (`--prueba`) ejecutado sin clave.
+- [ ] Prompt para Jhonn con creación de la API key, ejecución, montaje en Studio y reglas de reserva.
+- [ ] La clave nunca se guarda en el repositorio.
+
