@@ -231,3 +231,9 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Mundo / sistemas.
 - **Propuesta:** 6 jugadores y 6 plots de 34 × 40 en media luna alrededor de la plaza; caminadora delante y taller al fondo; muro frontal con abertura y las estaciones Tienda, Robux, Criadero y Cronómetro. Detalle en [[GDD]] §15.8.
+
+#### DEC-013 — Historia inicial, pieza del legado, tutorial e ingreso pasivo del 30%
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Experiencia de inicio / economía.
+- **Propuesta:** cinemática del abandono y llegada a la ciudad; pieza del legado ficticia, protegida y usable en el Reloj del Legado; tutorial de 6 pasos; ingreso pasivo = 30% del valor cada 10 min. Detalle en [[GDD]] §15.9.
+- **Nota:** se evitan marcas reales (Patek Philippe, Graff) por derechos de marca.

@@ -32,7 +32,12 @@ local Config = {
 	-- Mundo
 	HUB_MAX_Z = 20, -- todo lo que tenga Z menor es la base (zona segura)
 	HOUSE_SPOT_RESPAWN_SECONDS = 20, -- una pieza robada reaparece tras este tiempo
-	MUSEUM_TICK_SECONDS = 10,
+	MUSEUM_TICK_SECONDS = 10, -- cada cuánto se paga el ingreso pasivo (en fracciones)
+	-- Ingreso pasivo de un reloj exhibido (DEV-011): PLOT_INCOME_PERCENT de su valor
+	-- de venta cada PLOT_INCOME_PERIOD_SECONDS. Vender da el 100% al momento.
+	PLOT_INCOME_PERCENT = 0.30,
+	PLOT_INCOME_PERIOD_SECONDS = 600,
+	LEGACY_CLAIM_DISTANCE = 80, -- distancia máxima a la aparición para recoger la pieza del legado
 
 	-- Robo y persecución (DEV-003)
 	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en salir tras de ti

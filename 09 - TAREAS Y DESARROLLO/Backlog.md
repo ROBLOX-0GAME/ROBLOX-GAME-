@@ -329,7 +329,7 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - **Revisor:** Zadiel. Cuenta B revisa la historia, los textos y la cinemática.
 - **Área:** Sistemas, economía y experiencia de inicio.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -342,12 +342,12 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 
 **Criterios de aceptación:**
 
-- [ ] Cinemática con texto de la historia y cámara, solo la primera vez, con opción de saltar.
-- [ ] La pieza del legado se recoge una sola vez (validado en el servidor), es aleatoria, está protegida contra venta y descarte, y se puede usar en una receta especial.
-- [ ] El tutorial empieza después de la pieza y enseña velocidad, robo, taller, venta, exhibición y mejoras, con guía en el mundo.
-- [ ] Ingreso pasivo = 30% del valor de venta por periodo, con acumulación de fracciones.
-- [ ] Pruebas actualizadas y nuevas, y revisión estática sin errores.
-- [ ] La fila DEV-011 de ACTIVE_TASKS queda Completada.
+- [x] Cinemática con texto de la historia y cámara, solo la primera vez, con opción de saltar.
+- [x] La pieza del legado se recoge una sola vez (validado en el servidor), es aleatoria, está protegida contra venta y descarte, y se puede usar en una receta especial.
+- [x] El tutorial empieza después de la pieza y enseña velocidad, robo, taller, venta, exhibición y mejoras, con guía en el mundo.
+- [x] Ingreso pasivo = 30% del valor de venta por periodo, con acumulación de fracciones.
+- [x] Pruebas actualizadas y nuevas, y revisión estática sin errores.
+- [x] La fila DEV-011 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-010 (Completada).
 

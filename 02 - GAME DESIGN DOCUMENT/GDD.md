@@ -323,3 +323,31 @@ Las mascotas de la Cápsula Cósmica son exclusivas de Robux y más fuertes que 
 - **Muro frontal** amplio, en el borde de la base, con una **abertura central** para salir a correr hacia las zonas. Pegados a su cara interior están la **Tienda**, la **Tienda Robux**, el **Criadero de cápsulas** y el **Cronómetro Maestro**.
 - Se aparece en la plaza, frente a la salida. Cuando tienes plot, al reaparecer vas delante de él.
 - Para que quepa la media luna, el mapa se ensancha a 260 studs de ancho y la base llega hasta Z = −205.
+
+### 15.9 Historia inicial, pieza del legado, tutorial e ingreso pasivo (DEV-011)
+
+> Dirección de Jhonn (2026-11-20). Propuesta DEC-013. La Cuenta B revisa textos y cinemática; el arte final va aparte.
+
+**Cinemática (solo la primera vez, con botón «Saltar»):** pantalla negra con la historia y después la cámara baja hasta el jugador en la plaza:
+
+1. «Cuando eras pequeño, tus padres se fueron sin dejar rastro.»
+2. «Creciste solo, con una única pasión: los relojes.»
+3. «El día que cumpliste 18 años, te dejaron en un lugar que nunca habías visto…»
+4. «…una ciudad donde los relojes valen fortunas.» Luego: «…y en el suelo, algo brilla.»
+
+**Pieza del legado:** una pieza muy luminosa en la plaza. Al recogerla toca una de tres al azar: **Espiral Celestial**, **Corona de Zafiro Real** o **Rotor de Diamantes Arcoíris**.
+
+- Son nombres **ficticios** inspirados en la alta relojería. No se usan marcas reales como Patek Philippe o Graff, porque son marcas registradas y Roblox puede moderar el juego.
+- Se recibe **una sola vez** y queda para siempre. No ocupa espacio en la mochila y **no se puede vender, tirar ni entregar**.
+- El jugador puede **guardarla** o **usarla** en el **Reloj del Legado**: nivel 3, se vende por 3.000, +4% de suerte exhibido.
+
+**Tutorial nuevo** (empieza tras recoger la pieza; cada paso da monedas y una guía luminosa):
+
+1. Entrenar en la caminadora del plot hasta +0,5 de velocidad.
+2. Salir por la abertura del muro, robar 5 piezas y volver a la base.
+3. Fabricar un Reloj de bolsillo en el taller al fondo del plot.
+4. Vender un reloj en la Tienda: da todo su valor al momento.
+5. Fabricar otro y exhibirlo en el plot: da el 30% de su valor cada 10 min.
+6. Comprar una mejora: más velocidad abre zonas más ricas.
+
+**Ingreso pasivo:** un reloj exhibido da el **30% de su valor de venta cada 10 minutos**, pagado en fracciones cada 10 s y sin perder decimales. Por ejemplo, un Reloj del millonario (5.000) da 150 monedas por minuto. **Vender** da el 100% al momento (lo activo); **exhibir** paga poco a poco pero sin parar (lo pasivo). El porcentaje y el periodo están en `Config` (`PLOT_INCOME_PERCENT` y `PLOT_INCOME_PERIOD_SECONDS`).

@@ -366,7 +366,7 @@ local function renderShop()
 	local anyPart = false
 	for _, partId in GameData.PartOrder do
 		local owned = state.parts[partId] or 0
-		if owned > 0 then
+		if owned > 0 and not GameData.Parts[partId].protected then
 			anyPart = true
 			local part = GameData.Parts[partId]
 			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", part.name, owned, part.sell), {
@@ -453,11 +453,17 @@ end
 local function renderMuseum()
 	addHeader(
 		string.format(
-			"Vitrinas %d/%d · Ingreso +%d cada %d s",
+			"Vitrinas %d/%d · Ingreso pasivo +%.1f monedas/min",
 			state.museumCount,
 			state.museumSlots,
-			state.museumIncome,
-			Config.MUSEUM_TICK_SECONDS
+			state.museumIncomePerMinute
+		)
+	)
+	addRow(
+		string.format(
+			"Vender da el 100%% del valor al momento. Exhibido, un reloj da el %d%% de su valor cada %d min.",
+			math.floor(Config.PLOT_INCOME_PERCENT * 100 + 0.5),
+			Config.PLOT_INCOME_PERIOD_SECONDS // 60
 		)
 	)
 	local anyDisplayed = false
@@ -466,7 +472,7 @@ local function renderMuseum()
 		if displayed > 0 then
 			anyDisplayed = true
 			local watch = GameData.Watches[watchId]
-			addRow(string.format("<b>%s</b> × %d exhibido  ·  +%d c/u", watch.name, displayed, watch.income), {
+			addRow(string.format("<b>%s</b> × %d exhibido  ·  +%.1f/min c/u", watch.name, displayed, PlayerLogic.watchIncomePerMinute(watchId)), {
 				{
 					text = "Retirar",
 					onActivated = function()
@@ -488,7 +494,7 @@ local function renderMuseum()
 		if owned > 0 then
 			anyOwned = true
 			local watch = GameData.Watches[watchId]
-			addRow(string.format("<b>%s</b> × %d  ·  +%d por ciclo", watch.name, owned, watch.income), {
+			addRow(string.format("<b>%s</b> × %d  ·  vende %d o exhibe por +%.1f/min", watch.name, owned, watch.sell, PlayerLogic.watchIncomePerMinute(watchId)), {
 				{
 					text = "Exhibir",
 					enabled = hasSpace,
@@ -694,7 +700,22 @@ local function renderBackpack()
 		local part = GameData.Parts[partId]
 		local owned = state.parts[partId] or 0
 		local buttons = nil
-		if owned > 0 then
+		if partId == "legacy" then
+			if owned > 0 then
+				local variant = nil
+				for _, legacyPiece in GameData.LegacyPieces do
+					if legacyPiece.id == state.legacyVariant then
+						variant = legacyPiece
+					end
+				end
+				addRow(string.format(
+					"<b>%s</b> (herencia)
+<font color=\"#aaaab9\">%s Úsala en el Reloj del Legado o guárdala.</font>",
+					variant and variant.name or part.name,
+					variant and variant.desc or ""
+				))
+			end
+		elseif owned > 0 then
 			-- Tirar piezas libera espacio en cualquier lugar (BUG-001).
 			buttons = {
 				{
@@ -711,7 +732,9 @@ local function renderBackpack()
 				},
 			}
 		end
-		addRow(string.format("<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>", part.name, owned, part.rarity), buttons)
+		if partId ~= "legacy" then
+			addRow(string.format("<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>", part.name, owned, part.rarity), buttons)
+		end
 	end
 	addHeader("Relojes")
 	for _, watchId in GameData.WatchOrder do
@@ -815,7 +838,7 @@ local function renderBoss()
 	local any = false
 	for _, partId in GameData.PartOrder do
 		local owned = state.parts[partId] or 0
-		if owned > 0 then
+		if owned > 0 and not GameData.Parts[partId].protected then
 			any = true
 			local part = GameData.Parts[partId]
 			addRow(
@@ -1021,9 +1044,8 @@ local function updateHud()
 		hud.loot.Visible = false
 	end
 	hud.museum.Text = string.format(
-		"Plot: +%d cada %d s · suerte +%.1f%%",
-		state.museumIncome,
-		Config.MUSEUM_TICK_SECONDS,
+		"Plot: +%.1f monedas/min · suerte +%.1f%%",
+		state.museumIncomePerMinute,
 		state.plotLuck * 100
 	)
 
@@ -1055,6 +1077,15 @@ local guide = { beam = nil, from = nil, to = nil, target = nil }
 local findStation = stationById
 
 local function findGuideTarget(guideId)
+	if guideId == "treadmill" then
+		-- Caminadora del plot propio (DEV-011)
+		for _, part in CollectionService:GetTagged("PlotTreadmill") do
+			if part:GetAttribute("OwnerUserId") == player.UserId then
+				return part
+			end
+		end
+		return nil
+	end
 	if guideId == "house" then
 		return CollectionService:GetTagged("GuideHouse")[1]
 	end
@@ -1329,6 +1360,11 @@ end
 -- ---------------------------------------------------------------------------
 -- API
 -- ---------------------------------------------------------------------------
+
+-- Otros módulos del cliente (Intro) piden acciones por aquí.
+function Ui.request(action, id, amount)
+	request(action, id, amount)
+end
 
 function Ui.init(remote)
 	actionRemote = remote

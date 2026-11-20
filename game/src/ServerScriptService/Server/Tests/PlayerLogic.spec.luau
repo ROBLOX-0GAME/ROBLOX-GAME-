@@ -154,9 +154,15 @@ return function(t)
 			t.ok(PlayerLogic.display(data, "wrist"), "exhibe")
 		end
 		t.ok(not PlayerLogic.display(data, "wrist"), "no supera las vitrinas")
-		t.eq(PlayerLogic.museumIncome(data), GameData.Watches.wrist.income * slots, "ingreso correcto")
-		local earned = PlayerLogic.collectIncome(data)
-		t.eq(earned, GameData.Watches.wrist.income * slots, "cobra el ingreso")
+		-- DEV-011: cada ciclo paga PLOT_INCOME_PERCENT del valor repartido en el periodo
+		local perTick = GameData.Watches.wrist.sell * slots * Config.PLOT_INCOME_PERCENT
+			* Config.MUSEUM_TICK_SECONDS / Config.PLOT_INCOME_PERIOD_SECONDS
+		t.ok(math.abs(PlayerLogic.museumIncome(data) - perTick) < 1e-9, "ingreso por ciclo")
+		local earned = 0
+		for _ = 1, 40 do
+			earned += PlayerLogic.collectIncome(data)
+		end
+		t.eq(earned, math.floor(perTick * 40 + 1e-6), "las fracciones se acumulan sin perderse")
 		t.eq(data.coins, earned, "suma monedas")
 		t.ok(PlayerLogic.withdraw(data, "wrist"), "retira")
 		t.eq(data.watches.wrist, 2, "vuelve al inventario")
@@ -197,35 +203,34 @@ return function(t)
 		end
 	end)
 
-	t.test("DEV-002: el tutorial avanza en orden y paga una sola vez", function()
+	t.test("DEV-002/011: el tutorial empieza tras la introducción, va en orden y paga una vez", function()
 		local data = PlayerLogic.newData()
 		local steps = GameData.Tutorial
 		t.eq(data.tutorial, 1, "empieza en el paso 1")
-		t.eq(#PlayerLogic.advanceTutorial(data), 0, "sin progreso no avanza")
-
-		for _ = 1, steps[1].target - 1 do
-			PlayerLogic.addPart(data, "gear")
-		end
+		data.trained = 1
+		t.eq(#PlayerLogic.advanceTutorial(data), 0, "sin la introducción no avanza")
+		t.eq(PlayerLogic.buildView(data).tutorial, false, "la vista no muestra el tutorial aún")
+		t.ok(PlayerLogic.claimLegacy(data, 0), "recoge la pieza del legado")
 		PlayerLogic.advanceTutorial(data)
-		t.eq(data.tutorial, 1, "a una pieza de la meta no avanza")
-		PlayerLogic.addPart(data, "gear")
-		PlayerLogic.advanceTutorial(data)
-		t.eq(data.tutorial, 2, "completa el paso 1")
+		t.eq(data.tutorial, 2, "entrenar +0.5 completa el paso 1")
 		t.eq(data.coins, steps[1].reward, "paga el premio del paso 1")
 		PlayerLogic.advanceTutorial(data)
 		t.eq(data.coins, steps[1].reward, "no paga dos veces")
 
-		-- Cumplir el paso 3 (vender) antes que el 2 no lo salta: se completan en orden.
+		-- Cumplir pasos posteriores antes que el 2 no lo salta: se completan en orden.
 		data.stats.sold = 1
-		PlayerLogic.advanceTutorial(data)
-		t.eq(data.tutorial, 2, "sigue en fabricar")
 		data.stats.crafted = 1
 		PlayerLogic.advanceTutorial(data)
-		t.eq(data.tutorial, 4, "completa fabricar y vender de una vez")
+		t.eq(data.tutorial, 2, "sigue en robar")
+		data.stats.collected = 5
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 5, "completa robar, fabricar y vender de una vez")
 	end)
 
 	t.test("DEV-002: el tutorial termina y los datos antiguos se reparan", function()
 		local data = PlayerLogic.newData()
+		data.introDone = true
+		data.trained = 5
 		data.stats.collected = 99
 		data.stats.crafted = 9
 		data.stats.sold = 9
@@ -606,6 +611,59 @@ return function(t)
 		for index = 2, #GameData.PlaytimeRewards do
 			t.ok(GameData.PlaytimeRewards[index].minutes > GameData.PlaytimeRewards[index - 1].minutes, "niveles en orden")
 		end
+	end)
+
+	t.test("DEV-011: pieza del legado una sola vez, aleatoria y protegida", function()
+		local data = PlayerLogic.newData()
+		t.ok(not data.introDone, "empieza sin introducción")
+		local ok = PlayerLogic.claimLegacy(data, 0.999)
+		t.ok(ok, "recoge la pieza")
+		t.eq(data.legacyVariant, GameData.LegacyPieces[#GameData.LegacyPieces].id, "roll alto = última variante")
+		t.eq(data.parts.legacy, 1, "la pieza va a la mochila")
+		t.eq(PlayerLogic.partCount(data), 0, "la herencia no ocupa espacio de robo")
+		t.ok(not PlayerLogic.claimLegacy(data, 0), "no se recoge dos veces")
+		t.eq(data.parts.legacy, 1, "sigue habiendo una sola")
+		t.ok(not PlayerLogic.sellPart(data, "legacy", 1), "no se vende")
+		t.ok(not PlayerLogic.discardPart(data, "legacy", 1), "no se tira")
+		t.ok(not PlayerLogic.contributeParts(data, "legacy", 1), "no se entrega al Cronómetro")
+		t.eq(PlayerLogic.legacyPiece(data).id, data.legacyVariant, "se puede consultar la variante")
+		t.eq(PlayerLogic.reconcile({ legacyVariant = "falsa" }).legacyVariant, nil, "descarta variantes falsas")
+		t.eq(GameData.Parts.legacy.weight, 0, "no sale en las casas")
+		for _, zone in GameData.Zones do
+			t.eq(zone.weights.legacy, nil, zone.name .. " no da piezas del legado")
+		end
+	end)
+
+	t.test("DEV-011: usar la pieza en el Reloj del Legado", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.claimLegacy(data, 0)
+		data.xp = 10 ^ 6
+		for partId, amount in GameData.Watches.legacy.cost do
+			if partId ~= "legacy" then
+				data.parts[partId] = amount
+			end
+		end
+		t.ok(PlayerLogic.craft(data, "legacy"), "fabrica el Reloj del Legado")
+		t.eq(data.parts.legacy, nil, "la pieza se usa")
+		t.eq(data.watches.legacy, 1, "obtiene el reloj")
+		t.ok(not PlayerLogic.craft(data, "legacy"), "sin pieza no fabrica otro")
+	end)
+
+	t.test("DEV-011: vender rinde más al momento; exhibir da el 30% por periodo", function()
+		for _, watchId in GameData.WatchOrder do
+			local perPeriod = PlayerLogic.watchIncomePerMinute(watchId) * Config.PLOT_INCOME_PERIOD_SECONDS / 60
+			t.ok(
+				math.abs(perPeriod - GameData.Watches[watchId].sell * Config.PLOT_INCOME_PERCENT) < 1e-6,
+				watchId .. ": 30% del valor por periodo"
+			)
+			t.ok(GameData.Watches[watchId].sell > perPeriod, watchId .. ": vender da más que un periodo exhibido")
+		end
+		local data = PlayerLogic.newData()
+		data.museum.pocket = 1
+		local before = PlayerLogic.museumIncomePerMinute(data)
+		PlayerLogic.setPasses(data, { vip = true })
+		t.ok(PlayerLogic.museumIncomePerMinute(data) > before, "el VIP aumenta el ingreso pasivo")
+		t.eq(PlayerLogic.reconcile({ incomeRemainder = 5 }).incomeRemainder, 0, "repara fracciones inválidas")
 	end)
 
 	t.test("buildView es coherente", function()

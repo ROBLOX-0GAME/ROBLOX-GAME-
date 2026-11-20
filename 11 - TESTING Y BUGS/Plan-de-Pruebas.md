@@ -274,3 +274,15 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | En tu plot: caminadora delante, vitrinas en el centro, taller al fondo | Manual | Pendiente |
 | Muro frontal con abertura; Tienda, Robux, Criadero y Cronómetro pegados al muro | Manual | Pendiente |
 | Salir por la abertura lleva al camino de las zonas; al volver se guarda el botín | Manual | Pendiente |
+
+## 18. Pruebas de DEV-011 (historia, legado y tutorial)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`python game/tools/build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 40 bloques de prueba de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| Al entrar: pantalla negra con 4 frases y la cámara baja hasta el jugador; «Saltar» funciona | Manual | Pendiente |
+| Aparece una pieza luminosa delante; al recogerla sale el mensaje con su nombre | Manual | Pendiente |
+| La Mochila muestra la herencia sin botones de tirar; la Tienda y el Cronómetro no la ofrecen | Manual | Pendiente |
+| El tutorial empieza en «entrenar» y la guía apunta a tu caminadora | Manual | Pendiente |
+| Al exhibir un reloj, el HUD muestra «+X monedas/min» y las monedas suben poco a poco | Manual | Pendiente |

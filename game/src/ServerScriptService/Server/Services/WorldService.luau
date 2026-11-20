@@ -338,6 +338,7 @@ function WorldService.init()
 	spawn.Anchored = true
 	spawn.Size = Vector3.new(10, 1, 10)
 	spawn.Position = WorldService.PlazaCenter + Vector3.new(0, 0.5, 40) -- plaza, frente a la salida
+	WorldService.SpawnPosition = spawn.Position -- aquí empieza la historia (DEV-011)
 	spawn.Neutral = true
 	spawn.Duration = 0
 	spawn.Color = Color3.fromRGB(240, 200, 80)

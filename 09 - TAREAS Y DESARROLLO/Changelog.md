@@ -195,3 +195,28 @@ Reglas:
   - Interfaz: los menús que se abren desde el HUD (Mochila, Robux, Premios) ya no se cierran al alejarse.
   - · Verificación: comprobación geométrica en Python (0 solapamientos, todo dentro del mapa, estaciones y aparición libres) y revisión estática (0 errores).
 - **2026-11-20 · DEV-010 · Paso 3 — Cierre.** GDD §15.8, Plan de Pruebas §17, propuesta DEC-012 y memorias. La fila DEV-010 pasa a Completada. Las pruebas automáticas siguen siendo 37 porque la distribución no cambia reglas de `PlayerLogic`. · Verificación: revisión de archivos.
+
+---
+
+## 12. DEV-011 — Historia inicial, pieza del legado, tutorial e ingreso pasivo del 30%
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Cuenta B revisa historia y textos · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-011 · Paso 1 — Dirección y reserva.** Jhonn pide una cinemática de historia, una pieza luminosa de alta relojería que el jugador conserva, un tutorial completo y que exhibir dé el 30% del valor. Se proponen nombres ficticios en lugar de las marcas Patek Philippe y Graff. Reserva subida en `8b39674`. · Verificación: ejecutada.
+- **2026-11-20 · DEV-011 · Paso 2 — Datos y reglas.**
+  - `GameData`: pieza `legacy` (protegida), `LegacyPieces`, `IntroStory`, Reloj del Legado, tutorial de 6 pasos y rareza Herencia. Se quita el campo `income` de los relojes.
+  - `Config`: `PLOT_INCOME_PERCENT` = 0,30, `PLOT_INCOME_PERIOD_SECONDS` = 600 y `LEGACY_CLAIM_DISTANCE`.
+  - `PlayerLogic`: `claimLegacy`, `legacyPiece`, `introDone`, ingreso pasivo con `incomeRemainder`, `watchIncomePerMinute` y `museumIncomePerMinute`. Las piezas protegidas no se venden, ni se tiran, ni se entregan, ni ocupan espacio. El tutorial empieza tras la introducción y se añade la medida `trained10`.
+  - · Verificación: revisión estática.
+- **2026-11-20 · DEV-011 · Paso 3 — Servidor y cliente.**
+  - Acción `claimLegacy`, solo cerca de la aparición y una vez.
+  - `PlotService` deja al jugador en la plaza hasta terminar la introducción.
+  - `WorldService.SpawnPosition`.
+  - Nuevo módulo de cliente `Intro`: cinemática con «Saltar», cámara y pieza luminosa local.
+  - Guía del tutorial hacia la caminadora propia.
+  - La interfaz muestra el ingreso por minuto y oculta las acciones sobre la herencia.
+  - · Verificación: revisión estática (23 scripts, 0 errores).
+- **2026-11-20 · DEV-011 · Paso 4 — Pruebas.** Se actualizan las pruebas del museo y del tutorial y se añaden 3 nuevas: pieza del legado, Reloj del Legado e ingreso del 30%. Total: 40 bloques. · Verificación: pendiente en Studio.
+- **2026-11-20 · DEV-011 · Paso 5 — Cierre.** GDD §15.9, Plan de Pruebas §18, propuesta DEC-013 y memorias. La fila DEV-011 pasa a Completada. · Verificación: revisión de archivos.

@@ -36,6 +36,9 @@ function PlayerLogic.newData()
 		passes = {}, -- [passId] = true; SOLO de la sesión: se consulta a Roblox al entrar
 		receipts = {}, -- últimas compras con Robux entregadas (evita entregar dos veces)
 		capsules = {}, -- [capsuleId] = cápsulas sin abrir en la Mochila (DEV-009)
+		introDone = false, -- vio la introducción y recogió la pieza del legado (DEV-011)
+		legacyVariant = nil, -- id de GameData.LegacyPieces que le tocó
+		incomeRemainder = 0, -- fracción de moneda pendiente del ingreso pasivo
 		daily = { streak = 0, lastDay = -1 }, -- racha de recompensa diaria
 		playtime = { day = -1, seconds = 0, claimed = {} }, -- tiempo jugado hoy
 	}
@@ -147,6 +150,23 @@ function PlayerLogic.reconcile(data)
 	end
 	data.receipts = receipts
 
+	-- Introducción y pieza del legado (DEV-011)
+	data.introDone = data.introDone == true
+	local validVariant = false
+	for _, piece in GameData.LegacyPieces do
+		if piece.id == data.legacyVariant then
+			validVariant = true
+		end
+	end
+	if not validVariant then
+		data.legacyVariant = nil
+	end
+	local remainder = data.incomeRemainder
+	if type(remainder) ~= "number" or remainder ~= remainder or remainder < 0 or remainder >= 1 then
+		remainder = 0
+	end
+	data.incomeRemainder = remainder
+
 	-- Cápsulas y recompensas (DEV-009)
 	data.capsules = cleanCounts(data.capsules, GameData.Eggs)
 	for capsuleId, amount in data.capsules do
@@ -213,7 +233,13 @@ function PlayerLogic.backpackCapacity(data)
 end
 
 function PlayerLogic.partCount(data)
-	return sumCounts(data.parts)
+	local total = sumCounts(data.parts)
+	for partId, amount in data.parts do
+		if GameData.Parts[partId].protected then
+			total -= amount -- las piezas protegidas (herencia) no ocupan espacio
+		end
+	end
+	return total
 end
 
 function PlayerLogic.carriedCount(data)
@@ -345,12 +371,22 @@ function PlayerLogic.museumCount(data)
 	return sumCounts(data.museum)
 end
 
+-- Monedas por minuto que da un reloj exhibido (DEV-011: 30% de su valor por periodo).
+function PlayerLogic.watchIncomePerMinute(watchId)
+	return GameData.Watches[watchId].sell * Config.PLOT_INCOME_PERCENT * 60 / Config.PLOT_INCOME_PERIOD_SECONDS
+end
+
+-- Monedas (con decimales) que da el plot en un ciclo de Config.MUSEUM_TICK_SECONDS.
 function PlayerLogic.museumIncome(data)
 	local total = 0
 	for watchId, amount in data.museum do
-		total += GameData.Watches[watchId].income * amount
+		total += GameData.Watches[watchId].sell * amount
 	end
-	return total
+	return total * Config.PLOT_INCOME_PERCENT * Config.MUSEUM_TICK_SECONDS / Config.PLOT_INCOME_PERIOD_SECONDS
+end
+
+function PlayerLogic.museumIncomePerMinute(data)
+	return PlayerLogic.museumIncome(data) * 60 / Config.MUSEUM_TICK_SECONDS * PlayerLogic.coinMultiplier(data)
 end
 
 -- Devuelve nivel, XP dentro del nivel actual y XP necesaria para el siguiente (0 en el máximo).
@@ -441,7 +477,9 @@ end
 
 -- Valor actual de lo que mide un paso del tutorial.
 function PlayerLogic.tutorialValue(data, stat)
-	if stat == "museum" then
+	if stat == "trained10" then
+		return math.floor(data.trained * 10 + 1e-6)
+	elseif stat == "museum" then
 		return PlayerLogic.museumCount(data)
 	elseif stat == "upgrades" then
 		return sumCounts(data.upgrades)
@@ -451,6 +489,9 @@ end
 
 -- Paso actual del tutorial y su progreso, o nil si ya terminó.
 function PlayerLogic.tutorialStep(data)
+	if not data.introDone then
+		return nil, 0 -- el tutorial empieza después de la introducción
+	end
 	local step = GameData.Tutorial[data.tutorial]
 	if not step then
 		return nil, 0
@@ -530,6 +571,9 @@ function PlayerLogic.buildView(data, now)
 		museumSlots = PlayerLogic.museumSlots(data),
 		museumCount = PlayerLogic.museumCount(data),
 		museumIncome = PlayerLogic.museumIncome(data),
+		museumIncomePerMinute = PlayerLogic.museumIncomePerMinute(data),
+		introDone = data.introDone,
+		legacyVariant = data.legacyVariant or false,
 	}
 end
 
@@ -662,6 +706,9 @@ function PlayerLogic.sellPart(data, partId, amount)
 	if (data.parts[partId] or 0) < amount then
 		return false, "No tienes suficientes piezas de ese tipo."
 	end
+	if part.protected then
+		return false, part.name .. " no se vende: guárdala o úsala en el Reloj del Legado."
+	end
 	local earned = math.floor(part.sell * amount * PlayerLogic.coinMultiplier(data))
 	removeCount(data.parts, partId, amount)
 	data.coins += earned
@@ -680,6 +727,9 @@ function PlayerLogic.discardPart(data, partId, amount)
 	end
 	if (data.parts[partId] or 0) < amount then
 		return false, "No tienes suficientes piezas de ese tipo."
+	end
+	if part.protected then
+		return false, part.name .. " no se puede tirar."
 	end
 	removeCount(data.parts, partId, amount)
 	return true, string.format("Tiraste %d × %s.", amount, part.name)
@@ -767,6 +817,9 @@ function PlayerLogic.contributeParts(data, partId, amount)
 	end
 	if (data.parts[partId] or 0) < amount then
 		return false, "No tienes suficientes piezas de ese tipo.", 0
+	end
+	if part.protected then
+		return false, part.name .. " no se entrega al Cronómetro.", 0
 	end
 	removeCount(data.parts, partId, amount)
 	local points = GameData.RepairPoints[part.rarity] * amount
@@ -1113,9 +1166,40 @@ function PlayerLogic.claimPlaytime(data, now, tierIndex)
 	return true, string.format("Premio por %d minutos: %s", tier.minutes, message)
 end
 
+-- ---------------------------------------------------------------------------
+-- Introducción y pieza del legado (DEV-011)
+-- ---------------------------------------------------------------------------
+
+function PlayerLogic.legacyPiece(data)
+	for _, piece in GameData.LegacyPieces do
+		if piece.id == data.legacyVariant then
+			return piece
+		end
+	end
+	return nil
+end
+
+-- Recoge la pieza del legado (una sola vez) y termina la introducción.
+-- roll en [0, 1) elige la variante. Devuelve ok, mensaje.
+function PlayerLogic.claimLegacy(data, roll)
+	if data.introDone or data.legacyVariant then
+		return false, "Ya recogiste tu pieza del legado."
+	end
+	local index = math.clamp(math.floor(roll * #GameData.LegacyPieces) + 1, 1, #GameData.LegacyPieces)
+	local piece = GameData.LegacyPieces[index]
+	data.legacyVariant = piece.id
+	-- No ocupa la mochila de robo: es una herencia.
+	data.parts.legacy = (data.parts.legacy or 0) + 1
+	data.introDone = true
+	return true, string.format("Encontraste: %s. %s Guárdala o úsala en el Reloj del Legado.", piece.name, piece.desc)
+end
+
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.
 function PlayerLogic.collectIncome(data)
-	local income = math.floor(PlayerLogic.museumIncome(data) * PlayerLogic.coinMultiplier(data))
+	-- Las fracciones se acumulan para que los relojes baratos también paguen.
+	local exact = PlayerLogic.museumIncome(data) * PlayerLogic.coinMultiplier(data) + data.incomeRemainder
+	local income = math.floor(exact)
+	data.incomeRemainder = exact - income
 	if income > 0 then
 		data.coins += income
 		data.stats.earned += income

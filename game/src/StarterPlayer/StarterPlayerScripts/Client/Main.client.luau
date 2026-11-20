@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
 local Ui = require(script.Parent:WaitForChild("Ui"))
+local Intro = require(script.Parent:WaitForChild("Intro"))
 
 local remotes = ReplicatedStorage:WaitForChild("Remotes")
 local stateRemote = remotes:WaitForChild(Config.REMOTES.State)
@@ -15,9 +16,11 @@ local openPanelRemote = remotes:WaitForChild(Config.REMOTES.OpenPanel)
 local actionRemote = remotes:WaitForChild(Config.REMOTES.Action)
 
 Ui.init(actionRemote)
+Intro.init(Ui.request)
 
 stateRemote.OnClientEvent:Connect(function(state)
 	Ui.setState(state)
+	Intro.onState(state) -- cinemática y pieza del legado la primera vez (DEV-011)
 end)
 
 notifyRemote.OnClientEvent:Connect(function(text, kind)
@@ -28,4 +31,3 @@ openPanelRemote.OnClientEvent:Connect(function(panelId)
 	Ui.openPanel(panelId)
 end)
 
-Ui.toast("¡Bienvenido a BUILD A WATCH! Roba piezas en las casas y vuelve a la base antes de que te atrape el dueño.", "info")

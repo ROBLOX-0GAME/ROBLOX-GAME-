@@ -36,7 +36,33 @@ GameData.Parts = {
 		holdTime = 1.5,
 	},
 }
-GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby", "diamond" }
+GameData.Parts.legacy = {
+	id = "legacy",
+	name = "Pieza del Legado",
+	rarity = "Herencia",
+	common = false,
+	weight = 0, -- no sale en las casas: se recibe una sola vez en la introducción (DEV-011)
+	sell = 0,
+	holdTime = 0,
+	protected = true, -- no se vende, ni se tira, ni se entrega al Cronómetro: se guarda o se usa
+}
+GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby", "diamond", "legacy" }
+
+-- Variantes de la pieza del legado (ficticias, inspiradas en la alta relojería;
+-- no se usan marcas reales). Se elige una al azar para cada jugador.
+GameData.LegacyPieces = {
+	{ id = "celestial", name = "Espiral Celestial", desc = "Espiral de un calibre de gran complicación, ensamblada a mano." },
+	{ id = "sapphire", name = "Corona de Zafiro Real", desc = "Corona tallada en zafiro de una pieza de alta joyería." },
+	{ id = "rainbow", name = "Rotor de Diamantes Arcoíris", desc = "Rotor cubierto de diamantes de colores, de un reloj único." },
+}
+
+-- Historia de la cinemática inicial (DEV-011; textos propuestos, los revisa la Cuenta B)
+GameData.IntroStory = {
+	"Cuando eras pequeño, tus padres se fueron sin dejar rastro.",
+	"Creciste solo, con una única pasión: los relojes.",
+	"El día que cumpliste 18 años, te dejaron en un lugar que nunca habías visto…",
+	"…una ciudad donde los relojes valen fortunas.",
+}
 
 -- Puntos de reparación del Cronómetro Maestro por rareza (DEV-004, PROPUESTA)
 GameData.RepairPoints = {
@@ -44,6 +70,7 @@ GameData.RepairPoints = {
 	["Poco común"] = 3,
 	["Raro"] = 8,
 	["Legendario"] = 20,
+	["Herencia"] = 0, -- protegida: no se entrega
 }
 
 GameData.RarityColors = {
@@ -54,6 +81,7 @@ GameData.RarityColors = {
 	["Legendario"] = Color3.fromRGB(255, 200, 40),
 	["Mítico"] = Color3.fromRGB(255, 90, 160),
 	["Divino"] = Color3.fromRGB(120, 255, 240),
+	["Herencia"] = Color3.fromRGB(255, 240, 150),
 }
 
 -- Mascotas (DEV-005, PROPUESTA). bonus: velocidad extra (0.10 = +10%).
@@ -207,7 +235,8 @@ GameData.PlaytimeRewards = {
 
 -- Relojes que se fabrican en el taller.
 -- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender
--- income: monedas por ciclo mientras está exhibido en el plot · cost: piezas necesarias
+-- cost: piezas necesarias · luck: suerte mientras está exhibido
+-- Ingreso pasivo exhibido: Config.PLOT_INCOME_PERCENT del valor cada periodo (DEV-011)
 GameData.Watches = {
 	pocket = {
 		id = "pocket",
@@ -216,7 +245,6 @@ GameData.Watches = {
 		level = 1,
 		xp = 10,
 		sell = 60,
-		income = 1,
 		cost = { gear = 3, spring = 2, screw = 2 },
 	},
 	wrist = {
@@ -226,7 +254,6 @@ GameData.Watches = {
 		level = 2,
 		xp = 25,
 		sell = 150,
-		income = 3,
 		cost = { gear = 4, spring = 2, crystal = 2, strap = 1 },
 	},
 	chrono = {
@@ -236,7 +263,6 @@ GameData.Watches = {
 		level = 4,
 		xp = 60,
 		sell = 400,
-		income = 8,
 		cost = { gear = 6, spring = 4, screw = 4, crystal = 3, strap = 2 },
 	},
 	royal = {
@@ -246,7 +272,6 @@ GameData.Watches = {
 		level = 6,
 		xp = 150,
 		sell = 1200,
-		income = 25,
 		cost = { gear = 8, spring = 4, crystal = 4, strap = 2, ruby = 2 },
 	},
 	millionaire = {
@@ -256,11 +281,19 @@ GameData.Watches = {
 		level = 8,
 		xp = 400,
 		sell = 5000,
-		income = 60,
 		cost = { gear = 10, spring = 6, crystal = 6, strap = 4, ruby = 4, diamond = 2 },
 	},
 }
-GameData.WatchOrder = { "pocket", "wrist", "chrono", "royal", "millionaire" }
+GameData.Watches.legacy = {
+	id = "legacy",
+	name = "Reloj del Legado",
+	luck = 0.04,
+	level = 3,
+	xp = 200,
+	sell = 3000,
+	cost = { legacy = 1, gear = 6, spring = 4, crystal = 2, strap = 1 },
+}
+GameData.WatchOrder = { "pocket", "wrist", "chrono", "legacy", "royal", "millionaire" }
 
 -- Mejoras compradas con monedas. Precio del siguiente nivel:
 -- floor(baseCost * growth ^ nivelActual)
@@ -380,21 +413,30 @@ GameData.Zones = {
 	},
 }
 
--- Tutorial guiado (DEV-002, PROPUESTA). Los pasos se completan en orden.
+-- Tutorial guiado (DEV-002; rehecho en DEV-011, PROPUESTA). Empieza después de
+-- la cinemática y de recoger la pieza del legado. Los pasos se completan en orden.
 -- stat: qué se mide (ver PlayerLogic.tutorialValue) · target: meta
 -- reward: monedas al completar · guide: a dónde apunta la guía en el mundo
 GameData.Tutorial = {
 	{
-		id = "collect",
-		text = "Roba 5 piezas en una casa y llévalas a la base",
-		stat = "collected",
+		id = "train",
+		text = "Gana velocidad: entrena en la caminadora delante de tu plot (+0.5)",
+		stat = "trained10",
 		target = 5,
 		reward = 20,
+		guide = "treadmill",
+	},
+	{
+		id = "collect",
+		text = "Sal por la abertura del muro, roba 5 piezas en una casa y vuelve a la base",
+		stat = "collected",
+		target = 5,
+		reward = 30,
 		guide = "house",
 	},
 	{
 		id = "craft",
-		text = "Fabrica un reloj de bolsillo en el taller de tu plot",
+		text = "Fabrica un reloj de bolsillo en el taller al fondo de tu plot",
 		stat = "crafted",
 		target = 1,
 		reward = 30,
@@ -402,15 +444,15 @@ GameData.Tutorial = {
 	},
 	{
 		id = "sell",
-		text = "Vende un reloj en la Tienda",
+		text = "Vende un reloj en la Tienda: vender da todo su valor al momento",
 		stat = "sold",
 		target = 1,
-		reward = 30,
+		reward = 40,
 		guide = "shop",
 	},
 	{
 		id = "display",
-		text = "Fabrica otro reloj y exhíbelo en tu plot",
+		text = "Fabrica otro y exhíbelo en tu plot: da el 30% de su valor cada 10 min",
 		stat = "museum",
 		target = 1,
 		reward = 40,
@@ -418,10 +460,10 @@ GameData.Tutorial = {
 	},
 	{
 		id = "upgrade",
-		text = "Compra tu primera mejora en la Tienda",
+		text = "Compra una mejora: más velocidad abre zonas más ricas",
 		stat = "upgrades",
 		target = 1,
-		reward = 50,
+		reward = 60,
 		guide = "shop",
 	},
 }

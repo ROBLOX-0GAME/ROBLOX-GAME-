@@ -115,6 +115,19 @@ local ACTIONS = {
 			return ok, message
 		end,
 	},
+	-- Pieza del legado de la introducción (DEV-011): una vez, cerca de la plaza
+	claimLegacy = {
+		affectsCharacter = true,
+		run = function(data, _, _, player)
+			local character = player.Character
+			local root = character and character:FindFirstChild("HumanoidRootPart")
+			local spawnPosition = WorldService.SpawnPosition
+			if not root or not spawnPosition or (root.Position - spawnPosition).Magnitude > Config.LEGACY_CLAIM_DISTANCE then
+				return false, "La pieza está en la plaza donde apareciste."
+			end
+			return PlayerLogic.claimLegacy(data, random:NextNumber())
+		end,
+	},
 	claimDaily = {
 		run = function(data)
 			return PlayerLogic.claimDaily(data, os.time())

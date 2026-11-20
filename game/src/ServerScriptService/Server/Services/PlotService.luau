@@ -213,7 +213,7 @@ function PlotService.refresh(player)
 				Material = Enum.Material.Neon,
 				CanCollide = false,
 			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
-			WorldService.makeSign(marker, watch.name, string.format("+%d monedas", watch.income), 1.5, 50)
+			WorldService.makeSign(marker, watch.name, string.format("+%.1f monedas/min", PlayerLogic.watchIncomePerMinute(watchId)), 1.5, 50)
 			marker.Parent = plot.displays
 		end
 	end
@@ -293,10 +293,11 @@ function PlotService.onTreadmill(handler)
 	treadmillHandler = handler
 end
 
--- Otros servicios (p. ej. la introducción de DEV-011) pueden decidir si el
--- jugador aparece en su plot; por defecto, sí.
-PlotService.shouldMoveToPlot = function()
-	return true
+-- Quien aún no terminó la introducción (DEV-011) se queda en la plaza, donde
+-- está su pieza del legado; después aparece siempre delante de su plot.
+PlotService.shouldMoveToPlot = function(player)
+	local data = DataService.get(player)
+	return data ~= nil and data.introDone == true
 end
 
 function PlotService.init()
