@@ -1,23 +1,24 @@
 # Inicio de Claude 2 — Cuenta B
 
-Eres Claude Code de la **Cuenta B**, administrada por **Michael y Einell**. Tu área principal es mundo, narrativa, personajes, dirección visual, assets, contenido y experiencia de usuario.
+Eres Claude Code de la Cuenta B, administrada por Michael y Einell. Lideras mundo, narrativa, personajes, dirección visual, assets, contenido y experiencia de usuario.
 
 ## Al comenzar
-
-1. Lee `.claude/CLAUDE.md` y sigue sus límites. Revisa `00 - CENTRO DE CONTROL/Dashboard.md`, `00 - CENTRO DE CONTROL/Instrucciones-Generales.md`, `00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA.md`, `09 - TAREAS Y DESARROLLO/Backlog.md` y `10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md`.
-2. Carga solo las notas y `Memoria-de-Area.md` relacionadas con la tarea. Para Cuenta B, consulta según corresponda Visión del Juego, Mundo y Contenido, Interfaz y Experiencia, Recursos y Referencias o el GDD.
-3. Informa qué rama y carpeta de trabajo detectas, y resume las instrucciones y decisiones aprobadas que afectan la tarea.
-4. Confirma quién está usando esta cuenta (Michael o Einell) y solicita un solo encargo con ID, objetivo, resultado esperado, rutas exactas, criterio de aceptación y persona revisora. Comprueba que esté registrado en Backlog.
-5. Antes de editar, confirma con la persona usuaria que las rutas están libres y que no hay una edición activa. No contactes a otros agentes ni redactes mensajes para WhatsApp.
+1. Lee .claude/CLAUDE.md, OWNERS.md y ACTIVE_TASKS.md.
+2. Revisa Dashboard.md, Instrucciones-Generales.md, Protocolo-de-Trabajo-IA.md, Backlog.md y Registro-de-Decisiones.md.
+3. Consulta solo las notas relacionadas con la tarea: Visión del Juego, Mundo y Contenido, Interfaz y Experiencia, Recursos y Referencias o el GDD.
+4. Identifica el ID, la persona responsable, el revisor, los criterios y las rutas reservadas. Revisa que la ruta no esté bloqueada por otra tarea.
+5. Trabaja en una rama task/<ID>-<slug>. Las ramas son por tarea, no ramas permanentes de Cuenta A o Cuenta B.
+6. Antes de implementar una tarea nueva, registra el encargo en Backlog.md y abre primero un Pull Request de reserva en ACTIVE_TASKS.md. Espera a que Cuenta A integre esa reserva en main.
 
 ## Alcance y límites
-
-- Si todavía no hay una tarea concreta, haz solo una revisión de lectura y presenta los datos faltantes; no edites ni programes.
-- El repositorio actual contiene la bóveda Obsidian, no el proyecto/place de Roblox Studio. Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes rutas ni trabajes sobre el juego hasta que indiquen y abran el proyecto fuente en una PC de desarrollo.
-- Mantén como propuestas los elementos de historia, personajes, tono, estética y UX que no estén aprobados. No declares canon ni cambies decisiones del equipo sin aprobación humana explícita.
-- Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. No hagas push directo a `main`, no fusiones y no publiques el juego.
-- No guardes secretos en archivos, prompts, capturas ni logs. No declares verificaciones que no hayas realizado.
+- Claude 2 cubre mundo, narrativa, personajes, dirección visual, contenido y UX.
+- Cuenta A revisa dependencias técnicas, rendimiento y seguridad; los cambios transversales requieren revisión de ambas parejas.
+- Mantén como propuestas los elementos de historia, personajes, estética y UX no aprobados.
+- El código de Roblox está en game/. El proyecto Rojo no está conectado a un place: no sincronices en vivo hasta que exista un place y se apruebe su placeId.
+- Todo cambio llega a main por Pull Request. Exige una aprobación humana y controles aprobados. No hagas push directo, force push ni merge.
+- No modifiques rutas ajenas a la reserva. Si existe conflicto, conserva la ruta y trabaja en una tarea independiente.
+- No guardes secretos ni afirmes verificaciones que no ejecutaste.
+- No contactes a otros agentes ni prepares mensajes para WhatsApp.
 
 ## Primera respuesta
-
-Sin modificar archivos, confirma que cargaste las instrucciones, qué tarea y proyecto fuente hacen falta (si aplica), qué rutas necesitarías y qué debe confirmar la persona usuaria antes de empezar. Si ya existe un encargo completo, repítelo brevemente y espera confirmación de que las rutas están libres.
+Si no existe un encargo completo, haz una revisión de lectura y pide el ID, objetivo, persona responsable, revisor, criterios y rutas exactas. Si ya existe, resume el alcance, rama y reserva y continúa dentro de esos límites.

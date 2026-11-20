@@ -1,181 +1,57 @@
-
 # 🤖 PROTOCOLO DE TRABAJO DE LOS AGENTES IA
 
 ## 1. Propósito
+Coordinar las dos cuentas Claude Code, conservar trabajo concurrente y llevar cambios revisados a main.
 
-Establecer las reglas de colaboración, coordinación, comunicación y ejecución de tareas entre los dos agentes Claude Code de Roblox Game Studio.
+## 2. Organización
+- Cuenta A — Claude 1, administrada por Jhonn y Zadiel. Lidera gameplay, sistemas, economía, progresión, arquitectura técnica y la integración Git/Obsidian.
+- Cuenta B — Claude 2, administrada por Michael y Einell. Lidera mundo, narrativa, personajes, dirección visual, contenido y UX.
+- Cada tarea del Backlog identifica una persona responsable y un revisor. Las tareas transversales requieren revisión de ambas parejas.
+- Cuenta A coordina la integración. Nadie aprueba su propio Pull Request.
 
-Los agentes deben trabajar como integrantes de un mismo estudio, respetando la arquitectura, documentación y decisiones oficiales.
+## 3. Registro y reserva de rutas
+Cada tarea usa un ID, una rama y rutas concretas.
+1. Registra la tarea en Backlog.md con objetivo, responsable, cuenta, revisor, prioridad, estado, dependencias y aceptación.
+2. Revisa OWNERS.md para identificar el área responsable.
+3. Crea la rama task/<ID>-<slug>.
+4. Añade la fila en ACTIVE_TASKS.md con rutas exactas o patrones, responsables y estado En desarrollo.
+5. Abre un Pull Request de reserva que solo cambie Backlog.md y ACTIVE_TASKS.md. Espera aprobación e integración en main.
+6. Solo después de integrar la reserva, modifica las rutas reservadas.
+7. El control file-reservations valida los cambios de cada Pull Request. Una ruta que choque con una reserva ajena detiene la integración.
+8. Una reserva En desarrollo o Bloqueada se mantiene activa. En el Pull Request final cambia su estado a Completada. Al fusionarse, la reserva queda liberada. Si un Pull Request de implementación se cierra sin fusionar, restablece la reserva a En desarrollo o márcala Cancelada.
 
-## 2. Organización de los agentes
+La automatización actúa como puerta de integración: no puede impedir que alguien edite un archivo localmente ni reemplaza la reserva previa.
 
-### CLAUDE 1 — CUENTA A: GAMEPLAY & SYSTEMS
+## 4. Flujo de ramas y Pull Requests
+- Usa una rama por tarea, nunca una rama permanente por Claude.
+- Actualiza la rama desde main antes de abrir el Pull Request.
+- Todo cambio se integra mediante Pull Request a main.
+- El Pull Request incluye ID, responsable, revisor, rutas reservadas, resumen, criterios de aceptación y verificaciones.
+- Se requiere una aprobación humana de otra persona y que pasen los controles file-reservations y rojo-build.
+- No hagas push directo a main, force push ni merge. La persona integradora autorizada de Cuenta A integra después de la revisión.
+- Las reglas de GitHub para proteger main deben exigir Pull Request, una aprobación y ambos controles. La configuración efectiva se activa en Settings del repositorio.
 
-Administrada por Zadiel y Jhonn. Responsabilidad principal:
+## 5. Conflictos
+- Si una ruta aparece reservada por otra tarea, no la edites.
+- Si dos cambios abiertos modifican la misma ruta, el control automático no permite integrar ambos a la vez.
+- Coordina una nueva reserva o elige una tarea independiente. Nunca descartes cambios para eliminar un conflicto.
+- No uses force push. Conserva y compara las versiones.
 
-- Loop de juego y mecánicas.
-- Inventario, objetos y crafting.
-- Habilidades, progresión y economía.
-- Implementación técnica en Roblox.
+## 6. Roblox Studio y Rojo
+- El repositorio incluye el scaffold de código en game/. Git es la fuente del código; Roblox Studio conserva el place, el mundo y los assets.
+- Rojo usa un servidor local y el plugin de Studio; no es una conexión directa desde GitHub a Studio.
+- El place todavía no existe. game/default.project.json tiene servePlaceIds vacío, así que no sincronices en vivo.
+- Una vez creado el place, registra su placeId en Arquitectura-General.md y añade el ID a servePlaceIds en un Pull Request revisado.
+- Instala Rojo y el plugin en las PC Windows de desarrollo, siguiendo game/README.md.
 
-### CLAUDE 2 — CUENTA B: WORLD & PRESENTATION
+## 7. Autoridad y límites
+Pide aprobación humana para cambiar decisiones aprobadas, arquitectura general, datos persistentes, dependencias importantes, permisos o publicación. No guardes credenciales y no declares pruebas que no ejecutaste.
 
-Administrada por Michael y Einell. Responsabilidad principal:
-
-- Mundo, narrativa y personajes.
-- Dirección visual y assets.
-- Contenido y experiencia de usuario (UX).
-
-Ambas cuentas pueden colaborar fuera de su área cuando la tarea lo requiera. Cada tarea identifica a una persona responsable y a quien la revisa; los cambios transversales requieren revisión de ambas parejas.
-
-## 3. Inicio obligatorio de cada tarea
-
-Antes de comenzar, cada agente debe:
-
-1. Leer [[Instrucciones-Generales]].
-2. Consultar [[Dashboard]].
-3. Leer los documentos relacionados con su tarea.
-4. Consultar [[Registro-de-Decisiones]].
-5. Revisar [[Backlog]].
-6. Comprobar el estado del repositorio Git.
-7. Identificar dependencias y posibles conflictos.
-
-## 4. Asignación de tareas
-
-Cada tarea debe tener:
-
-- Identificador.
-- Descripción.
-- Responsable principal.
-- Área.
-- Prioridad.
-- Estado.
-- Criterios de aceptación.
-
-No deben existir dos responsables principales trabajando simultáneamente sobre el mismo cambio sin coordinación.
-
-## 5. Comunicación entre agentes
-
-Antes de realizar cambios que afecten al trabajo del otro agente:
-
-1. Identificar el sistema afectado.
-2. Revisar sus dependencias.
-3. Documentar la modificación propuesta.
-4. Comunicar el impacto.
-5. Coordinar la integración.
-
-Los agentes no deben asumir que el otro conoce cambios que no han sido comunicados.
-
-## 6. Protección de archivos
-
-- No sobrescribir cambios ajenos.
-- No eliminar documentos sin autorización.
-- No modificar configuraciones compartidas sin necesidad.
-- No alterar archivos fuera del alcance de la tarea.
-- Revisar cambios existentes antes de editar.
-- Detenerse si aparecen modificaciones inesperadas.
-
-## 7. Procedimiento de desarrollo
-
-Cada tarea seguirá este flujo:
-
-1. Leer la documentación.
-2. Comprender el objetivo.
-3. Identificar dependencias.
-4. Planificar la implementación.
-5. Realizar los cambios.
-6. Ejecutar pruebas.
-7. Revisar el resultado.
-8. Actualizar la documentación.
-9. Informar del trabajo realizado.
-10. Preparar la integración en Git.
-
-## 8. Control de versiones
-
-GitHub es el repositorio central.
-
-Antes de trabajar:
-
-- Comprobar la rama actual.
-- Revisar el estado de Git.
-- Obtener los cambios remotos.
-- Confirmar que no existen conflictos.
-
-Al finalizar:
-
-- Revisar los archivos modificados.
-- Comprobar que no se incluyen archivos sensibles.
-- Crear un commit descriptivo.
-- Publicar los cambios cuando esté autorizado.
-- Informar del commit realizado.
-
-Nunca utilizar force push para solucionar conflictos.
-
-## 9. Conflictos entre agentes
-
-Si dos agentes modifican el mismo archivo o sistema:
-
-1. Detener la integración automática.
-2. Identificar los cambios de ambos.
-3. Determinar qué modificaciones son compatibles.
-4. Consultar al responsable humano si existe una decisión contradictoria.
-5. Resolver el conflicto sin perder información.
-6. Verificar el resultado.
-
-## 10. Límites de autonomía
-
-Los agentes pueden ejecutar tareas técnicas dentro del alcance autorizado.
-
-Deben solicitar aprobación humana para:
-
-- Cambiar decisiones de diseño aprobadas.
-- Modificar la arquitectura general.
-- Eliminar sistemas importantes.
-- Alterar estructuras de datos persistentes.
-- Introducir dependencias importantes.
-- Modificar permisos o credenciales.
-- Realizar cambios de gran impacto en el proyecto.
-
-## 11. Informe obligatorio al finalizar
-
-Cada agente debe informar:
-
-### Resumen de la tarea
-Qué se realizó.
-
-### Archivos modificados
-Lista de archivos afectados.
-
-### Pruebas
-Qué pruebas se ejecutaron y sus resultados.
-
-### Problemas
-Errores, limitaciones o tareas pendientes.
-
-### Integración
-Estado del commit y publicación en GitHub.
-
-### Siguiente paso
-Recomendaciones para continuar.
-
-## 12. Regla fundamental
-
-La prioridad de ambos agentes es trabajar de forma coordinada, mantener la integridad del proyecto y respetar las decisiones del equipo humano.
-
-La velocidad nunca debe estar por encima de la seguridad, la calidad y la conservación del trabajo.
-
-## 13. Documentos relacionados
-
-- [[Dashboard]]
-- [[Instrucciones-Generales]]
-- [[Equipo-y-Responsabilidades]]
-- [[Backlog]]
-- [[Registro-de-Decisiones]]
-- [[Arquitectura-General]]
-- [[Plan-de-Pruebas]]
+## 8. Informe de cierre
+Informa qué cambió, rutas afectadas, responsable y revisor, rama, commit y Pull Request, verificaciones ejecutadas, conflictos y próximos pasos. Actualiza Backlog y libera la reserva.
 
 ---
 
-**Estado:** Borrador inicial
-**Agentes:** Claude 1 y Claude 2
-**Aprobación:** Pendiente del equipo
+**Agentes:** Claude 1/Cuenta A y Claude 2/Cuenta B
+**Responsables:** Jhonn, Zadiel, Michael y Einell
+**Estado:** Protocolo operativo propuesto para revisión del equipo

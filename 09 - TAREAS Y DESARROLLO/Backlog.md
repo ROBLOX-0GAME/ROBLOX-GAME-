@@ -48,17 +48,17 @@ Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Regi
 - **Revisión:** Jhonn y Zadiel; Michael y Einell para cambios transversales.
 - **Área:** GitHub, coordinación de archivos y entorno Rojo.
 - **Prioridad:** Alta.
-- **Estado:** En progreso.
+- **Estado:** En revisión.
 - **Rama:** `task/INFRA-001-coordination-rojo`.
 - **Alcance:** crear el registro de propietarios y reservas, las reglas de ramas y revisión, una comprobación de conflictos para Pull Requests, y el scaffold inicial de Rojo en `game/`.
 - **Criterios de aceptación:**
-  - [ ] La propiedad de áreas refleja Cuenta A (Jhonn/Zadiel) y Cuenta B (Michael/Einell); los archivos compartidos exigen coordinación.
-  - [ ] Cada tarea trabaja en `task/<ID>-<slug>` y reserva rutas antes de editarlas.
-  - [ ] Una comprobación automatizada bloquea la integración de un Pull Request que cambie rutas reservadas por otra tarea.
-  - [ ] Los Pull Requests usan una plantilla con responsable, revisor, rutas reservadas y verificaciones.
-  - [ ] `game/default.project.json` puede construir el scaffold; Rojo no permite la sincronización en vivo hasta que se añada el `placeId`.
-  - [ ] La protección efectiva de `main` requiere Pull Request, una aprobación y verificaciones de GitHub Actions.
-- **Dependencias:** creación del place de Roblox y registro de su `placeId` para habilitar la sincronización en vivo de Rojo.
+  - [x] La propiedad de áreas refleja Cuenta A (Jhonn/Zadiel) y Cuenta B (Michael/Einell); los archivos compartidos exigen coordinación.
+  - [x] Cada tarea trabaja en `task/<ID>-<slug>` y reserva rutas antes de editarlas.
+  - [x] Una comprobación automatizada bloquea la integración de un Pull Request que cambie rutas reservadas por otra tarea.
+  - [x] Los Pull Requests usan una plantilla con responsable, revisor, rutas reservadas y verificaciones.
+  - [x] `game/default.project.json` puede construir el scaffold; Rojo no permite la sincronización en vivo hasta que se añada el `placeId`.
+  - [ ] Activar en GitHub Settings la protección de `main`: Pull Request obligatorio, una aprobación y los controles de GitHub Actions.
+- **Dependencias:** protección de `main` pendiente de activación en GitHub Settings; la sincronización en vivo espera a que se cree el place y se registre su `placeId`.
 - **Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Protocolo-de-Trabajo-IA]], [[Arquitectura-General]].
 
 ### Diseño

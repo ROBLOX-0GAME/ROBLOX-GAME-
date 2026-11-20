@@ -1,113 +1,62 @@
-
 # 🏗️ ARQUITECTURA TÉCNICA GENERAL
 
 ## 1. Propósito
-
 Definir la estructura técnica del proyecto Roblox Game Studio, sus componentes, responsabilidades y criterios de organización.
 
 ## 2. Plataforma y tecnología
-
 - **Plataforma:** Roblox
 - **Motor:** Roblox Studio
 - **Lenguaje principal:** Luau
-- **Entorno de desarrollo:** Roblox Studio
 - **Control de versiones:** Git y GitHub
 - **Documentación:** Obsidian
+- **Herramienta de sincronización:** Rojo
 
 ### Entorno de trabajo por dispositivo
-
 - Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo.
-- La MacBook se usará para Obsidian y tareas escolares; no se planifica el desarrollo de Roblox Studio en ella.
-- El repositorio GitHub conectado actualmente contiene la bóveda de Obsidian, no el place ni el código fuente del juego.
-- Antes de programar, registra aquí la ruta o repositorio del proyecto, confirma que abre en Roblox Studio en una PC de desarrollo y documenta la rama y el flujo de publicación.
+- La MacBook se usará para Obsidian y tareas escolares.
+- El código y la configuración Rojo se guardan en la carpeta game/ de este repositorio.
+- El flujo confirmado es parcialmente gestionado: Git guarda el código; Roblox conserva el place, el mundo y los assets.
+- El place todavía no existe. No hay placeId disponible.
+- game/default.project.json contiene una allowlist servePlaceIds vacía. Rojo puede construir el scaffold, pero la sincronización en vivo queda bloqueada hasta que se apruebe un placeId.
+- El servidor de Rojo corre en la PC de desarrollo y el plugin de Roblox Studio se conecta a ese servidor local. GitHub es el repositorio central; no es el servidor de sincronización.
 
-## 3. Arquitectura general
+### Preparación inicial
+1. Clona este repositorio en una PC Windows de desarrollo.
+2. Instala Rokit y ejecuta rokit install desde game/.
+3. Instala el plugin con rojo plugin install.
+4. Construye el archivo inicial con rojo build default.project.json -o build/ROBLOX-GAME.rbxlx.
+5. Cuando el equipo cree el place, anota su placeId aquí y en game/default.project.json dentro de servePlaceIds.
+6. Solo después de que la reserva del placeId quede aprobada, ejecuta rojo serve y conecta el plugin de Studio.
 
-La arquitectura deberá separar claramente:
+Consulta [[game/README|Proyecto fuente de Roblox con Rojo]] para los pasos completos.
 
-- Cliente.
-- Servidor.
-- Módulos compartidos.
-- Servicios del juego.
-- Sistemas de datos.
-- Interfaces.
+## 3. Arquitectura general del código
+La estructura inicial separa:
+- Código del servidor bajo game/src/ServerScriptService.
+- Módulos compartidos bajo game/src/ReplicatedStorage/Shared.
+- Scripts del cliente bajo game/src/StarterPlayer/StarterPlayerScripts.
 
-La implementación específica está pendiente de diseño.
+Esta estructura es un scaffold técnico inicial. Los sistemas, datos persistentes, servicios de juego y comunicación cliente-servidor se diseñarán y aprobarán antes de implementarse.
 
-## 4. Organización del código
+## 4. Principios
+- Mantener separadas las responsabilidades de cliente, servidor y módulos compartidos.
+- El servidor valida las acciones importantes del jugador.
+- Las decisiones de persistencia, seguridad, economía y publicación requieren aprobación humana.
+- Los assets y el diseño del mundo siguen siendo gestionados en Roblox Studio.
 
-### Cliente
-Responsable de las funcionalidades que se ejecutan en el dispositivo del jugador.
-
-### Servidor
-Responsable de la lógica autoritativa, validaciones y estado compartido del juego.
-
-### Módulos compartidos
-Contendrán componentes y definiciones que necesiten utilizar tanto el cliente como el servidor.
-
-## 5. Sistemas técnicos
-
-- Sistema de jugadores.
-- Sistema de combate.
-- Sistema de habilidades.
-- Sistema de inventario.
-- Sistema de economía.
-- Sistema de progresión.
-- Sistema de guardado.
-- Sistema de enemigos.
-- Sistema de misiones.
-- Sistema multijugador.
-- Sistema de interfaz.
-
-## 6. Comunicación cliente-servidor
-
-Definir los mecanismos de comunicación, validaciones y límites de confianza.
-
-Principio fundamental: el servidor debe validar las acciones importantes del jugador.
-
-## 7. Gestión de datos
-
-- Persistencia.
+## 5. Sistemas técnicos previstos
+- Jugadores.
+- Combate.
+- Habilidades.
+- Inventario.
+- Economía y progresión.
 - Guardado.
-- Carga.
-- Validación.
-- Recuperación ante errores.
-- Evolución de estructuras de datos.
+- Enemigos y misiones.
+- Multijugador e interfaz.
 
-Tecnología y diseño detallado pendientes de aprobación.
+La implementación específica sigue pendiente de diseño y aprobación.
 
-## 8. Rendimiento y optimización
-
-- Control de uso de memoria.
-- Optimización de scripts.
-- Gestión de eventos.
-- Optimización de física.
-- Control de carga de recursos.
-- Pruebas de rendimiento.
-
-## 9. Seguridad
-
-- Validación en servidor.
-- Protección de eventos remotos.
-- Control de datos.
-- Prevención de exploits.
-- Verificación de transacciones.
-
-## 10. Estándares de desarrollo
-
-- Código modular.
-- Responsabilidades claras.
-- Nombres consistentes.
-- Documentación del código.
-- Evitar duplicación innecesaria.
-- Probar antes de integrar cambios.
-
-## 11. Decisiones técnicas pendientes
-
-Registrar aquí las decisiones que el equipo todavía debe aprobar.
-
-## 12. Documentos relacionados
-
+## 6. Documentos relacionados
 - [[Dashboard]]
 - [[Vision-General]]
 - [[GDD]]
@@ -115,8 +64,10 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 - [[Backlog]]
 - [[Registro-de-Decisiones]]
 - [[Plan-de-Pruebas]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+- [[game/README|Proyecto fuente de Roblox con Rojo]]
 
 ---
 
-**Estado:** Borrador inicial  
-**Aprobación técnica:** Pendiente
+**Estado:** Scaffold Rojo preparado; conexión en vivo pendiente de crear el place y aprobar el placeId.

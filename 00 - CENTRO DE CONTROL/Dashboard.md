@@ -30,6 +30,9 @@
 ## 📚 04. DOCUMENTACIÓN Y RECURSOS
 
 - [[Recursos-y-Referencias|Recursos y Referencias]]
+- [[OWNERS|Propiedad de áreas y archivos]]
+- [[ACTIVE_TASKS|Tareas activas y reservas]]
+- [[game/README|Proyecto de código Roblox con Rojo]]
 
 ## 👥 05. ORGANIZACIÓN DEL ESTUDIO
 
@@ -45,14 +48,14 @@
 |---|---|
 | Visión del juego | Base del formulario incorporada; visión final por aprobar |
 | Game Design Document | Propuesta 1.0 preparada para revisión del equipo |
-| Arquitectura técnica | Propuesta inicial; falta ubicar el proyecto fuente en una PC Windows de desarrollo |
+| Arquitectura técnica | Scaffold Rojo en game/; sincronización en vivo pendiente de crear el place y aprobar su placeId |
 | Sistemas del juego | Loop y mecánicas documentados como propuestas para validar |
 | Mundo y contenido | Premisa base incorporada; canon narrativo y visual por revisar |
 | Interfaz y experiencia | Teclado, mando y toque confirmados; flujos detallados por diseñar |
 | Economía y progresión | Sistemas descritos; cifras y balance por aprobar |
 | Multijugador | Propuestas de robo voluntario y jefe de taller listas para revisión |
-| Desarrollo | Protocolo de trabajo listo para la primera tarea |
-| Testing | Criterios preparados; pruebas del juego aún no ejecutadas |
+| Desarrollo | INFRA-001 en revisión; reservas de rutas y controles de Pull Request preparados |
+| Testing | GitHub Actions construye el scaffold Rojo y comprueba reservas; pruebas de juego aún no ejecutadas |
 | Documentación de IA | Reglas raíz, 13 reglas de carpeta y 13 memorias en propuesta de revisión |
 
 ---
@@ -70,7 +73,7 @@
 
 **Documento principal:** Dashboard  
 **Proyecto:** Roblox Game Studio  
-**Estado:** En reconstrucción
+**Estado:** Coordinación y scaffold Rojo preparados; la protección de main debe activarse en GitHub Settings y el place aún está pendiente.
 
 ## Memoria por área
 

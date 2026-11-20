@@ -1,1 +1,6 @@
 .obsidian/
+
+# Archivos generados por Rojo
+/game/build/
+/game/sourcemap.json
+/game/.rojo/
