@@ -1,0 +1,1 @@
+-- Punto de entrada vacío; no añade comportamiento al cliente.

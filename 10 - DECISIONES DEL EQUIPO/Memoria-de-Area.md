@@ -4,7 +4,7 @@
 
 ## Notas canónicas
 
-[[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]; [[00 - CENTRO DE CONTROL/Instrucciones-Generales]]
+[[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]; [[00 - CENTRO DE CONTROL/Instrucciones-Generales]]; [[OWNERS]]; [[ACTIVE_TASKS]]; [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA]]
 - Registro: [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]
 
 ## Respuestas directas y datos base
@@ -13,14 +13,14 @@
 
 ## Pendientes concretos
 
-- Desempate en caso de desacuerdo.
+- Activar protección de main desde GitHub Settings, limitar escritura a las cuatro cuentas y asignar revisores/CODEOWNERS cuando se confirmen sus @handles.
 
 ## Decisiones aprobadas del área
 
-- Añade una decisión solo tras aprobación humana y registro canónico.
+- DEC-001: repositorio único con código en game/ y flujo parcialmente gestionado con Rojo. DEC-002: ramas task/<ID>-<slug>, PR obligatorio y aprobación humana; consulta el registro canónico.
 
 ## Memoria reciente
 
-- Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- INFRA-001 documenta DEC-001/DEC-002; consultar [[ACTIVE_TASKS]] y [[OWNERS]] para rutas y responsables.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

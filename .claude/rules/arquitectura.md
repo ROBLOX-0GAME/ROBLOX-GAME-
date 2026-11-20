@@ -2,6 +2,7 @@
 paths:
   - "03 - ARQUITECTURA TECNICA/Arquitectura-General.md"
   - "03 - ARQUITECTURA TECNICA/Memoria-de-Area.md"
+  - "game/**"
 ---
 
 # 03 - ARQUITECTURA TECNICA
@@ -13,7 +14,7 @@ Nota canónica: 03 - ARQUITECTURA TECNICA/Arquitectura-General.md; memoria: 03 -
 Responsable operativo: Lidera Cuenta A (Jhonn/Zadiel); Cuenta B revisa impacto visible para el jugador.
 
 ## Instrucciones por nota
-- Arquitectura-General.md: La idea menciona Roblox Studio y Luau. El repo no contiene el place/código. No inventes rutas ni marques una propuesta técnica como implementada.
+- Arquitectura-General.md: el código y scaffold Rojo se mantienen en game/. El place y los assets permanecen en Studio; el place aún no existe. No inventes rutas ni marques una propuesta técnica como implementada.
 
 
 ## Mantenimiento

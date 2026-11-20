@@ -24,11 +24,64 @@ Su objetivo es evitar contradicciones, conservar el contexto del proyecto y perm
 
 ## 4. Registro de decisiones
 
-Todavía no existen decisiones de diseño definitivas registradas en esta reconstrucción.
+### DEC-001 — Código en Git y flujo parcialmente gestionado con Rojo
+
+- **Fecha:** 2026-11-19.
+- **Estado:** Aprobada por la persona usuaria responsable del proyecto.
+- **Responsable:** Equipo Roblox Game Studio.
+- **Área:** Arquitectura técnica.
+
+**Contexto:**
+
+El repositorio existente contiene la bóveda de Obsidian, pero no tenía un proyecto de código Roblox.
+
+**Decisión:**
+
+Crear el código fuente dentro de game/ en este mismo repositorio. Usar Rojo con flujo parcialmente gestionado: Git conserva el código y Roblox Studio conserva el place, el mundo y los assets. Fijar la versión de Rojo y dejar la sincronización en vivo bloqueada hasta crear el place y aprobar su placeId.
+
+**Justificación:**
+
+La documentación del proyecto recomienda mantener el código versionado y revisar cambios en GitHub, mientras Studio conserva recursos que no se gestionan como archivos de texto.
+
+**Consecuencias:**
+
+La MacBook sigue dedicada a Obsidian; Rojo y Roblox Studio se instalarán en las PC Windows de desarrollo. El scaffold y los enlaces quedan en game/ y en el Dashboard. La conexión en vivo no se activa sin placeId.
+
+**Documentos afectados:**
+
+- [[Arquitectura-General]]
+- [[Dashboard]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+- [[game/README|Proyecto fuente de Roblox con Rojo]]
+
+### DEC-002 — Ramas por tarea y revisión obligatoria
+
+- **Fecha:** 2026-11-19.
+- **Estado:** Aprobada para implementar por la persona usuaria responsable del proyecto.
+- **Responsable:** Cuenta A (Jhonn/Zadiel).
+- **Área:** GitHub y coordinación de agentes.
+
+**Decisión:**
+
+Cada tarea usa una rama task/<ID>-<slug>. main recibe cambios solo por Pull Request, con al menos una aprobación humana y los controles automatizados aprobados. Cuenta A coordina la integración; nadie aprueba su propio Pull Request.
+
+**Consecuencias:**
+
+ACTIVE_TASKS.md registra las rutas reservadas; el control de GitHub Actions bloquea Pull Requests que invadan rutas de otra tarea. La configuración de protección de main debe activarse en GitHub Settings y no se modifica desde un archivo del repositorio.
+
+**Documentos afectados:**
+
+- [[Protocolo-de-Trabajo-IA]]
+- [[Backlog]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+- [[ACTIVE_TASKS]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|Memoria de Decisiones]]
 
 ### Plantilla de decisión
 
-#### DEC-001 — Título de la decisión
+#### Plantilla — Título de la decisión
 
 - **Fecha:** Pendiente.
 - **Estado:** Propuesta.

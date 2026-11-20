@@ -13,17 +13,21 @@ Definir la estructura técnica del proyecto Roblox Game Studio, sus componentes,
 - **Entorno de desarrollo:** Roblox Studio
 - **Control de versiones:** Git y GitHub
 - **Documentación:** Obsidian
+- **Herramienta de sincronización:** Rojo
 
 ### Entorno de trabajo por dispositivo
 
 - Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo.
 - La MacBook se usará para Obsidian y tareas escolares; no se planifica el desarrollo de Roblox Studio en ella.
-- El repositorio GitHub conectado actualmente contiene la bóveda de Obsidian, no el place ni el código fuente del juego.
-- Antes de programar, registra aquí la ruta o repositorio del proyecto, confirma que abre en Roblox Studio en una PC de desarrollo y documenta la rama y el flujo de publicación.
+- El repositorio GitHub contiene la bóveda de Obsidian y el código fuente inicial en game/; el place de Roblox todavía no existe.
+- El flujo acordado es parcialmente gestionado: Git contiene código y configuración, y Roblox Studio conserva el place, el mundo y los assets.
+- game/default.project.json deja servePlaceIds vacío para impedir la sincronización en vivo hasta que el equipo cree el place y apruebe su placeId.
+- Rojo sirve desde la PC Windows de desarrollo y su plugin local se conecta a ese servidor; GitHub no mantiene una conexión directa con Studio.
+- Consulta [[game/README|Proyecto fuente de Roblox con Rojo]] para instalación, build y sincronización.
 
 ## 3. Arquitectura general
 
-La arquitectura deberá separar claramente:
+El scaffold inicial vive en game/ y separa claramente:
 
 - Cliente.
 - Servidor.
@@ -32,7 +36,7 @@ La arquitectura deberá separar claramente:
 - Sistemas de datos.
 - Interfaces.
 
-La implementación específica está pendiente de diseño.
+La implementación específica de sistemas está pendiente de diseño y aprobación.
 
 ## 4. Organización del código
 
@@ -115,6 +119,10 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 - [[Backlog]]
 - [[Registro-de-Decisiones]]
 - [[Plan-de-Pruebas]]
+- [[game/README|Proyecto fuente de Roblox con Rojo]]
+- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|Memoria de Arquitectura]]
+- [[OWNERS]]
+- [[ACTIVE_TASKS]]
 
 ---
 
