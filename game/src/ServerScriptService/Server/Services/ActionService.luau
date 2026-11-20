@@ -27,6 +27,21 @@ local random = Random.new()
 
 local ActionService = {}
 
+-- Efecto de sonido de cada acción cuando sale bien (DEV-014)
+local ACTION_SOUNDS = {
+	sell = "comprar",
+	sellPart = "comprar",
+	buyUpgrade = "comprar",
+	buyPlotUpgrade = "comprar",
+	buyCarryUpgrade = "comprar",
+	hatchEgg = "abrir_capsula",
+	openCapsule = "abrir_capsula",
+	claimDaily = "guardar_botin",
+	claimPlaytime = "guardar_botin",
+	claimLegacy = "abrir_capsula",
+	craft = "comprar",
+}
+
 -- acción → estación requerida y función que la ejecuta
 local ACTIONS = {
 	-- station: estación compartida · plotPart: parte del plot PROPIO (DEV-008)
@@ -235,8 +250,14 @@ local function handle(player, actionName, id, amount)
 		return reply(false, "Acércate a tu plot para hacer eso.")
 	end
 
+	local levelBefore = PlayerLogic.level(data)
 	local ok, message, extra = action.run(data, id, amount or 1, player)
 	if ok then
+		if PlayerLogic.level(data) > levelBefore then
+			Net.sound(player, "subir_nivel")
+		elseif ACTION_SOUNDS[actionName] then
+			Net.sound(player, ACTION_SOUNDS[actionName])
+		end
 		DataService.replicate(player)
 		if actionName == "buyUpgrade" or action.affectsCharacter then
 			CharacterService.apply(player)

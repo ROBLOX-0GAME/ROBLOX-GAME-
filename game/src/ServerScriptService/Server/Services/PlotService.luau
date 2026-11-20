@@ -24,6 +24,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
+local AssetLibrary = require(Shared.AssetLibrary)
 local GameData = require(Shared.GameData)
 local PlayerLogic = require(Shared.PlayerLogic)
 local DataService = require(script.Parent.DataService)
@@ -97,12 +98,15 @@ local function buildPlot(folder, index, angle)
 	model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
 	plot.model = model
 
-	plotPart(plot, {
+	local floor = plotPart(plot, {
 		Name = "Suelo",
 		Size = Vector3.new(PLOT_WIDTH, 0.4, PLOT_DEPTH),
 		Color = Color3.fromRGB(120, 110, 100),
 		Material = Enum.Material.Concrete,
-	}, CFrame.new(0, 0.3, 0)).Parent = model
+	}, CFrame.new(0, 0.3, 0))
+	floor.Parent = model
+	-- Arte (DEV-014): modelos si existen en ReplicatedStorage/Assets
+	AssetLibrary.dress(floor, "mdl_plot_suelo")
 
 	-- Taller al fondo
 	local workshop = plotPart(plot, {
@@ -114,6 +118,7 @@ local function buildPlot(folder, index, angle)
 	workshop:SetAttribute("StationId", "workshop")
 	CollectionService:AddTag(workshop, "Station")
 	workshop.Parent = model
+	AssetLibrary.dress(workshop, "mdl_taller")
 
 	-- Panel del plot en la esquina delantera (vitrinas y mejoras)
 	local panel = plotPart(plot, {
@@ -125,6 +130,7 @@ local function buildPlot(folder, index, angle)
 	panel:SetAttribute("StationId", "plot")
 	CollectionService:AddTag(panel, "Station")
 	panel.Parent = model
+	AssetLibrary.dress(panel, "mdl_panel_plot")
 
 	-- Caminadora delante del plot, hacia la plaza
 	local treadmill = plotPart(plot, {
@@ -135,6 +141,7 @@ local function buildPlot(folder, index, angle)
 	}, CFrame.new(0, 0.5, -PLOT_DEPTH / 2 - 7))
 	CollectionService:AddTag(treadmill, "PlotTreadmill")
 	treadmill.Parent = model
+	AssetLibrary.dress(treadmill, "mdl_caminadora")
 
 	-- Cartel con el nombre del dueño, sobre el borde delantero
 	local sign = plotPart(plot, {
@@ -195,13 +202,15 @@ function PlotService.refresh(player)
 	for slot = 1, slots do
 		local row = DISPLAY_ROWS[(slot - 1) // #DISPLAY_COLUMNS + 1]
 		local column = DISPLAY_COLUMNS[(slot - 1) % #DISPLAY_COLUMNS + 1]
-		plotPart(plot, {
+		local pedestal = plotPart(plot, {
 			Name = "Vitrina" .. slot,
 			Size = Vector3.new(2, 2.5, 2),
 			Color = Color3.fromRGB(230, 225, 210),
 			Material = Enum.Material.Glass,
 			Transparency = 0.2,
-		}, CFrame.new(column, 1.65, row)).Parent = plot.displays
+		}, CFrame.new(column, 1.65, row))
+		pedestal.Parent = plot.displays
+		AssetLibrary.dress(pedestal, "mdl_vitrina")
 		local watchId = watches[slot]
 		if watchId then
 			local watch = GameData.Watches[watchId]
@@ -215,6 +224,7 @@ function PlotService.refresh(player)
 			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
 			WorldService.makeSign(marker, watch.name, string.format("+%.1f monedas/min", PlayerLogic.watchIncomePerMinute(watchId)), 1.5, 50)
 			marker.Parent = plot.displays
+			AssetLibrary.dress(marker, AssetLibrary.WATCH_ASSETS[watchId], { facing = plot.cframe.LookVector })
 		end
 	end
 end

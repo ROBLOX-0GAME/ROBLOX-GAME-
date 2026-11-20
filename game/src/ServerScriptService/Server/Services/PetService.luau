@@ -12,6 +12,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local GameData = require(Shared.GameData)
+local AssetLibrary = require(Shared.AssetLibrary)
 local DataService = require(script.Parent.DataService)
 local WorldService = require(script.Parent.WorldService)
 
@@ -57,6 +58,8 @@ local function makeFollower(root, petId, offset)
 	weld.Part0 = root
 	weld.Part1 = ball
 	weld.Parent = ball
+	-- Arte (DEV-014): el modelo de la mascota sigue a la esfera soldado
+	AssetLibrary.dress(ball, AssetLibrary.PET_ASSETS[petId], { weld = true })
 	return ball
 end
 

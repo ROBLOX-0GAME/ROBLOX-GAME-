@@ -510,7 +510,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Zadiel; Michael y Einell revisan la interfaz y el arte.
 - **Área:** Arquitectura técnica e integración de assets.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (para verlo falta publicar la place e importar los assets).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -518,11 +518,11 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Módulo compartido `AssetLibrary` con `find` y `dress` (alinear la base, orientar, ocultar la pieza provisional, soldar si se mueve).
-- [ ] Plots, estaciones, muro, salida, casas, pedestales, piezas robables, vitrinas, relojes, mascotas, pieza del legado y dueños usan su asset si existe.
-- [ ] Sonidos (`Config.SOUND_IDS`) en los momentos clave e iconos (`Config.ICON_IDS`) en el HUD, inactivos mientras valgan 0.
-- [ ] Pruebas de `AssetLibrary` y revisión estática sin errores.
-- [ ] Instrucciones de importación actualizadas en [[Pipeline-de-Arte]].
-- [ ] La fila DEV-014 de ACTIVE_TASKS queda Completada.
+- [x] Módulo compartido `AssetLibrary` con `find` y `dress` (alinear la base, orientar, ocultar la pieza provisional, soldar si se mueve).
+- [x] Plots, estaciones, muro, salida, casas, pedestales, piezas robables, vitrinas, relojes, mascotas, pieza del legado y dueños usan su asset si existe.
+- [x] Sonidos (`Config.SOUND_IDS`) en los momentos clave e iconos (`Config.ICON_IDS`) en el HUD, inactivos mientras valgan 0.
+- [x] Pruebas de `AssetLibrary` y revisión estática sin errores.
+- [x] Instrucciones de importación actualizadas en [[Pipeline-de-Arte]].
+- [x] La fila DEV-014 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-001 a ART-004 (Completadas). Para verlo en el juego hace falta la place publicada con los assets importados.

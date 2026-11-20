@@ -305,3 +305,15 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Ruleta: «!» al entrar; girar anima y muestra el premio; segundo giro bloqueado | Manual | Pendiente |
 | Ajustes: desactivar la guía la oculta; Tamaño Grande agranda el HUD; «Ver historia» repite la cinemática | Manual | Pendiente |
 | Puesto de Carga: con carga 1 no se puede robar una segunda pieza en el mismo viaje; tras mejorar, sí | Manual | Pendiente |
+
+## 21. Pruebas de DEV-014 (arte en el juego)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática y nombres de assets contra los FBX | Automática | **Ejecutada 2026-11-20: 0 errores; todos los nombres existen** |
+| 47 bloques de prueba (43 `PlayerLogic` + 4 `AssetLibrary`) | Automática | Pendiente (Play en Studio) |
+| Sin carpeta `Assets`: el juego se ve igual que antes (piezas provisionales) | Manual | Pendiente |
+| Con `mdl_caminadora` en `ReplicatedStorage/Assets`: aparece en cada plot, apoyada en el suelo y mirando a la plaza | Manual | Pendiente (requiere importar) |
+| Casas con modelo: se puede entrar por la puerta y robar | Manual | Pendiente |
+| Con un ID en `Config.SOUND_IDS.robar`: suena al robar | Manual | Pendiente (requiere subir audio) |
+

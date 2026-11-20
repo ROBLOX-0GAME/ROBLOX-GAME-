@@ -323,3 +323,27 @@ Reglas:
 - **2026-11-20 · ART-004 · Paso 4 — Sonido.** `art/audio/sonidos.py` (solo biblioteca estándar) sintetiza 10 efectos en WAV. `convertir_ogg.py` los pasa a OGG/Vorbis con el motor de audio de Blender (en Blender 5 la colección se llama `strips`; se corrigió). · Verificación: **ejecutada**: 10 OGG con cabecera válida, decodificados con `aud`, con duración igual a la sintetizada (±0,01 s) y pico ≈ 0,65. No se pudieron escuchar desde aquí.
 - **2026-11-20 · ART-004 · Paso 5 — Cierre.** [[Pipeline-de-Arte]] (prioridad 3 y comandos), memoria del área 12 y hoja de contactos actualizadas. La música queda pendiente. La fila ART-004 pasa a Completada. · Verificación: revisión de archivos.
 
+---
+
+## 19. DEV-014 — Conectar el arte al juego
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Michael y Einell (interfaz y arte) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-014 · Paso 1 — Reserva.** Subida en `232167c`. · Verificación: ejecutada.
+- **2026-11-20 · DEV-014 · Paso 2 — `AssetLibrary` (compartido).** `find`, `dress` (base alineada, centrado, orientación por la pieza o por `facing`, ajuste `GiroY`, visual sin colisión, soldadura para lo que se mueve, oculta la pieza provisional) y `place` (decoración). Tablas de nombres de piezas, relojes, mascotas, estaciones y legado. · Verificación: revisión estática.
+- **2026-11-20 · DEV-014 · Paso 3 — Integración.**
+  - Plot: suelo, taller, panel, caminadora, vitrinas y relojes.
+  - Estaciones del muro; el Cronómetro oculta su esfera provisional si hay modelo.
+  - Muro, arco de salida, casas de cada zona mirando al camino, pedestales y piezas robables.
+  - Mascotas soldadas a su esfera y pieza del legado en el cliente.
+  - Dueños desde `npc_dueno_z<zona>` (R15 de Studio) si existen.
+  - Decoración automática (farolas, árboles, arbustos, rocas, bancas, vallas, carteles, cajas y postes de las puertas).
+  - Sonidos por `RemoteEvent` `Sound` (`Config.SOUND_IDS`) en robar, alarma, atrapado, botín, compras, cápsulas, ruleta, subir de nivel, entrenar (bucle) y botones.
+  - Iconos en los botones del HUD y las monedas (`Config.ICON_IDS`).
+
+  · Verificación: revisión estática (25 scripts, 0 errores). Comprobación cruzada: todos los nombres de assets del código existen como FBX en `art/export/modelos`; las cápsulas quedan para una futura pantalla de premios.
+- **2026-11-20 · DEV-014 · Paso 4 — Pruebas.** Nuevo `AssetLibrary.spec.luau` con 4 pruebas: colocación y ocultado, sin asset no cambia nada, orientación, `GiroY` y soldadura, y nombres de todo el catálogo. Total: 47 bloques (43 + 4). · Verificación: pendiente en Studio.
+- **2026-11-20 · DEV-014 · Paso 5 — Cierre.** [[Pipeline-de-Arte]] con los pasos de importación definitivos, [[Arquitectura-General]] §14, Plan de Pruebas §21 y propuesta en el Registro. La fila DEV-014 pasa a Completada. **Para verlo en el juego falta publicar la place e importar los assets.** · Verificación: revisión de archivos.
+

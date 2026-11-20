@@ -20,6 +20,7 @@ local Workspace = game:GetService("Workspace")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
 local PlayerLogic = require(Shared.PlayerLogic)
+local AssetLibrary = require(Shared.AssetLibrary)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local WorldService = require(script.Parent.WorldService)
@@ -182,6 +183,11 @@ function BossService.init()
 	smoke.RiseVelocity = 4
 	smoke.Enabled = false
 	smoke.Parent = face
+	-- Arte (DEV-014): el modelo de la estación ya trae su esfera de reloj
+	if AssetLibrary.find(AssetLibrary.STATION_ASSETS.boss) then
+		face.Transparency = 1
+		clockHand.Transparency = 1
+	end
 
 	nextAt = now() + Config.BOSS_FIRST_DELAY_SECONDS
 	publish()

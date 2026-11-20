@@ -23,12 +23,18 @@ Net.State = create("RemoteEvent", Config.REMOTES.State)
 Net.Notify = create("RemoteEvent", Config.REMOTES.Notify)
 Net.OpenPanel = create("RemoteEvent", Config.REMOTES.OpenPanel)
 Net.Action = create("RemoteFunction", Config.REMOTES.Action)
+Net.Sound = create("RemoteEvent", Config.REMOTES.Sound)
 
 folder.Parent = ReplicatedStorage
 
 -- kind: "info" | "ok" | "error"
 function Net.notify(player, text, kind)
 	Net.Notify:FireClient(player, text, kind or "info")
+end
+
+-- Pide al cliente reproducir un efecto (clave de Config.SOUND_IDS). DEV-014.
+function Net.sound(player, key)
+	Net.Sound:FireClient(player, key)
 end
 
 return Net

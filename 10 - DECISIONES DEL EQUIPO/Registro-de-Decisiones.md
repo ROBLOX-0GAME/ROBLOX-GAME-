@@ -252,3 +252,9 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn; la dirección visual pasará a Michael y Einell). **Área:** Arte / assets.
 - **Propuesta:** estilo low-poly colorido tipo simulador de Roblox con una textura de paleta común; herramientas Blender, Krita, Material Maker y Audacity; carpeta `art/` para fuentes y exportaciones; 1 unidad = 1 stud; modelos base generados por script y detallados a mano. Detalle en [[Pipeline-de-Arte]].
+
+#### DEC-017 — Los assets viven en ReplicatedStorage/Assets con respaldo provisional
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Área:** Arquitectura / arte.
+- **Propuesta:** los modelos importados se guardan en `ReplicatedStorage/Assets` con su nombre; el código los coloca sobre las piezas provisionales, que conservan la lógica; sin asset, se usa la pieza provisional. Sonidos e iconos por ID en `Config`. Detalle en [[Pipeline-de-Arte]] §5.
+

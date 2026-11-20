@@ -4,6 +4,10 @@
 	puede reemplazar el modelo conservando HumanoidRootPart y Humanoid.
 ]]
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local AssetLibrary = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("AssetLibrary"))
+
 local OwnerNpc = {}
 
 local function weld(part0, part1)
@@ -26,8 +30,41 @@ local function block(name, size, color, cframe)
 	return part
 end
 
+-- Personaje hecho en Studio (DEV-014): un Model R15 con Humanoid y
+-- HumanoidRootPart guardado en ReplicatedStorage/Assets como npc_dueno_z<zona>
+-- (o npc_dueno para todas las zonas). Las skins se diseñan con personajes originales.
+local function fromAsset(assetName, displayName, position, parent)
+	local asset = AssetLibrary.find(assetName) or AssetLibrary.find("npc_dueno")
+	if not asset or not asset:FindFirstChildOfClass("Humanoid") or not asset:FindFirstChild("HumanoidRootPart") then
+		return nil
+	end
+	local model = asset:Clone()
+	model.Name = displayName
+	local humanoid = model:FindFirstChildOfClass("Humanoid")
+	local root = model:FindFirstChild("HumanoidRootPart")
+	humanoid.DisplayName = displayName
+	humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff
+	humanoid.MaxHealth = math.huge
+	humanoid.Health = math.huge
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.Anchored = false
+		end
+	end
+	model.PrimaryPart = root
+	model:PivotTo(CFrame.new(position + Vector3.new(0, 3, 0)))
+	model.Parent = parent
+	root:SetNetworkOwner(nil)
+	return { model = model, humanoid = humanoid, root = root }
+end
+
 -- Devuelve { model, humanoid, root }
-function OwnerNpc.create(displayName, color, position, parent)
+function OwnerNpc.create(displayName, color, position, parent, assetName)
+	local custom = assetName and fromAsset(assetName, displayName, position, parent)
+	if custom then
+		return custom
+	end
 	local model = Instance.new("Model")
 	model.Name = displayName
 

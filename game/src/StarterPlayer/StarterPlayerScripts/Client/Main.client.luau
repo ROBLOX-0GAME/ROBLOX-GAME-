@@ -14,6 +14,7 @@ local stateRemote = remotes:WaitForChild(Config.REMOTES.State)
 local notifyRemote = remotes:WaitForChild(Config.REMOTES.Notify)
 local openPanelRemote = remotes:WaitForChild(Config.REMOTES.OpenPanel)
 local actionRemote = remotes:WaitForChild(Config.REMOTES.Action)
+local soundRemote = remotes:WaitForChild(Config.REMOTES.Sound)
 
 Ui.init(actionRemote)
 Intro.init(Ui.request)
@@ -26,6 +27,10 @@ end)
 
 notifyRemote.OnClientEvent:Connect(function(text, kind)
 	Ui.toast(text, kind)
+end)
+
+soundRemote.OnClientEvent:Connect(function(key)
+	Ui.playSound(key)
 end)
 
 openPanelRemote.OnClientEvent:Connect(function(panelId)

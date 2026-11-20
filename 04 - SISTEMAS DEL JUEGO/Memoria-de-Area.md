@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-014: `AssetLibrary` (find, dress y place) y el `RemoteEvent` `Sound` conectan modelos, decoración, sonidos e iconos con respaldo provisional. DEC-017.
 - 2026-11-20 · DEV-013: acciones `buyCarryUpgrade`, `spinWheel` y `setSetting`; `PlayerLogic.carryCapacity` limita el robo por viaje; las respuestas de acción llevan `extra`.
 - 2026-11-20 · DEV-011: módulo de cliente `Intro` (cinemática y pieza local), acción `claimLegacy` y `PlotService.shouldMoveToPlot` según `introDone`.
 - 2026-11-20 · DEV-010: `PlotService` con plots en arco (`CFrame.lookAt` hacia `WorldService.PlazaCenter`); `WorldService.WallSlots` coloca las estaciones en el muro frontal.

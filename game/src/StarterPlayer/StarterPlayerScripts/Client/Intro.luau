@@ -17,6 +17,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local GameData = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameData"))
+local AssetLibrary = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("AssetLibrary"))
 
 local player = Players.LocalPlayer
 
@@ -85,6 +86,8 @@ local function spawnPiece()
 	end)
 
 	piece.Parent = Workspace
+	-- Arte (DEV-014): modelo de la pieza si existe; va soldado para flotar y girar con ella
+	AssetLibrary.dress(piece, "mdl_legado_espiral", { weld = true })
 	local current = piece
 	task.spawn(function()
 		local base = current.Position

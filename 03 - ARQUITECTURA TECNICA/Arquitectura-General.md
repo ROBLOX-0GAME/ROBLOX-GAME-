@@ -139,3 +139,11 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 - **Robux:** `MonetizationService`. Los pases se consultan a Roblox al entrar. Los productos se entregan una sola vez (id de compra guardado) y solo se confirman tras guardar. Los IDs se configuran en `Config` (0 = próximamente).
 - **Mundo:** `WorldService`, `HouseService` y `TrainingService` generan piezas funcionales provisionales, marcadas con CollectionService (`Station`, `SpeedGate`, `GuideHouse`, `Treadmill`). El arte final se hará con Krita, Blender, Audacity y Material Maker y podrá sustituirlas conservando etiquetas y atributos.
 - Diseño: [[GDD]] §15. Historial: [[Changelog]]. Propuestas: [[Registro-de-Decisiones]] DEC-003 a DEC-008.
+
+## 14. Arte en el juego (DEV-014)
+
+- `ReplicatedStorage/Shared/AssetLibrary`: el código usa los modelos de **`ReplicatedStorage/Assets`** (se importan en la place publicada; no están en Git, según DEC-001) y, si faltan, las piezas provisionales.
+- Las piezas provisionales siguen siendo la fuente de colisiones, avisos (ProximityPrompt), etiquetas y lógica; el modelo es solo visual.
+- Sonidos por el `RemoteEvent` `Sound`; los IDs están en `Config.SOUND_IDS`. Iconos en `Config.ICON_IDS`.
+- Detalle y pasos en [[Pipeline-de-Arte]].
+

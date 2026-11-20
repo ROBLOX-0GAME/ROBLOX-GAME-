@@ -23,6 +23,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
 local GameData = require(Shared.GameData)
 local PlayerLogic = require(Shared.PlayerLogic)
+local AssetLibrary = require(Shared.AssetLibrary)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local OwnerNpc = require(script.Parent.OwnerNpc)
@@ -123,11 +124,13 @@ local function spawnSpot(house, spot)
 		spot.item = nil
 		house.thieves[player] = true
 		Net.notify(player, message, "ok")
+		Net.sound(player, "robar")
 		DataService.replicate(player)
 		task.delay(Config.HOUSE_SPOT_RESPAWN_SECONDS, spawnSpot, house, spot)
 	end)
 
 	item.Parent = house.model
+	AssetLibrary.dress(item, AssetLibrary.PART_ASSETS[partId]) -- arte (DEV-014)
 	spot.item = item
 end
 
@@ -216,15 +219,20 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		chasing = nil,
 	}
 
+	-- Arte (DEV-014): la casa mira hacia el camino (la puerta da a -side en X)
+	AssetLibrary.dress(model, "mdl_casa_z" .. zoneIndex, { facing = Vector3.new(-side, 0, 0) })
+
 	for _, offset in SPOT_OFFSETS do
 		local position = Vector3.new(centerX + side * offset[1], 0, centerZ + offset[2])
-		makePart({
+		local pedestal = makePart({
 			Name = "Pedestal",
 			Size = Vector3.new(2.4, 2, 2.4),
 			Position = position + Vector3.new(0, 1, 0),
 			Color = Color3.fromRGB(110, 80, 55),
 			Material = Enum.Material.Wood,
-		}).Parent = model
+		})
+		pedestal.Parent = model
+		AssetLibrary.dress(pedestal, "mdl_pedestal")
 		local spot = { position = position + Vector3.new(0, 2.9, 0), item = nil }
 		table.insert(house.spots, spot)
 		spawnSpot(house, spot)
@@ -241,9 +249,16 @@ end
 local function chase(house, player)
 	house.chasing = player
 	local zone = house.zone
-	local npc = OwnerNpc.create(house.ownerName, zone.color:Lerp(Color3.new(0, 0, 0), 0.4), house.ownerSpawn, npcFolder)
+	local npc = OwnerNpc.create(
+		house.ownerName,
+		zone.color:Lerp(Color3.new(0, 0, 0), 0.4),
+		house.ownerSpawn,
+		npcFolder,
+		"npc_dueno_z" .. house.zoneIndex
+	)
 	npc.humanoid.WalkSpeed = zone.ownerSpeed
 	Net.notify(player, string.format("¡%s te vio! Corre a la base con tu botín.", house.ownerName), "error")
+	Net.sound(player, "alarma_dueno")
 
 	task.wait(Config.OWNER_REACTION_SECONDS)
 	local started = os.clock()
@@ -293,6 +308,7 @@ local function chase(house, player)
 	if result == "caught" and data then
 		local lost = PlayerLogic.loseLoot(data)
 		Net.notify(player, string.format("¡%s te atrapó! Perdiste %d piezas robadas.", house.ownerName, lost), "error")
+		Net.sound(player, "atrapado")
 		DataService.replicate(player)
 	elseif result == "escaped" then
 		Net.notify(player, string.format("%s dejó de perseguirte.", house.ownerName), "info")
@@ -352,6 +368,7 @@ local function tick()
 			if root and WorldService.isInHub(root.Position) then
 				local saved = PlayerLogic.depositLoot(data)
 				Net.notify(player, string.format("Botín guardado: +%d piezas en tu mochila.", saved), "ok")
+				Net.sound(player, "guardar_botin")
 				DataService.replicate(player)
 			end
 		end

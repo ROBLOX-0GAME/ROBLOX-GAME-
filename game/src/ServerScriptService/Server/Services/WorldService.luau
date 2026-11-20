@@ -27,6 +27,7 @@ local Config = require(Shared.Config)
 local GameData = require(Shared.GameData)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
+local AssetLibrary = require(Shared.AssetLibrary)
 
 local WorldService = {}
 
@@ -184,6 +185,8 @@ function WorldService.buildStation(info)
 	model.PrimaryPart = base
 	model.Parent = WorldService.Folder
 	WorldService.Stations[info.id] = base
+	-- Arte (DEV-014)
+	AssetLibrary.dress(model, AssetLibrary.STATION_ASSETS[info.id])
 	return base
 end
 
@@ -246,6 +249,10 @@ local function buildZone(folder, zoneIndex, zone)
 		barrier:SetAttribute("ZoneIndex", zoneIndex)
 		CollectionService:AddTag(barrier, "SpeedGate")
 		barrier.Parent = gate
+		-- Arte (DEV-014): postes en los extremos de la barrera
+		for _, side in { -1, 1 } do
+			AssetLibrary.place("mdl_puerta_velocidad_poste", Vector3.new(side * (HALF_WIDTH - 2), 0, startZ - 5), nil, gate)
+		end
 		local label = makePart({
 			Name = "Rotulo",
 			Size = Vector3.new(1, 1, 1),
@@ -308,14 +315,18 @@ function WorldService.init()
 	-- Muro frontal con abertura para salir a correr
 	local wallLength = HALF_WIDTH - FRONT_OPENING
 	for _, side in { -1, 1 } do
-		makePart({
+		local wallPart = makePart({
 			Name = "MuroFrontal",
 			Size = Vector3.new(wallLength, 18, 2),
 			Position = Vector3.new(side * (FRONT_OPENING + wallLength / 2), 9, FRONT_WALL_Z),
 			Color = Color3.fromRGB(150, 140, 125),
 			Material = Enum.Material.Brick,
-		}).Parent = folder
+		})
+		wallPart.Parent = folder
+		AssetLibrary.dress(wallPart, "mdl_muro_frontal")
 	end
+	-- Arco de la salida (solo visual, si existe el asset)
+	AssetLibrary.place("mdl_cartel_salida", Vector3.new(0, 0, FRONT_WALL_Z), Vector3.new(0, 0, -1), folder)
 	local exitSign = makePart({
 		Name = "CartelSalida",
 		Size = Vector3.new(1, 1, 1),
@@ -361,11 +372,54 @@ function WorldService.init()
 		buildZone(zonesFolder, zoneIndex, zone)
 	end
 
+	WorldService.placeDecor(folder)
 	folder.Parent = Workspace
 
 	for _, info in STATIONS do
 		WorldService.buildStation(info)
 	end
+end
+
+-- Decoración (DEV-014): solo aparece si los assets existen; no afecta al juego.
+function WorldService.placeDecor(folder)
+	local decor = Instance.new("Folder")
+	decor.Name = "Decoracion"
+	-- Farolas a ambos lados del camino
+	for z = ZONE_START, MAP_END - 20, 40 do
+		for _, side in { -1, 1 } do
+			AssetLibrary.place("mdl_farola", Vector3.new(side * 14, 0, z), Vector3.new(-side, 0, 0), decor)
+		end
+	end
+	-- Árboles, arbustos y rocas junto a los muros laterales
+	local kinds = { "mdl_arbol", "mdl_arbusto", "mdl_arbol", "mdl_roca" }
+	local index = 0
+	for z = ZONE_START + 10, MAP_END - 10, 22 do
+		for _, side in { -1, 1 } do
+			index += 1
+			AssetLibrary.place(kinds[index % #kinds + 1], Vector3.new(side * (HALF_WIDTH - 8), 0, z), nil, decor)
+		end
+	end
+	-- Bancas en la plaza
+	local plaza = WorldService.PlazaCenter
+	for _, offset in { Vector3.new(-12, 0, 20), Vector3.new(12, 0, 20), Vector3.new(-12, 0, 55), Vector3.new(12, 0, 55) } do
+		AssetLibrary.place("mdl_banca", plaza + offset, Vector3.new(-math.sign(offset.X), 0, 0), decor)
+	end
+	-- Cajas junto al Puesto de Carga
+	local carry = WorldService.WallSlots.carry
+	for _, offset in { Vector3.new(-10, 0, -2), Vector3.new(-10, 0, -5), Vector3.new(10, 0, -3) } do
+		AssetLibrary.place("mdl_caja_madera", carry + offset, nil, decor)
+	end
+	-- Cartel de cada zona y vallas en sus bordes
+	for zoneIndex in GameData.Zones do
+		local startZ = WorldService.zoneBounds(zoneIndex)
+		AssetLibrary.place("mdl_cartel_zona", Vector3.new(-14, 0, startZ + 4), Vector3.new(0, 0, -1), decor)
+		for x = -HALF_WIDTH + 8, HALF_WIDTH - 8, 8 do
+			if math.abs(x) > 14 then
+				AssetLibrary.place("mdl_valla", Vector3.new(x, 0, startZ + 0.5), Vector3.new(0, 0, -1), decor)
+			end
+		end
+	end
+	decor.Parent = folder
 end
 
 -- ¿Está el personaje del jugador cerca de la estación?

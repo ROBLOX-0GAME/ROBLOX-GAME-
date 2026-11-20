@@ -59,8 +59,14 @@ Según DEC-001, **Roblox Studio guarda los assets ya importados en la place** y 
    O modela a mano en Blender respetando la escala y la paleta.
 2. **Vista previa:** con `vista_previa.py` (mismo comando) se generan `art/export/vistas/*.png`, para revisar en Obsidian o GitHub.
 3. **Detallar a mano** en Blender, Krita y Material Maker. Guarda la fuente en `art/` y vuelve a exportar.
-4. **Importar en Studio:** abre la place oficial → **3D Importer** → elige el FBX → unidad **Stud** → importar. Sube `tex_paleta.png` (Asset Manager) y ponla como `TextureID` del MeshPart. Guarda el modelo en `ServerStorage/Assets/` con su nombre (`mdl_caminadora`).
-5. **Conectar al juego** (tarea de código posterior): los servicios usarán el modelo de `ServerStorage/Assets` si existe y, si no, la pieza provisional actual. Así el juego nunca se rompe por un asset que falte.
+4. **Importar en Studio:** abre la place oficial → **3D Importer** → elige el FBX → unidad **Stud** → importar. Sube `tex_paleta.png` (Asset Manager) y ponla como `TextureID` del MeshPart. Guarda el modelo en **`ReplicatedStorage/Assets/`** (crea la carpeta `Assets`) con su nombre exacto (`mdl_caminadora`). Va en ReplicatedStorage porque el cliente también usa algunos, como la pieza del legado.
+5. **Conectado al juego (DEV-014, `AssetLibrary`):** al pulsar Play, cada servicio busca su modelo en `ReplicatedStorage/Assets`.
+   - Si **existe**, lo coloca sobre la pieza provisional (base con base, centrado) y oculta la pieza, que conserva colisiones, avisos y lógica.
+   - Si **no existe**, se queda la pieza provisional. El juego nunca se rompe por un asset que falte.
+   - **Orientación:** el frente del asset debe mirar hacia su LookVector (−Z en Studio). Si al importarlo quedó girado, añade al asset el atributo numérico **`GiroY`** (grados, por ejemplo 180) y no hay que tocar código.
+   - **Decoración:** árboles, farolas, bancas, vallas, rocas, cajas, carteles de zona, postes de las puertas y el arco de salida aparecen solos al importar sus modelos.
+   - **Dueños de las casas:** crea en Studio un personaje R15 (Avatar → Build Rig y ropa o accesorios **originales**) y guárdalo como `npc_dueno_z1` … `npc_dueno_z5` (o `npc_dueno` para todas las zonas). Debe tener `Humanoid` y `HumanoidRootPart`.
+   - **Sonidos:** sube cada `art/audio/export/sfx_*.ogg` y pega su ID en `Config.SOUND_IDS` (por ejemplo `robar = 1234567890`). **Iconos:** sube cada `ico_*.png` y pega su ID en `Config.ICON_IDS`. Con 0 no suenan ni se muestran.
 6. **Registrar** el asset en la lista (§7) y en el [[Changelog]], con autor y licencia si aplica.
 
 > ⚠️ **Place oficial:** la place que genera `build.py` o Rojo solo contiene código. Los modelos importados se guardan en la place **publicada** de Roblox, y Rojo sincroniza el código en ella (`servePlaceIds`, ver [[Arquitectura-General]]). Hay que publicar esa place antes de empezar a importar assets.

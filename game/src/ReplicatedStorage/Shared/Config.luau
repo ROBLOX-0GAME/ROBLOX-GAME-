@@ -115,6 +115,33 @@ local Config = {
 		Notify = "Notify", -- RemoteEvent servidor → cliente: mensaje corto
 		OpenPanel = "OpenPanel", -- RemoteEvent servidor → cliente: abrir un menú de estación
 		Action = "Action", -- RemoteFunction cliente → servidor: pedir una acción
+		Sound = "Sound", -- RemoteEvent servidor → cliente: reproducir un efecto (DEV-014)
+	},
+
+	-- Arte (DEV-014): IDs de Roblox de los sonidos (art/audio/export/sfx_*.ogg) y de los
+	-- iconos (art/texturas/export/ico_*.png) tras subirlos con el Asset Manager.
+	-- 0 = todavía no subido: no suena o no se muestra (el juego funciona igual).
+	SOUND_IDS = {
+		robar = 0,
+		alarma_dueno = 0,
+		atrapado = 0,
+		guardar_botin = 0,
+		comprar = 0,
+		abrir_capsula = 0,
+		ruleta = 0,
+		subir_nivel = 0,
+		entrenar = 0,
+		boton = 0,
+	},
+	ICON_IDS = {
+		monedas = 0,
+		velocidad = 0,
+		mochila = 0,
+		premios = 0,
+		ruleta = 0,
+		robux = 0,
+		ajustes = 0,
+		carga = 0,
 	},
 }
 

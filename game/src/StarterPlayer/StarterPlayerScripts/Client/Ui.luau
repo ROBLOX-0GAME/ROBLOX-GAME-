@@ -118,6 +118,50 @@ local function label(text, size, color, props)
 	return item
 end
 
+-- ---------------------------------------------------------------------------
+-- Sonidos (DEV-014): solo suenan los que tienen ID en Config.SOUND_IDS
+-- ---------------------------------------------------------------------------
+
+local SoundService = game:GetService("SoundService")
+local soundCache = {}
+local trainingSound = nil
+
+local function getSound(key)
+	local id = Config.SOUND_IDS[key]
+	if not id or id == 0 then
+		return nil
+	end
+	if not soundCache[key] then
+		local sound = Instance.new("Sound")
+		sound.Name = "sfx_" .. key
+		sound.SoundId = "rbxassetid://" .. id
+		sound.Parent = SoundService
+		soundCache[key] = sound
+	end
+	return soundCache[key]
+end
+
+function Ui.playSound(key)
+	local sound = getSound(key)
+	if sound then
+		SoundService:PlayLocalSound(sound)
+	end
+end
+
+-- Icono (DEV-014): ImageLabel si hay ID en Config.ICON_IDS
+local function iconImage(key, size)
+	local id = Config.ICON_IDS[key]
+	if not id or id == 0 then
+		return nil
+	end
+	local image = Instance.new("ImageLabel")
+	image.Name = "Icono"
+	image.BackgroundTransparency = 1
+	image.Image = "rbxassetid://" .. id
+	image.Size = UDim2.fromOffset(size, size)
+	return image
+end
+
 local function button(text, enabled, onActivated)
 	local item = new("TextButton", {
 		Size = UDim2.fromOffset(120, 40),
@@ -133,7 +177,10 @@ local function button(text, enabled, onActivated)
 		item.BackgroundColor3 = COLORS.button
 	end
 	-- Activated funciona con clic, toque y botón A del mando.
-	item.Activated:Connect(onActivated)
+	item.Activated:Connect(function(...)
+		Ui.playSound("boton")
+		onActivated(...)
+	end)
 	return item
 end
 
@@ -954,6 +1001,7 @@ local function renderSpin()
 					return
 				end
 				spinning = true
+				Ui.playSound("ruleta")
 				-- Animación: recorre los premios y se detiene en el que decide el servidor.
 				local finished = false
 				task.spawn(function()
@@ -1385,11 +1433,11 @@ local function card(name, props)
 end
 
 local RAIL_BUTTONS = {
-	{ id = "backpack", text = "Mochila", key = "B" },
-	{ id = "rewards", text = "Premios", key = "P" },
-	{ id = "spin", text = "Ruleta", key = "R" },
-	{ id = "robux", text = "Robux", key = "M" },
-	{ id = "settings", text = "Ajustes", key = "O" },
+	{ id = "backpack", text = "Mochila", key = "B", icon = "mochila" },
+	{ id = "rewards", text = "Premios", key = "P", icon = "premios" },
+	{ id = "spin", text = "Ruleta", key = "R", icon = "ruleta" },
+	{ id = "robux", text = "Robux", key = "M", icon = "robux" },
+	{ id = "settings", text = "Ajustes", key = "O", icon = "ajustes" },
 }
 
 local function buildHud()
@@ -1414,6 +1462,12 @@ local function buildHud()
 
 	local money = card("Dinero", { LayoutOrder = 1 })
 	hud.coins = label("", 24, COLORS.accent, { LayoutOrder = 1 })
+	local coinIcon = iconImage("monedas", 26)
+	if coinIcon then
+		coinIcon.AnchorPoint = Vector2.new(1, 0)
+		coinIcon.Position = UDim2.new(1, 0, 0, 0)
+		coinIcon.Parent = hud.coins
+	end
 	hud.level = label("", 15, COLORS.text, { LayoutOrder = 2 })
 	local xpBar = new("Frame", {
 		Size = UDim2.new(1, 0, 0, 14),
@@ -1502,6 +1556,14 @@ local function buildHud()
 		item.Name = "Boton" .. info.text
 		item.LayoutOrder = index
 		item.Size = UDim2.fromOffset(120, 44)
+		local icon = iconImage(info.icon, 30)
+		if icon then
+			icon.AnchorPoint = Vector2.new(0, 0.5)
+			icon.Position = UDim2.new(0, 6, 0.5, 0)
+			icon.Parent = item
+			item.TextXAlignment = Enum.TextXAlignment.Right
+			new("UIPadding", { PaddingRight = UDim.new(0, 8) }).Parent = item
+		end
 		local badge = new("TextLabel", {
 			Name = "Aviso",
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -1591,6 +1653,16 @@ local function watchDistance()
 			task.wait(0.5)
 			updateGuide()
 			updateGates()
+			local isTraining = player:GetAttribute("Training") ~= nil
+			local loop = getSound("entrenar")
+			if loop then
+				loop.Looped = true
+				if isTraining and not loop.IsPlaying then
+					loop:Play()
+				elseif not isTraining and loop.IsPlaying then
+					loop:Stop()
+				end
+			end
 			if player:GetAttribute("Training") and state then
 				hud.training.Visible = true
 				hud.training.Text = string.format(
