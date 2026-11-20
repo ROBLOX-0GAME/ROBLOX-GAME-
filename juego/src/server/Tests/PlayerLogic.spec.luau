@@ -318,6 +318,31 @@ return function(t)
 		t.ok(last > first * 3, "la última zona da muchas más piezas raras")
 	end)
 
+	t.test("DEV-004: entregar piezas al Cronómetro y reembolso", function()
+		local data = PlayerLogic.newData()
+		data.parts.gear = 5
+		data.parts.ruby = 2
+		local ok, _, points = PlayerLogic.contributeParts(data, "ruby", 2)
+		t.ok(ok, "entrega 2 rubíes")
+		t.eq(points, GameData.RepairPoints["Raro"] * 2, "puntos por rareza")
+		t.eq(data.parts.ruby, nil, "se descuentan")
+		t.ok(not PlayerLogic.contributeParts(data, "gear", 6), "no entrega más de lo que tiene")
+		t.ok(not PlayerLogic.contributeParts(data, "gear", 0), "rechaza 0")
+		t.ok(not PlayerLogic.contributeParts(data, "nada", 1), "rechaza piezas desconocidas")
+		t.eq(data.parts.gear, 5, "un rechazo no descuenta nada")
+		t.eq(PlayerLogic.refundParts(data, { ruby = 2, nada = 3 }), 2, "devuelve solo piezas válidas")
+		t.eq(data.parts.ruby, 2, "reembolso completo")
+		t.eq(PlayerLogic.bossReward(10), 10 * Config.BOSS_COINS_PER_POINT, "premio por punto")
+	end)
+
+	t.test("DEV-004: todas las rarezas tienen puntos y color", function()
+		for _, partId in GameData.PartOrder do
+			local rarity = GameData.Parts[partId].rarity
+			t.ok(GameData.RepairPoints[rarity] ~= nil, "puntos para " .. rarity)
+			t.ok(GameData.RarityColors[rarity] ~= nil, "color para " .. rarity)
+		end
+	end)
+
 	t.test("buildView es coherente", function()
 		local data = PlayerLogic.newData()
 		data.parts.gear = 4

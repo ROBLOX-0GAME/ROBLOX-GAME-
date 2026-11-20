@@ -38,6 +38,14 @@ GameData.Parts = {
 }
 GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby", "diamond" }
 
+-- Puntos de reparación del Cronómetro Maestro por rareza (DEV-004, PROPUESTA)
+GameData.RepairPoints = {
+	["Común"] = 1,
+	["Poco común"] = 3,
+	["Raro"] = 8,
+	["Legendario"] = 20,
+}
+
 GameData.RarityColors = {
 	["Común"] = Color3.fromRGB(170, 170, 180),
 	["Poco común"] = Color3.fromRGB(80, 150, 230),

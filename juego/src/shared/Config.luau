@@ -40,6 +40,14 @@ local Config = {
 	CHASE_LOSE_DISTANCE = 140, -- el dueño se rinde si te alejas tanto
 	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
 
+	-- Jefe cooperativo: Cronómetro Maestro (DEV-004)
+	BOSS_FIRST_DELAY_SECONDS = 90, -- primera avería tras iniciar el servidor
+	BOSS_INTERVAL_SECONDS = 420, -- tiempo entre averías
+	BOSS_DURATION_SECONDS = 150, -- tiempo para repararlo
+	BOSS_POINTS_PER_PLAYER = 25, -- meta = esto × jugadores conectados
+	BOSS_MIN_GOAL = 30,
+	BOSS_COINS_PER_POINT = 12, -- premio por punto aportado si se repara
+
 	-- Seguridad
 	INTERACT_DISTANCE = 14, -- distancia máxima para robar una pieza
 	STATION_DISTANCE = 20, -- distancia máxima a una estación para usar su menú

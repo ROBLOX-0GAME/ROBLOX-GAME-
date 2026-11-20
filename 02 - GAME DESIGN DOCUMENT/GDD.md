@@ -183,3 +183,14 @@ Pendiente de definir.
 - Nueva pieza **Diamante** (legendaria) y nuevo **Reloj del millonario** (nivel 8, se vende por 5000).
 - La mejora **Velocidad** sube a 10 niveles, para llegar a 36. La **Suerte** ahora da probabilidad de robar 2 piezas en vez de 1.
 - **Seguridad:** el servidor rechaza robos en zonas sin la velocidad necesaria, aunque alguien cruce la puerta con trampas. El botín se descarta al cargar los datos.
+
+### 15.3 Jefe cooperativo: el Cronómetro Maestro (DEV-004)
+
+- Está en la base. Funciona hasta que **se avería**: primero a los 90 s de abrir el servidor y luego cada 7 min.
+- Mientras está averiado (2 min 30 s), **todos los jugadores del servidor** le entregan piezas guardadas. Cada rareza vale distintos puntos: común 1, poco común 3, rara 8 y legendaria 20.
+- **Meta:** 25 puntos por jugador conectado (mínimo 30).
+  - Si la alcanzan, cada participante gana **12 monedas por punto** aportado.
+  - Si se acaba el tiempo, se devuelven las piezas a quien siga conectado.
+- Sin combate. Le da otro uso a las piezas y empuja a cooperar en un juego de robo.
+- El aviso llega a todo el servidor. El menú muestra el tiempo, el progreso y el aporte de cada jugador; la esfera echa humo mientras está averiado.
+- **Futuro (no implementado):** fases de diagnóstico y calibración en equipo, y premio de huevo de mascota (pendiente de DEV-005).

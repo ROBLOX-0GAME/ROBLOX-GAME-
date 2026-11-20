@@ -552,6 +552,41 @@ function PlayerLogic.advanceTutorial(data)
 	return messages
 end
 
+-- Entrega piezas guardadas al Cronómetro Maestro (DEV-004).
+-- Devuelve ok, mensaje, puntos.
+function PlayerLogic.contributeParts(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida.", 0
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida.", 0
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo.", 0
+	end
+	removeCount(data.parts, partId, amount)
+	local points = GameData.RepairPoints[part.rarity] * amount
+	return true, string.format("Entregaste %d × %s: +%d puntos de reparación.", amount, part.name, points), points
+end
+
+-- Devuelve piezas entregadas si la reparación falla (ignora la capacidad:
+-- el jugador ya las tenía).
+function PlayerLogic.refundParts(data, parts)
+	local total = 0
+	for partId, amount in parts do
+		if GameData.Parts[partId] and amount > 0 then
+			data.parts[partId] = (data.parts[partId] or 0) + amount
+			total += amount
+		end
+	end
+	return total
+end
+
+function PlayerLogic.bossReward(points)
+	return math.floor(points * Config.BOSS_COINS_PER_POINT)
+end
+
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.
 function PlayerLogic.collectIncome(data)
 	local income = PlayerLogic.museumIncome(data)

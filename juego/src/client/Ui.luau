@@ -17,6 +17,7 @@ local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
@@ -44,9 +45,12 @@ local PANEL_TITLES = {
 	shop = "Tienda — Vender y mejorar",
 	museum = "Museo — Exhibir relojes",
 	backpack = "Mochila",
+	boss = "Cronómetro Maestro — Reparación",
 }
 
 local state = nil
+local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
+local lastBossKey = ""
 local actionRemote = nil
 local busy = false
 local openPanelId = nil
@@ -241,7 +245,24 @@ end
 
 local function addHeader(text)
 	rowOrder += 1
-	label("<b>" .. text .. "</b>", 18, COLORS.accent, { LayoutOrder = rowOrder }).Parent = panelList
+	local item = label("<b>" .. text .. "</b>", 18, COLORS.accent, { LayoutOrder = rowOrder })
+	item.Parent = panelList
+	return item
+end
+
+-- Parte de una estación por id (etiqueta "Station" que pone el servidor).
+local function stationById(stationId)
+	for _, part in CollectionService:GetTagged("Station") do
+		if part:GetAttribute("StationId") == stationId then
+			return part
+		end
+	end
+	return nil
+end
+
+local function formatTime(seconds)
+	seconds = math.max(0, math.floor(seconds))
+	return string.format("%d:%02d", seconds // 60, seconds % 60)
 end
 
 local function costText(cost)
@@ -492,11 +513,104 @@ local function renderBackpack()
 	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
 end
 
+-- Estado del jefe leído de los atributos de su estación (DEV-004)
+local function bossInfo()
+	local station = stationById("boss")
+	if not station then
+		return nil
+	end
+	return {
+		active = station:GetAttribute("BossActive") == true,
+		points = station:GetAttribute("BossPoints") or 0,
+		goal = station:GetAttribute("BossGoal") or 0,
+		endsAt = station:GetAttribute("BossEndsAt") or 0,
+		nextAt = station:GetAttribute("BossNextAt") or 0,
+		mine = player:GetAttribute("BossPoints") or 0,
+	}
+end
+
+local function bossTimerText(info)
+	local now = Workspace:GetServerTimeNow()
+	if info.active then
+		return string.format("⏱ Tiempo restante: %s", formatTime(info.endsAt - now))
+	end
+	return string.format("Próxima avería en %s", formatTime(info.nextAt - now))
+end
+
+local function renderBoss()
+	local info = bossInfo()
+	if not info then
+		addRow("Cargando el Cronómetro Maestro…")
+		return
+	end
+	bossTimerLabel = addHeader(bossTimerText(info))
+	if not info.active then
+		addRow(
+			"El Cronómetro Maestro funciona. Cuando se averíe, todos los jugadores del servidor "
+				.. "tendrán poco tiempo para entregarle piezas guardadas. Si llegan a la meta, "
+				.. string.format("cada uno gana %d monedas por punto aportado; si no, recuperan sus piezas.", Config.BOSS_COINS_PER_POINT)
+		)
+		return
+	end
+	addRow(
+		string.format(
+			"<b>Reparación: %d / %d puntos</b>\nTu aporte: %d puntos (≈ %d monedas si se repara)",
+			info.points,
+			info.goal,
+			info.mine,
+			info.mine * Config.BOSS_COINS_PER_POINT
+		)
+	)
+	addHeader("Entregar piezas guardadas")
+	local any = false
+	for _, partId in GameData.PartOrder do
+		local owned = state.parts[partId] or 0
+		if owned > 0 then
+			any = true
+			local part = GameData.Parts[partId]
+			addRow(
+				string.format(
+					"<b>%s</b> × %d  ·  %d puntos c/u",
+					part.name,
+					owned,
+					GameData.RepairPoints[part.rarity]
+				),
+				{
+					{
+						text = "Entregar 1",
+						onActivated = function()
+							request("contribute", partId, 1)
+						end,
+					},
+					{
+						text = "Entregar todas",
+						onActivated = function()
+							request("contribute", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+						end,
+					},
+				}
+			)
+		end
+	end
+	if not any then
+		addRow("No tienes piezas guardadas. Roba en las casas y vuelve rápido.")
+	end
+end
+
+local function bossKey()
+	local info = bossInfo()
+	if not info then
+		return ""
+	end
+	return string.format("%s|%d|%d|%d", tostring(info.active), info.points, info.goal, info.mine)
+end
+
 local RENDERERS = {
 	workshop = renderWorkshop,
 	shop = renderShop,
 	museum = renderMuseum,
 	backpack = renderBackpack,
+	boss = renderBoss,
 }
 
 -- ---------------------------------------------------------------------------
@@ -631,14 +745,7 @@ local guide = { beam = nil, from = nil, to = nil, target = nil }
 
 -- Estación por id (etiqueta "Station"); funciona con streaming porque las
 -- estaciones son modelos persistentes.
-local function findStation(stationId)
-	for _, part in CollectionService:GetTagged("Station") do
-		if part:GetAttribute("StationId") == stationId then
-			return part
-		end
-	end
-	return nil
-end
+local findStation = stationById
 
 local function findGuideTarget(guideId)
 	if guideId == "house" then
@@ -849,6 +956,18 @@ local function watchDistance()
 			task.wait(0.5)
 			updateGuide()
 			updateGates()
+			if openPanelId == "boss" then
+				local key = bossKey()
+				if key ~= lastBossKey then
+					lastBossKey = key
+					render(true)
+				elseif bossTimerLabel and bossTimerLabel.Parent then
+					local info = bossInfo()
+					if info then
+						bossTimerLabel.Text = "<b>" .. bossTimerText(info) .. "</b>"
+					end
+				end
+			end
 			if openPanelId and openPanelId ~= "backpack" then
 				local station = findStation(openPanelId)
 				local character = player.Character

@@ -174,6 +174,25 @@ Cinco objetivos en orden que enseñan el bucle principal: recoger 5 cajas → fa
 - [ ] Prueba en Studio: robar en la zona 1, escapar, ser atrapado, cruzar una puerta tras mejorar la velocidad.
 - [ ] El equipo aprueba zonas y cifras (DEC-004).
 
+### DEV-004 — Jefe cooperativo: Cronómetro Maestro
+
+- **ID:** DEV-004 · **Responsable:** Jhonn · **Cuenta Claude:** Claude 1 — Cuenta A · **Revisor:** Zadiel.
+- **Área:** Sistemas, multijugador, economía. **Prioridad:** Media. **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-004-jefe-cronometro` (sale de DEV-003). **Fecha:** 2026-11-20.
+
+**Descripción:** evento periódico en el que todos los jugadores del servidor entregan piezas para reparar el Cronómetro Maestro. Diseño en [[GDD]] §15.3.
+
+**Rutas:** `juego/src/shared/{Config,GameData,PlayerLogic}.luau`, `juego/src/server/Services/{BossService,ActionService}.luau`, `juego/src/server/Main.server.luau`, `juego/src/server/Tests/PlayerLogic.spec.luau`, `juego/src/client/Ui.luau`.
+
+**Criterios de aceptación:**
+
+- [x] Ciclo funcionando → averiado → reparado o fallido, con aviso a todo el servidor.
+- [x] Entregas validadas en el servidor; premio por punto si se repara; reembolso si falla.
+- [x] El menú muestra tiempo, progreso y aporte propio, y se actualiza solo.
+- [x] 2 pruebas nuevas (27 en total).
+- [ ] Prueba en Studio con 2 jugadores (Test → Clients and Servers).
+- [ ] El equipo aprueba tiempos, meta y premios (DEC-005).
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea

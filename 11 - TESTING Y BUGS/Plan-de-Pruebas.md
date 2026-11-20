@@ -205,3 +205,14 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | La puerta de la zona 2 bloquea con velocidad 16 y deja pasar con 18 | Manual | Pendiente |
 | 2 jugadores roban la misma casa: el dueño persigue a uno y luego al otro | Multijugador | Pendiente |
 | El dueño no se atasca al salir de la casa | Manual | Pendiente |
+
+## 12. Pruebas de DEV-004 (Cronómetro Maestro)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 27 pruebas de `PlayerLogic` | Automática | Pendiente |
+| A los 90 s llega el aviso de avería y el reloj echa humo | Manual | Pendiente |
+| Llegar a la meta: monedas = 12 × puntos aportados | Manual | Pendiente |
+| Dejar que se acabe el tiempo: se devuelven las piezas | Manual | Pendiente |
+| 2 jugadores aportan; la meta escala a 50 puntos | Multijugador | Pendiente |

@@ -126,3 +126,8 @@ Los agentes deben:
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn; falta que el equipo apruebe las cifras). **Área:** Gameplay / economía.
 - **Propuesta:** 5 zonas con puertas de velocidad; botín que se pierde si el dueño te atrapa; reemplaza a las cajas de DEC-002. Detalle en [[GDD]] §15.2.
 - **Reemplaza en parte:** DEC-002 (la recolección por cajas).
+
+#### DEC-005 — Jefe cooperativo: Cronómetro Maestro
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Área:** Sistemas / multijugador.
+- **Propuesta:** evento cada 7 min; entrega de piezas por puntos de rareza; 12 monedas por punto si se repara; reembolso si falla. Detalle en [[GDD]] §15.3.

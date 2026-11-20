@@ -75,3 +75,17 @@ Reglas:
 - **2026-11-20 · DEV-003 · Paso 4 — Mundo y casas.** `WorldService` se rehace: base segura, camino, 5 zonas, puertas de velocidad y muros límite; las estaciones se marcan con CollectionService y son persistentes con streaming. Nuevo `HouseService`: 20 casas con 3 piezas que reaparecen, robo validado, cola de persecución, botín guardado al entrar a la base y botín perdido al morir. Nuevo `OwnerNpc`: el dueño (un personaje de bloques) sale por la puerta y te persigue con `MoveTo`. Se elimina `PartSpawner`. · Verificación: revisión estática; prueba en Studio pendiente.
 - **2026-11-20 · DEV-003 · Paso 5 — Interfaz.** El HUD muestra la velocidad, la zona máxima y el botín encima. Las puertas se abren solo en el cliente que cumple la velocidad. La guía del tutorial apunta a la primera casa y la Mochila muestra el botín. El primer paso del tutorial pasa a ser «Roba 5 piezas y llévalas a la base». · Verificación: revisión estática.
 - **2026-11-20 · DEV-003 · Paso 6 — Pruebas.** Hay 4 pruebas nuevas: robo, guardado y pérdida del botín, límite de mochila con suerte, zonas y velocidad, y rareza por zona. Se ajusta la prueba de `rollPart`. Total: 25. · Verificación: **pendiente** en Studio. Revisión estática ejecutada: 0 errores, 42 `require`.
+
+---
+
+## 5. DEV-004 — Jefe cooperativo: Cronómetro Maestro
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Rama:** `task/DEV-004-jefe-cronometro`
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-004 · Paso 1 — Diseño.** Se adapta la propuesta previa del jefe sin combate (memoria de 08 - Multijugador) al nuevo bucle de robo: es un evento cooperativo de entrega de piezas. Escrito en [[GDD]] §15.3. · Verificación: ejecutada.
+- **2026-11-20 · DEV-004 · Paso 2 — Reglas.** `Config` recibe los tiempos, la meta y el premio del evento. `GameData.RepairPoints` define los puntos por rareza. `PlayerLogic` incorpora `contributeParts`, `refundParts` y `bossReward`. · Verificación: revisión estática.
+- **2026-11-20 · DEV-004 · Paso 3 — Servidor.** `BossService` crea la estación con la esfera, la aguja que gira y el humo, maneja el ciclo del evento y publica su estado en atributos; además evita cerrar el evento dos veces. `ActionService` incorpora la acción `contribute`, que ahora recibe también al jugador. · Verificación: revisión estática; prueba en Studio pendiente.
+- **2026-11-20 · DEV-004 · Paso 4 — Interfaz.** Menú «Cronómetro Maestro» con temporizador en vivo, progreso, aporte propio y botones para entregar. Se refresca cuando cambia el estado. · Verificación: revisión estática (0 errores, 49 `require`).
+- **2026-11-20 · DEV-004 · Paso 5 — Pruebas.** 2 pruebas nuevas: entregas y reembolso, y rarezas con puntos y color. Total: 27. · Verificación: **pendiente** en Studio.

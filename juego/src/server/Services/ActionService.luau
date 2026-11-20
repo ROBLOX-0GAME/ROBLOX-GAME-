@@ -17,6 +17,7 @@ local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local WorldService = require(script.Parent.WorldService)
 local CharacterService = require(script.Parent.CharacterService)
+local BossService = require(script.Parent.BossService)
 
 local ActionService = {}
 
@@ -51,6 +52,12 @@ local ACTIONS = {
 		station = "shop",
 		run = function(data, id)
 			return PlayerLogic.buyUpgrade(data, id)
+		end,
+	},
+	contribute = {
+		station = "boss",
+		run = function(data, id, amount, player)
+			return BossService.contribute(player, data, id, amount)
 		end,
 	},
 	display = {
@@ -107,7 +114,7 @@ local function handle(player, actionName, id, amount)
 		return reply(false, "Acércate a la estación para hacer eso.")
 	end
 
-	local ok, message = action.run(data, id, amount or 1)
+	local ok, message = action.run(data, id, amount or 1, player)
 	if ok then
 		DataService.replicate(player)
 		if actionName == "buyUpgrade" then
