@@ -2,6 +2,13 @@
 
 > Creado en ART-011 (2026-11-20) por Claude en la PC Windows de Zadiel. **Jhonn:** haz tú la parte 1 (crear la clave) y después abre Claude Code **en la raíz del repositorio** y pega: «Haz `git pull` y sigue `art/PROMPT_SUBIDA_JHONN.md` desde la parte 2».
 
+
+> ⛔ **NO HACE FALTA EJECUTAR ESTE PROMPT (ART-008, 2026-11-20).** Los 20 modelos PBR y sus mapas ya se subieron con Open Cloud desde la MacBook de Zadiel. Están montados en `ReplicatedStorage/Assets` de la place oficial (78 `SurfaceAppearance`), y la place se guardó en Roblox (versión 9). IDs en `art/texturas/ids_roblox.md`.
+>
+> En una partida de prueba, los 78 contenidos cargaron en el cliente con `ContentProvider:PreloadAsync` (todos *Success*), así que los assets de zadiel799 sí cargan en la experiencia de Jhonn. **Volver a subirlos crearía 76 assets permanentes duplicados.**
+>
+> Úsalo solo si en un **servidor real** (no en Studio), con otra cuenta, los relojes salen sin textura y Output muestra errores de permiso de assets.
+
 ---
 
 Eres Claude Code de la **Cuenta A**, trabajando con **Jhonn** en BUILD A WATCH!. La place oficial es **84500108687089** («Reloj creation oficial 1», universo 10778093657) y es de **Jhonn (Lubu465, ID de usuario 2311077683)**. Los assets deben subirse **a nombre de Jhonn** para que carguen en su experiencia; por eso la API key es suya.

@@ -73,7 +73,7 @@ Según DEC-001, **Roblox Studio guarda los assets ya importados en la place** y 
    - **Sonidos:** sube cada `art/audio/export/sfx_*.ogg` y pega su ID en `Config.SOUND_IDS` (por ejemplo `robar = 1234567890`). **Iconos:** sube cada `ico_*.png` y pega su ID en `Config.ICON_IDS`. Con 0 no suenan ni se muestran.
 6. **Registrar** el asset en la lista (§7) y en el [[Changelog]], con autor y licencia si aplica.
 
-> ⚠️ **Place oficial:** la place que genera `build.py` o Rojo solo contiene código. Los modelos importados se guardan en la place **publicada** de Roblox, y Rojo sincroniza el código en ella (`servePlaceIds`, ver [[Arquitectura-General]]). Hay que publicar esa place antes de empezar a importar assets.
+> **Place oficial:** **84500108687089** («Reloj creation oficial 1», universo 10778093657, dueño Jhonn; zadiel799 colabora en Team Create). La place que genera `build.py` o Rojo solo contiene código; los modelos se guardan en la place oficial, en `ReplicatedStorage/Assets`. Desde ART-008 están dentro los 20 modelos PBR (relojes, piezas robables, legado y cápsulas); IDs en `art/texturas/ids_roblox.md`. `servePlaceIds` sigue vacío: activarlo es una tarea de código aparte.
 
 ### Notas de importación (ART-002)
 
@@ -155,6 +155,26 @@ Materiales nuevos (`materiales_pbr.py -- metal_laton metal_plata esmalte_cosmico
 | `mdl_capsula_cosmica` | 668 | esmalte cósmico, plata, esmalte blanco y negro, acero, diamante |
 
 **Windows:** Material Maker 1.8 no exporta el nodo `perlin` en esta PC (Intel UHD 630) y necesita rutas con `/`; `materiales_pbr.py` ya pasa las rutas así, reintenta y los materiales nuevos usan el ruido «nube» (`fbm2` con Perlin). Los mapas de ART-006 hechos en la Mac no se tocan.
+
+### Importación en Studio con el MCP de Studio (ART-008)
+
+Hecho desde la MacBook de Zadiel, con Roblox Studio y su MCP, sobre la place oficial abierta en Team Create:
+
+1. **Subida con Open Cloud** (`open_cloud_invoke`, `POST /assets/v1/assets`) a la cuenta del colaborador que tiene abierto Studio (zadiel799):
+   - 20 FBX como **Model** y 43 PNG como **Image**, todos *Approved*.
+   - En Studio hace falta: *Assistant → Settings → MCP Permissions*, con `asset:read` y `asset:write` y la carpeta `art/` del repositorio aprobada para subidas.
+2. **Inserción** (`insert_asset`) en `ReplicatedStorage/Assets`. Llegan como paquetes.
+3. **Escala ×0,01:** el FBX llega 100 veces grande (en centímetros). Después, **anclar** las piezas y montar los `SurfaceAppearance` con el script de `art/texturas/ids_roblox.md`. Resultado: 78 montados, 0 avisos.
+4. **Comprobaciones:**
+   - `AssetLibrary.dress` coloca los 20 base con base y oculta la pieza provisional.
+   - Los relojes miran en el sentido del plot, así que no hace falta `GiroY`.
+   - `ContentProvider:PreloadAsync` en el cliente: 78 de 78 *Success*. Los assets del colaborador cargan en la experiencia del dueño.
+5. **Guardado:** *Save to Roblox* (versión 9). **No** se publicó.
+
+Lo aprendido:
+- El filtro de texto puede cambiar el nombre visible de un asset (pasó con «negro»), pero el ID funciona igual.
+- Los mapas metálicos de un solo color se comparten: 1 imagen blanca para todos los metales, y ninguna para los no metálicos.
+- La primera `screen_capture` tras insertar sale vacía porque las mallas aún cargan; hay que repetirla.
 
 ## 6. Control de recursos
 

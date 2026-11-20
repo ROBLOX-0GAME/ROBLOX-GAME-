@@ -272,3 +272,9 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 - **Fecha:** 2026-11-20. **Estado:** **Aprobada** por Zadiel (INFRA-003). **Área:** Equipo / coordinación.
 - **Decisión:** Michael y Einell dejan de participar. Zadiel y Jhonn toman todas las decisiones y revisan todo, también el área que era de la Cuenta B (mundo, narrativa, personajes, dirección visual, arte, contenido y UX). Las propuestas que esperaban a Michael y Einell (por ejemplo DEC-016, DEC-018 y DEC-019) las deciden ahora Zadiel y Jhonn. Donde reglas o notas antiguas digan «Cuenta B» o «Michael y Einell», se entiende Zadiel y Jhonn. Actualizados [[OWNERS]], AGENTS.md y `.claude/CLAUDE.md`.
+
+#### DEC-021 — Roblox Studio también en la MacBook de Zadiel
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-008). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Propuesta:** la MacBook de Zadiel usa Roblox Studio, con su MCP y Open Cloud, para trabajar en la place oficial por Team Create: importar assets, montar `SurfaceAppearance` y hacer pruebas en Play. Así se hizo ART-008. Amplía DEC-019 («sin Roblox Studio») y contradice la línea de `.claude/CLAUDE.md` y [[Arquitectura-General]] («la MacBook queda para Obsidian…»), que no se editan hasta que se apruebe.
+- **Límites:** no se conecta Rojo a la place oficial desde la Mac (`servePlaceIds` sigue vacío), no se publica sin el OK de Jhonn y el código sigue entrando solo por `game/src`.

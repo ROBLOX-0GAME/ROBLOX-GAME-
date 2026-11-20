@@ -599,7 +599,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Michael y Einell (dueños del arte); Jhonn (técnica).
 - **Área:** Arte / Studio.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo (desbloqueada el 2026-11-20: place oficial «Reloj creation oficial 1», Place ID `84500108687089`, Universe ID `10778093657`, dueño Lubu465 (Jhonn), zadiel799 colaborador en Team Create; IDs comprobados por Jhonn con la API pública). `servePlaceIds` sigue vacío: hace falta una tarea de código aparte.
+- **Estado:** Completada (2026-11-20, MacBook de Zadiel con Studio y MCP). Place oficial 84500108687089 guardada en la versión 9, sin publicar.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -608,8 +608,10 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 **Criterios de aceptación:**
 
 - [x] Existe la place oficial publicada (la creó Jhonn).
-- [ ] 6 relojes en `ReplicatedStorage/Assets` y 31 `SurfaceAppearance` montados sin avisos.
-- [ ] Prueba en Play realizada y anotada en el Changelog.
+- [x] 6 relojes en `ReplicatedStorage/Assets` y 31 `SurfaceAppearance` montados sin avisos. Ampliado a los 20 modelos PBR de ART-009: 78 `SurfaceAppearance`, 0 avisos.
+- [x] Prueba en Play realizada y anotada en el Changelog §27. `AssetLibrary` coloca los 20 y el cliente carga 78 de 78 contenidos.
+- [x] IDs en `art/texturas/ids_roblox.md`; capturas en `art/export/vistas/studio_*.png`.
+- [ ] Ver un reloj en una vitrina con un jugador real. Bloqueado por `Ui.luau:766` (DEV-011), que rompe el cliente: hace falta una tarea de código.
 
 ### ART-010 — Retocar iconos del HUD y sonidos
 

@@ -425,3 +425,46 @@ Reglas:
 - **2026-11-20 · ART-011 · Paso 1 — Por qué.** La place oficial es de Jhonn (Lubu465) y Zadiel es colaborador: los assets subidos por otra cuenta no cargan en la experiencia sin compartirlos, así que se suben con una API key de Jhonn. Claude no puede crear la clave (necesita la sesión de Jhonn en el navegador). Mientras tanto, ART-008 sigue reservada desde la MacBook (`88a742e`) y esta tarea no toca sus rutas.
 - **2026-11-20 · ART-011 · Paso 2 — Script.** `art/tools/subir_roblox.py` (Python estándar): sube con la Assets API los 56 mapas de los 14 materiales como **Image** y los 20 FBX PBR como **Model**, espera a que termine cada operación, reintenta 429/5xx, guarda los IDs en `art/tools/ids_roblox.json` tras cada subida (se puede retomar) y genera `art/tools/montar_assets.luau`, que en Studio carga los modelos con `InsertService:LoadAsset` en `ReplicatedStorage/Assets` y monta los `SurfaceAppearance` (78 esperados). La clave solo se lee de `ROBLOX_API_KEY`. · Verificación: ejecutada con `--prueba` (14 materiales, 20 modelos, 76 subidas pendientes), sin clave (aviso correcto) y con una clave falsa contra la API real (respuesta 401 «Invalid API Key», o sea, la petición llega bien formada). **No** se ha subido nada ni probado `montar_assets.luau` en Studio.
 - **2026-11-20 · ART-011 · Paso 3 — Prompt.** `art/PROMPT_SUBIDA_JHONN.md`: crear la clave (Assets Read/Write), guardarla como variable de entorno fuera de Claude, abrir ART-012, subir con el script, subir los IDs a Git, montar en Studio solo si ART-008 está libre, y prueba en Play. Enlazado desde `art/README.md`.
+
+## 27. ART-008 — Importar los assets PBR en la place oficial (MacBook de Zadiel)
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn (DEC-020) · **Flujo:** directo en `main` (DEC-009) · **Herramientas:** Roblox Studio en la MacBook, con su MCP
+
+### Registro de pasos
+
+- **2026-11-20 · ART-008 · Paso 1 — Desbloqueo.** La place oficial existe: 84500108687089, universo 10778093657, dueño Lubu465 (Jhonn), zadiel799 colaborador. Reserva reactivada (`88a742e`).
+  - Studio abrió la place de la nube (`persistedToCloud`) y Luau lo confirmó con `game.PlaceId` y `game.GameId`. Open Cloud indica la última actualización a las 22:54 UTC.
+  - Los **25 scripts** de la place coinciden byte a byte con `game/src` de `main` (último cambio de código `17892b0`).
+  - · Verificación: ejecutada.
+- **2026-11-20 · ART-008 · Paso 2 — Subida (Open Cloud, cuenta zadiel799, con permiso de Zadiel).**
+  - **6 relojes** (ART-006) y **14 modelos de ART-009** como Model.
+  - **43 imágenes:** color, normal y rugosidad de los 14 materiales, más un mapa metálico blanco compartido por los 5 metales. Los `_metalico` de los metales son idénticos byte a byte; los no metálicos son negros y no se suben.
+  - Todas *Approved*. El filtro de texto cambió el nombre visible de los 3 mapas de `esmalte_negro`, pero sus IDs sirven.
+  - IDs en `art/texturas/ids_roblox.md`, que rellena la plantilla de `490a8b6` (sesión de Windows).
+  - · Verificación: ejecutada (respuesta de cada operación).
+- **2026-11-20 · ART-008 · Paso 3 — Montaje.**
+  - `insert_asset` en `ReplicatedStorage/Assets` (carpeta nueva). Los modelos llegan como paquetes, **100 veces grandes** (FBX en cm), con un MeshPart por material y su nombre, y sin anclar.
+  - Script de `ids_roblox.md`: `ScaleTo(0.01)`, anclaje y `SurfaceAppearance`. Resultado: **78 montados, 0 avisos**.
+  - Medidas: relojes 0,94–1,31 × 1,41–1,85 studs, piezas ≈ 1,4, cápsulas 2,1 × 3,05.
+  - · Verificación: ejecutada (contador, medidas y capturas `art/export/vistas/studio_*.png` revisadas). Orientación correcta, sin espejo: frente hacia −Z y XII arriba.
+- **2026-11-20 · ART-008 · Paso 4 — Prueba en Play.**
+  - `[BUILD A WATCH!] Servidor iniciado.`
+  - En el servidor de la prueba, `AssetLibrary.dress` (el código real) coloca los **6 relojes** sobre marcadores como los de las vitrinas, base con base y mirando en el sentido del plot (sin `GiroY`), y también las **14 piezas, legado y cápsulas** (14 de 14).
+  - En el cliente, `ContentProvider:PreloadAsync` de los 20 modelos: **78 de 78 contenidos *Success***.
+  - **No** se vio un reloj en una vitrina con un jugador real, porque el jugador nuevo no tiene relojes expuestos y el cliente no arranca (ver abajo).
+  - · Verificación: ejecutada.
+- **2026-11-20 · ART-008 · Paso 5 — Errores encontrados (no son de arte; no se tocó `game/src`).**
+  - **`Client/Ui.luau:766`:** «Malformed string». Una cadena entre comillas tiene un salto de línea real (líneas 766–767), y el `Ui` del cliente no carga, así que no hay HUD. Viene de `a644eac` (DEV-011) y **ya está en la place publicada**.
+  - **Prueba de `AssetLibrary`:** 46 correctas y 1 fallida, «place apoya la base en el suelo». Usa su propia carpeta de prueba (`mdl_prueba`), no los assets.
+  - `rbxassetid://203785492` da «Asset type does not match»; no está en el repositorio.
+  - Hace falta una tarea de código.
+- **2026-11-20 · ART-008 · Paso 6 — Guardado.** *Save to Roblox* (Team Create), **versión 9**. **No** se publicó.
+- **2026-11-20 · ART-008 · Paso 7 — Aviso a ART-011.** `art/PROMPT_SUBIDA_JHONN.md` proponía volver a subir todo con una clave de Jhonn. Se le añade un aviso: no hace falta, salvo que en un servidor real falten las texturas.
+- **Pendiente:**
+  - Tarea de código para `Ui.luau:766` y la prueba de `AssetLibrary`.
+  - `servePlaceIds`.
+  - DataStores (Enable Studio Access to API Services), gamepasses y productos (IDs de `Config` a 0).
+  - Probar en un servidor real con otra cuenta.
+  - Publicar cuando Jhonn lo apruebe.
+  - Propuesta DEC-021 (Studio en la MacBook).
+
