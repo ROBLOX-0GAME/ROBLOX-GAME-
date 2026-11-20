@@ -31,6 +31,7 @@ Este control local cubre las herramientas Edit/Write de Claude Code; Bash, edito
 | ART-003 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Pipeline-de-Arte.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
 | ART-004 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
 | DEV-014 | Cuenta A | Jhonn | Zadiel; Michael y Einell revisan la interfaz y el arte | game/src/**<br>art/Pipeline-de-Arte.md<br>03 - ARQUITECTURA TECNICA/Arquitectura-General.md<br>04 - SISTEMAS DEL JUEGO/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>11 - TESTING Y BUGS/Plan-de-Pruebas.md | Completada |
+| ART-005 | Cuenta A | Jhonn | Zadiel; Michael y Einell | art/PROMPT_ARTE_ZADIEL_MAC.md<br>art/README.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
 ## main sin protección (DEC-009)
 Por DEC-009, `main` no tiene protección de rama: se sube directamente, sin Pull Request ni aprobación. Nunca uses force push. Si alguien abre un Pull Request de forma opcional, GitHub Actions sigue ejecutando `reservation-check` y `rojo-build`.
 

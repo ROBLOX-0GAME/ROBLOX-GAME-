@@ -347,3 +347,19 @@ Reglas:
 - **2026-11-20 · DEV-014 · Paso 4 — Pruebas.** Nuevo `AssetLibrary.spec.luau` con 4 pruebas: colocación y ocultado, sin asset no cambia nada, orientación, `GiroY` y soldadura, y nombres de todo el catálogo. Total: 47 bloques (43 + 4). · Verificación: pendiente en Studio.
 - **2026-11-20 · DEV-014 · Paso 5 — Cierre.** [[Pipeline-de-Arte]] con los pasos de importación definitivos, [[Arquitectura-General]] §14, Plan de Pruebas §21 y propuesta en el Registro. La fila DEV-014 pasa a Completada. **Para verlo en el juego falta publicar la place e importar los assets.** · Verificación: revisión de archivos.
 
+---
+
+## 20. ART-005 — Traspaso del arte a Zadiel (MacBook)
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Michael y Einell · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-005 · Paso 1 — Prompt de traspaso.** Jhonn pasa el arte a Zadiel, que trabajará desde su MacBook. Se crea `art/PROMPT_ARTE_ZADIEL_MAC.md` con:
+  - las reglas del equipo (DEC-009, reservas, propiedad de Cuenta B, sin marcas reales, sin tocar `game/src`);
+  - la verificación e instalación (con permiso) de Blender, Krita, Material Maker y Audacity en macOS;
+  - la prueba del pipeline con Blender para Mac;
+  - la tarea de materiales PBR de los relojes (Material Maker → mapas → mallas por material → `SurfaceAppearance`), con el aviso de que usar la MacBook para arte cambia lo dicho en Arquitectura y debe registrarse como propuesta.
+
+  Enlazado desde `art/README.md`. · Verificación: revisión del archivo (sin caracteres de control). No se pudo comprobar la MacBook desde aquí: esa verificación es el primer paso del prompt.
+

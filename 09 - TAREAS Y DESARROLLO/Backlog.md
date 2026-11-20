@@ -526,3 +526,21 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila DEV-014 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-001 a ART-004 (Completadas). Para verlo en el juego hace falta la place publicada con los assets importados.
+### ART-005 — Traspaso del arte a Zadiel (MacBook)
+
+- **ID:** ART-005.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel; Michael y Einell (dueños del área de arte).
+- **Área:** Coordinación de arte.
+- **Prioridad:** Alta.
+- **Estado:** Completada.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** prompt de traspaso `art/PROMPT_ARTE_ZADIEL_MAC.md` para que Zadiel continúe desde su MacBook con el diseño y los materiales de los relojes. El prompt indica cómo verificar o instalar Blender, Krita, Material Maker y Audacity en macOS, comprobar el pipeline y abrir su propia tarea (ART-006).
+
+**Criterios de aceptación:**
+
+- [x] Prompt con reglas del equipo, verificación e instalación de herramientas, prueba del pipeline en macOS, tarea de materiales PBR y siguientes pasos.
+- [x] Enlazado desde `art/README.md` y registrado en el Changelog.

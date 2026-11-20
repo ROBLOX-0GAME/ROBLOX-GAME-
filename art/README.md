@@ -1,5 +1,7 @@
 # art/ — fuentes y exportaciones de arte
 
+Traspaso a Zadiel (MacBook): [[PROMPT_ARTE_ZADIEL_MAC|Prompt de arte y materiales]].
+
 Pipeline completo, estilo, formatos y lista de assets: [[Pipeline-de-Arte|Pipeline de Arte]] (`art/Pipeline-de-Arte.md`).
 
 | Carpeta | Contenido |
