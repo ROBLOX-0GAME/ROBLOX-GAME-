@@ -1,0 +1,5614 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="ReplicatedStorage" referent="RBX00000001">
+		<Properties>
+			<string name="Name">ReplicatedStorage</string>
+		</Properties>
+		<Item class="Folder" referent="RBX00000002">
+			<Properties>
+				<string name="Name">Shared</string>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX00000003">
+				<Properties>
+					<string name="Name">Config</string>
+					<ProtectedString name="Source"><![CDATA[--[[
+	Config — valores técnicos y de balance de BUILD A WATCH!
+
+	IMPORTANTE: todas las cifras de balance (monedas, capacidades, tiempos,
+	velocidades) son PROPUESTAS y están pendientes de aprobación del equipo.
+	Cambiar un número aquí cambia el juego sin tocar otro código.
+]]
+
+local Config = {
+	-- Guardado de datos
+	DATASTORE_NAME = "BuildAWatch_PlayerData_v1",
+	DATA_VERSION = 1,
+	AUTOSAVE_SECONDS = 120,
+	SESSION_LOCK_SECONDS = 300, -- tras este tiempo un bloqueo de sesión se considera abandonado
+	LOAD_ATTEMPTS = 5,
+	LOAD_RETRY_SECONDS = 3,
+	SAVE_ATTEMPTS = 3,
+
+	-- Jugador (bases antes de mejoras)
+	START_COINS = 0,
+	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
+	BASE_WALKSPEED = 16,
+	MAX_WALKSPEED = 80, -- tope de seguridad para la física
+	BASE_JUMPHEIGHT = 7.2,
+	BASE_MUSEUM_SLOTS = 3,
+	MAX_WATCHES_PER_TYPE = 999,
+
+	-- Progresión: subir del nivel n al n+1 cuesta XP_PER_LEVEL_STEP * n
+	XP_PER_LEVEL_STEP = 50,
+	MAX_LEVEL = 20,
+
+	-- Mundo
+	HUB_MAX_Z = 20, -- todo lo que tenga Z menor es la base (zona segura)
+	HOUSE_SPOT_RESPAWN_SECONDS = 20, -- una pieza robada reaparece tras este tiempo
+	MUSEUM_TICK_SECONDS = 10,
+
+	-- Robo y persecución (DEV-003)
+	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en salir tras de ti
+	CHASE_MAX_SECONDS = 25, -- el dueño se rinde después de este tiempo
+	CHASE_LOSE_DISTANCE = 140, -- el dueño se rinde si te alejas tanto
+	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
+
+	-- Jefe cooperativo: Cronómetro Maestro (DEV-004)
+	BOSS_FIRST_DELAY_SECONDS = 90, -- primera avería tras iniciar el servidor
+	BOSS_INTERVAL_SECONDS = 420, -- tiempo entre averías
+	BOSS_DURATION_SECONDS = 150, -- tiempo para repararlo
+	BOSS_POINTS_PER_PLAYER = 25, -- meta = esto × jugadores conectados
+	BOSS_MIN_GOAL = 30,
+	BOSS_COINS_PER_POINT = 12, -- premio por punto aportado si se repara
+	BOSS_EGG_MIN_POINTS = 20, -- con este aporte también se gana un huevo de mascota
+	BOSS_EGG = "brass",
+
+	-- Mascotas (DEV-005)
+	MAX_PETS = 50,
+	MAX_EQUIPPED_PETS = 3,
+
+	-- Entrenamiento de velocidad en caminadoras (DEV-006)
+	TRAIN_RATE = 0.01, -- velocidad permanente ganada por segundo con multiplicador ×1
+	MAX_TRAINED = 30, -- velocidad máxima que se puede ganar entrenando
+	TRAIN_TICK_SECONDS = 1,
+	TREADMILL_DISTANCE = 8, -- si te alejas más, dejas de entrenar
+
+	-- Pases y productos con Robux (DEV-006). 0 = todavía no creado en Roblox
+	-- (se muestra «Próximamente»). Los IDs reales se copian del Creator Hub
+	-- al publicar la experiencia.
+	GAMEPASS_IDS = {
+		supremePet = 0,
+		turboTreadmill = 0,
+		runner = 0,
+		vip = 0,
+		bigBackpack = 0,
+		petSlot = 0,
+	},
+	PRODUCT_IDS = {
+		coinsSmall = 0,
+		coinsMedium = 0,
+		coinsLarge = 0,
+		instantTraining = 0,
+		goldEgg = 0,
+	},
+	-- Solo para probar en Studio: da todos los pases durante la sesión (no se guardan).
+	STUDIO_GRANT_ALL_PASSES = false,
+	SUPREME_PET_FACTOR = 1.2, -- la Mascota Suprema es 20% mejor que tu mejor mascota
+	SUPREME_PET_MIN_BONUS = 0.06, -- bonus mínimo si aún no tienes mascotas
+	MAX_RECEIPTS = 50, -- compras recordadas para no entregar dos veces
+
+	-- Seguridad
+	INTERACT_DISTANCE = 14, -- distancia máxima para robar una pieza
+	STATION_DISTANCE = 20, -- distancia máxima a una estación para usar su menú
+	REQUESTS_PER_SECOND = 8, -- límite de solicitudes cliente → servidor
+	MAX_SELL_AMOUNT = 999,
+
+	-- Desarrollo
+	RUN_TESTS_IN_STUDIO = true, -- ejecuta las pruebas al pulsar Play en Studio
+
+	-- Nombres de los remotos (servidor y cliente deben coincidir)
+	REMOTES = {
+		State = "State", -- RemoteEvent servidor → cliente: estado completo del jugador
+		Notify = "Notify", -- RemoteEvent servidor → cliente: mensaje corto
+		OpenPanel = "OpenPanel", -- RemoteEvent servidor → cliente: abrir un menú de estación
+		Action = "Action", -- RemoteFunction cliente → servidor: pedir una acción
+	},
+}
+
+return Config
+]]></ProtectedString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX00000004">
+				<Properties>
+					<string name="Name">GameData</string>
+					<ProtectedString name="Source"><![CDATA[--[[
+	GameData — catálogo de piezas, relojes, mejoras, zonas y tutorial.
+
+	Todo el contenido y sus cifras son PROPUESTA, pendiente de aprobación del
+	equipo. Los textos visibles están en español.
+]]
+
+local GameData = {}
+
+-- Piezas. Se roban en las casas de cada zona (ver GameData.Zones).
+-- weight: probabilidad base (la usa rollPart sin tabla de zona)
+-- sell: monedas al vender la pieza suelta en la Tienda (salida de BUG-001; menor que fabricar)
+-- holdTime: segundos manteniendo el botón para robarla
+GameData.Parts = {
+	gear = { id = "gear", name = "Engranaje", rarity = "Común", common = true, weight = 40, sell = 2, holdTime = 0.3 },
+	spring = { id = "spring", name = "Resorte", rarity = "Común", common = true, weight = 30, sell = 2, holdTime = 0.3 },
+	screw = { id = "screw", name = "Tornillo", rarity = "Común", common = true, weight = 30, sell = 2, holdTime = 0.3 },
+	crystal = {
+		id = "crystal",
+		name = "Cristal",
+		rarity = "Poco común",
+		common = false,
+		weight = 14,
+		sell = 6,
+		holdTime = 0.6,
+	},
+	strap = { id = "strap", name = "Correa", rarity = "Poco común", common = false, weight = 12, sell = 6, holdTime = 0.6 },
+	ruby = { id = "ruby", name = "Rubí", rarity = "Raro", common = false, weight = 4, sell = 25, holdTime = 1 },
+	diamond = {
+		id = "diamond",
+		name = "Diamante",
+		rarity = "Legendario",
+		common = false,
+		weight = 0, -- solo aparece en zonas ricas
+		sell = 80,
+		holdTime = 1.5,
+	},
+}
+GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby", "diamond" }
+
+-- Puntos de reparación del Cronómetro Maestro por rareza (DEV-004, PROPUESTA)
+GameData.RepairPoints = {
+	["Común"] = 1,
+	["Poco común"] = 3,
+	["Raro"] = 8,
+	["Legendario"] = 20,
+}
+
+GameData.RarityColors = {
+	["Común"] = Color3.fromRGB(170, 170, 180),
+	["Poco común"] = Color3.fromRGB(80, 150, 230),
+	["Raro"] = Color3.fromRGB(220, 60, 70),
+	["Épico"] = Color3.fromRGB(170, 90, 230),
+	["Legendario"] = Color3.fromRGB(255, 200, 40),
+}
+
+-- Mascotas (DEV-005, PROPUESTA). bonus: velocidad extra (0.10 = +10%).
+-- El multiplicador total es 1 + suma de los bonus de las mascotas equipadas.
+GameData.Pets = {
+	mouse = { id = "mouse", name = "Ratón de Cuerda", rarity = "Común", bonus = 0.05 },
+	cat = { id = "cat", name = "Gato Engranaje", rarity = "Poco común", bonus = 0.10 },
+	fox = { id = "fox", name = "Zorro Relojero", rarity = "Raro", bonus = 0.20 },
+	hawk = { id = "hawk", name = "Halcón de Cuarzo", rarity = "Épico", bonus = 0.35 },
+	dragon = { id = "dragon", name = "Dragón del Tiempo", rarity = "Legendario", bonus = 0.60 },
+	-- Exclusiva del pase «Mascota Suprema»: su bonus se calcula como 20% más
+	-- que tu mejor mascota (PlayerLogic.petBonus). No sale de huevos ni se libera.
+	supreme = {
+		id = "supreme",
+		name = "Mascota Suprema",
+		rarity = "Legendario",
+		bonus = 0,
+		exclusive = true,
+	},
+}
+-- Orden de menor a mayor bonus (la Suprema siempre es la mejor)
+GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon", "supreme" }
+
+-- Caminadoras de entrenamiento de velocidad (DEV-006, PROPUESTA)
+-- multiplier: multiplica Config.TRAIN_RATE · cost: monedas para desbloquear
+-- pass: pase de Robux necesario
+GameData.Treadmills = {
+	basic = { id = "basic", name = "Caminadora Básica", multiplier = 1, cost = 0 },
+	advanced = { id = "advanced", name = "Caminadora de Acero", multiplier = 2.5, cost = 2500 },
+	turbo = { id = "turbo", name = "Caminadora Turbo", multiplier = 6, cost = 0, pass = "turboTreadmill" },
+}
+GameData.TreadmillOrder = { "basic", "advanced", "turbo" }
+
+-- Pases de juego (compra única con Robux, permanentes). DEV-006, PROPUESTA.
+-- Por decisión de Jhonn incluyen ventajas fuertes de velocidad.
+GameData.GamePasses = {
+	supremePet = {
+		id = "supremePet",
+		name = "Mascota Suprema",
+		desc = "Mascota exclusiva 20% mejor que tu mejor mascota (mejora sola cuando consigues mejores)",
+	},
+	turboTreadmill = {
+		id = "turboTreadmill",
+		name = "Caminadora Turbo",
+		desc = "Acceso a la caminadora que entrena velocidad ×6",
+	},
+	runner = {
+		id = "runner",
+		name = "Corredor VIP",
+		desc = "+25% de velocidad permanente",
+		speedMultiplier = 1.25,
+	},
+	vip = {
+		id = "vip",
+		name = "VIP",
+		desc = "+20% de monedas al vender y en el museo",
+		coinMultiplier = 1.2,
+	},
+	bigBackpack = {
+		id = "bigBackpack",
+		name = "Mochila Gigante",
+		desc = "+20 espacios para piezas",
+		backpack = 20,
+	},
+	petSlot = {
+		id = "petSlot",
+		name = "Ranura de Mascota",
+		desc = "+1 mascota equipada",
+		petSlots = 1,
+	},
+}
+GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "bigBackpack", "petSlot" }
+
+-- Productos (compra repetible con Robux). DEV-006, PROPUESTA.
+GameData.Products = {
+	coinsSmall = { id = "coinsSmall", name = "Bolsa de monedas", desc = "+2.500 monedas", coins = 2500 },
+	coinsMedium = { id = "coinsMedium", name = "Cofre de monedas", desc = "+15.000 monedas", coins = 15000 },
+	coinsLarge = { id = "coinsLarge", name = "Bóveda de monedas", desc = "+75.000 monedas", coins = 75000 },
+	instantTraining = {
+		id = "instantTraining",
+		name = "Entrenamiento instantáneo",
+		desc = "+5 de velocidad entrenada",
+		trained = 5,
+	},
+	goldEgg = {
+		id = "goldEgg",
+		name = "Huevo de Oro instantáneo",
+		desc = "Abre un Huevo de Oro (probabilidades visibles en el Criadero)",
+		egg = "gold",
+	},
+}
+GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg" }
+
+-- Huevos del Criadero. chances: probabilidad relativa de cada mascota.
+GameData.Eggs = {
+	brass = {
+		id = "brass",
+		name = "Huevo de Latón",
+		cost = 500,
+		chances = { mouse = 60, cat = 30, fox = 10 },
+	},
+	silver = {
+		id = "silver",
+		name = "Huevo de Plata",
+		cost = 5000,
+		chances = { cat = 50, fox = 35, hawk = 15 },
+	},
+	gold = {
+		id = "gold",
+		name = "Huevo de Oro",
+		cost = 40000,
+		chances = { fox = 50, hawk = 35, dragon = 15 },
+	},
+}
+GameData.EggOrder = { "brass", "silver", "gold" }
+
+-- Relojes que se fabrican en el taller.
+-- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender
+-- income: monedas por ciclo del museo mientras está exhibido · cost: piezas necesarias
+GameData.Watches = {
+	pocket = {
+		id = "pocket",
+		name = "Reloj de bolsillo",
+		level = 1,
+		xp = 10,
+		sell = 60,
+		income = 1,
+		cost = { gear = 3, spring = 2, screw = 2 },
+	},
+	wrist = {
+		id = "wrist",
+		name = "Reloj de pulsera",
+		level = 2,
+		xp = 25,
+		sell = 150,
+		income = 3,
+		cost = { gear = 4, spring = 2, crystal = 2, strap = 1 },
+	},
+	chrono = {
+		id = "chrono",
+		name = "Cronógrafo",
+		level = 4,
+		xp = 60,
+		sell = 400,
+		income = 8,
+		cost = { gear = 6, spring = 4, screw = 4, crystal = 3, strap = 2 },
+	},
+	royal = {
+		id = "royal",
+		name = "Reloj real de rubí",
+		level = 6,
+		xp = 150,
+		sell = 1200,
+		income = 25,
+		cost = { gear = 8, spring = 4, crystal = 4, strap = 2, ruby = 2 },
+	},
+	millionaire = {
+		id = "millionaire",
+		name = "Reloj del millonario",
+		level = 8,
+		xp = 400,
+		sell = 5000,
+		income = 60,
+		cost = { gear = 10, spring = 6, crystal = 6, strap = 4, ruby = 4, diamond = 2 },
+	},
+}
+GameData.WatchOrder = { "pocket", "wrist", "chrono", "royal", "millionaire" }
+
+-- Mejoras compradas con monedas. Precio del siguiente nivel:
+-- floor(baseCost * growth ^ nivelActual)
+GameData.Upgrades = {
+	backpack = {
+		id = "backpack",
+		name = "Mochila",
+		desc = "+10 espacios para piezas",
+		maxLevel = 5,
+		baseCost = 100,
+		growth = 2,
+		step = 10,
+	},
+	speed = {
+		id = "speed",
+		name = "Velocidad",
+		desc = "+2 de velocidad (abre zonas más ricas)",
+		maxLevel = 10,
+		baseCost = 150,
+		growth = 1.8,
+		step = 2,
+	},
+	jump = {
+		id = "jump",
+		name = "Salto",
+		desc = "+1.5 de altura de salto",
+		maxLevel = 3,
+		baseCost = 200,
+		growth = 2,
+		step = 1.5,
+	},
+	luck = {
+		id = "luck",
+		name = "Suerte",
+		desc = "+7.5% de probabilidad de robar 2 piezas en vez de 1",
+		maxLevel = 5,
+		baseCost = 250,
+		growth = 2.2,
+		step = 0.075,
+	},
+	museum = {
+		id = "museum",
+		name = "Vitrinas del museo",
+		desc = "+1 vitrina para exhibir relojes",
+		maxLevel = 5,
+		baseCost = 300,
+		growth = 2,
+		step = 1,
+	},
+}
+GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck", "museum" }
+
+-- Zonas de robo (DEV-003, PROPUESTA). Se recorren en línea recta desde la base.
+-- minSpeed: velocidad necesaria para cruzar la puerta de la zona y robar en ella
+-- ownerSpeed: velocidad del dueño que te persigue (algo menor que minSpeed:
+--   quien apenas cumple el mínimo puede escapar si no se deja alcanzar)
+-- weights: probabilidad relativa de cada pieza en las casas de la zona
+GameData.Zones = {
+	{
+		id = "humble",
+		name = "Barrio Humilde",
+		minSpeed = 0,
+		ownerSpeed = 14,
+		color = Color3.fromRGB(150, 120, 90),
+		owners = { "Don Tomás", "Doña Rosa", "Don Pepe", "Doña Lupe" },
+		weights = { gear = 40, spring = 30, screw = 30, crystal = 4, strap = 4 },
+	},
+	{
+		id = "worker",
+		name = "Barrio Obrero",
+		minSpeed = 18,
+		ownerSpeed = 17,
+		color = Color3.fromRGB(170, 110, 80),
+		owners = { "Señor Ramírez", "Señora Ortiz", "Señor Vega", "Señora Luna" },
+		weights = { gear = 30, spring = 25, screw = 25, crystal = 12, strap = 10, ruby = 1 },
+	},
+	{
+		id = "residential",
+		name = "Zona Residencial",
+		minSpeed = 22,
+		ownerSpeed = 21,
+		color = Color3.fromRGB(200, 200, 205),
+		owners = { "Licenciado Mora", "Doctora Paz", "Ingeniero Soto", "Arquitecta Real" },
+		weights = { gear = 20, spring = 20, screw = 15, crystal = 20, strap = 18, ruby = 5, diamond = 0.5 },
+	},
+	{
+		id = "mansions",
+		name = "Mansiones",
+		minSpeed = 28,
+		ownerSpeed = 26,
+		color = Color3.fromRGB(235, 225, 200),
+		owners = { "Magnate Duarte", "Condesa Ibarra", "Barón Salcedo", "Duquesa Alba" },
+		weights = { gear = 10, spring = 10, screw = 10, crystal = 25, strap = 25, ruby = 14, diamond = 3 },
+	},
+	{
+		id = "millionaires",
+		name = "Colina de los Millonarios",
+		minSpeed = 34,
+		ownerSpeed = 32,
+		color = Color3.fromRGB(240, 200, 90),
+		owners = { "Sir Oro", "Lady Platino", "Rey del Tiempo", "Reina del Cuarzo" },
+		weights = { gear = 5, spring = 5, screw = 5, crystal = 20, strap = 20, ruby = 30, diamond = 10 },
+	},
+}
+
+-- Tutorial guiado (DEV-002, PROPUESTA). Los pasos se completan en orden.
+-- stat: qué se mide (ver PlayerLogic.tutorialValue) · target: meta
+-- reward: monedas al completar · guide: a dónde apunta la guía en el mundo
+GameData.Tutorial = {
+	{
+		id = "collect",
+		text = "Roba 5 piezas en una casa y llévalas a la base",
+		stat = "collected",
+		target = 5,
+		reward = 20,
+		guide = "house",
+	},
+	{
+		id = "craft",
+		text = "Fabrica un reloj de bolsillo en el Taller",
+		stat = "crafted",
+		target = 1,
+		reward = 30,
+		guide = "workshop",
+	},
+	{
+		id = "sell",
+		text = "Vende un reloj en la Tienda",
+		stat = "sold",
+		target = 1,
+		reward = 30,
+		guide = "shop",
+	},
+	{
+		id = "display",
+		text = "Fabrica otro reloj y exhíbelo en el Museo",
+		stat = "museum",
+		target = 1,
+		reward = 40,
+		guide = "museum",
+	},
+	{
+		id = "upgrade",
+		text = "Compra tu primera mejora en la Tienda",
+		stat = "upgrades",
+		target = 1,
+		reward = 50,
+		guide = "shop",
+	},
+}
+
+return GameData
+]]></ProtectedString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX00000005">
+				<Properties>
+					<string name="Name">PlayerLogic</string>
+					<ProtectedString name="Source"><![CDATA[--[[
+	PlayerLogic — reglas puras del juego sobre la tabla de datos de un jugador.
+
+	No usa servicios de Roblox ni hace llamadas de red, para poder probarse
+	de forma aislada (ver ServerScriptService.Server.Tests). El servidor es el
+	único que llama a las funciones que modifican datos; el cliente solo usa
+	las de lectura para mostrar información.
+
+	Las funciones que modifican devuelven (ok: boolean, mensaje: string, ...).
+]]
+
+local Config = require(script.Parent.Config)
+local GameData = require(script.Parent.GameData)
+
+local PlayerLogic = {}
+
+-- ---------------------------------------------------------------------------
+-- Estructura de datos
+-- ---------------------------------------------------------------------------
+
+function PlayerLogic.newData()
+	return {
+		version = Config.DATA_VERSION,
+		coins = Config.START_COINS,
+		xp = 0,
+		parts = {}, -- [partId] = cantidad guardada (segura)
+		carried = {}, -- [partId] = botín robado que llevas encima; se pierde si te atrapan
+		watches = {}, -- [watchId] = cantidad en inventario
+		museum = {}, -- [watchId] = cantidad exhibida
+		upgrades = {}, -- [upgradeId] = nivel
+		pets = {}, -- [petId] = cantidad que posee
+		equipped = {}, -- [petId] = cantidad equipada (≤ pets[petId])
+		stats = { collected = 0, crafted = 0, sold = 0, earned = 0 },
+		tutorial = 1, -- paso actual del tutorial; #GameData.Tutorial + 1 = terminado
+		trained = 0, -- velocidad permanente ganada en caminadoras (DEV-006)
+		treadmills = {}, -- [treadmillId] = true si la desbloqueó con monedas
+		passes = {}, -- [passId] = true; SOLO de la sesión: se consulta a Roblox al entrar
+		receipts = {}, -- últimas compras con Robux entregadas (evita entregar dos veces)
+	}
+end
+
+local function cleanCounts(map, catalog)
+	local out = {}
+	if type(map) == "table" then
+		for id, amount in map do
+			if catalog[id] and type(amount) == "number" and amount >= 1 then
+				out[id] = math.floor(amount)
+			end
+		end
+	end
+	return out
+end
+
+local function nonNegativeInt(value)
+	if type(value) ~= "number" or value ~= value or value < 0 then
+		return 0
+	end
+	return math.floor(value)
+end
+
+-- Completa campos ausentes y descarta valores inválidos o ids desconocidos.
+-- Se usa al cargar datos guardados, para que versiones antiguas sigan funcionando.
+function PlayerLogic.reconcile(data)
+	local template = PlayerLogic.newData()
+	if type(data) ~= "table" then
+		return template
+	end
+
+	data.coins = nonNegativeInt(data.coins)
+	data.xp = nonNegativeInt(data.xp)
+	data.parts = cleanCounts(data.parts, GameData.Parts)
+	-- El botín no guardado en la base se pierde al salir del juego.
+	data.carried = {}
+
+	-- Mascotas: nunca más equipadas que poseídas ni más del límite.
+	data.pets = cleanCounts(data.pets, GameData.Pets)
+	-- Las mascotas exclusivas de pases se reponen al comprobar los pases.
+	for petId, pet in GameData.Pets do
+		if pet.exclusive then
+			data.pets[petId] = nil
+		end
+	end
+	data.passes = {}
+	local equipped = {}
+	local slots = Config.MAX_EQUIPPED_PETS
+	for _, petId in GameData.PetOrder do
+		local wanted = 0
+		if type(data.equipped) == "table" and type(data.equipped[petId]) == "number" then
+			wanted = math.floor(data.equipped[petId])
+		end
+		local amount = math.clamp(wanted, 0, math.min(data.pets[petId] or 0, slots))
+		if amount > 0 then
+			equipped[petId] = amount
+			slots -= amount
+		end
+	end
+	data.equipped = equipped
+	data.watches = cleanCounts(data.watches, GameData.Watches)
+	data.museum = cleanCounts(data.museum, GameData.Watches)
+
+	local upgrades = {}
+	if type(data.upgrades) == "table" then
+		for id, level in data.upgrades do
+			local upgrade = GameData.Upgrades[id]
+			if upgrade and type(level) == "number" then
+				upgrades[id] = math.clamp(math.floor(level), 0, upgrade.maxLevel)
+			end
+		end
+	end
+	data.upgrades = upgrades
+
+	local stats = {}
+	local oldStats = data.stats
+	if type(oldStats) ~= "table" then
+		oldStats = {}
+	end
+	for key in template.stats do
+		stats[key] = nonNegativeInt(oldStats[key])
+	end
+	data.stats = stats
+
+	-- Datos guardados antes de DEV-002 no tienen tutorial: empiezan en el paso 1
+	-- y los pasos ya cumplidos se completan solos al cargar.
+	data.tutorial = math.clamp(nonNegativeInt(data.tutorial), 1, #GameData.Tutorial + 1)
+
+	-- Entrenamiento y caminadoras (DEV-006)
+	local trained = data.trained
+	if type(trained) ~= "number" or trained ~= trained or trained < 0 then
+		trained = 0
+	end
+	data.trained = math.min(trained, Config.MAX_TRAINED)
+	local treadmills = {}
+	if type(data.treadmills) == "table" then
+		for id, owned in data.treadmills do
+			if GameData.Treadmills[id] and owned == true then
+				treadmills[id] = true
+			end
+		end
+	end
+	data.treadmills = treadmills
+	local receipts = {}
+	if type(data.receipts) == "table" then
+		for _, receipt in data.receipts do
+			if type(receipt) == "string" and #receipts < Config.MAX_RECEIPTS then
+				table.insert(receipts, receipt)
+			end
+		end
+	end
+	data.receipts = receipts
+
+	data.version = Config.DATA_VERSION
+	return data
+end
+
+-- ---------------------------------------------------------------------------
+-- Lecturas
+-- ---------------------------------------------------------------------------
+
+local function sumCounts(map)
+	local total = 0
+	for _, amount in map do
+		total += amount
+	end
+	return total
+end
+
+function PlayerLogic.upgradeLevel(data, upgradeId)
+	return data.upgrades[upgradeId] or 0
+end
+
+-- ¿Tiene el pase de juego? (DEV-006)
+function PlayerLogic.hasPass(data, passId)
+	return data.passes[passId] == true
+end
+
+function PlayerLogic.backpackCapacity(data)
+	local capacity = Config.BASE_BACKPACK + PlayerLogic.upgradeLevel(data, "backpack") * GameData.Upgrades.backpack.step
+	if PlayerLogic.hasPass(data, "bigBackpack") then
+		capacity += GameData.GamePasses.bigBackpack.backpack
+	end
+	return capacity
+end
+
+function PlayerLogic.partCount(data)
+	return sumCounts(data.parts)
+end
+
+function PlayerLogic.carriedCount(data)
+	return sumCounts(data.carried)
+end
+
+-- Espacio libre en la mochila: capacidad - piezas guardadas - botín encima.
+function PlayerLogic.freeSpace(data)
+	return math.max(0, PlayerLogic.backpackCapacity(data) - PlayerLogic.partCount(data) - PlayerLogic.carriedCount(data))
+end
+
+-- Mascotas que se pueden equipar a la vez (el pase añade una).
+function PlayerLogic.petSlots(data)
+	local slots = Config.MAX_EQUIPPED_PETS
+	if PlayerLogic.hasPass(data, "petSlot") then
+		slots += GameData.GamePasses.petSlot.petSlots
+	end
+	return slots
+end
+
+-- Bonus de una mascota. La Mascota Suprema vale 20% más que tu mejor mascota normal.
+function PlayerLogic.petBonus(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet.exclusive then
+		return pet.bonus
+	end
+	local best = 0
+	for ownedId, amount in data.pets do
+		local owned = GameData.Pets[ownedId]
+		if amount > 0 and not owned.exclusive and owned.bonus > best then
+			best = owned.bonus
+		end
+	end
+	return math.max(Config.SUPREME_PET_MIN_BONUS, best * Config.SUPREME_PET_FACTOR)
+end
+
+-- Multiplicador de velocidad de las mascotas equipadas (DEV-005).
+function PlayerLogic.petMultiplier(data)
+	local bonus = 0
+	for petId, amount in data.equipped do
+		bonus += PlayerLogic.petBonus(data, petId) * amount
+	end
+	return 1 + bonus
+end
+
+-- Multiplicador total: mascotas × pase Corredor VIP.
+function PlayerLogic.speedMultiplier(data)
+	local multiplier = PlayerLogic.petMultiplier(data)
+	if PlayerLogic.hasPass(data, "runner") then
+		multiplier *= GameData.GamePasses.runner.speedMultiplier
+	end
+	return multiplier
+end
+
+-- Velocidad base: inicial + mejoras compradas + velocidad entrenada.
+function PlayerLogic.baseSpeed(data)
+	return Config.BASE_WALKSPEED
+		+ PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
+		+ data.trained
+end
+
+-- Velocidad = base × multiplicadores, redondeada a 1 decimal y con tope de seguridad.
+function PlayerLogic.walkSpeed(data)
+	local speed = PlayerLogic.baseSpeed(data) * PlayerLogic.speedMultiplier(data)
+	return math.min(Config.MAX_WALKSPEED, math.floor(speed * 10 + 0.5) / 10)
+end
+
+-- Multiplicador de monedas por ventas y museo (pase VIP).
+function PlayerLogic.coinMultiplier(data)
+	if PlayerLogic.hasPass(data, "vip") then
+		return GameData.GamePasses.vip.coinMultiplier
+	end
+	return 1
+end
+
+-- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?
+function PlayerLogic.canEnterZone(data, zoneIndex)
+	local zone = GameData.Zones[zoneIndex]
+	if not zone then
+		return false
+	end
+	return PlayerLogic.walkSpeed(data) >= zone.minSpeed
+end
+
+-- Zona más lejana a la que puede entrar.
+function PlayerLogic.highestZone(data)
+	local highest = 1
+	for index in GameData.Zones do
+		if PlayerLogic.canEnterZone(data, index) and index > highest then
+			highest = index
+		end
+	end
+	return highest
+end
+
+function PlayerLogic.jumpHeight(data)
+	return Config.BASE_JUMPHEIGHT + PlayerLogic.upgradeLevel(data, "jump") * GameData.Upgrades.jump.step
+end
+
+-- Probabilidad (0-1) de robar 2 piezas en vez de 1.
+function PlayerLogic.extraPartChance(data)
+	return PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step
+end
+
+function PlayerLogic.museumSlots(data)
+	return Config.BASE_MUSEUM_SLOTS + PlayerLogic.upgradeLevel(data, "museum") * GameData.Upgrades.museum.step
+end
+
+function PlayerLogic.museumCount(data)
+	return sumCounts(data.museum)
+end
+
+function PlayerLogic.museumIncome(data)
+	local total = 0
+	for watchId, amount in data.museum do
+		total += GameData.Watches[watchId].income * amount
+	end
+	return total
+end
+
+-- Devuelve nivel, XP dentro del nivel actual y XP necesaria para el siguiente (0 en el máximo).
+function PlayerLogic.levelInfo(xp)
+	local level = 1
+	local remaining = xp
+	while level < Config.MAX_LEVEL and remaining >= level * Config.XP_PER_LEVEL_STEP do
+		remaining -= level * Config.XP_PER_LEVEL_STEP
+		level += 1
+	end
+	local needed = 0
+	if level < Config.MAX_LEVEL then
+		needed = level * Config.XP_PER_LEVEL_STEP
+	end
+	return level, remaining, needed
+end
+
+function PlayerLogic.level(data)
+	local level = PlayerLogic.levelInfo(data.xp)
+	return level
+end
+
+-- Precio del siguiente nivel de una mejora, o nil si ya está al máximo.
+function PlayerLogic.upgradeCost(data, upgradeId)
+	local upgrade = GameData.Upgrades[upgradeId]
+	if not upgrade then
+		return nil
+	end
+	local current = PlayerLogic.upgradeLevel(data, upgradeId)
+	if current >= upgrade.maxLevel then
+		return nil
+	end
+	return math.floor(upgrade.baseCost * upgrade.growth ^ current)
+end
+
+-- Comprueba si se puede fabricar un reloj. Devuelve ok y el motivo si no se puede.
+function PlayerLogic.canCraft(data, watchId)
+	local watch = GameData.Watches[watchId]
+	if not watch then
+		return false, "Ese reloj no existe."
+	end
+	if PlayerLogic.level(data) < watch.level then
+		return false, string.format("Necesitas nivel %d para fabricar %s.", watch.level, watch.name)
+	end
+	if (data.watches[watchId] or 0) >= Config.MAX_WATCHES_PER_TYPE then
+		return false, "Ya tienes el máximo de ese reloj."
+	end
+	for partId, needed in watch.cost do
+		local have = data.parts[partId] or 0
+		if have < needed then
+			return false, string.format("Te faltan %d %s.", needed - have, GameData.Parts[partId].name)
+		end
+	end
+	return true, ""
+end
+
+-- Elige una pieza al azar. roll es un número en [0, 1).
+-- zoneWeights (opcional): tabla [partId] = peso de una zona; si falta, usa el peso base.
+-- luckMultiplier multiplica el peso de las piezas que no son comunes.
+function PlayerLogic.rollPart(luckMultiplier, roll, zoneWeights)
+	local total = 0
+	local weights = {}
+	for index, partId in GameData.PartOrder do
+		local part = GameData.Parts[partId]
+		local weight = part.weight
+		if zoneWeights then
+			weight = zoneWeights[partId] or 0
+		end
+		if not part.common then
+			weight *= luckMultiplier
+		end
+		weights[index] = weight
+		total += weight
+	end
+	local target = roll * total
+	local lastValid = GameData.PartOrder[1]
+	for index, partId in GameData.PartOrder do
+		if weights[index] > 0 then
+			lastValid = partId
+			target -= weights[index]
+			if target < 0 then
+				return partId
+			end
+		end
+	end
+	return lastValid
+end
+
+-- Valor actual de lo que mide un paso del tutorial.
+function PlayerLogic.tutorialValue(data, stat)
+	if stat == "museum" then
+		return PlayerLogic.museumCount(data)
+	elseif stat == "upgrades" then
+		return sumCounts(data.upgrades)
+	end
+	return data.stats[stat] or 0
+end
+
+-- Paso actual del tutorial y su progreso, o nil si ya terminó.
+function PlayerLogic.tutorialStep(data)
+	local step = GameData.Tutorial[data.tutorial]
+	if not step then
+		return nil, 0
+	end
+	return step, math.min(PlayerLogic.tutorialValue(data, step.stat), step.target)
+end
+
+-- Vista que el servidor envía al cliente (solo lectura en el cliente).
+function PlayerLogic.buildView(data)
+	local level, levelXp, levelNeed = PlayerLogic.levelInfo(data.xp)
+	local upgradeCosts = {}
+	for _, upgradeId in GameData.UpgradeOrder do
+		upgradeCosts[upgradeId] = PlayerLogic.upgradeCost(data, upgradeId) or false
+	end
+	local petBonuses = {}
+	for petId in data.pets do
+		petBonuses[petId] = PlayerLogic.petBonus(data, petId)
+	end
+	local tutorial = false
+	local step, progress = PlayerLogic.tutorialStep(data)
+	if step then
+		tutorial = {
+			index = data.tutorial,
+			total = #GameData.Tutorial,
+			text = step.text,
+			progress = progress,
+			target = step.target,
+			reward = step.reward,
+			guide = step.guide,
+		}
+	end
+	return {
+		tutorial = tutorial,
+		coins = data.coins,
+		xp = data.xp,
+		level = level,
+		levelXp = levelXp,
+		levelNeed = levelNeed,
+		parts = table.clone(data.parts),
+		carried = table.clone(data.carried),
+		carriedCount = PlayerLogic.carriedCount(data),
+		freeSpace = PlayerLogic.freeSpace(data),
+		walkSpeed = PlayerLogic.walkSpeed(data),
+		highestZone = PlayerLogic.highestZone(data),
+		watches = table.clone(data.watches),
+		museum = table.clone(data.museum),
+		upgrades = table.clone(data.upgrades),
+		pets = table.clone(data.pets),
+		equipped = table.clone(data.equipped),
+		petCount = PlayerLogic.petCount(data),
+		equippedCount = PlayerLogic.equippedCount(data),
+		petMultiplier = PlayerLogic.petMultiplier(data),
+		petSlots = PlayerLogic.petSlots(data),
+		petBonuses = petBonuses,
+		speedMultiplier = PlayerLogic.speedMultiplier(data),
+		baseSpeed = PlayerLogic.baseSpeed(data),
+		trained = data.trained,
+		treadmills = table.clone(data.treadmills),
+		passes = table.clone(data.passes),
+		coinMultiplier = PlayerLogic.coinMultiplier(data),
+		upgradeCosts = upgradeCosts,
+		capacity = PlayerLogic.backpackCapacity(data),
+		partCount = PlayerLogic.partCount(data),
+		museumSlots = PlayerLogic.museumSlots(data),
+		museumCount = PlayerLogic.museumCount(data),
+		museumIncome = PlayerLogic.museumIncome(data),
+	}
+end
+
+-- ---------------------------------------------------------------------------
+-- Modificaciones (solo servidor)
+-- ---------------------------------------------------------------------------
+
+local function removeCount(map, id, amount)
+	local left = (map[id] or 0) - amount
+	if left > 0 then
+		map[id] = left
+	else
+		map[id] = nil
+	end
+end
+
+-- Cantidad entera entre 1 y Config.MAX_SELL_AMOUNT (rechaza NaN y decimales).
+local function validAmount(amount)
+	return type(amount) == "number"
+		and amount == amount
+		and amount >= 1
+		and amount % 1 == 0
+		and amount <= Config.MAX_SELL_AMOUNT
+end
+
+function PlayerLogic.addPart(data, partId)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida."
+	end
+	if PlayerLogic.freeSpace(data) < 1 then
+		return false, "Mochila llena: fabrica relojes, vende piezas en la Tienda o tira piezas desde la Mochila."
+	end
+	data.parts[partId] = (data.parts[partId] or 0) + 1
+	data.stats.collected += 1
+	return true, string.format("+1 %s (%s)", part.name, part.rarity)
+end
+
+-- Roba una pieza en una casa: va al botín que llevas encima (DEV-003).
+-- bonusRoll en [0, 1): si es menor que la suerte, roba 2 (si caben).
+-- Devuelve ok, mensaje, cantidad.
+function PlayerLogic.stealPart(data, partId, bonusRoll)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida.", 0
+	end
+	local free = PlayerLogic.freeSpace(data)
+	if free < 1 then
+		return false, "Mochila llena: vuelve a la base, fabrica relojes o vende piezas.", 0
+	end
+	local amount = 1
+	if free >= 2 and bonusRoll < PlayerLogic.extraPartChance(data) then
+		amount = 2
+	end
+	data.carried[partId] = (data.carried[partId] or 0) + amount
+	local message = string.format("Robaste %d %s (%s). ¡Llévalo a la base!", amount, part.name, part.rarity)
+	return true, message, amount
+end
+
+-- Guarda el botín al llegar a la base. Devuelve cuántas piezas se guardaron.
+function PlayerLogic.depositLoot(data)
+	local total = 0
+	for partId, amount in data.carried do
+		data.parts[partId] = (data.parts[partId] or 0) + amount
+		total += amount
+	end
+	data.carried = {}
+	data.stats.collected += total
+	return total
+end
+
+-- El dueño te atrapó (o caíste): se pierde el botín. Devuelve cuántas piezas se perdieron.
+function PlayerLogic.loseLoot(data)
+	local total = PlayerLogic.carriedCount(data)
+	data.carried = {}
+	return total
+end
+
+-- Devuelve ok, mensaje, subióDeNivel
+function PlayerLogic.craft(data, watchId)
+	local ok, reason = PlayerLogic.canCraft(data, watchId)
+	if not ok then
+		return false, reason, false
+	end
+	local watch = GameData.Watches[watchId]
+	local levelBefore = PlayerLogic.level(data)
+	for partId, needed in watch.cost do
+		removeCount(data.parts, partId, needed)
+	end
+	data.watches[watchId] = (data.watches[watchId] or 0) + 1
+	data.xp += watch.xp
+	data.stats.crafted += 1
+	local levelAfter = PlayerLogic.level(data)
+	local message = string.format("Fabricaste: %s (+%d XP)", watch.name, watch.xp)
+	if levelAfter > levelBefore then
+		message ..= string.format(" · ¡Subiste a nivel %d!", levelAfter)
+	end
+	return true, message, levelAfter > levelBefore
+end
+
+function PlayerLogic.sell(data, watchId, amount)
+	local watch = GameData.Watches[watchId]
+	if not watch then
+		return false, "Ese reloj no existe."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	local owned = data.watches[watchId] or 0
+	if owned < amount then
+		return false, "No tienes suficientes relojes de ese tipo."
+	end
+	local earned = math.floor(watch.sell * amount * PlayerLogic.coinMultiplier(data))
+	removeCount(data.watches, watchId, amount)
+	data.coins += earned
+	data.stats.sold += amount
+	data.stats.earned += earned
+	return true, string.format("Vendiste %d × %s por %d monedas.", amount, watch.name, earned)
+end
+
+-- Vende piezas sueltas en la Tienda (BUG-001).
+function PlayerLogic.sellPart(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo."
+	end
+	local earned = math.floor(part.sell * amount * PlayerLogic.coinMultiplier(data))
+	removeCount(data.parts, partId, amount)
+	data.coins += earned
+	data.stats.earned += earned
+	return true, string.format("Vendiste %d × %s por %d monedas.", amount, part.name, earned)
+end
+
+-- Tira piezas desde la Mochila, en cualquier lugar y sin pago (BUG-001).
+function PlayerLogic.discardPart(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo."
+	end
+	removeCount(data.parts, partId, amount)
+	return true, string.format("Tiraste %d × %s.", amount, part.name)
+end
+
+function PlayerLogic.buyUpgrade(data, upgradeId)
+	local upgrade = GameData.Upgrades[upgradeId]
+	if not upgrade then
+		return false, "Esa mejora no existe."
+	end
+	local cost = PlayerLogic.upgradeCost(data, upgradeId)
+	if not cost then
+		return false, upgrade.name .. " ya está al máximo."
+	end
+	if data.coins < cost then
+		return false, string.format("Te faltan %d monedas.", cost - data.coins)
+	end
+	data.coins -= cost
+	local newLevel = PlayerLogic.upgradeLevel(data, upgradeId) + 1
+	data.upgrades[upgradeId] = newLevel
+	return true, string.format("%s mejorada a nivel %d.", upgrade.name, newLevel)
+end
+
+function PlayerLogic.display(data, watchId)
+	local watch = GameData.Watches[watchId]
+	if not watch then
+		return false, "Ese reloj no existe."
+	end
+	if (data.watches[watchId] or 0) < 1 then
+		return false, "No tienes ese reloj en tu inventario."
+	end
+	if PlayerLogic.museumCount(data) >= PlayerLogic.museumSlots(data) then
+		return false, "No quedan vitrinas libres. Mejora el museo o retira un reloj."
+	end
+	removeCount(data.watches, watchId, 1)
+	data.museum[watchId] = (data.museum[watchId] or 0) + 1
+	return true, string.format("%s exhibido en el museo.", watch.name)
+end
+
+function PlayerLogic.withdraw(data, watchId)
+	local watch = GameData.Watches[watchId]
+	if not watch then
+		return false, "Ese reloj no existe."
+	end
+	if (data.museum[watchId] or 0) < 1 then
+		return false, "Ese reloj no está exhibido."
+	end
+	if (data.watches[watchId] or 0) >= Config.MAX_WATCHES_PER_TYPE then
+		return false, "Tu inventario de ese reloj está lleno."
+	end
+	removeCount(data.museum, watchId, 1)
+	data.watches[watchId] = (data.watches[watchId] or 0) + 1
+	return true, string.format("%s retirado del museo.", watch.name)
+end
+
+-- Completa todos los pasos del tutorial ya cumplidos y entrega sus premios.
+-- Devuelve la lista de mensajes para mostrar al jugador.
+function PlayerLogic.advanceTutorial(data)
+	local messages = {}
+	while true do
+		local step, progress = PlayerLogic.tutorialStep(data)
+		if not step or progress < step.target then
+			break
+		end
+		data.coins += step.reward
+		data.stats.earned += step.reward
+		data.tutorial += 1
+		table.insert(messages, string.format("¡Objetivo cumplido! +%d monedas", step.reward))
+		if data.tutorial > #GameData.Tutorial then
+			table.insert(messages, "¡Tutorial completado! Ahora fabrica relojes mejores y llena tu museo.")
+		end
+	end
+	return messages
+end
+
+-- Entrega piezas guardadas al Cronómetro Maestro (DEV-004).
+-- Devuelve ok, mensaje, puntos.
+function PlayerLogic.contributeParts(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida.", 0
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida.", 0
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo.", 0
+	end
+	removeCount(data.parts, partId, amount)
+	local points = GameData.RepairPoints[part.rarity] * amount
+	return true, string.format("Entregaste %d × %s: +%d puntos de reparación.", amount, part.name, points), points
+end
+
+-- Devuelve piezas entregadas si la reparación falla (ignora la capacidad:
+-- el jugador ya las tenía).
+function PlayerLogic.refundParts(data, parts)
+	local total = 0
+	for partId, amount in parts do
+		if GameData.Parts[partId] and amount > 0 then
+			data.parts[partId] = (data.parts[partId] or 0) + amount
+			total += amount
+		end
+	end
+	return total
+end
+
+function PlayerLogic.bossReward(points)
+	return math.floor(points * Config.BOSS_COINS_PER_POINT)
+end
+
+-- ---------------------------------------------------------------------------
+-- Mascotas (DEV-005)
+-- ---------------------------------------------------------------------------
+
+function PlayerLogic.petCount(data)
+	return sumCounts(data.pets)
+end
+
+function PlayerLogic.equippedCount(data)
+	return sumCounts(data.equipped)
+end
+
+-- Elige una mascota de un huevo. roll en [0, 1). Devuelve petId o nil.
+function PlayerLogic.rollPet(eggId, roll)
+	local egg = GameData.Eggs[eggId]
+	if not egg then
+		return nil
+	end
+	local total = 0
+	for _, petId in GameData.PetOrder do
+		total += egg.chances[petId] or 0
+	end
+	local target = roll * total
+	local last = nil
+	for _, petId in GameData.PetOrder do
+		local weight = egg.chances[petId] or 0
+		if weight > 0 then
+			last = petId
+			target -= weight
+			if target < 0 then
+				return petId
+			end
+		end
+	end
+	return last
+end
+
+-- Añade una mascota; se equipa sola si hay espacio. Devuelve ok, mensaje.
+function PlayerLogic.grantPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet or pet.exclusive then
+		return false, "Mascota desconocida."
+	end
+	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS)
+	end
+	data.pets[petId] = (data.pets[petId] or 0) + 1
+	local extra = ""
+	if PlayerLogic.equippedCount(data) < PlayerLogic.petSlots(data) then
+		data.equipped[petId] = (data.equipped[petId] or 0) + 1
+		extra = " (equipada)"
+	end
+	return true, string.format("¡%s %s! +%d%% de velocidad%s", pet.name, pet.rarity, math.floor(pet.bonus * 100 + 0.5), extra)
+end
+
+-- Compra y abre un huevo. Devuelve ok, mensaje, petId.
+function PlayerLogic.hatchEgg(data, eggId, roll)
+	local egg = GameData.Eggs[eggId]
+	if not egg then
+		return false, "Ese huevo no existe.", nil
+	end
+	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS), nil
+	end
+	if data.coins < egg.cost then
+		return false, string.format("Te faltan %d monedas.", egg.cost - data.coins), nil
+	end
+	local petId = PlayerLogic.rollPet(eggId, roll)
+	data.coins -= egg.cost
+	local _, message = PlayerLogic.grantPet(data, petId)
+	return true, egg.name .. ": " .. message, petId
+end
+
+function PlayerLogic.equipPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if (data.pets[petId] or 0) <= (data.equipped[petId] or 0) then
+		return false, "No tienes otra " .. pet.name .. " sin equipar."
+	end
+	if PlayerLogic.equippedCount(data) >= PlayerLogic.petSlots(data) then
+		return false, string.format("Solo puedes equipar %d mascotas.", PlayerLogic.petSlots(data))
+	end
+	data.equipped[petId] = (data.equipped[petId] or 0) + 1
+	return true, pet.name .. " equipada."
+end
+
+function PlayerLogic.unequipPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if (data.equipped[petId] or 0) < 1 then
+		return false, pet.name .. " no está equipada."
+	end
+	removeCount(data.equipped, petId, 1)
+	return true, pet.name .. " desequipada."
+end
+
+-- Equipa las mascotas con mayor bonus.
+function PlayerLogic.equipBest(data)
+	data.equipped = {}
+	local slots = PlayerLogic.petSlots(data)
+	for index = #GameData.PetOrder, 1, -1 do
+		local petId = GameData.PetOrder[index]
+		local amount = math.min(data.pets[petId] or 0, slots)
+		if amount > 0 then
+			data.equipped[petId] = amount
+			slots -= amount
+		end
+	end
+	return true, string.format("Mejores mascotas equipadas: velocidad ×%.2f", PlayerLogic.petMultiplier(data))
+end
+
+-- Libera una mascota que no esté equipada.
+function PlayerLogic.releasePet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if pet.exclusive then
+		return false, pet.name .. " es exclusiva de un pase y no se puede liberar."
+	end
+	if (data.pets[petId] or 0) - (data.equipped[petId] or 0) < 1 then
+		return false, "Desequipa esa mascota antes de liberarla."
+	end
+	removeCount(data.pets, petId, 1)
+	return true, pet.name .. " liberada."
+end
+
+-- ---------------------------------------------------------------------------
+-- Pases, entrenamiento y productos con Robux (DEV-006)
+-- ---------------------------------------------------------------------------
+
+-- Aplica los pases que Roblox confirma que posee (tabla [passId] = true).
+-- Da o quita la Mascota Suprema y ajusta las mascotas equipadas a las ranuras.
+function PlayerLogic.setPasses(data, owned)
+	local passes = {}
+	for passId, value in owned do
+		if GameData.GamePasses[passId] and value == true then
+			passes[passId] = true
+		end
+	end
+	data.passes = passes
+
+	if passes.supremePet then
+		if (data.pets.supreme or 0) < 1 then
+			data.pets.supreme = 1
+			if PlayerLogic.equippedCount(data) < PlayerLogic.petSlots(data) then
+				data.equipped.supreme = 1
+			end
+		end
+	else
+		data.pets.supreme = nil
+		data.equipped.supreme = nil
+	end
+
+	-- Si perdió ranuras, desequipa empezando por las de menor bonus.
+	local index = 1
+	while PlayerLogic.equippedCount(data) > PlayerLogic.petSlots(data) and index <= #GameData.PetOrder do
+		local petId = GameData.PetOrder[index]
+		if (data.equipped[petId] or 0) > 0 then
+			removeCount(data.equipped, petId, 1)
+		else
+			index += 1
+		end
+	end
+end
+
+function PlayerLogic.canUseTreadmill(data, treadmillId)
+	local treadmill = GameData.Treadmills[treadmillId]
+	if not treadmill then
+		return false, "Esa caminadora no existe."
+	end
+	if treadmill.pass and not PlayerLogic.hasPass(data, treadmill.pass) then
+		return false, string.format("Necesitas el pase «%s».", GameData.GamePasses[treadmill.pass].name)
+	end
+	if treadmill.cost > 0 and not data.treadmills[treadmillId] then
+		return false, string.format("Desbloquéala en la Tienda por %d monedas.", treadmill.cost)
+	end
+	return true, ""
+end
+
+function PlayerLogic.buyTreadmill(data, treadmillId)
+	local treadmill = GameData.Treadmills[treadmillId]
+	if not treadmill or treadmill.cost <= 0 then
+		return false, "Esa caminadora no se compra con monedas."
+	end
+	if data.treadmills[treadmillId] then
+		return false, "Ya tienes la " .. treadmill.name .. "."
+	end
+	if data.coins < treadmill.cost then
+		return false, string.format("Te faltan %d monedas.", treadmill.cost - data.coins)
+	end
+	data.coins -= treadmill.cost
+	data.treadmills[treadmillId] = true
+	return true, treadmill.name .. " desbloqueada."
+end
+
+-- Entrena en una caminadora durante `seconds`. Devuelve la velocidad ganada.
+function PlayerLogic.trainTick(data, treadmillId, seconds)
+	if not PlayerLogic.canUseTreadmill(data, treadmillId) then
+		return 0
+	end
+	local multiplier = GameData.Treadmills[treadmillId].multiplier
+	local before = data.trained
+	data.trained = math.min(Config.MAX_TRAINED, before + Config.TRAIN_RATE * seconds * multiplier)
+	return data.trained - before
+end
+
+function PlayerLogic.hasReceipt(data, purchaseId)
+	return table.find(data.receipts, purchaseId) ~= nil
+end
+
+function PlayerLogic.addReceipt(data, purchaseId)
+	table.insert(data.receipts, purchaseId)
+	while #data.receipts > Config.MAX_RECEIPTS do
+		table.remove(data.receipts, 1)
+	end
+end
+
+-- Entrega un producto comprado con Robux. roll en [0, 1) para huevos.
+-- Devuelve ok, mensaje.
+function PlayerLogic.grantProduct(data, productId, roll)
+	local product = GameData.Products[productId]
+	if not product then
+		return false, "Producto desconocido."
+	end
+	if product.coins then
+		data.coins += product.coins
+		return true, string.format("Compra recibida: +%d monedas.", product.coins)
+	end
+	if product.trained then
+		data.trained = math.min(Config.MAX_TRAINED, data.trained + product.trained)
+		return true, string.format("Compra recibida: velocidad entrenada %.1f/%d.", data.trained, Config.MAX_TRAINED)
+	end
+	if product.egg then
+		local egg = GameData.Eggs[product.egg]
+		if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+			-- Sin espacio para mascotas: se compensa con el precio del huevo.
+			data.coins += egg.cost
+			return true, string.format("No caben más mascotas: recibes %d monedas.", egg.cost)
+		end
+		local _, message = PlayerLogic.grantPet(data, PlayerLogic.rollPet(product.egg, roll))
+		return true, egg.name .. ": " .. message
+	end
+	return false, "Producto sin contenido."
+end
+
+-- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.
+function PlayerLogic.collectIncome(data)
+	local income = math.floor(PlayerLogic.museumIncome(data) * PlayerLogic.coinMultiplier(data))
+	if income > 0 then
+		data.coins += income
+		data.stats.earned += income
+	end
+	return income
+end
+
+return PlayerLogic
+]]></ProtectedString>
+				</Properties>
+			</Item>
+		</Item>
+	</Item>
+	<Item class="ServerScriptService" referent="RBX00000006">
+		<Properties>
+			<string name="Name">ServerScriptService</string>
+		</Properties>
+		<Item class="Folder" referent="RBX00000007">
+			<Properties>
+				<string name="Name">Server</string>
+			</Properties>
+			<Item class="Script" referent="RBX00000008">
+				<Properties>
+					<string name="Name">Main</string>
+					<ProtectedString name="Source"><![CDATA[--[[
+	Main — punto de entrada del servidor de BUILD A WATCH!
+	Inicia los servicios en orden. Cada servicio está en Server/Services.
+]]
+
+local Services = script.Parent:WaitForChild("Services")
+
+local DataService = require(Services.DataService)
+local WorldService = require(Services.WorldService)
+local HouseService = require(Services.HouseService)
+local CharacterService = require(Services.CharacterService)
+local ActionService = require(Services.ActionService)
+local MuseumService = require(Services.MuseumService)
+local BossService = require(Services.BossService)
+local PetService = require(Services.PetService)
+local TrainingService = require(Services.TrainingService)
+local MonetizationService = require(Services.MonetizationService)
+
+DataService.init()
+WorldService.init()
+HouseService.init()
+CharacterService.init()
+ActionService.init()
+MuseumService.init()
+BossService.init()
+PetService.init()
+TrainingService.init()
+MonetizationService.init()
+DataService.start() -- al final: los demás servicios ya escuchan onLoaded
+
+print("[BUILD A WATCH!] Servidor iniciado.")
+]]></ProtectedString>
+				</Properties>
+			</Item>
+			<Item class="Folder" referent="RBX00000009">
+				<Properties>
+					<string name="Name">Services</string>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX0000000A">
+					<Properties>
+						<string name="Name">ActionService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	ActionService — única puerta de entrada de las acciones del cliente.
+
+	El cliente llama Remotes.Action:InvokeServer(acción, id, cantidad) y recibe
+	{ ok = boolean, message = string }. El servidor nunca confía en el cliente:
+	valida tipos, límite de solicitudes, distancia a la estación y reglas del
+	juego (PlayerLogic) antes de cambiar datos.
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local PlayerLogic = require(Shared.PlayerLogic)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+local WorldService = require(script.Parent.WorldService)
+local CharacterService = require(script.Parent.CharacterService)
+local BossService = require(script.Parent.BossService)
+local PetService = require(script.Parent.PetService)
+local MonetizationService = require(script.Parent.MonetizationService)
+
+local random = Random.new()
+
+local ActionService = {}
+
+-- acción → estación requerida y función que la ejecuta
+local ACTIONS = {
+	craft = {
+		station = "workshop",
+		run = function(data, id)
+			local ok, message = PlayerLogic.craft(data, id)
+			return ok, message
+		end,
+	},
+	sell = {
+		station = "shop",
+		run = function(data, id, amount)
+			return PlayerLogic.sell(data, id, amount)
+		end,
+	},
+	sellPart = {
+		station = "shop",
+		run = function(data, id, amount)
+			return PlayerLogic.sellPart(data, id, amount)
+		end,
+	},
+	discardPart = {
+		station = nil, -- se puede tirar en cualquier lugar (BUG-001)
+		run = function(data, id, amount)
+			return PlayerLogic.discardPart(data, id, amount)
+		end,
+	},
+	buyUpgrade = {
+		station = "shop",
+		run = function(data, id)
+			return PlayerLogic.buyUpgrade(data, id)
+		end,
+	},
+	hatchEgg = {
+		station = "pets",
+		affectsCharacter = true,
+		run = function(data, id)
+			local ok, message = PlayerLogic.hatchEgg(data, id, random:NextNumber())
+			return ok, message
+		end,
+	},
+	-- Manejo de mascotas: desde la Mochila, en cualquier lugar.
+	equipPet = {
+		affectsCharacter = true,
+		run = function(data, id)
+			return PlayerLogic.equipPet(data, id)
+		end,
+	},
+	unequipPet = {
+		affectsCharacter = true,
+		run = function(data, id)
+			return PlayerLogic.unequipPet(data, id)
+		end,
+	},
+	equipBest = {
+		affectsCharacter = true,
+		run = function(data)
+			return PlayerLogic.equipBest(data)
+		end,
+	},
+	releasePet = {
+		run = function(data, id)
+			return PlayerLogic.releasePet(data, id)
+		end,
+	},
+	-- Caminadoras y Robux (DEV-006)
+	buyTreadmill = {
+		station = "shop",
+		run = function(data, id)
+			return PlayerLogic.buyTreadmill(data, id)
+		end,
+	},
+	buyPass = {
+		run = function(data, id, _, player)
+			return MonetizationService.promptPass(player, data, id)
+		end,
+	},
+	buyProduct = {
+		run = function(_, id, _, player)
+			return MonetizationService.promptProduct(player, id)
+		end,
+	},
+	contribute = {
+		station = "boss",
+		run = function(data, id, amount, player)
+			return BossService.contribute(player, data, id, amount)
+		end,
+	},
+	display = {
+		station = "museum",
+		run = function(data, id)
+			return PlayerLogic.display(data, id)
+		end,
+	},
+	withdraw = {
+		station = "museum",
+		run = function(data, id)
+			return PlayerLogic.withdraw(data, id)
+		end,
+	},
+}
+
+-- Límite de solicitudes por jugador (ventana de 1 segundo)
+local requestLog = {} -- [Player] = { windowStart, count }
+
+local function allowRequest(player)
+	local now = os.clock()
+	local entry = requestLog[player]
+	if not entry or now - entry.windowStart >= 1 then
+		requestLog[player] = { windowStart = now, count = 1 }
+		return true
+	end
+	entry.count += 1
+	return entry.count <= Config.REQUESTS_PER_SECOND
+end
+
+local function reply(ok, message)
+	return { ok = ok, message = message }
+end
+
+local function handle(player, actionName, id, amount)
+	if not allowRequest(player) then
+		return reply(false, "Vas demasiado rápido. Espera un momento.")
+	end
+	if type(actionName) ~= "string" or type(id) ~= "string" or #id > 32 then
+		return reply(false, "Solicitud no válida.")
+	end
+	local action = ACTIONS[actionName]
+	if not action then
+		return reply(false, "Acción desconocida.")
+	end
+	if amount ~= nil and type(amount) ~= "number" then
+		return reply(false, "Cantidad no válida.")
+	end
+	local data = DataService.get(player)
+	if not data then
+		return reply(false, "Tus datos aún se están cargando…")
+	end
+	if action.station and not WorldService.isNearStation(player, action.station, Config.STATION_DISTANCE) then
+		return reply(false, "Acércate a la estación para hacer eso.")
+	end
+
+	local ok, message = action.run(data, id, amount or 1, player)
+	if ok then
+		DataService.replicate(player)
+		if actionName == "buyUpgrade" or action.affectsCharacter then
+			CharacterService.apply(player)
+		end
+		if action.affectsCharacter then
+			PetService.refresh(player)
+		end
+	end
+	return reply(ok, message)
+end
+
+function ActionService.init()
+	Net.Action.OnServerInvoke = function(player, actionName, id, amount)
+		local success, result = pcall(handle, player, actionName, id, amount)
+		if success then
+			return result
+		end
+		warn("[ActionService] Error procesando", actionName, "de", player.Name, ":", result)
+		return reply(false, "Ocurrió un error. Inténtalo de nuevo.")
+	end
+	Players.PlayerRemoving:Connect(function(player)
+		requestLog[player] = nil
+	end)
+end
+
+return ActionService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000000B">
+					<Properties>
+						<string name="Name">BossService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	BossService — jefe cooperativo sin combate: el Cronómetro Maestro (DEV-004).
+
+	Cada Config.BOSS_INTERVAL_SECONDS el Cronómetro de la base se avería.
+	Durante Config.BOSS_DURATION_SECONDS todos los jugadores del servidor
+	pueden entregarle piezas guardadas; cada rareza vale distintos puntos.
+	  - Si llegan a la meta (BOSS_POINTS_PER_PLAYER × jugadores), cada
+	    participante gana monedas según sus puntos.
+	  - Si se acaba el tiempo, se devuelven las piezas a quien siga conectado.
+
+	El estado se publica como atributos de la estación (los lee el cliente):
+	BossActive, BossPoints, BossGoal, BossEndsAt, BossNextAt (tiempo de
+	servidor) y el atributo BossPoints de cada jugador (su aporte).
+]]
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local PlayerLogic = require(Shared.PlayerLogic)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+local WorldService = require(script.Parent.WorldService)
+local CharacterService = require(script.Parent.CharacterService)
+local PetService = require(script.Parent.PetService)
+
+local random = Random.new()
+
+local BossService = {}
+
+local station = nil
+local smoke = nil
+local clockHand = nil
+local active = false
+local points = 0
+local goal = 0
+local endsAt = 0
+local nextAt = 0
+local contributions = {} -- [Player] = { points = n, parts = { [partId] = n } }
+
+local function now()
+	return Workspace:GetServerTimeNow()
+end
+
+local function publish()
+	station:SetAttribute("BossActive", active)
+	station:SetAttribute("BossPoints", points)
+	station:SetAttribute("BossGoal", goal)
+	station:SetAttribute("BossEndsAt", endsAt)
+	station:SetAttribute("BossNextAt", nextAt)
+end
+
+local function notifyAll(text, kind)
+	for _, player in Players:GetPlayers() do
+		Net.notify(player, text, kind)
+	end
+end
+
+local function start()
+	active = true
+	points = 0
+	goal = math.max(Config.BOSS_MIN_GOAL, Config.BOSS_POINTS_PER_PLAYER * #Players:GetPlayers())
+	endsAt = now() + Config.BOSS_DURATION_SECONDS
+	contributions = {}
+	for _, player in Players:GetPlayers() do
+		player:SetAttribute("BossPoints", 0)
+	end
+	smoke.Enabled = true
+	publish()
+	notifyAll(
+		string.format(
+			"¡El Cronómetro Maestro se averió! Entrégale piezas en la base: %d s para reunir %d puntos.",
+			Config.BOSS_DURATION_SECONDS,
+			goal
+		),
+		"info"
+	)
+end
+
+local function finish(success)
+	if not active then
+		return -- ya terminó (p. ej. dos entregas alcanzaron la meta a la vez)
+	end
+	active = false
+	nextAt = now() + Config.BOSS_INTERVAL_SECONDS
+	smoke.Enabled = false
+
+	for player, entry in contributions do
+		local data = DataService.get(player)
+		if player.Parent and data then
+			if success then
+				local coins = PlayerLogic.bossReward(entry.points)
+				data.coins += coins
+				data.stats.earned += coins
+				Net.notify(
+					player,
+					string.format("¡Cronómetro reparado! Tu aporte: %d puntos → +%d monedas.", entry.points, coins),
+					"ok"
+				)
+				-- Premio extra: huevo de mascota para quien aportó bastante (DEV-005)
+				if entry.points >= Config.BOSS_EGG_MIN_POINTS then
+					local petId = PlayerLogic.rollPet(Config.BOSS_EGG, random:NextNumber())
+					local granted, message = PlayerLogic.grantPet(data, petId)
+					Net.notify(player, "Premio del Cronómetro: " .. message, granted and "ok" or "error")
+					if granted then
+						CharacterService.apply(player)
+						PetService.refresh(player)
+					end
+				end
+			else
+				local refunded = PlayerLogic.refundParts(data, entry.parts)
+				Net.notify(player, string.format("No se logró repararlo. Te devolvimos %d piezas.", refunded), "error")
+			end
+			DataService.replicate(player)
+		end
+		player:SetAttribute("BossPoints", 0)
+	end
+	contributions = {}
+
+	if success then
+		notifyAll("¡El Cronómetro Maestro vuelve a funcionar gracias a todos!", "ok")
+	else
+		notifyAll("Se acabó el tiempo: el Cronómetro Maestro sigue averiado.", "error")
+	end
+	points = 0
+	publish()
+end
+
+-- Llamado por ActionService (ya validó distancia a la estación).
+function BossService.contribute(player, data, partId, amount)
+	if not active then
+		local wait = math.max(0, math.floor(nextAt - now()))
+		return false, string.format("El Cronómetro funciona bien. Próxima avería en %d s.", wait)
+	end
+	local ok, message, gained = PlayerLogic.contributeParts(data, partId, amount)
+	if not ok then
+		return false, message
+	end
+	local entry = contributions[player]
+	if not entry then
+		entry = { points = 0, parts = {} }
+		contributions[player] = entry
+	end
+	entry.points += gained
+	entry.parts[partId] = (entry.parts[partId] or 0) + amount
+	points += gained
+	player:SetAttribute("BossPoints", entry.points)
+	publish()
+	if points >= goal then
+		task.defer(finish, true)
+	end
+	return true, message
+end
+
+function BossService.init()
+	station = WorldService.buildStation({
+		id = "boss",
+		title = "Cronómetro Maestro",
+		action = "Entregar piezas",
+		position = Vector3.new(-55, 0, -70),
+		color = Color3.fromRGB(150, 110, 200),
+	})
+
+	-- Esfera del reloj sobre el mostrador
+	local face = WorldService.makePart({
+		Name = "Esfera",
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(1, 9, 9),
+		CFrame = CFrame.new(station.Position + Vector3.new(0, 9, 0)) * CFrame.Angles(0, math.rad(90), 0),
+		Color = Color3.fromRGB(245, 240, 225),
+		Material = Enum.Material.SmoothPlastic,
+	})
+	face.Parent = station.Parent
+	clockHand = WorldService.makePart({
+		Name = "Aguja",
+		Size = Vector3.new(0.4, 3.6, 0.4),
+		Position = station.Position + Vector3.new(0, 10.6, 0.7),
+		Color = Color3.fromRGB(30, 30, 35),
+		CanCollide = false,
+	})
+	clockHand.Parent = station.Parent
+	smoke = Instance.new("Smoke")
+	smoke.Color = Color3.fromRGB(80, 80, 80)
+	smoke.Size = 3
+	smoke.RiseVelocity = 4
+	smoke.Enabled = false
+	smoke.Parent = face
+
+	nextAt = now() + Config.BOSS_FIRST_DELAY_SECONDS
+	publish()
+
+	Players.PlayerRemoving:Connect(function(player)
+		-- Quien se va pierde su aporte (sus piezas ya se guardaron sin ellas).
+		contributions[player] = nil
+	end)
+
+	task.spawn(function()
+		local angle = 0
+		while true do
+			task.wait(1)
+			if active and now() >= endsAt then
+				finish(false)
+			elseif not active and now() >= nextAt then
+				start()
+			end
+			-- La aguja gira solo cuando el reloj funciona.
+			if not active then
+				angle = (angle + 6) % 360
+				clockHand.CFrame = CFrame.new(station.Position + Vector3.new(0, 9, 0.7))
+					* CFrame.Angles(0, 0, math.rad(angle))
+					* CFrame.new(0, 1.6, 0)
+			end
+		end
+	end)
+end
+
+return BossService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000000C">
+					<Properties>
+						<string name="Name">CharacterService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	CharacterService — aplica las mejoras de velocidad y salto al personaje.
+	El progreso no depende del personaje: morir o reaparecer no pierde nada.
+]]
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local PlayerLogic = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PlayerLogic"))
+local DataService = require(script.Parent.DataService)
+
+local CharacterService = {}
+
+function CharacterService.apply(player)
+	local data = DataService.get(player)
+	local character = player.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	if not data or not humanoid then
+		return
+	end
+	humanoid.UseJumpPower = false
+	-- Mientras entrena en una caminadora (TrainingService) se queda quieto.
+	if player:GetAttribute("Training") then
+		humanoid.WalkSpeed = 0
+		humanoid.JumpHeight = 0
+		return
+	end
+	humanoid.WalkSpeed = PlayerLogic.walkSpeed(data)
+	humanoid.JumpHeight = PlayerLogic.jumpHeight(data)
+end
+
+local function watchPlayer(player)
+	player.CharacterAdded:Connect(function(character)
+		character:WaitForChild("Humanoid", 10)
+		CharacterService.apply(player)
+	end)
+end
+
+function CharacterService.init()
+	Players.PlayerAdded:Connect(watchPlayer)
+	for _, player in Players:GetPlayers() do
+		watchPlayer(player)
+	end
+	-- El personaje puede aparecer antes de que terminen de cargar los datos.
+	DataService.onLoaded(function(player)
+		CharacterService.apply(player)
+	end)
+end
+
+return CharacterService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000000D">
+					<Properties>
+						<string name="Name">DataService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	DataService — carga, guarda y replica los datos de cada jugador.
+
+	- Formato guardado: { data = <tabla de PlayerLogic>, lock = { job, time } | nil }
+	- Bloqueo de sesión: evita que dos servidores escriban los mismos datos a la vez
+	  (por ejemplo, al cambiar rápido de servidor). Un bloqueo caduca tras
+	  Config.SESSION_LOCK_SECONDS.
+	- Si los datos no cargan en un servidor real, se expulsa al jugador para no
+	  sobrescribir su progreso con datos vacíos.
+	- En Studio sin acceso a API (Game Settings → Security → Enable Studio Access
+	  to API Services) se juega con datos temporales que NO se guardan.
+]]
+
+local DataStoreService = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local PlayerLogic = require(Shared.PlayerLogic)
+local Net = require(script.Parent.Net)
+
+local DataService = {}
+
+local store = nil
+local profiles = {} -- [Player] = { data = tabla, canSave = boolean }
+local loadedCallbacks = {}
+
+local function keyFor(player)
+	return "player_" .. player.UserId
+end
+
+local function isLockedByOther(stored, now)
+	return type(stored) == "table"
+		and type(stored.lock) == "table"
+		and stored.lock.job ~= game.JobId
+		and now - (tonumber(stored.lock.time) or 0) < Config.SESSION_LOCK_SECONDS
+end
+
+-- Devuelve "ok", datos | "locked" | "error", mensaje
+local function tryLoad(player)
+	local now = os.time()
+	local loaded = nil
+	local locked = false
+	local success, err = pcall(function()
+		store:UpdateAsync(keyFor(player), function(stored)
+			locked = false
+			loaded = nil
+			if isLockedByOther(stored, now) then
+				locked = true
+				return nil -- no escribir
+			end
+			local raw = nil
+			if type(stored) == "table" then
+				raw = stored.data
+			end
+			loaded = PlayerLogic.reconcile(raw)
+			return { data = loaded, lock = { job = game.JobId, time = now } }
+		end)
+	end)
+	if not success then
+		return "error", tostring(err)
+	end
+	if locked then
+		return "locked"
+	end
+	return "ok", loaded
+end
+
+local function writeProfile(player, profile, release)
+	if not store or not profile.canSave then
+		return true
+	end
+	for attempt = 1, Config.SAVE_ATTEMPTS do
+		local lostLock = false
+		local success, err = pcall(function()
+			store:UpdateAsync(keyFor(player), function(stored)
+				lostLock = false
+				if isLockedByOther(stored, os.time()) then
+					lostLock = true
+					return nil -- otro servidor tomó la sesión: no sobrescribir
+				end
+				local lock = nil
+				if not release then
+					lock = { job = game.JobId, time = os.time() }
+				end
+				return { data = profile.data, lock = lock }
+			end)
+		end)
+		if success then
+			if lostLock then
+				warn("[DataService] Otro servidor tiene la sesión de", player.Name, "; no se sobrescribe.")
+				profile.canSave = false
+			end
+			return true
+		end
+		warn(string.format("[DataService] Error al guardar %s (intento %d): %s", player.Name, attempt, tostring(err)))
+		if attempt < Config.SAVE_ATTEMPTS then
+			task.wait(2)
+		end
+	end
+	return false
+end
+
+local function setupLeaderstats(player)
+	local leaderstats = Instance.new("Folder")
+	leaderstats.Name = "leaderstats"
+	local coins = Instance.new("IntValue")
+	coins.Name = "Monedas"
+	coins.Parent = leaderstats
+	local level = Instance.new("IntValue")
+	level.Name = "Nivel"
+	level.Value = 1
+	level.Parent = leaderstats
+	leaderstats.Parent = player
+end
+
+local function onPlayerAdded(player)
+	local data = nil
+	local canSave = false
+
+	if store then
+		local status, result
+		for attempt = 1, Config.LOAD_ATTEMPTS do
+			status, result = tryLoad(player)
+			if status == "ok" then
+				break
+			end
+			if not player.Parent then
+				return
+			end
+			warn(string.format("[DataService] Carga de %s: %s (intento %d) %s", player.Name, status, attempt, tostring(result or "")))
+			if status == "error" and RunService:IsStudio() then
+				break -- en Studio sin acceso a API no tiene sentido reintentar
+			end
+			task.wait(Config.LOAD_RETRY_SECONDS)
+		end
+
+		if status == "ok" then
+			data = result
+			canSave = true
+		elseif RunService:IsStudio() then
+			warn("[DataService] Studio sin acceso a DataStore: se usan datos temporales que NO se guardan.")
+		else
+			if status == "locked" then
+				player:Kick("Tus datos siguen abiertos en otro servidor. Vuelve a entrar en un minuto.")
+			else
+				player:Kick("No pudimos cargar tus datos. Tu progreso está a salvo; inténtalo de nuevo.")
+			end
+			return
+		end
+	end
+
+	if data == nil then
+		data = PlayerLogic.newData()
+	end
+
+	local profile = { data = data, canSave = canSave }
+
+	-- Si el jugador salió mientras cargaba, liberar el bloqueo y terminar.
+	if not player.Parent then
+		writeProfile(player, profile, true)
+		return
+	end
+
+	profiles[player] = profile
+	setupLeaderstats(player)
+	DataService.replicate(player)
+
+	if not canSave then
+		Net.notify(player, "Modo de prueba: tu progreso no se guardará.", "error")
+	end
+
+	for _, callback in loadedCallbacks do
+		task.spawn(callback, player, data)
+	end
+end
+
+local function onPlayerRemoving(player)
+	local profile = profiles[player]
+	if not profile then
+		return
+	end
+	writeProfile(player, profile, true)
+	profiles[player] = nil
+end
+
+-- API ------------------------------------------------------------------------
+
+function DataService.init()
+	local success, result = pcall(function()
+		return DataStoreService:GetDataStore(Config.DATASTORE_NAME)
+	end)
+	if success then
+		store = result
+	else
+		warn("[DataService] DataStore no disponible:", result)
+	end
+end
+
+function DataService.start()
+	Players.PlayerAdded:Connect(onPlayerAdded)
+	Players.PlayerRemoving:Connect(onPlayerRemoving)
+	for _, player in Players:GetPlayers() do
+		task.spawn(onPlayerAdded, player)
+	end
+
+	-- Autoguardado periódico (también renueva el bloqueo de sesión).
+	task.spawn(function()
+		while true do
+			task.wait(Config.AUTOSAVE_SECONDS)
+			for player, profile in profiles do
+				task.spawn(writeProfile, player, profile, false)
+			end
+		end
+	end)
+
+	-- Guardar a todos al cerrar el servidor.
+	game:BindToClose(function()
+		local pending = 0
+		for player, profile in profiles do
+			pending += 1
+			task.spawn(function()
+				writeProfile(player, profile, true)
+				pending -= 1
+			end)
+		end
+		local started = os.clock()
+		while pending > 0 and os.clock() - started < 25 do
+			task.wait(0.2)
+		end
+	end)
+end
+
+-- Guarda ya (usado tras compras con Robux). Devuelve true si quedó guardado
+-- o si la sesión no guarda (Studio sin acceso a API).
+function DataService.saveNow(player)
+	local profile = profiles[player]
+	if not profile then
+		return false
+	end
+	return writeProfile(player, profile, false)
+end
+
+-- Llama a callback(player, data) cuando los datos de un jugador están listos.
+function DataService.onLoaded(callback)
+	table.insert(loadedCallbacks, callback)
+	for player, profile in profiles do
+		task.spawn(callback, player, profile.data)
+	end
+end
+
+-- Datos del jugador o nil si todavía no cargaron.
+function DataService.get(player)
+	local profile = profiles[player]
+	if profile then
+		return profile.data
+	end
+	return nil
+end
+
+function DataService.forEach(callback)
+	for player, profile in profiles do
+		callback(player, profile.data)
+	end
+end
+
+-- Se llama después de cada cambio de datos: completa objetivos del tutorial
+-- cumplidos, envía el estado al cliente y actualiza la tabla de clasificación.
+function DataService.replicate(player)
+	local data = DataService.get(player)
+	if not data then
+		return
+	end
+	for _, message in PlayerLogic.advanceTutorial(data) do
+		Net.notify(player, message, "ok")
+	end
+	local view = PlayerLogic.buildView(data)
+	Net.State:FireClient(player, view)
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if leaderstats then
+		leaderstats.Monedas.Value = view.coins
+		leaderstats.Nivel.Value = view.level
+	end
+end
+
+return DataService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000000E">
+					<Properties>
+						<string name="Name">HouseService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	HouseService — casas, robo de piezas y persecución (DEV-003).
+
+	Flujo:
+	  1. Entras a una casa y mantienes el botón sobre una pieza → va a tu botín
+	     (lo llevas encima, todavía no es tuyo).
+	  2. Al SALIR de la casa con botín, el dueño sale tras de ti.
+	  3. Si llegas a la base segura, el botín se guarda en tu mochila.
+	     Si el dueño te atrapa (o caes), pierdes todo el botín que llevabas.
+	  4. El dueño se rinde si llegas a la base, si te alejas demasiado o tras
+	     Config.CHASE_MAX_SECONDS.
+
+	Cada zona tiene 4 casas con 3 piezas. Las piezas reaparecen tras
+	Config.HOUSE_SPOT_RESPAWN_SECONDS con una rareza nueva según la zona.
+	Cada dueño persigue a un ladrón a la vez; los demás esperan en cola.
+]]
+
+local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+local OwnerNpc = require(script.Parent.OwnerNpc)
+local WorldService = require(script.Parent.WorldService)
+
+local HouseService = {}
+
+local random = Random.new()
+local houses = {}
+local npcFolder = nil
+
+-- Medidas de una casa
+local HOUSE_WIDTH = 26 -- eje X
+local HOUSE_DEPTH = 24 -- eje Z
+local HOUSE_HEIGHT = 12
+local DOOR_WIDTH = 8
+local DOOR_HEIGHT = 9
+local HOUSE_OFFSET_X = 48 -- distancia del camino al centro de la casa
+-- Posición de las 3 piezas: { hacia el fondo, a lo largo de Z }
+local SPOT_OFFSETS = { { 7, -7 }, { 7, 7 }, { -3, -8 } }
+
+local function getRoot(player)
+	local character = player.Character
+	return character and character:FindFirstChild("HumanoidRootPart")
+end
+
+local function isInside(house, position)
+	return position.X >= house.min.X
+		and position.X <= house.max.X
+		and position.Z >= house.min.Z
+		and position.Z <= house.max.Z
+		and position.Y <= house.max.Y
+end
+
+local function flatDistance(a, b)
+	return Vector3.new(a.X - b.X, 0, a.Z - b.Z).Magnitude
+end
+
+-- ---------------------------------------------------------------------------
+-- Piezas dentro de la casa
+-- ---------------------------------------------------------------------------
+
+local function spawnSpot(house, spot)
+	local partId = PlayerLogic.rollPart(1, random:NextNumber(), house.zone.weights)
+	local info = GameData.Parts[partId]
+
+	local item = Instance.new("Part")
+	item.Name = info.name
+	item.Shape = Enum.PartType.Ball
+	item.Size = Vector3.new(1.4, 1.4, 1.4)
+	item.Anchored = true
+	item.CanCollide = false
+	item.Color = GameData.RarityColors[info.rarity]
+	item.Material = Enum.Material.SmoothPlastic
+	if not info.common then
+		item.Material = Enum.Material.Neon
+		local light = Instance.new("PointLight")
+		light.Range = 8
+		light.Color = item.Color
+		light.Parent = item
+	end
+	item.Position = spot.position
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ActionText = "Robar"
+	prompt.ObjectText = string.format("%s (%s)", info.name, info.rarity)
+	prompt.HoldDuration = info.holdTime
+	prompt.MaxActivationDistance = 8
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = item
+
+	local taken = false
+	prompt.Triggered:Connect(function(player)
+		if taken then
+			return
+		end
+		local data = DataService.get(player)
+		local root = getRoot(player)
+		if not data or not root or (root.Position - item.Position).Magnitude > Config.INTERACT_DISTANCE then
+			return
+		end
+		-- Defensa en el servidor: la puerta de velocidad se abre en el cliente.
+		if not PlayerLogic.canEnterZone(data, house.zoneIndex) then
+			Net.notify(
+				player,
+				string.format("Necesitas velocidad %d para robar en %s.", house.zone.minSpeed, house.zone.name),
+				"error"
+			)
+			return
+		end
+		local ok, message = PlayerLogic.stealPart(data, partId, random:NextNumber())
+		if not ok then
+			Net.notify(player, message, "error")
+			return
+		end
+		taken = true
+		item:Destroy()
+		spot.item = nil
+		house.thieves[player] = true
+		Net.notify(player, message, "ok")
+		DataService.replicate(player)
+		task.delay(Config.HOUSE_SPOT_RESPAWN_SECONDS, spawnSpot, house, spot)
+	end)
+
+	item.Parent = house.model
+	spot.item = item
+end
+
+-- ---------------------------------------------------------------------------
+-- Construcción de una casa
+-- ---------------------------------------------------------------------------
+
+-- side = -1: casa a la izquierda del camino (puerta mirando a +X); side = 1: a la derecha.
+local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
+	local makePart = WorldService.makePart
+	local centerX = side * HOUSE_OFFSET_X
+	local frontX = centerX - side * HOUSE_WIDTH / 2
+	local backX = centerX + side * HOUSE_WIDTH / 2
+	local ownerName = zone.owners[houseIndex] or ("Dueño " .. houseIndex)
+
+	local model = Instance.new("Model")
+	model.Name = string.format("Casa%d", houseIndex)
+
+	local wallColor = zone.color
+	local function wall(name, size, position)
+		makePart({
+			Name = name,
+			Size = size,
+			Position = position,
+			Color = wallColor,
+			Material = Enum.Material.Brick,
+		}).Parent = model
+	end
+
+	makePart({
+		Name = "Piso",
+		Size = Vector3.new(HOUSE_WIDTH, 0.4, HOUSE_DEPTH),
+		Position = Vector3.new(centerX, 0.4, centerZ),
+		Color = Color3.fromRGB(150, 110, 80),
+		Material = Enum.Material.WoodPlanks,
+	}).Parent = model
+
+	local halfH = HOUSE_HEIGHT / 2
+	wall("ParedFondo", Vector3.new(1, HOUSE_HEIGHT, HOUSE_DEPTH), Vector3.new(backX, halfH, centerZ))
+	wall("ParedLado", Vector3.new(HOUSE_WIDTH, HOUSE_HEIGHT, 1), Vector3.new(centerX, halfH, centerZ - HOUSE_DEPTH / 2))
+	wall("ParedLado", Vector3.new(HOUSE_WIDTH, HOUSE_HEIGHT, 1), Vector3.new(centerX, halfH, centerZ + HOUSE_DEPTH / 2))
+	local segment = (HOUSE_DEPTH - DOOR_WIDTH) / 2
+	local segmentOffset = DOOR_WIDTH / 2 + segment / 2
+	wall("ParedFrente", Vector3.new(1, HOUSE_HEIGHT, segment), Vector3.new(frontX, halfH, centerZ - segmentOffset))
+	wall("ParedFrente", Vector3.new(1, HOUSE_HEIGHT, segment), Vector3.new(frontX, halfH, centerZ + segmentOffset))
+	wall(
+		"Dintel",
+		Vector3.new(1, HOUSE_HEIGHT - DOOR_HEIGHT, DOOR_WIDTH),
+		Vector3.new(frontX, DOOR_HEIGHT + (HOUSE_HEIGHT - DOOR_HEIGHT) / 2, centerZ)
+	)
+	makePart({
+		Name = "Techo",
+		Size = Vector3.new(HOUSE_WIDTH + 2, 1, HOUSE_DEPTH + 2),
+		Position = Vector3.new(centerX, HOUSE_HEIGHT + 0.5, centerZ),
+		Color = zone.color:Lerp(Color3.new(0, 0, 0), 0.35),
+		Material = Enum.Material.Slate,
+	}).Parent = model
+
+	local door = makePart({
+		Name = "Puerta",
+		Size = Vector3.new(1, DOOR_HEIGHT, DOOR_WIDTH),
+		Position = Vector3.new(frontX, DOOR_HEIGHT / 2, centerZ),
+		Transparency = 1,
+		CanCollide = false,
+		CanQuery = false,
+	})
+	WorldService.makeSign(door, "Casa de " .. ownerName, zone.name, 7, 120)
+	door.Parent = model
+	if zoneIndex == 1 and houseIndex == 1 then
+		CollectionService:AddTag(door, "GuideHouse")
+		model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+	end
+
+	local house = {
+		zoneIndex = zoneIndex,
+		zone = zone,
+		model = model,
+		ownerName = ownerName,
+		min = Vector3.new(centerX - HOUSE_WIDTH / 2, -5, centerZ - HOUSE_DEPTH / 2),
+		max = Vector3.new(centerX + HOUSE_WIDTH / 2, HOUSE_HEIGHT, centerZ + HOUSE_DEPTH / 2),
+		ownerSpawn = Vector3.new(centerX + side * 6, 0, centerZ),
+		doorOutside = Vector3.new(frontX - side * 4, 0, centerZ),
+		spots = {},
+		thieves = {}, -- [Player] = true mientras roba dentro
+		queue = {}, -- ladrones que salieron y esperan persecución
+		chasing = nil,
+	}
+
+	for _, offset in SPOT_OFFSETS do
+		local position = Vector3.new(centerX + side * offset[1], 0, centerZ + offset[2])
+		makePart({
+			Name = "Pedestal",
+			Size = Vector3.new(2.4, 2, 2.4),
+			Position = position + Vector3.new(0, 1, 0),
+			Color = Color3.fromRGB(110, 80, 55),
+			Material = Enum.Material.Wood,
+		}).Parent = model
+		local spot = { position = position + Vector3.new(0, 2.9, 0), item = nil }
+		table.insert(house.spots, spot)
+		spawnSpot(house, spot)
+	end
+
+	model.Parent = parent
+	table.insert(houses, house)
+end
+
+-- ---------------------------------------------------------------------------
+-- Persecución
+-- ---------------------------------------------------------------------------
+
+local function chase(house, player)
+	house.chasing = player
+	local zone = house.zone
+	local npc = OwnerNpc.create(house.ownerName, zone.color:Lerp(Color3.new(0, 0, 0), 0.4), house.ownerSpawn, npcFolder)
+	npc.humanoid.WalkSpeed = zone.ownerSpeed
+	Net.notify(player, string.format("¡%s te vio! Corre a la base con tu botín.", house.ownerName), "error")
+
+	task.wait(Config.OWNER_REACTION_SECONDS)
+	local started = os.clock()
+	local leftHouse = false
+	local result = "gone"
+	local data = nil
+
+	while true do
+		data = DataService.get(player)
+		local root = getRoot(player)
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+		if not player.Parent or not data or not root or not humanoid or humanoid.Health <= 0 then
+			result = "gone"
+			break
+		end
+		if PlayerLogic.carriedCount(data) == 0 then
+			result = "gone"
+			break
+		end
+		if WorldService.isInHub(root.Position) then
+			result = "escaped"
+			break
+		end
+		local distance = (root.Position - npc.root.Position).Magnitude
+		if distance <= Config.CATCH_DISTANCE then
+			result = "caught"
+			break
+		end
+		local elapsed = os.clock() - started
+		if distance > Config.CHASE_LOSE_DISTANCE or elapsed > Config.CHASE_MAX_SECONDS then
+			result = "escaped"
+			break
+		end
+		if not leftHouse then
+			-- Primero sale por la puerta para no atascarse en las paredes.
+			npc.humanoid:MoveTo(house.doorOutside)
+			if flatDistance(npc.root.Position, house.doorOutside) < 3 or elapsed > 4 then
+				leftHouse = true
+			end
+		else
+			npc.humanoid:MoveTo(root.Position)
+		end
+		task.wait(0.1)
+	end
+
+	if result == "caught" and data then
+		local lost = PlayerLogic.loseLoot(data)
+		Net.notify(player, string.format("¡%s te atrapó! Perdiste %d piezas robadas.", house.ownerName, lost), "error")
+		DataService.replicate(player)
+	elseif result == "escaped" then
+		Net.notify(player, string.format("%s dejó de perseguirte.", house.ownerName), "info")
+	end
+
+	npc.model:Destroy()
+	house.chasing = nil
+end
+
+local function startNextChase(house)
+	while #house.queue > 0 do
+		local player = table.remove(house.queue, 1)
+		local data = DataService.get(player)
+		local root = getRoot(player)
+		if
+			player.Parent
+			and data
+			and root
+			and PlayerLogic.carriedCount(data) > 0
+			and not WorldService.isInHub(root.Position)
+		then
+			house.chasing = player
+			task.spawn(chase, house, player)
+			return
+		end
+	end
+end
+
+-- Revisa salidas de casas, inicia persecuciones y guarda botín en la base.
+local function tick()
+	for _, house in houses do
+		for player in house.thieves do
+			local root = getRoot(player)
+			if not player.Parent or not root then
+				house.thieves[player] = nil
+			elseif not isInside(house, root.Position) then
+				house.thieves[player] = nil
+				local data = DataService.get(player)
+				if
+					data
+					and PlayerLogic.carriedCount(data) > 0
+					and house.chasing ~= player
+					and not table.find(house.queue, player)
+				then
+					table.insert(house.queue, player)
+				end
+			end
+		end
+		if not house.chasing then
+			startNextChase(house)
+		end
+	end
+
+	DataService.forEach(function(player, data)
+		if PlayerLogic.carriedCount(data) > 0 then
+			local root = getRoot(player)
+			if root and WorldService.isInHub(root.Position) then
+				local saved = PlayerLogic.depositLoot(data)
+				Net.notify(player, string.format("Botín guardado: +%d piezas en tu mochila.", saved), "ok")
+				DataService.replicate(player)
+			end
+		end
+	end)
+end
+
+-- Caer o reiniciar con botín encima también lo pierde (evita escapar reiniciando).
+local function watchDeaths(player)
+	player.CharacterAdded:Connect(function(character)
+		local humanoid = character:WaitForChild("Humanoid", 10)
+		if not humanoid then
+			return
+		end
+		humanoid.Died:Connect(function()
+			local data = DataService.get(player)
+			if data and PlayerLogic.carriedCount(data) > 0 then
+				local lost = PlayerLogic.loseLoot(data)
+				Net.notify(player, string.format("Perdiste %d piezas robadas al caer.", lost), "error")
+				DataService.replicate(player)
+			end
+		end)
+	end)
+end
+
+function HouseService.init()
+	npcFolder = Instance.new("Folder")
+	npcFolder.Name = "Duenos"
+	npcFolder.Parent = WorldService.Folder
+
+	for zoneIndex, zone in GameData.Zones do
+		local startZ = WorldService.zoneBounds(zoneIndex)
+		local zoneModel = WorldService.ZonesFolder:FindFirstChild(string.format("Zona%d_%s", zoneIndex, zone.id))
+		local houseIndex = 0
+		for _, rowZ in { startZ + 35, startZ + 95 } do
+			for _, side in { -1, 1 } do
+				houseIndex += 1
+				buildHouse(zoneModel, zoneIndex, zone, houseIndex, rowZ, side)
+			end
+		end
+	end
+
+	Players.PlayerAdded:Connect(watchDeaths)
+	for _, player in Players:GetPlayers() do
+		watchDeaths(player)
+	end
+
+	task.spawn(function()
+		while true do
+			task.wait(0.2)
+			tick()
+		end
+	end)
+end
+
+return HouseService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000000F">
+					<Properties>
+						<string name="Name">MonetizationService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	MonetizationService — pases de juego y productos con Robux (DEV-006).
+
+	Pases (compra única): al entrar se consulta a Roblox qué pases tiene el
+	jugador; no se guardan en DataStore (Roblox es la fuente de verdad).
+	Productos (compra repetible): ProcessReceipt entrega el producto, guarda
+	el id de la compra en los datos del jugador y SOLO confirma a Roblox
+	(PurchaseGranted) cuando los datos quedaron guardados. Si algo falla,
+	devuelve NotProcessedYet y Roblox reintenta; el id guardado evita entregar
+	dos veces.
+
+	Los IDs están en Config.GAMEPASS_IDS / Config.PRODUCT_IDS. Mientras sean 0
+	la compra responde «Próximamente».
+]]
+
+local MarketplaceService = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic)
+local CharacterService = require(script.Parent.CharacterService)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+local PetService = require(script.Parent.PetService)
+
+local MonetizationService = {}
+
+local random = Random.new()
+local passKeyById = {}
+local productKeyById = {}
+for key, id in Config.GAMEPASS_IDS do
+	if id ~= 0 then
+		passKeyById[id] = key
+	end
+end
+for key, id in Config.PRODUCT_IDS do
+	if id ~= 0 then
+		productKeyById[id] = key
+	end
+end
+
+local function refreshPlayer(player)
+	CharacterService.apply(player)
+	PetService.refresh(player)
+	DataService.replicate(player)
+end
+
+local function ownsPass(player, passId)
+	for attempt = 1, 3 do
+		local ok, result = pcall(function()
+			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
+		end)
+		if ok then
+			return result == true
+		end
+		warn(string.format("[Monetization] Error consultando pase %d de %s (intento %d): %s", passId, player.Name, attempt, tostring(result)))
+		task.wait(1)
+	end
+	return false
+end
+
+-- Consulta todos los pases del jugador y los aplica.
+local function syncPasses(player)
+	local data = DataService.get(player)
+	if not data then
+		return
+	end
+	local owned = {}
+	local testing = RunService:IsStudio() and Config.STUDIO_GRANT_ALL_PASSES
+	for key, id in Config.GAMEPASS_IDS do
+		if testing then
+			owned[key] = true
+		elseif id ~= 0 and ownsPass(player, id) then
+			owned[key] = true
+		end
+	end
+	-- Conserva pases comprados durante esta sesión aunque la consulta tarde.
+	for key in data.passes do
+		owned[key] = true
+	end
+	if not player.Parent then
+		return
+	end
+	PlayerLogic.setPasses(data, owned)
+	refreshPlayer(player)
+	if testing then
+		Net.notify(player, "Modo de prueba: todos los pases activos (no se guardan).", "info")
+	end
+end
+
+-- Acción del cliente: abrir la compra de un pase.
+function MonetizationService.promptPass(player, data, passKey)
+	local pass = GameData.GamePasses[passKey]
+	if not pass then
+		return false, "Ese pase no existe."
+	end
+	if PlayerLogic.hasPass(data, passKey) then
+		return false, "Ya tienes el pase «" .. pass.name .. "»."
+	end
+	local id = Config.GAMEPASS_IDS[passKey]
+	if not id or id == 0 then
+		return false, "«" .. pass.name .. "» estará disponible próximamente."
+	end
+	MarketplaceService:PromptGamePassPurchase(player, id)
+	return true, "Abriendo la compra de «" .. pass.name .. "»…"
+end
+
+-- Acción del cliente: abrir la compra de un producto.
+function MonetizationService.promptProduct(player, productKey)
+	local product = GameData.Products[productKey]
+	if not product then
+		return false, "Ese producto no existe."
+	end
+	local id = Config.PRODUCT_IDS[productKey]
+	if not id or id == 0 then
+		return false, "«" .. product.name .. "» estará disponible próximamente."
+	end
+	MarketplaceService:PromptProductPurchase(player, id)
+	return true, "Abriendo la compra de «" .. product.name .. "»…"
+end
+
+local function processReceipt(receipt)
+	local player = Players:GetPlayerByUserId(receipt.PlayerId)
+	local data = player and DataService.get(player)
+	if not player or not data then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	local productKey = productKeyById[receipt.ProductId]
+	if not productKey then
+		warn("[Monetization] Producto sin configurar:", receipt.ProductId)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	local purchaseId = tostring(receipt.PurchaseId)
+	if PlayerLogic.hasReceipt(data, purchaseId) then
+		return Enum.ProductPurchaseDecision.PurchaseGranted -- ya entregado antes
+	end
+
+	local ok, message = PlayerLogic.grantProduct(data, productKey, random:NextNumber())
+	if not ok then
+		warn("[Monetization] No se pudo entregar", productKey, message)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	PlayerLogic.addReceipt(data, purchaseId)
+	if not DataService.saveNow(player) then
+		-- No se confirmó el guardado: Roblox reintentará. El id ya está en
+		-- memoria, así que el reintento en esta sesión no entrega dos veces.
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	Net.notify(player, message, "ok")
+	refreshPlayer(player)
+	return Enum.ProductPurchaseDecision.PurchaseGranted
+end
+
+function MonetizationService.init()
+	DataService.onLoaded(function(player)
+		syncPasses(player)
+	end)
+
+	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, passId, purchased)
+		local key = passKeyById[passId]
+		local data = DataService.get(player)
+		if not purchased or not key or not data then
+			return
+		end
+		local owned = table.clone(data.passes)
+		owned[key] = true
+		PlayerLogic.setPasses(data, owned)
+		Net.notify(player, "¡Gracias! Pase activado: " .. GameData.GamePasses[key].name, "ok")
+		refreshPlayer(player)
+	end)
+
+	MarketplaceService.ProcessReceipt = processReceipt
+end
+
+return MonetizationService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000010">
+					<Properties>
+						<string name="Name">MuseumService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	MuseumService — ingreso pasivo de los relojes exhibidos.
+	Cada Config.MUSEUM_TICK_SECONDS suma a cada jugador el ingreso de su museo.
+	Solo cuenta mientras el jugador está conectado (sin ganancias offline).
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local PlayerLogic = require(Shared.PlayerLogic)
+local DataService = require(script.Parent.DataService)
+
+local MuseumService = {}
+
+function MuseumService.init()
+	task.spawn(function()
+		while true do
+			task.wait(Config.MUSEUM_TICK_SECONDS)
+			DataService.forEach(function(player, data)
+				if PlayerLogic.collectIncome(data) > 0 then
+					DataService.replicate(player)
+				end
+			end)
+		end
+	end)
+end
+
+return MuseumService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000011">
+					<Properties>
+						<string name="Name">Net</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	Net — crea los remotos en ReplicatedStorage.Remotes y ofrece ayudas.
+	Se crean una sola vez, la primera vez que un servicio requiere este módulo.
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+
+local Net = {}
+
+local folder = Instance.new("Folder")
+folder.Name = "Remotes"
+
+local function create(className, name)
+	local remote = Instance.new(className)
+	remote.Name = name
+	remote.Parent = folder
+	return remote
+end
+
+Net.State = create("RemoteEvent", Config.REMOTES.State)
+Net.Notify = create("RemoteEvent", Config.REMOTES.Notify)
+Net.OpenPanel = create("RemoteEvent", Config.REMOTES.OpenPanel)
+Net.Action = create("RemoteFunction", Config.REMOTES.Action)
+
+folder.Parent = ReplicatedStorage
+
+-- kind: "info" | "ok" | "error"
+function Net.notify(player, text, kind)
+	Net.Notify:FireClient(player, text, kind or "info")
+end
+
+return Net
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000012">
+					<Properties>
+						<string name="Name">OwnerNpc</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	OwnerNpc — crea al dueño de una casa: un personaje sencillo de bloques
+	con Humanoid para poder caminar con MoveTo. Es provisional; la Cuenta B
+	puede reemplazar el modelo conservando HumanoidRootPart y Humanoid.
+]]
+
+local OwnerNpc = {}
+
+local function weld(part0, part1)
+	local constraint = Instance.new("WeldConstraint")
+	constraint.Part0 = part0
+	constraint.Part1 = part1
+	constraint.Parent = part0
+end
+
+local function block(name, size, color, cframe)
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.Color = color
+	part.CFrame = cframe
+	part.CanCollide = false
+	part.Massless = true
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	return part
+end
+
+-- Devuelve { model, humanoid, root }
+function OwnerNpc.create(displayName, color, position, parent)
+	local model = Instance.new("Model")
+	model.Name = displayName
+
+	local origin = CFrame.new(position + Vector3.new(0, 3, 0))
+
+	local root = block("HumanoidRootPart", Vector3.new(2, 2, 1), color, origin)
+	root.Transparency = 1
+	root.CanCollide = true
+	root.Massless = false
+	root.Parent = model
+
+	local torso = block("Torso", Vector3.new(2, 2, 1), color, origin)
+	torso.Parent = model
+	weld(root, torso)
+
+	local head = block("Head", Vector3.new(1.4, 1.4, 1.4), Color3.fromRGB(245, 205, 160), origin * CFrame.new(0, 1.7, 0))
+	head.Parent = model
+	weld(root, head)
+
+	for _, x in { -0.5, 0.5 } do
+		local leg = block("Pierna", Vector3.new(0.9, 2, 0.9), Color3.fromRGB(50, 50, 70), origin * CFrame.new(x, -2, 0))
+		leg.Parent = model
+		weld(root, leg)
+	end
+
+	local humanoid = Instance.new("Humanoid")
+	humanoid.RigType = Enum.HumanoidRigType.R15
+	humanoid.HipHeight = 3 -- sin piernas articuladas: flota a esta altura sobre el suelo
+	humanoid.DisplayName = displayName
+	humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+	humanoid.NameDisplayDistance = 80
+	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff
+	humanoid.MaxHealth = math.huge
+	humanoid.Health = math.huge
+	humanoid.Parent = model
+
+	model.PrimaryPart = root
+	model.Parent = parent
+	-- El servidor controla su física para que la persecución sea justa.
+	root:SetNetworkOwner(nil)
+
+	return { model = model, humanoid = humanoid, root = root }
+end
+
+return OwnerNpc
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000013">
+					<Properties>
+						<string name="Name">PetService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	PetService — Criadero de huevos y mascotas que acompañan al jugador (DEV-005).
+
+	Las mascotas equipadas multiplican la velocidad (PlayerLogic.walkSpeed).
+	Aquí solo se crea la estación y la parte visual: esferas con nombre que
+	flotan alrededor del personaje. Son provisionales; la Cuenta B puede
+	reemplazarlas por modelos conservando PetService.refresh.
+]]
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local GameData = require(Shared.GameData)
+local DataService = require(script.Parent.DataService)
+local WorldService = require(script.Parent.WorldService)
+
+local PetService = {}
+
+-- Posición de cada mascota respecto al personaje (hasta 3 equipadas)
+local OFFSETS = {
+	Vector3.new(-3, 1.5, 2.5),
+	Vector3.new(3, 1.5, 2.5),
+	Vector3.new(0, 2.5, 3.5),
+}
+
+local function makeFollower(root, petId, offset)
+	local pet = GameData.Pets[petId]
+	local ball = Instance.new("Part")
+	ball.Name = pet.name
+	ball.Shape = Enum.PartType.Ball
+	ball.Size = Vector3.new(1.6, 1.6, 1.6)
+	ball.Color = GameData.RarityColors[pet.rarity]
+	ball.Material = Enum.Material.Neon
+	ball.CanCollide = false
+	ball.CanQuery = false
+	ball.CanTouch = false
+	ball.Massless = true
+	ball.CFrame = root.CFrame * CFrame.new(offset)
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Size = UDim2.fromOffset(120, 24)
+	billboard.StudsOffset = Vector3.new(0, 1.4, 0)
+	billboard.MaxDistance = 60
+	billboard.Parent = ball
+	local text = Instance.new("TextLabel")
+	text.Size = UDim2.fromScale(1, 1)
+	text.BackgroundTransparency = 1
+	text.Font = Enum.Font.GothamBold
+	text.TextScaled = true
+	text.TextColor3 = Color3.new(1, 1, 1)
+	text.TextStrokeTransparency = 0.4
+	text.Text = string.format("%s +%d%%", pet.name, math.floor(pet.bonus * 100 + 0.5))
+	text.Parent = billboard
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = root
+	weld.Part1 = ball
+	weld.Parent = ball
+	return ball
+end
+
+-- Vuelve a dibujar las mascotas equipadas del jugador.
+function PetService.refresh(player)
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local data = DataService.get(player)
+	if not root or not data then
+		return
+	end
+	local old = character:FindFirstChild("Mascotas")
+	if old then
+		old:Destroy()
+	end
+	local folder = Instance.new("Folder")
+	folder.Name = "Mascotas"
+	local index = 0
+	for _, petId in GameData.PetOrder do
+		for _ = 1, data.equipped[petId] or 0 do
+			index += 1
+			if OFFSETS[index] then
+				makeFollower(root, petId, OFFSETS[index]).Parent = folder
+			end
+		end
+	end
+	folder.Parent = character
+end
+
+local function watchPlayer(player)
+	player.CharacterAdded:Connect(function(character)
+		character:WaitForChild("HumanoidRootPart", 10)
+		PetService.refresh(player)
+	end)
+end
+
+function PetService.init()
+	WorldService.buildStation({
+		id = "pets",
+		title = "Criadero",
+		action = "Huevos y mascotas",
+		position = Vector3.new(55, 0, -70),
+		color = Color3.fromRGB(220, 150, 60),
+	})
+	Players.PlayerAdded:Connect(watchPlayer)
+	for _, player in Players:GetPlayers() do
+		watchPlayer(player)
+	end
+	DataService.onLoaded(function(player)
+		PetService.refresh(player)
+	end)
+end
+
+return PetService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000014">
+					<Properties>
+						<string name="Name">TrainingService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	TrainingService — caminadoras para entrenar velocidad permanente (DEV-006).
+
+	Pulsa el botón de una caminadora para empezar a entrenar y otra vez para
+	parar. Mientras entrenas el personaje no se mueve y cada segundo ganas
+	Config.TRAIN_RATE × multiplicador de la caminadora (hasta Config.MAX_TRAINED).
+	Alejarse, reaparecer o salir del juego detiene el entrenamiento.
+
+	Las piezas son marcadores funcionales; el modelo final se hará aparte.
+	Etiqueta "Treadmill" con atributo TreadmillId.
+]]
+
+local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic)
+local CharacterService = require(script.Parent.CharacterService)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+local WorldService = require(script.Parent.WorldService)
+
+local TrainingService = {}
+
+local training = {} -- [Player] = { id = treadmillId, part = BasePart }
+
+local POSITIONS = {
+	basic = Vector3.new(-80, 0, 5),
+	advanced = Vector3.new(-80, 0, -10),
+	turbo = Vector3.new(-80, 0, -25),
+}
+
+local function getRoot(player)
+	local character = player.Character
+	return character and character:FindFirstChild("HumanoidRootPart")
+end
+
+function TrainingService.stop(player, message)
+	if not training[player] then
+		return
+	end
+	training[player] = nil
+	player:SetAttribute("Training", nil)
+	CharacterService.apply(player)
+	if message then
+		Net.notify(player, message, "info")
+	end
+end
+
+local function start(player, treadmillId, part)
+	local data = DataService.get(player)
+	local root = getRoot(player)
+	if not data or not root then
+		return
+	end
+	local ok, reason = PlayerLogic.canUseTreadmill(data, treadmillId)
+	if not ok then
+		Net.notify(player, reason, "error")
+		return
+	end
+	if data.trained >= Config.MAX_TRAINED then
+		Net.notify(player, "Ya entrenaste la velocidad máxima.", "info")
+		return
+	end
+	if PlayerLogic.carriedCount(data) > 0 then
+		Net.notify(player, "Guarda tu botín antes de entrenar.", "error")
+		return
+	end
+	training[player] = { id = treadmillId, part = part }
+	player:SetAttribute("Training", treadmillId)
+	root.CFrame = CFrame.new(part.Position + Vector3.new(0, 3.5, 0))
+	CharacterService.apply(player)
+	local treadmill = GameData.Treadmills[treadmillId]
+	Net.notify(
+		player,
+		string.format("Entrenando en la %s (×%s). Pulsa otra vez para parar.", treadmill.name, tostring(treadmill.multiplier)),
+		"ok"
+	)
+end
+
+local function buildTreadmill(folder, treadmill)
+	local position = POSITIONS[treadmill.id]
+	local part = WorldService.makePart({
+		Name = treadmill.name,
+		Size = Vector3.new(5, 1, 8),
+		Position = position + Vector3.new(0, 0.5, 0),
+		Color = Color3.fromRGB(60, 60, 70),
+		Material = Enum.Material.Metal,
+	})
+	part:SetAttribute("TreadmillId", treadmill.id)
+	CollectionService:AddTag(part, "Treadmill")
+	local subtitle = string.format("Entrena velocidad ×%s", tostring(treadmill.multiplier))
+	if treadmill.cost > 0 then
+		subtitle ..= string.format(" · %d monedas", treadmill.cost)
+	elseif treadmill.pass then
+		subtitle ..= " · pase de Robux"
+	end
+	WorldService.makeSign(part, treadmill.name, subtitle, 5, 100)
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ActionText = "Entrenar / parar"
+	prompt.ObjectText = treadmill.name
+	prompt.HoldDuration = 0
+	prompt.MaxActivationDistance = 10
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = part
+	prompt.Triggered:Connect(function(player)
+		if training[player] then
+			TrainingService.stop(player, "Dejaste de entrenar.")
+		else
+			start(player, treadmill.id, part)
+		end
+	end)
+	part.Parent = folder
+end
+
+function TrainingService.init()
+	local folder = Instance.new("Model")
+	folder.Name = "Caminadoras"
+	folder.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+	folder.Parent = WorldService.Folder
+	for _, treadmillId in GameData.TreadmillOrder do
+		buildTreadmill(folder, GameData.Treadmills[treadmillId])
+	end
+
+	local function watchPlayer(player)
+		player.CharacterAdded:Connect(function()
+			TrainingService.stop(player)
+		end)
+	end
+	Players.PlayerAdded:Connect(watchPlayer)
+	for _, player in Players:GetPlayers() do
+		watchPlayer(player)
+	end
+	Players.PlayerRemoving:Connect(function(player)
+		training[player] = nil
+	end)
+
+	task.spawn(function()
+		while true do
+			task.wait(Config.TRAIN_TICK_SECONDS)
+			for player, info in training do
+				local data = DataService.get(player)
+				local root = getRoot(player)
+				if not data or not root or (root.Position - info.part.Position).Magnitude > Config.TREADMILL_DISTANCE then
+					TrainingService.stop(player, "Dejaste de entrenar.")
+				else
+					local gained = PlayerLogic.trainTick(data, info.id, Config.TRAIN_TICK_SECONDS)
+					if gained > 0 then
+						DataService.replicate(player)
+					end
+					if data.trained >= Config.MAX_TRAINED then
+						TrainingService.stop(player, "¡Velocidad de entrenamiento al máximo!")
+					end
+				end
+			end
+		end
+	end)
+end
+
+return TrainingService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX00000015">
+					<Properties>
+						<string name="Name">WorldService</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	WorldService — construye el mapa al iniciar el servidor.
+
+	Estructura (vista desde arriba, el camino avanza hacia +Z):
+
+	  [Base segura: Z < Config.HUB_MAX_Z]  aparición, Taller, Tienda, Museo...
+	  [Zona 1: Barrio Humilde]             4 casas, sin puerta de velocidad
+	  [Puerta de velocidad 18] [Zona 2]    ...
+	  ...
+	  [Puerta de velocidad 34] [Zona 5: Colina de los Millonarios]
+
+	Las puertas de velocidad son sólidas en el servidor; cada cliente las vuelve
+	atravesables solo para su personaje si tiene la velocidad (ver Ui.luau).
+	El servidor además rechaza robos en zonas sin la velocidad necesaria.
+
+	El mapa es funcional y provisional: la Cuenta B puede sustituir lo visual
+	conservando etiquetas (CollectionService) y atributos.
+	Etiquetas: "Station" (StationId), "SpeedGate" (MinSpeed, ZoneIndex), "GuideHouse".
+]]
+
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+local DataService = require(script.Parent.DataService)
+local Net = require(script.Parent.Net)
+
+local WorldService = {}
+
+WorldService.Folder = nil
+WorldService.Stations = {} -- [stationId] = BasePart
+
+-- Medidas del mapa
+local HALF_WIDTH = 110 -- el mapa va de X = -110 a X = 110
+local ZONE_START = 30 -- Z donde empieza la zona 1
+local ZONE_LENGTH = 140 -- distancia entre el inicio de dos zonas
+local ZONE_DEPTH = 130 -- largo útil de cada zona
+local MAP_END = ZONE_START + #GameData.Zones * ZONE_LENGTH
+local MAP_BACK = -100
+
+local STATIONS = {
+	{
+		id = "workshop",
+		title = "Taller",
+		action = "Fabricar relojes",
+		position = Vector3.new(-35, 0, -25),
+		color = Color3.fromRGB(196, 134, 72),
+	},
+	{
+		id = "shop",
+		title = "Tienda",
+		action = "Vender y mejorar",
+		position = Vector3.new(35, 0, -25),
+		color = Color3.fromRGB(74, 160, 96),
+	},
+	{
+		id = "museum",
+		title = "Museo",
+		action = "Exhibir relojes",
+		position = Vector3.new(0, 0, -65),
+		color = Color3.fromRGB(92, 120, 200),
+	},
+}
+
+local function makePart(props)
+	local part = Instance.new("Part")
+	part.Anchored = true
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	for key, value in props do
+		part[key] = value
+	end
+	return part
+end
+WorldService.makePart = makePart
+
+local function makeSign(parent, title, subtitle, height, maxDistance)
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "Cartel"
+	billboard.Size = UDim2.fromOffset(240, 70)
+	billboard.StudsOffset = Vector3.new(0, height, 0)
+	billboard.MaxDistance = maxDistance or 140
+	billboard.Parent = parent
+
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.fromScale(1, 0.6)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextScaled = true
+	titleLabel.TextColor3 = Color3.new(1, 1, 1)
+	titleLabel.TextStrokeTransparency = 0.4
+	titleLabel.Text = title
+	titleLabel.Parent = billboard
+
+	local subtitleLabel = Instance.new("TextLabel")
+	subtitleLabel.Size = UDim2.fromScale(1, 0.4)
+	subtitleLabel.Position = UDim2.fromScale(0, 0.6)
+	subtitleLabel.BackgroundTransparency = 1
+	subtitleLabel.Font = Enum.Font.Gotham
+	subtitleLabel.TextScaled = true
+	subtitleLabel.TextColor3 = Color3.fromRGB(235, 235, 235)
+	subtitleLabel.TextStrokeTransparency = 0.5
+	subtitleLabel.Text = subtitle
+	subtitleLabel.Parent = billboard
+	return billboard
+end
+WorldService.makeSign = makeSign
+
+-- Crea una estación con su menú. Otros servicios (jefe, mascotas) también la usan.
+function WorldService.buildStation(info)
+	local model = Instance.new("Model")
+	model.Name = info.title
+	model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+
+	local base = makePart({
+		Name = "Mostrador",
+		Size = Vector3.new(14, 5, 8),
+		Position = info.position + Vector3.new(0, 2.5, 0),
+		Color = info.color,
+		Material = Enum.Material.WoodPlanks,
+	})
+	base:SetAttribute("StationId", info.id)
+	CollectionService:AddTag(base, "Station")
+	base.Parent = model
+
+	makePart({
+		Name = "Techo",
+		Size = Vector3.new(18, 1, 12),
+		Position = info.position + Vector3.new(0, 11, 0),
+		Color = info.color:Lerp(Color3.new(0, 0, 0), 0.3),
+		Material = Enum.Material.SmoothPlastic,
+	}).Parent = model
+
+	for _, offset in { Vector3.new(-8, 0, -5), Vector3.new(8, 0, -5), Vector3.new(-8, 0, 5), Vector3.new(8, 0, 5) } do
+		makePart({
+			Name = "Columna",
+			Size = Vector3.new(1, 10.5, 1),
+			Position = info.position + offset + Vector3.new(0, 5.25, 0),
+			Color = Color3.fromRGB(230, 225, 210),
+			Material = Enum.Material.SmoothPlastic,
+		}).Parent = model
+	end
+
+	makeSign(base, info.title, info.action, 10)
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.Name = "Abrir"
+	prompt.ActionText = info.action
+	prompt.ObjectText = info.title
+	prompt.HoldDuration = 0
+	prompt.MaxActivationDistance = 12
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = base
+
+	prompt.Triggered:Connect(function(player)
+		if DataService.get(player) then
+			Net.OpenPanel:FireClient(player, info.id)
+		else
+			Net.notify(player, "Tus datos aún se están cargando…", "info")
+		end
+	end)
+
+	model.PrimaryPart = base
+	model.Parent = WorldService.Folder
+	WorldService.Stations[info.id] = base
+	return base
+end
+
+-- Inicio y fin (en Z) de una zona.
+function WorldService.zoneBounds(zoneIndex)
+	local startZ = ZONE_START + (zoneIndex - 1) * ZONE_LENGTH
+	return startZ, startZ + ZONE_DEPTH
+end
+
+function WorldService.isInHub(position)
+	return position.Z < Config.HUB_MAX_Z
+end
+
+local function buildZone(folder, zoneIndex, zone)
+	local startZ, endZ = WorldService.zoneBounds(zoneIndex)
+	local model = Instance.new("Model")
+	model.Name = string.format("Zona%d_%s", zoneIndex, zone.id)
+
+	makePart({
+		Name = "Terreno",
+		Size = Vector3.new(HALF_WIDTH * 2, 0.2, endZ - startZ),
+		Position = Vector3.new(0, 0.1, (startZ + endZ) / 2),
+		Color = zone.color:Lerp(Color3.fromRGB(106, 168, 79), 0.55),
+		Material = Enum.Material.Grass,
+		CanCollide = false,
+	}).Parent = model
+
+	-- Cartel de la zona a la entrada del camino
+	local signPost = makePart({
+		Name = "CartelZona",
+		Size = Vector3.new(1, 8, 1),
+		Position = Vector3.new(14, 4, startZ + 4),
+		Color = Color3.fromRGB(90, 70, 50),
+		Material = Enum.Material.Wood,
+	})
+	makeSign(
+		signPost,
+		zone.name,
+		string.format("Zona %d · velocidad mínima %d", zoneIndex, zone.minSpeed),
+		6,
+		220
+	)
+	signPost.Parent = model
+
+	-- Puerta de velocidad (la zona 1 no tiene)
+	if zone.minSpeed > 0 then
+		local gate = Instance.new("Model")
+		gate.Name = "PuertaDeVelocidad"
+		gate.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+		local barrier = makePart({
+			Name = "Barrera",
+			Size = Vector3.new(HALF_WIDTH * 2, 40, 2),
+			Position = Vector3.new(0, 20, startZ - 5),
+			Color = Color3.fromRGB(230, 70, 70),
+			Material = Enum.Material.ForceField,
+			Transparency = 0.3,
+			CanCollide = true,
+		})
+		barrier:SetAttribute("MinSpeed", zone.minSpeed)
+		barrier:SetAttribute("ZoneIndex", zoneIndex)
+		CollectionService:AddTag(barrier, "SpeedGate")
+		barrier.Parent = gate
+		local label = makePart({
+			Name = "Rotulo",
+			Size = Vector3.new(1, 1, 1),
+			Position = Vector3.new(0, 8, startZ - 5),
+			Transparency = 1,
+			CanCollide = false,
+		})
+		makeSign(label, string.format("Velocidad %d", zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 220)
+		label.Parent = gate
+		gate.Parent = model
+	end
+
+	model.Parent = folder
+	return model
+end
+
+function WorldService.init()
+	local folder = Instance.new("Folder")
+	folder.Name = "Mapa"
+	WorldService.Folder = folder
+
+	-- Suelo general (0.1 sobre una Baseplate estándar para evitar parpadeo)
+	makePart({
+		Name = "Suelo",
+		Size = Vector3.new(HALF_WIDTH * 2 + 20, 2, MAP_END - MAP_BACK + 20),
+		Position = Vector3.new(0, -0.9, (MAP_END + MAP_BACK) / 2),
+		Color = Color3.fromRGB(106, 168, 79),
+		Material = Enum.Material.Grass,
+	}).Parent = folder
+
+	-- Base segura
+	makePart({
+		Name = "Base",
+		Size = Vector3.new(HALF_WIDTH * 2, 0.2, Config.HUB_MAX_Z - MAP_BACK),
+		Position = Vector3.new(0, 0.1, (Config.HUB_MAX_Z + MAP_BACK) / 2),
+		Color = Color3.fromRGB(205, 190, 160),
+		Material = Enum.Material.Pavement,
+		CanCollide = false,
+	}).Parent = folder
+	local baseSign = makePart({
+		Name = "CartelBase",
+		Size = Vector3.new(1, 1, 1),
+		Position = Vector3.new(0, 6, Config.HUB_MAX_Z - 2),
+		Transparency = 1,
+		CanCollide = false,
+	})
+	makeSign(baseSign, "BASE SEGURA", "Aquí el botín se guarda y nadie te persigue", 2, 200)
+	baseSign.Parent = folder
+
+	-- Camino central
+	makePart({
+		Name = "Camino",
+		Size = Vector3.new(22, 0.2, MAP_END - Config.HUB_MAX_Z),
+		Position = Vector3.new(0, 0.25, (MAP_END + Config.HUB_MAX_Z) / 2),
+		Color = Color3.fromRGB(70, 70, 75),
+		Material = Enum.Material.Asphalt,
+		CanCollide = false,
+	}).Parent = folder
+
+	-- Muros invisibles alrededor del mapa
+	for _, wall in {
+		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(-HALF_WIDTH - 1, 40, (MAP_END + MAP_BACK) / 2) },
+		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(HALF_WIDTH + 1, 40, (MAP_END + MAP_BACK) / 2) },
+		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_BACK - 1) },
+		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_END + 1) },
+	} do
+		makePart({
+			Name = "Limite",
+			Size = wall[1],
+			Position = wall[2],
+			Transparency = 1,
+		}).Parent = folder
+	end
+
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "Aparicion"
+	spawn.Anchored = true
+	spawn.Size = Vector3.new(10, 1, 10)
+	spawn.Position = Vector3.new(0, 0.5, 0)
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.Color = Color3.fromRGB(240, 200, 80)
+	spawn.Material = Enum.Material.SmoothPlastic
+	spawn.Parent = folder
+
+	local zonesFolder = Instance.new("Folder")
+	zonesFolder.Name = "Zonas"
+	zonesFolder.Parent = folder
+	WorldService.ZonesFolder = zonesFolder
+	for zoneIndex, zone in GameData.Zones do
+		buildZone(zonesFolder, zoneIndex, zone)
+	end
+
+	folder.Parent = Workspace
+
+	for _, info in STATIONS do
+		WorldService.buildStation(info)
+	end
+end
+
+-- ¿Está el personaje del jugador cerca de la estación?
+function WorldService.isNearStation(player, stationId, maxDistance)
+	local station = WorldService.Stations[stationId]
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if not station or not root then
+		return false
+	end
+	return (root.Position - station.Position).Magnitude <= maxDistance
+end
+
+return WorldService
+]]></ProtectedString>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBX00000016">
+				<Properties>
+					<string name="Name">Tests</string>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX00000017">
+					<Properties>
+						<string name="Name">PlayerLogic.spec</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	Pruebas de PlayerLogic (reglas puras del juego).
+	Las ejecuta Tests/RunTests al pulsar Play en Studio.
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic)
+
+return function(t)
+	local function giveParts(data, cost)
+		for partId, amount in cost do
+			data.parts[partId] = (data.parts[partId] or 0) + amount
+		end
+	end
+
+	t.test("newData empieza vacío", function()
+		local data = PlayerLogic.newData()
+		t.eq(data.coins, Config.START_COINS, "monedas iniciales")
+		t.eq(PlayerLogic.partCount(data), 0, "sin piezas")
+		t.eq(PlayerLogic.level(data), 1, "nivel 1")
+	end)
+
+	t.test("reconcile repara datos dañados", function()
+		local data = PlayerLogic.reconcile({
+			coins = -50,
+			xp = "mucho",
+			parts = { gear = 3, inventada = 9, spring = -2 },
+			upgrades = { backpack = 99, falsa = 1 },
+		})
+		t.eq(data.coins, 0, "monedas negativas → 0")
+		t.eq(data.xp, 0, "xp inválida → 0")
+		t.eq(data.parts.gear, 3, "conserva piezas válidas")
+		t.eq(data.parts.inventada, nil, "descarta piezas desconocidas")
+		t.eq(data.parts.spring, nil, "descarta cantidades negativas")
+		t.eq(data.upgrades.backpack, GameData.Upgrades.backpack.maxLevel, "limita nivel de mejora")
+		t.eq(data.upgrades.falsa, nil, "descarta mejoras desconocidas")
+		t.eq(data.stats.crafted, 0, "crea estadísticas")
+		t.ok(type(PlayerLogic.reconcile(nil)) == "table", "nil → datos nuevos")
+	end)
+
+	t.test("levelInfo calcula niveles", function()
+		local step = Config.XP_PER_LEVEL_STEP
+		t.eq(PlayerLogic.levelInfo(0), 1, "0 xp = nivel 1")
+		t.eq(PlayerLogic.levelInfo(step - 1), 1, "justo antes del nivel 2")
+		t.eq(PlayerLogic.levelInfo(step), 2, "nivel 2")
+		t.eq(PlayerLogic.levelInfo(step + step * 2), 3, "nivel 3")
+		local level = PlayerLogic.levelInfo(10 ^ 9)
+		t.eq(level, Config.MAX_LEVEL, "no supera el nivel máximo")
+	end)
+
+	t.test("addPart respeta la capacidad de la mochila", function()
+		local data = PlayerLogic.newData()
+		for _ = 1, Config.BASE_BACKPACK do
+			t.ok(PlayerLogic.addPart(data, "gear"), "cabe la pieza")
+		end
+		local ok = PlayerLogic.addPart(data, "gear")
+		t.ok(not ok, "mochila llena rechaza la pieza")
+		t.eq(PlayerLogic.partCount(data), Config.BASE_BACKPACK, "no pasa del límite")
+		t.ok(not PlayerLogic.addPart(PlayerLogic.newData(), "inventada"), "rechaza piezas desconocidas")
+	end)
+
+	t.test("craft consume piezas y da XP", function()
+		local data = PlayerLogic.newData()
+		local watch = GameData.Watches.pocket
+		t.ok(not PlayerLogic.craft(data, "pocket"), "sin piezas no fabrica")
+		giveParts(data, watch.cost)
+		local ok = PlayerLogic.craft(data, "pocket")
+		t.ok(ok, "fabrica con piezas suficientes")
+		t.eq(data.watches.pocket, 1, "suma el reloj")
+		t.eq(PlayerLogic.partCount(data), 0, "consume todas las piezas")
+		t.eq(data.xp, watch.xp, "da XP")
+		t.eq(data.parts.gear, nil, "limpia contadores en cero")
+	end)
+
+	t.test("craft exige nivel", function()
+		local data = PlayerLogic.newData()
+		giveParts(data, GameData.Watches.royal.cost)
+		local ok, reason = PlayerLogic.craft(data, "royal")
+		t.ok(not ok, "nivel 1 no fabrica el reloj real")
+		t.ok(string.find(reason, "nivel") ~= nil, "explica que falta nivel")
+	end)
+
+	t.test("sell valida cantidad y paga", function()
+		local data = PlayerLogic.newData()
+		data.watches.pocket = 3
+		t.ok(not PlayerLogic.sell(data, "pocket", 0), "rechaza 0")
+		t.ok(not PlayerLogic.sell(data, "pocket", 1.5), "rechaza decimales")
+		t.ok(not PlayerLogic.sell(data, "pocket", 4), "rechaza más de lo que tiene")
+		t.ok(not PlayerLogic.sell(data, "pocket", 0 / 0), "rechaza NaN")
+		t.ok(PlayerLogic.sell(data, "pocket", 2), "vende 2")
+		t.eq(data.coins, GameData.Watches.pocket.sell * 2, "paga el precio")
+		t.eq(data.watches.pocket, 1, "quedan 1")
+	end)
+
+	t.test("BUG-001: vender y tirar piezas libera la mochila", function()
+		local data = PlayerLogic.newData()
+		for _ = 1, Config.BASE_BACKPACK do
+			PlayerLogic.addPart(data, "screw")
+		end
+		t.ok(not PlayerLogic.addPart(data, "gear"), "mochila llena")
+		t.ok(not PlayerLogic.sellPart(data, "screw", Config.BASE_BACKPACK + 1), "no vende más de lo que tiene")
+		t.ok(not PlayerLogic.sellPart(data, "screw", 0.5), "rechaza decimales")
+		t.ok(PlayerLogic.sellPart(data, "screw", 5), "vende 5")
+		t.eq(data.coins, GameData.Parts.screw.sell * 5, "paga las piezas")
+		t.ok(PlayerLogic.discardPart(data, "screw", 5), "tira 5")
+		t.eq(data.coins, GameData.Parts.screw.sell * 5, "tirar no paga")
+		t.eq(PlayerLogic.partCount(data), Config.BASE_BACKPACK - 10, "libera 10 espacios")
+		t.ok(PlayerLogic.addPart(data, "gear"), "ya cabe otra pieza")
+		t.ok(not PlayerLogic.discardPart(data, "ruby", 1), "no tira lo que no tiene")
+	end)
+
+	t.test("vender piezas siempre rinde menos que fabricar", function()
+		for _, watchId in GameData.WatchOrder do
+			local watch = GameData.Watches[watchId]
+			local partsValue = 0
+			for partId, amount in watch.cost do
+				partsValue += GameData.Parts[partId].sell * amount
+			end
+			t.ok(watch.sell > partsValue, watch.name .. " vale más que sus piezas")
+		end
+	end)
+
+	t.test("buyUpgrade cobra y respeta el máximo", function()
+		local data = PlayerLogic.newData()
+		local upgrade = GameData.Upgrades.jump
+		t.ok(not PlayerLogic.buyUpgrade(data, "jump"), "sin monedas no compra")
+		data.coins = 10 ^ 7
+		for _ = 1, upgrade.maxLevel do
+			t.ok(PlayerLogic.buyUpgrade(data, "jump"), "compra un nivel")
+		end
+		t.ok(not PlayerLogic.buyUpgrade(data, "jump"), "no pasa del máximo")
+		t.eq(PlayerLogic.upgradeCost(data, "jump"), nil, "sin precio al máximo")
+		t.eq(PlayerLogic.jumpHeight(data), Config.BASE_JUMPHEIGHT + upgrade.maxLevel * upgrade.step, "aplica el salto")
+	end)
+
+	t.test("upgradeCost crece por nivel", function()
+		local data = PlayerLogic.newData()
+		local upgrade = GameData.Upgrades.backpack
+		t.eq(PlayerLogic.upgradeCost(data, "backpack"), upgrade.baseCost, "precio inicial")
+		data.upgrades.backpack = 2
+		t.eq(PlayerLogic.upgradeCost(data, "backpack"), math.floor(upgrade.baseCost * upgrade.growth ^ 2), "precio nivel 2")
+		t.eq(PlayerLogic.backpackCapacity(data), Config.BASE_BACKPACK + 2 * upgrade.step, "capacidad mejorada")
+	end)
+
+	t.test("museo: exhibir, límite de vitrinas, retirar e ingreso", function()
+		local data = PlayerLogic.newData()
+		local slots = PlayerLogic.museumSlots(data)
+		data.watches.wrist = slots + 1
+		for _ = 1, slots do
+			t.ok(PlayerLogic.display(data, "wrist"), "exhibe")
+		end
+		t.ok(not PlayerLogic.display(data, "wrist"), "no supera las vitrinas")
+		t.eq(PlayerLogic.museumIncome(data), GameData.Watches.wrist.income * slots, "ingreso correcto")
+		local earned = PlayerLogic.collectIncome(data)
+		t.eq(earned, GameData.Watches.wrist.income * slots, "cobra el ingreso")
+		t.eq(data.coins, earned, "suma monedas")
+		t.ok(PlayerLogic.withdraw(data, "wrist"), "retira")
+		t.eq(data.watches.wrist, 2, "vuelve al inventario")
+		t.ok(not PlayerLogic.withdraw(data, "pocket"), "no retira lo que no está")
+	end)
+
+	t.test("rollPart devuelve piezas válidas y la suerte ayuda", function()
+		t.eq(PlayerLogic.rollPart(1, 0), GameData.PartOrder[1], "roll 0 = primera pieza")
+		local lastWithWeight = nil
+		for _, partId in GameData.PartOrder do
+			if GameData.Parts[partId].weight > 0 then
+				lastWithWeight = partId
+			end
+		end
+		t.eq(PlayerLogic.rollPart(1, 0.999999), lastWithWeight, "roll ~1 = última pieza con peso")
+		t.ok(PlayerLogic.rollPart(1, 0.999999) ~= "diamond", "sin tabla de zona no sale diamante")
+		local rng = Random.new(1234)
+		local rareNormal, rareLucky = 0, 0
+		for _ = 1, 4000 do
+			local roll = rng:NextNumber()
+			if not GameData.Parts[PlayerLogic.rollPart(1, roll)].common then
+				rareNormal += 1
+			end
+			if not GameData.Parts[PlayerLogic.rollPart(1.75, roll)].common then
+				rareLucky += 1
+			end
+		end
+		t.ok(rareLucky > rareNormal, "más suerte = más piezas no comunes")
+	end)
+
+	t.test("las recetas solo usan piezas existentes", function()
+		for _, watchId in GameData.WatchOrder do
+			local watch = GameData.Watches[watchId]
+			t.ok(watch ~= nil, "reloj en el orden existe: " .. watchId)
+			for partId in watch.cost do
+				t.ok(GameData.Parts[partId] ~= nil, watchId .. " usa pieza válida " .. partId)
+			end
+		end
+	end)
+
+	t.test("DEV-002: el tutorial avanza en orden y paga una sola vez", function()
+		local data = PlayerLogic.newData()
+		local steps = GameData.Tutorial
+		t.eq(data.tutorial, 1, "empieza en el paso 1")
+		t.eq(#PlayerLogic.advanceTutorial(data), 0, "sin progreso no avanza")
+
+		for _ = 1, steps[1].target - 1 do
+			PlayerLogic.addPart(data, "gear")
+		end
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 1, "a una pieza de la meta no avanza")
+		PlayerLogic.addPart(data, "gear")
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 2, "completa el paso 1")
+		t.eq(data.coins, steps[1].reward, "paga el premio del paso 1")
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.coins, steps[1].reward, "no paga dos veces")
+
+		-- Cumplir el paso 3 (vender) antes que el 2 no lo salta: se completan en orden.
+		data.stats.sold = 1
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 2, "sigue en fabricar")
+		data.stats.crafted = 1
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 4, "completa fabricar y vender de una vez")
+	end)
+
+	t.test("DEV-002: el tutorial termina y los datos antiguos se reparan", function()
+		local data = PlayerLogic.newData()
+		data.stats.collected = 99
+		data.stats.crafted = 9
+		data.stats.sold = 9
+		data.museum.pocket = 1
+		data.upgrades.speed = 1
+		local messages = PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, #GameData.Tutorial + 1, "tutorial terminado")
+		t.eq(#messages, #GameData.Tutorial + 1, "un mensaje por paso y otro final")
+		t.eq(PlayerLogic.tutorialStep(data), nil, "sin paso actual")
+		t.eq(PlayerLogic.buildView(data).tutorial, false, "la vista no muestra tutorial")
+
+		t.eq(PlayerLogic.reconcile({ coins = 5 }).tutorial, 1, "datos sin tutorial empiezan en 1")
+		t.eq(PlayerLogic.reconcile({ tutorial = 999 }).tutorial, #GameData.Tutorial + 1, "limita el paso máximo")
+	end)
+
+	t.test("DEV-003: robar, guardar en la base y perder el botín", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.stealPart(data, "ruby", 0.99), "roba un rubí")
+		t.eq(PlayerLogic.carriedCount(data), 1, "va al botín")
+		t.eq(data.parts.ruby, nil, "todavía no está guardado")
+		t.eq(PlayerLogic.freeSpace(data), Config.BASE_BACKPACK - 1, "el botín ocupa espacio")
+		t.eq(PlayerLogic.depositLoot(data), 1, "guarda 1 pieza")
+		t.eq(data.parts.ruby, 1, "ahora está en la mochila")
+		t.eq(data.stats.collected, 1, "cuenta para el tutorial")
+		PlayerLogic.stealPart(data, "gear", 0.99)
+		PlayerLogic.stealPart(data, "gear", 0.99)
+		t.eq(PlayerLogic.loseLoot(data), 2, "atrapado: pierde 2")
+		t.eq(PlayerLogic.carriedCount(data), 0, "botín vacío")
+		t.eq(data.parts.ruby, 1, "lo guardado no se pierde")
+		t.ok(not PlayerLogic.stealPart(data, "inventada", 0), "rechaza piezas desconocidas")
+	end)
+
+	t.test("DEV-003: la mochila limita el robo y la suerte da piezas extra", function()
+		local data = PlayerLogic.newData()
+		for _ = 1, Config.BASE_BACKPACK - 1 do
+			PlayerLogic.stealPart(data, "gear", 0.99)
+		end
+		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		local _, _, amount = PlayerLogic.stealPart(data, "gear", 0)
+		t.eq(amount, 1, "con 1 espacio libre roba solo 1 aunque tenga suerte")
+		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "mochila llena no roba")
+
+		local lucky = PlayerLogic.newData()
+		lucky.upgrades.luck = 2
+		local _, _, double = PlayerLogic.stealPart(lucky, "gear", 0)
+		t.eq(double, 2, "tirada baja con suerte = 2 piezas")
+		local _, _, single = PlayerLogic.stealPart(lucky, "gear", 0.99)
+		t.eq(single, 1, "tirada alta = 1 pieza")
+		t.eq(PlayerLogic.reconcile(lucky).carried.gear, nil, "al cargar datos el botín se descarta")
+	end)
+
+	t.test("DEV-003: zonas y velocidad", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.canEnterZone(data, 1), "zona 1 siempre abierta")
+		t.ok(not PlayerLogic.canEnterZone(data, 2), "zona 2 necesita velocidad")
+		t.ok(not PlayerLogic.canEnterZone(data, 99), "zona inexistente cerrada")
+		t.eq(PlayerLogic.highestZone(data), 1, "empieza en la zona 1")
+		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "respeta el tope de velocidad")
+		local previousMin = -1
+		for index, zone in GameData.Zones do
+			t.ok(zone.minSpeed > previousMin, "las zonas piden más velocidad en orden")
+			t.ok(zone.ownerSpeed < math.max(zone.minSpeed, Config.BASE_WALKSPEED), zone.name .. ": el dueño es alcanzable")
+			for partId in zone.weights do
+				t.ok(GameData.Parts[partId] ~= nil, zone.name .. " usa pieza válida " .. partId)
+			end
+			previousMin = zone.minSpeed
+			t.eq(#zone.owners, 4, zone.name .. " tiene 4 dueños")
+			t.ok(index >= 1, "índice válido")
+		end
+		t.ok(
+			PlayerLogic.walkSpeed(data) >= GameData.Zones[#GameData.Zones].minSpeed,
+			"la mejora de velocidad al máximo alcanza la última zona"
+		)
+	end)
+
+	t.test("DEV-003: zonas ricas dan piezas más raras", function()
+		local rng = Random.new(99)
+		local function rareShare(zone)
+			local rare = 0
+			for _ = 1, 3000 do
+				if not GameData.Parts[PlayerLogic.rollPart(1, rng:NextNumber(), zone.weights)].common then
+					rare += 1
+				end
+			end
+			return rare
+		end
+		local first = rareShare(GameData.Zones[1])
+		local last = rareShare(GameData.Zones[#GameData.Zones])
+		t.ok(last > first * 3, "la última zona da muchas más piezas raras")
+	end)
+
+	t.test("DEV-004: entregar piezas al Cronómetro y reembolso", function()
+		local data = PlayerLogic.newData()
+		data.parts.gear = 5
+		data.parts.ruby = 2
+		local ok, _, points = PlayerLogic.contributeParts(data, "ruby", 2)
+		t.ok(ok, "entrega 2 rubíes")
+		t.eq(points, GameData.RepairPoints["Raro"] * 2, "puntos por rareza")
+		t.eq(data.parts.ruby, nil, "se descuentan")
+		t.ok(not PlayerLogic.contributeParts(data, "gear", 6), "no entrega más de lo que tiene")
+		t.ok(not PlayerLogic.contributeParts(data, "gear", 0), "rechaza 0")
+		t.ok(not PlayerLogic.contributeParts(data, "nada", 1), "rechaza piezas desconocidas")
+		t.eq(data.parts.gear, 5, "un rechazo no descuenta nada")
+		t.eq(PlayerLogic.refundParts(data, { ruby = 2, nada = 3 }), 2, "devuelve solo piezas válidas")
+		t.eq(data.parts.ruby, 2, "reembolso completo")
+		t.eq(PlayerLogic.bossReward(10), 10 * Config.BOSS_COINS_PER_POINT, "premio por punto")
+	end)
+
+	t.test("DEV-004: todas las rarezas tienen puntos y color", function()
+		for _, partId in GameData.PartOrder do
+			local rarity = GameData.Parts[partId].rarity
+			t.ok(GameData.RepairPoints[rarity] ~= nil, "puntos para " .. rarity)
+			t.ok(GameData.RarityColors[rarity] ~= nil, "color para " .. rarity)
+		end
+	end)
+
+	t.test("DEV-005: abrir huevos cobra y da mascotas válidas", function()
+		local data = PlayerLogic.newData()
+		local egg = GameData.Eggs.brass
+		t.ok(not PlayerLogic.hatchEgg(data, "brass", 0), "sin monedas no abre")
+		t.ok(not PlayerLogic.hatchEgg(data, "falso", 0), "huevo inexistente")
+		data.coins = egg.cost
+		local ok, _, petId = PlayerLogic.hatchEgg(data, "brass", 0)
+		t.ok(ok, "abre el huevo")
+		t.eq(data.coins, 0, "cobra el precio")
+		t.eq(petId, "mouse", "roll 0 = primera mascota del huevo")
+		t.eq(data.equipped.mouse, 1, "se equipa sola si hay espacio")
+		for _, eggId in GameData.EggOrder do
+			for chancePet in GameData.Eggs[eggId].chances do
+				t.ok(GameData.Pets[chancePet] ~= nil, eggId .. " contiene mascota válida " .. chancePet)
+			end
+			t.ok(GameData.Pets[PlayerLogic.rollPet(eggId, 0.999999)] ~= nil, "roll alto da mascota válida")
+		end
+	end)
+
+	t.test("DEV-005: equipar, límite, multiplicador y liberar", function()
+		local data = PlayerLogic.newData()
+		data.pets = { mouse = 2, fox = 1, dragon = 2 }
+		data.equipped = {}
+		t.eq(PlayerLogic.petMultiplier(data), 1, "sin equipar = ×1")
+		local baseSpeed = PlayerLogic.walkSpeed(data)
+		t.ok(PlayerLogic.equipPet(data, "fox"), "equipa zorro")
+		t.ok(not PlayerLogic.equipPet(data, "fox"), "no equipa más de las que tiene")
+		t.ok(PlayerLogic.walkSpeed(data) > baseSpeed, "la mascota da velocidad")
+		PlayerLogic.equipPet(data, "mouse")
+		PlayerLogic.equipPet(data, "mouse")
+		t.ok(not PlayerLogic.equipPet(data, "dragon"), "máximo de equipadas")
+		t.ok(not PlayerLogic.releasePet(data, "fox"), "no libera una equipada")
+		PlayerLogic.equipBest(data)
+		t.eq(data.equipped.dragon, 2, "equipar mejores elige dragones")
+		t.eq(data.equipped.fox, 1, "y luego el zorro")
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "llena los espacios")
+		local expected = 1 + 2 * GameData.Pets.dragon.bonus + GameData.Pets.fox.bonus
+		t.ok(math.abs(PlayerLogic.petMultiplier(data) - expected) < 1e-9, "multiplicador = 1 + suma de bonus")
+		t.ok(PlayerLogic.releasePet(data, "mouse"), "libera un ratón sin equipar")
+		t.eq(data.pets.mouse, 1, "queda 1 ratón")
+		t.ok(PlayerLogic.unequipPet(data, "dragon"), "desequipa")
+		t.ok(not PlayerLogic.unequipPet(data, "mouse"), "no desequipa lo que no está equipado")
+	end)
+
+	t.test("DEV-005: datos de mascotas dañados se reparan y la velocidad tiene tope", function()
+		local data = PlayerLogic.reconcile({
+			pets = { dragon = 5, falsa = 2 },
+			equipped = { dragon = 9, mouse = 2 },
+		})
+		t.eq(data.pets.falsa, nil, "descarta mascotas desconocidas")
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "no más equipadas que el límite")
+		t.eq(data.equipped.mouse, nil, "no equipa mascotas que no posee")
+		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "velocidad con tope")
+		local fresh = PlayerLogic.newData()
+		fresh.pets.fox = 1
+		fresh.equipped.fox = 1
+		t.ok(PlayerLogic.canEnterZone(fresh, 2), "un zorro (+20%) abre el Barrio Obrero")
+	end)
+
+	t.test("DEV-006: entrenar en caminadoras", function()
+		local data = PlayerLogic.newData()
+		local before = PlayerLogic.walkSpeed(data)
+		local gained = PlayerLogic.trainTick(data, "basic", 10)
+		t.ok(math.abs(gained - Config.TRAIN_RATE * 10) < 1e-9, "la básica entrena ×1")
+		t.ok(PlayerLogic.walkSpeed(data) > before, "entrenar sube la velocidad")
+		t.eq(PlayerLogic.trainTick(data, "advanced", 10), 0, "la de acero exige desbloquearla")
+		t.eq(PlayerLogic.trainTick(data, "turbo", 10), 0, "la turbo exige el pase")
+		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "sin monedas no la desbloquea")
+		data.coins = GameData.Treadmills.advanced.cost
+		t.ok(PlayerLogic.buyTreadmill(data, "advanced"), "desbloquea la de acero")
+		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "no la compra dos veces")
+		t.ok(not PlayerLogic.buyTreadmill(data, "turbo"), "la turbo no se compra con monedas")
+		local advanced = PlayerLogic.trainTick(data, "advanced", 10)
+		t.ok(math.abs(advanced - Config.TRAIN_RATE * 10 * GameData.Treadmills.advanced.multiplier) < 1e-9, "×2.5")
+		PlayerLogic.trainTick(data, "basic", 10 ^ 7)
+		t.eq(data.trained, Config.MAX_TRAINED, "tope de velocidad entrenada")
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad total")
+		t.eq(PlayerLogic.reconcile({ trained = -5 }).trained, 0, "repara entrenamiento negativo")
+		t.eq(PlayerLogic.reconcile({ trained = 999 }).trained, Config.MAX_TRAINED, "limita entrenamiento")
+		t.eq(PlayerLogic.reconcile({ treadmills = { advanced = true, falsa = true } }).treadmills.falsa, nil, "descarta caminadoras falsas")
+	end)
+
+	t.test("DEV-006: pases de velocidad, monedas, mochila y ranura", function()
+		local data = PlayerLogic.newData()
+		data.watches.pocket = 2
+		local baseSpeed = PlayerLogic.walkSpeed(data)
+		local baseCapacity = PlayerLogic.backpackCapacity(data)
+		PlayerLogic.setPasses(data, { runner = true, vip = true, bigBackpack = true, petSlot = true, falso = true })
+		t.eq(data.passes.falso, nil, "ignora pases desconocidos")
+		t.ok(PlayerLogic.walkSpeed(data) > baseSpeed, "Corredor VIP da velocidad")
+		t.eq(PlayerLogic.backpackCapacity(data), baseCapacity + GameData.GamePasses.bigBackpack.backpack, "Mochila Gigante")
+		t.eq(PlayerLogic.petSlots(data), Config.MAX_EQUIPPED_PETS + 1, "ranura extra")
+		PlayerLogic.sell(data, "pocket", 1)
+		t.eq(data.coins, math.floor(GameData.Watches.pocket.sell * GameData.GamePasses.vip.coinMultiplier), "VIP +20% al vender")
+		t.eq(next(PlayerLogic.reconcile(data).passes), nil, "los pases no se guardan: se consultan al entrar")
+	end)
+
+	t.test("DEV-006: Mascota Suprema es 20% mejor que tu mejor mascota", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.setPasses(data, { supremePet = true })
+		t.eq(data.pets.supreme, 1, "el pase da la mascota")
+		t.eq(data.equipped.supreme, 1, "se equipa sola")
+		t.eq(PlayerLogic.petBonus(data, "supreme"), Config.SUPREME_PET_MIN_BONUS, "sin mascotas usa el mínimo")
+		data.pets.dragon = 1
+		t.ok(
+			math.abs(PlayerLogic.petBonus(data, "supreme") - GameData.Pets.dragon.bonus * Config.SUPREME_PET_FACTOR) < 1e-9,
+			"20% más que el dragón"
+		)
+		t.ok(not PlayerLogic.releasePet(data, "supreme"), "no se puede liberar")
+		t.ok(not PlayerLogic.grantPet(data, "supreme"), "no sale de huevos ni regalos")
+		PlayerLogic.equipBest(data)
+		t.eq(data.equipped.supreme, 1, "equipar mejores la incluye")
+		local reloaded = PlayerLogic.reconcile(data)
+		t.eq(reloaded.pets.supreme, nil, "al cargar se quita hasta comprobar el pase")
+		PlayerLogic.setPasses(reloaded, {})
+		t.eq(reloaded.equipped.supreme, nil, "sin pase no queda equipada")
+		for _, eggId in GameData.EggOrder do
+			t.eq(GameData.Eggs[eggId].chances.supreme, nil, eggId .. " no contiene la Suprema")
+		end
+	end)
+
+	t.test("DEV-006: perder la ranura extra desequipa la de menor bonus", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.setPasses(data, { petSlot = true })
+		data.pets = { mouse = 1, dragon = 3 }
+		data.equipped = {}
+		PlayerLogic.equipBest(data)
+		t.eq(PlayerLogic.equippedCount(data), 4, "4 equipadas con el pase")
+		PlayerLogic.setPasses(data, {})
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "vuelve al límite")
+		t.eq(data.equipped.mouse, nil, "quita primero la de menor bonus")
+	end)
+
+	t.test("DEV-006: productos con Robux y recibos", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.grantProduct(data, "coinsSmall", 0), "entrega monedas")
+		t.eq(data.coins, GameData.Products.coinsSmall.coins, "cantidad correcta")
+		t.ok(PlayerLogic.grantProduct(data, "instantTraining", 0), "entrega entrenamiento")
+		t.eq(data.trained, GameData.Products.instantTraining.trained, "velocidad entrenada")
+		t.ok(PlayerLogic.grantProduct(data, "goldEgg", 0), "entrega huevo")
+		t.eq(PlayerLogic.petCount(data), 1, "mascota recibida")
+		t.ok(not PlayerLogic.grantProduct(data, "falso", 0), "rechaza productos desconocidos")
+		t.ok(not PlayerLogic.hasReceipt(data, "abc"), "recibo nuevo")
+		PlayerLogic.addReceipt(data, "abc")
+		t.ok(PlayerLogic.hasReceipt(data, "abc"), "recuerda el recibo")
+		for index = 1, Config.MAX_RECEIPTS + 5 do
+			PlayerLogic.addReceipt(data, "r" .. index)
+		end
+		t.eq(#data.receipts, Config.MAX_RECEIPTS, "guarda solo los últimos")
+		for _, key in GameData.ProductOrder do
+			t.ok(Config.PRODUCT_IDS[key] ~= nil, "id configurado para " .. key)
+		end
+		for _, key in GameData.GamePassOrder do
+			t.ok(Config.GAMEPASS_IDS[key] ~= nil, "id configurado para " .. key)
+		end
+	end)
+
+	t.test("buildView es coherente", function()
+		local data = PlayerLogic.newData()
+		data.parts.gear = 4
+		local view = PlayerLogic.buildView(data)
+		t.eq(view.partCount, 4, "partCount")
+		t.eq(view.capacity, Config.BASE_BACKPACK, "capacity")
+		t.eq(view.upgradeCosts.backpack, GameData.Upgrades.backpack.baseCost, "costo de mejora")
+		view.parts.gear = 99
+		t.eq(data.parts.gear, 4, "la vista es una copia")
+	end)
+end
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="Script" referent="RBX00000018">
+					<Properties>
+						<string name="Name">RunTests</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	RunTests — ejecuta los módulos *.spec de esta carpeta al pulsar Play en
+	Studio (nunca en servidores publicados). Resultado en la ventana Output:
+	  [Pruebas] N correctas, M fallidas
+	Se desactiva con Config.RUN_TESTS_IN_STUDIO = false.
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+
+if not RunService:IsStudio() or not Config.RUN_TESTS_IN_STUDIO then
+	return
+end
+
+local passed, failed = 0, 0
+local currentTest = ""
+
+local function fail(message)
+	error(message, 0)
+end
+
+local t = {}
+
+function t.ok(condition, message)
+	if not condition then
+		fail("se esperaba verdadero: " .. tostring(message))
+	end
+end
+
+function t.eq(actual, expected, message)
+	if actual ~= expected then
+		fail(string.format("%s — esperado %s, obtenido %s", tostring(message), tostring(expected), tostring(actual)))
+	end
+end
+
+function t.test(name, fn)
+	currentTest = name
+	local success, err = pcall(fn)
+	if success then
+		passed += 1
+	else
+		failed += 1
+		warn(string.format("[Pruebas] FALLA «%s»: %s", currentTest, tostring(err)))
+	end
+end
+
+for _, child in script.Parent:GetChildren() do
+	if child:IsA("ModuleScript") and string.sub(child.Name, -5) == ".spec" then
+		local success, err = pcall(function()
+			require(child)(t)
+		end)
+		if not success then
+			failed += 1
+			warn(string.format("[Pruebas] Error cargando %s: %s", child.Name, tostring(err)))
+		end
+	end
+end
+
+local summary = string.format("[Pruebas] %d correctas, %d fallidas", passed, failed)
+if failed > 0 then
+	warn(summary)
+else
+	print(summary)
+end
+]]></ProtectedString>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+	</Item>
+	<Item class="StarterPlayer" referent="RBX00000019">
+		<Properties>
+			<string name="Name">StarterPlayer</string>
+		</Properties>
+		<Item class="StarterPlayerScripts" referent="RBX0000001A">
+			<Properties>
+				<string name="Name">StarterPlayerScripts</string>
+			</Properties>
+			<Item class="Folder" referent="RBX0000001B">
+				<Properties>
+					<string name="Name">Client</string>
+				</Properties>
+				<Item class="LocalScript" referent="RBX0000001C">
+					<Properties>
+						<string name="Name">Main</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	Main — punto de entrada del cliente de BUILD A WATCH!
+	Conecta los remotos del servidor con la interfaz.
+]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+local Ui = require(script.Parent:WaitForChild("Ui"))
+
+local remotes = ReplicatedStorage:WaitForChild("Remotes")
+local stateRemote = remotes:WaitForChild(Config.REMOTES.State)
+local notifyRemote = remotes:WaitForChild(Config.REMOTES.Notify)
+local openPanelRemote = remotes:WaitForChild(Config.REMOTES.OpenPanel)
+local actionRemote = remotes:WaitForChild(Config.REMOTES.Action)
+
+Ui.init(actionRemote)
+
+stateRemote.OnClientEvent:Connect(function(state)
+	Ui.setState(state)
+end)
+
+notifyRemote.OnClientEvent:Connect(function(text, kind)
+	Ui.toast(text, kind)
+end)
+
+openPanelRemote.OnClientEvent:Connect(function(panelId)
+	Ui.openPanel(panelId)
+end)
+
+Ui.toast("¡Bienvenido a BUILD A WATCH! Roba piezas en las casas y vuelve a la base antes de que te atrape el dueño.", "info")
+]]></ProtectedString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX0000001D">
+					<Properties>
+						<string name="Name">Ui</string>
+						<ProtectedString name="Source"><![CDATA[--[[
+	Ui — HUD, notificaciones y menús de las estaciones.
+
+	Controles (teclado, mando y táctil):
+	  - Estaciones y cajas: ProximityPrompt (E / botón X del mando / tocar).
+	  - Mochila: tecla B, botón Y del mando o el botón "Mochila" en pantalla.
+	  - Cerrar menú: botón X del menú, botón B del mando o alejarse de la estación.
+	  - Con mando, al abrir un menú se selecciona el primer botón automáticamente.
+
+	La interfaz es provisional y funcional; la Cuenta B puede rediseñarla
+	manteniendo las llamadas a Ui.setState / Ui.openPanel / Ui.toast.
+]]
+
+local CollectionService = game:GetService("CollectionService")
+local ContextActionService = game:GetService("ContextActionService")
+local GuiService = game:GetService("GuiService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+
+local player = Players.LocalPlayer
+
+local Ui = {}
+
+local COLORS = {
+	panel = Color3.fromRGB(28, 30, 38),
+	row = Color3.fromRGB(42, 45, 56),
+	text = Color3.fromRGB(240, 240, 245),
+	muted = Color3.fromRGB(170, 172, 185),
+	accent = Color3.fromRGB(240, 196, 80),
+	ok = Color3.fromRGB(76, 175, 106),
+	error = Color3.fromRGB(214, 84, 84),
+	info = Color3.fromRGB(80, 130, 210),
+	button = Color3.fromRGB(80, 130, 210),
+	buttonOff = Color3.fromRGB(88, 90, 102),
+}
+
+local PANEL_TITLES = {
+	workshop = "Taller — Fabricar relojes",
+	shop = "Tienda — Vender y mejorar",
+	museum = "Museo — Exhibir relojes",
+	backpack = "Mochila",
+	boss = "Cronómetro Maestro — Reparación",
+	pets = "Criadero — Huevos y mascotas",
+	robux = "Tienda Robux — Pases y productos",
+}
+
+local state = nil
+local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
+local lastBossKey = ""
+local actionRemote = nil
+local busy = false
+local openPanelId = nil
+
+local gui, panel, panelTitle, panelList
+local hud = {}
+local toastList
+
+-- ---------------------------------------------------------------------------
+-- Ayudas de construcción
+-- ---------------------------------------------------------------------------
+
+local function new(className, props, children)
+	local instance = Instance.new(className)
+	for key, value in props do
+		instance[key] = value
+	end
+	if children then
+		for _, child in children do
+			child.Parent = instance
+		end
+	end
+	return instance
+end
+
+local function corner(radius)
+	return new("UICorner", { CornerRadius = UDim.new(0, radius or 8) })
+end
+
+local function padding(px)
+	return new("UIPadding", {
+		PaddingTop = UDim.new(0, px),
+		PaddingBottom = UDim.new(0, px),
+		PaddingLeft = UDim.new(0, px),
+		PaddingRight = UDim.new(0, px),
+	})
+end
+
+local function label(text, size, color, props)
+	local item = new("TextLabel", {
+		BackgroundTransparency = 1,
+		Font = Enum.Font.Gotham,
+		Text = text,
+		TextSize = size or 16,
+		TextColor3 = color or COLORS.text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextWrapped = true,
+		RichText = true,
+		AutomaticSize = Enum.AutomaticSize.Y,
+		Size = UDim2.new(1, 0, 0, 0),
+	})
+	if props then
+		for key, value in props do
+			item[key] = value
+		end
+	end
+	return item
+end
+
+local function button(text, enabled, onActivated)
+	local item = new("TextButton", {
+		Size = UDim2.fromOffset(120, 40),
+		BackgroundColor3 = COLORS.buttonOff,
+		Font = Enum.Font.GothamBold,
+		Text = text,
+		TextSize = 15,
+		TextColor3 = COLORS.text,
+		AutoButtonColor = true,
+		Selectable = true,
+	}, { corner(8) })
+	if enabled then
+		item.BackgroundColor3 = COLORS.button
+	end
+	-- Activated funciona con clic, toque y botón A del mando.
+	item.Activated:Connect(onActivated)
+	return item
+end
+
+local function formatNumber(value)
+	local text = tostring(math.floor(value))
+	local formatted = text:reverse():gsub("(%d%d%d)", "%1."):reverse()
+	if formatted:sub(1, 1) == "." then
+		formatted = formatted:sub(2)
+	end
+	return formatted
+end
+
+-- ---------------------------------------------------------------------------
+-- Notificaciones
+-- ---------------------------------------------------------------------------
+
+function Ui.toast(text, kind)
+	if not toastList or type(text) ~= "string" or text == "" then
+		return
+	end
+	local item = new("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS[kind] or COLORS.info,
+		BackgroundTransparency = 0.1,
+		Font = Enum.Font.GothamMedium,
+		Text = text,
+		TextSize = 16,
+		TextWrapped = true,
+		TextColor3 = COLORS.text,
+	}, { corner(8), padding(8) })
+	item.Parent = toastList
+	task.delay(3, function()
+		item:Destroy()
+	end)
+	local items = {}
+	for _, child in toastList:GetChildren() do
+		if child:IsA("TextLabel") then
+			table.insert(items, child)
+		end
+	end
+	if #items > 4 then
+		items[1]:Destroy()
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- Acciones al servidor
+-- ---------------------------------------------------------------------------
+
+local function request(action, id, amount)
+	if busy or not actionRemote then
+		return
+	end
+	busy = true
+	local success, result = pcall(function()
+		return actionRemote:InvokeServer(action, id, amount)
+	end)
+	busy = false
+	if not success or type(result) ~= "table" then
+		Ui.toast("No se pudo contactar con el servidor.", "error")
+		return
+	end
+	local kind = "error"
+	if result.ok then
+		kind = "ok"
+	end
+	Ui.toast(result.message, kind)
+end
+
+-- ---------------------------------------------------------------------------
+-- Filas de los menús
+-- ---------------------------------------------------------------------------
+
+local rowOrder = 0
+
+local function addRow(text, buttons)
+	rowOrder += 1
+	local row = new("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS.row,
+		LayoutOrder = rowOrder,
+	}, {
+		corner(8),
+		padding(10),
+		new("UIListLayout", {
+			FillDirection = Enum.FillDirection.Vertical,
+			Padding = UDim.new(0, 8),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+	})
+	label(text, 16, COLORS.text, { LayoutOrder = 1 }).Parent = row
+
+	if buttons and #buttons > 0 then
+		local bar = new("Frame", {
+			Size = UDim2.new(1, 0, 0, 40),
+			BackgroundTransparency = 1,
+			LayoutOrder = 2,
+		}, {
+			new("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = UDim.new(0, 8),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+			}),
+		})
+		for index, info in buttons do
+			local item = button(info.text, info.enabled ~= false, info.onActivated)
+			item.LayoutOrder = index
+			item.Parent = bar
+		end
+		bar.Parent = row
+	end
+	row.Parent = panelList
+	return row
+end
+
+local function addHeader(text)
+	rowOrder += 1
+	local item = label("<b>" .. text .. "</b>", 18, COLORS.accent, { LayoutOrder = rowOrder })
+	item.Parent = panelList
+	return item
+end
+
+-- Parte de una estación por id (etiqueta "Station" que pone el servidor).
+local function stationById(stationId)
+	for _, part in CollectionService:GetTagged("Station") do
+		if part:GetAttribute("StationId") == stationId then
+			return part
+		end
+	end
+	return nil
+end
+
+local function formatTime(seconds)
+	seconds = math.max(0, math.floor(seconds))
+	return string.format("%d:%02d", seconds // 60, seconds % 60)
+end
+
+local function costText(cost)
+	local pieces = {}
+	for _, partId in GameData.PartOrder do
+		local needed = cost[partId]
+		if needed then
+			local have = state.parts[partId] or 0
+			local color = "#7fd38f"
+			if have < needed then
+				color = "#e57373"
+			end
+			table.insert(
+				pieces,
+				string.format('<font color="%s">%d/%d</font> %s', color, have, needed, GameData.Parts[partId].name)
+			)
+		end
+	end
+	return table.concat(pieces, " · ")
+end
+
+-- ---------------------------------------------------------------------------
+-- Contenido de cada menú
+-- ---------------------------------------------------------------------------
+
+local function canCraftLocal(watch)
+	if state.level < watch.level then
+		return false
+	end
+	for partId, needed in watch.cost do
+		if (state.parts[partId] or 0) < needed then
+			return false
+		end
+	end
+	return true
+end
+
+local function renderWorkshop()
+	addHeader(string.format("Nivel %d · Piezas %d/%d", state.level, state.partCount, state.capacity))
+	for _, watchId in GameData.WatchOrder do
+		local watch = GameData.Watches[watchId]
+		local title = string.format(
+			"<b>%s</b>  <font color=\"#aaaab9\">(nivel %d · +%d XP · vende %d)</font>\n%s",
+			watch.name,
+			watch.level,
+			watch.xp,
+			watch.sell,
+			costText(watch.cost)
+		)
+		addRow(title, {
+			{
+				text = "Fabricar",
+				enabled = canCraftLocal(watch),
+				onActivated = function()
+					request("craft", watchId)
+				end,
+			},
+		})
+	end
+end
+
+local function renderShop()
+	addHeader("Vender relojes")
+	local any = false
+	for _, watchId in GameData.WatchOrder do
+		local owned = state.watches[watchId] or 0
+		if owned > 0 then
+			any = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", watch.name, owned, watch.sell), {
+				{
+					text = "Vender 1",
+					onActivated = function()
+						request("sell", watchId, 1)
+					end,
+				},
+				{
+					text = "Vender todos",
+					onActivated = function()
+						request("sell", watchId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			})
+		end
+	end
+	if not any then
+		addRow("No tienes relojes para vender. Fabrícalos en el Taller.")
+	end
+
+	addHeader("Vender piezas sueltas")
+	local anyPart = false
+	for _, partId in GameData.PartOrder do
+		local owned = state.parts[partId] or 0
+		if owned > 0 then
+			anyPart = true
+			local part = GameData.Parts[partId]
+			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", part.name, owned, part.sell), {
+				{
+					text = "Vender 1",
+					onActivated = function()
+						request("sellPart", partId, 1)
+					end,
+				},
+				{
+					text = "Vender todas",
+					onActivated = function()
+						request("sellPart", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			})
+		end
+	end
+	if not anyPart then
+		addRow("No tienes piezas sueltas.")
+	end
+
+	addHeader("Caminadoras de entrenamiento")
+	for _, treadmillId in GameData.TreadmillOrder do
+		local treadmill = GameData.Treadmills[treadmillId]
+		local status = "Gratis"
+		local buttons = nil
+		if treadmill.pass then
+			status = "Pase de Robux «" .. GameData.GamePasses[treadmill.pass].name .. "»"
+			if state.passes[treadmill.pass] then
+				status = "Tienes el pase"
+			end
+		elseif treadmill.cost > 0 then
+			if state.treadmills[treadmillId] then
+				status = "Desbloqueada"
+			else
+				status = formatNumber(treadmill.cost) .. " monedas"
+				buttons = {
+					{
+						text = "Desbloquear",
+						enabled = state.coins >= treadmill.cost,
+						onActivated = function()
+							request("buyTreadmill", treadmillId)
+						end,
+					},
+				}
+			end
+		end
+		addRow(
+			string.format(
+				"<b>%s</b> — entrena ×%s\n<font color=\"#aaaab9\">%s</font>",
+				treadmill.name,
+				tostring(treadmill.multiplier),
+				status
+			),
+			buttons
+		)
+	end
+	addRow(
+		string.format(
+			"Velocidad entrenada: %.1f / %d. Las caminadoras están a la izquierda de la base.",
+			state.trained,
+			Config.MAX_TRAINED
+		)
+	)
+
+	addHeader("Mejoras")
+	for _, upgradeId in GameData.UpgradeOrder do
+		local upgrade = GameData.Upgrades[upgradeId]
+		local level = state.upgrades[upgradeId] or 0
+		local cost = state.upgradeCosts[upgradeId]
+		local buttonText = "Máximo"
+		local enabled = false
+		if cost then
+			buttonText = "Comprar " .. formatNumber(cost)
+			enabled = state.coins >= cost
+		end
+		addRow(string.format("<b>%s</b>  (nivel %d/%d)\n%s", upgrade.name, level, upgrade.maxLevel, upgrade.desc), {
+			{
+				text = buttonText,
+				enabled = enabled,
+				onActivated = function()
+					if cost then
+						request("buyUpgrade", upgradeId)
+					end
+				end,
+			},
+		})
+	end
+end
+
+local function renderMuseum()
+	addHeader(
+		string.format(
+			"Vitrinas %d/%d · Ingreso +%d cada %d s",
+			state.museumCount,
+			state.museumSlots,
+			state.museumIncome,
+			Config.MUSEUM_TICK_SECONDS
+		)
+	)
+	local anyDisplayed = false
+	for _, watchId in GameData.WatchOrder do
+		local displayed = state.museum[watchId] or 0
+		if displayed > 0 then
+			anyDisplayed = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d exhibido  ·  +%d c/u", watch.name, displayed, watch.income), {
+				{
+					text = "Retirar",
+					onActivated = function()
+						request("withdraw", watchId)
+					end,
+				},
+			})
+		end
+	end
+	if not anyDisplayed then
+		addRow("Todavía no exhibes relojes. Cada reloj exhibido da monedas mientras juegas.")
+	end
+
+	addHeader("En tu inventario")
+	local anyOwned = false
+	local hasSpace = state.museumCount < state.museumSlots
+	for _, watchId in GameData.WatchOrder do
+		local owned = state.watches[watchId] or 0
+		if owned > 0 then
+			anyOwned = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d  ·  +%d por ciclo", watch.name, owned, watch.income), {
+				{
+					text = "Exhibir",
+					enabled = hasSpace,
+					onActivated = function()
+						request("display", watchId)
+					end,
+				},
+			})
+		end
+	end
+	if not anyOwned then
+		addRow("No tienes relojes en el inventario.")
+	end
+end
+
+-- Lista de mascotas con botones para equipar, desequipar y liberar (DEV-005).
+local function addPetRows()
+	addHeader(
+		string.format(
+			"Mascotas %d/%d · equipadas %d/%d · velocidad ×%.2f",
+			state.petCount,
+			Config.MAX_PETS,
+			state.equippedCount,
+			state.petSlots,
+			state.petMultiplier
+		)
+	)
+	if state.petCount == 0 then
+		addRow("Todavía no tienes mascotas. Compra huevos en el Criadero de la base.")
+		return
+	end
+	addRow("Equipa las mascotas con más bonus para correr más rápido.", {
+		{
+			text = "Equipar mejores",
+			onActivated = function()
+				request("equipBest", "best")
+			end,
+		},
+	})
+	for index = #GameData.PetOrder, 1, -1 do
+		local petId = GameData.PetOrder[index]
+		local owned = state.pets[petId] or 0
+		if owned > 0 then
+			local pet = GameData.Pets[petId]
+			local equipped = state.equipped[petId] or 0
+			addRow(
+				string.format(
+					"<b>%s</b> × %d  <font color=\"#aaaab9\">(%s · +%d%% velocidad · %d equipada(s))</font>",
+					pet.name,
+					owned,
+					pet.rarity,
+					math.floor((state.petBonuses[petId] or pet.bonus) * 100 + 0.5),
+					equipped
+				),
+				{
+					{
+						text = "Equipar",
+						enabled = owned > equipped and state.equippedCount < state.petSlots,
+						onActivated = function()
+							request("equipPet", petId)
+						end,
+					},
+					{
+						text = "Quitar",
+						enabled = equipped > 0,
+						onActivated = function()
+							request("unequipPet", petId)
+						end,
+					},
+					{
+						text = "Liberar",
+						enabled = owned > equipped,
+						onActivated = function()
+							request("releasePet", petId)
+						end,
+					},
+				}
+			)
+		end
+	end
+end
+
+local function renderPets()
+	addHeader(string.format("Tus monedas: %s", formatNumber(state.coins)))
+	for _, eggId in GameData.EggOrder do
+		local egg = GameData.Eggs[eggId]
+		local total = 0
+		for _, chance in egg.chances do
+			total += chance
+		end
+		local odds = {}
+		for _, petId in GameData.PetOrder do
+			local chance = egg.chances[petId]
+			if chance then
+				local pet = GameData.Pets[petId]
+				table.insert(
+					odds,
+					string.format(
+						"%s %d%% (+%d%%)",
+						pet.name,
+						math.floor(chance / total * 100 + 0.5),
+						math.floor(pet.bonus * 100 + 0.5)
+					)
+				)
+			end
+		end
+		addRow(
+			string.format("<b>%s</b> — %s monedas\n%s", egg.name, formatNumber(egg.cost), table.concat(odds, " · ")),
+			{
+				{
+					text = "Abrir",
+					enabled = state.coins >= egg.cost,
+					onActivated = function()
+						request("hatchEgg", eggId)
+					end,
+				},
+			}
+		)
+	end
+	addPetRows()
+end
+
+local function renderBackpack()
+	addHeader(string.format("Piezas %d/%d", state.partCount, state.capacity))
+	for _, partId in GameData.PartOrder do
+		local part = GameData.Parts[partId]
+		local owned = state.parts[partId] or 0
+		local buttons = nil
+		if owned > 0 then
+			-- Tirar piezas libera espacio en cualquier lugar (BUG-001).
+			buttons = {
+				{
+					text = "Tirar 1",
+					onActivated = function()
+						request("discardPart", partId, 1)
+					end,
+				},
+				{
+					text = "Tirar todas",
+					onActivated = function()
+						request("discardPart", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			}
+		end
+		addRow(string.format("<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>", part.name, owned, part.rarity), buttons)
+	end
+	addHeader("Relojes")
+	for _, watchId in GameData.WatchOrder do
+		local watch = GameData.Watches[watchId]
+		addRow(
+			string.format(
+				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%d en el museo)</font>",
+				watch.name,
+				state.watches[watchId] or 0,
+				state.museum[watchId] or 0
+			)
+		)
+	end
+	if state.carriedCount > 0 then
+		addHeader("Botín encima (aún no es tuyo)")
+		for _, partId in GameData.PartOrder do
+			local amount = state.carried[partId]
+			if amount then
+				addRow(
+					string.format(
+						"<b>%s</b> × %d — llévalo a la base para guardarlo",
+						GameData.Parts[partId].name,
+						amount
+					)
+				)
+			end
+		end
+	end
+	addPetRows()
+	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
+end
+
+-- Estado del jefe leído de los atributos de su estación (DEV-004)
+local function bossInfo()
+	local station = stationById("boss")
+	if not station then
+		return nil
+	end
+	return {
+		active = station:GetAttribute("BossActive") == true,
+		points = station:GetAttribute("BossPoints") or 0,
+		goal = station:GetAttribute("BossGoal") or 0,
+		endsAt = station:GetAttribute("BossEndsAt") or 0,
+		nextAt = station:GetAttribute("BossNextAt") or 0,
+		mine = player:GetAttribute("BossPoints") or 0,
+	}
+end
+
+local function bossTimerText(info)
+	local now = Workspace:GetServerTimeNow()
+	if info.active then
+		return string.format("⏱ Tiempo restante: %s", formatTime(info.endsAt - now))
+	end
+	return string.format("Próxima avería en %s", formatTime(info.nextAt - now))
+end
+
+local function renderBoss()
+	local info = bossInfo()
+	if not info then
+		addRow("Cargando el Cronómetro Maestro…")
+		return
+	end
+	bossTimerLabel = addHeader(bossTimerText(info))
+	if not info.active then
+		addRow(
+			"El Cronómetro Maestro funciona. Cuando se averíe, todos los jugadores del servidor "
+				.. "tendrán poco tiempo para entregarle piezas guardadas. Si llegan a la meta, "
+				.. string.format("cada uno gana %d monedas por punto aportado; si no, recuperan sus piezas.", Config.BOSS_COINS_PER_POINT)
+		)
+		return
+	end
+	addRow(
+		string.format(
+			"<b>Reparación: %d / %d puntos</b>\nTu aporte: %d puntos (≈ %d monedas si se repara)",
+			info.points,
+			info.goal,
+			info.mine,
+			info.mine * Config.BOSS_COINS_PER_POINT
+		)
+	)
+	addHeader("Entregar piezas guardadas")
+	local any = false
+	for _, partId in GameData.PartOrder do
+		local owned = state.parts[partId] or 0
+		if owned > 0 then
+			any = true
+			local part = GameData.Parts[partId]
+			addRow(
+				string.format(
+					"<b>%s</b> × %d  ·  %d puntos c/u",
+					part.name,
+					owned,
+					GameData.RepairPoints[part.rarity]
+				),
+				{
+					{
+						text = "Entregar 1",
+						onActivated = function()
+							request("contribute", partId, 1)
+						end,
+					},
+					{
+						text = "Entregar todas",
+						onActivated = function()
+							request("contribute", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+						end,
+					},
+				}
+			)
+		end
+	end
+	if not any then
+		addRow("No tienes piezas guardadas. Roba en las casas y vuelve rápido.")
+	end
+end
+
+-- Tienda Robux (DEV-006). Los IDs en 0 se muestran como «Próximamente».
+local function renderRobux()
+	addHeader("Pases (compra única, para siempre)")
+	for _, passKey in GameData.GamePassOrder do
+		local pass = GameData.GamePasses[passKey]
+		local owned = state.passes[passKey] == true
+		local available = (Config.GAMEPASS_IDS[passKey] or 0) ~= 0
+		local text = "Comprar"
+		if owned then
+			text = "Lo tienes"
+		elseif not available then
+			text = "Próximamente"
+		end
+		addRow(string.format("<b>%s</b>\n%s", pass.name, pass.desc), {
+			{
+				text = text,
+				enabled = available and not owned,
+				onActivated = function()
+					request("buyPass", passKey)
+				end,
+			},
+		})
+	end
+	addHeader("Productos (se pueden comprar varias veces)")
+	for _, productKey in GameData.ProductOrder do
+		local product = GameData.Products[productKey]
+		local available = (Config.PRODUCT_IDS[productKey] or 0) ~= 0
+		local text = "Comprar"
+		if not available then
+			text = "Próximamente"
+		end
+		addRow(string.format("<b>%s</b>\n%s", product.name, product.desc), {
+			{
+				text = text,
+				enabled = available,
+				onActivated = function()
+					request("buyProduct", productKey)
+				end,
+			},
+		})
+	end
+	addRow("Las compras las procesa Roblox. Los huevos muestran sus probabilidades en el Criadero.")
+end
+
+local function bossKey()
+	local info = bossInfo()
+	if not info then
+		return ""
+	end
+	return string.format("%s|%d|%d|%d", tostring(info.active), info.points, info.goal, info.mine)
+end
+
+local RENDERERS = {
+	workshop = renderWorkshop,
+	shop = renderShop,
+	museum = renderMuseum,
+	backpack = renderBackpack,
+	boss = renderBoss,
+	pets = renderPets,
+	robux = renderRobux,
+}
+
+-- ---------------------------------------------------------------------------
+-- Abrir, cerrar y refrescar menús
+-- ---------------------------------------------------------------------------
+
+local function selectFirstButton()
+	if not UserInputService.GamepadEnabled then
+		return
+	end
+	local first = nil
+	local bestOrder = math.huge
+	for _, descendant in panelList:GetDescendants() do
+		if descendant:IsA("TextButton") then
+			local row = descendant.Parent.Parent
+			if row.LayoutOrder < bestOrder then
+				bestOrder = row.LayoutOrder
+				first = descendant
+			end
+		end
+	end
+	GuiService.SelectedObject = first or panel:FindFirstChild("Cerrar", true)
+end
+
+local function render(keepSelection)
+	for _, child in panelList:GetChildren() do
+		if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
+			child:Destroy()
+		end
+	end
+	rowOrder = 0
+	if not openPanelId or not state then
+		return
+	end
+	panelTitle.Text = PANEL_TITLES[openPanelId] or ""
+	RENDERERS[openPanelId]()
+	if not keepSelection then
+		selectFirstButton()
+	elseif UserInputService.GamepadEnabled and not GuiService.SelectedObject then
+		selectFirstButton()
+	end
+end
+
+function Ui.closePanel()
+	openPanelId = nil
+	panel.Visible = false
+	GuiService.SelectedObject = nil
+	ContextActionService:UnbindAction("CerrarMenu")
+end
+
+function Ui.openPanel(panelId)
+	if not RENDERERS[panelId] or not state then
+		return
+	end
+	openPanelId = panelId
+	panel.Visible = true
+	render(false)
+	ContextActionService:BindAction("CerrarMenu", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			Ui.closePanel()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.KeyCode.ButtonB)
+end
+
+local function toggleBackpack()
+	if openPanelId == "backpack" then
+		Ui.closePanel()
+	else
+		Ui.openPanel("backpack")
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- HUD
+-- ---------------------------------------------------------------------------
+
+local function updateHud()
+	if not state then
+		return
+	end
+	hud.coins.Text = string.format("<b>%s</b> monedas", formatNumber(state.coins))
+	hud.level.Text = string.format("Nivel <b>%d</b>", state.level)
+	local fraction = 1
+	if state.levelNeed > 0 then
+		fraction = math.clamp(state.levelXp / state.levelNeed, 0, 1)
+		hud.xpText.Text = string.format("%d / %d XP", state.levelXp, state.levelNeed)
+	else
+		hud.xpText.Text = "Nivel máximo"
+	end
+	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
+	hud.backpack.Text = string.format(
+		"Mochila: %d/%d piezas",
+		state.partCount + state.carriedCount,
+		state.capacity
+	)
+	hud.speed.Text = string.format(
+		"Velocidad: %.1f (base %.1f × %.2f) · Zona máx.: %s",
+		state.walkSpeed,
+		state.baseSpeed,
+		state.speedMultiplier,
+		GameData.Zones[state.highestZone].name
+	)
+	if state.carriedCount > 0 then
+		hud.loot.Visible = true
+		hud.loot.Text = string.format("<b>Botín encima: %d</b> — ¡llévalo a la base!", state.carriedCount)
+	else
+		hud.loot.Visible = false
+	end
+	hud.museum.Text = string.format("Museo: +%d cada %d s", state.museumIncome, Config.MUSEUM_TICK_SECONDS)
+
+	local tutorial = state.tutorial
+	if tutorial then
+		hud.objective.Visible = true
+		hud.objective.Text = string.format(
+			"<b>Objetivo %d/%d</b>\n%s (%d/%d)\n<font color=\"#aaaab9\">Premio: %d monedas</font>",
+			tutorial.index,
+			tutorial.total,
+			tutorial.text,
+			tutorial.progress,
+			tutorial.target,
+			tutorial.reward
+		)
+	else
+		hud.objective.Visible = false
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- Guía del tutorial: una línea luminosa del personaje al destino (DEV-002)
+-- ---------------------------------------------------------------------------
+
+local guide = { beam = nil, from = nil, to = nil, target = nil }
+
+-- Estación por id (etiqueta "Station"); funciona con streaming porque las
+-- estaciones son modelos persistentes.
+local findStation = stationById
+
+local function findGuideTarget(guideId)
+	if guideId == "house" then
+		return CollectionService:GetTagged("GuideHouse")[1]
+	end
+	return findStation(guideId)
+end
+
+-- Puertas de velocidad: se vuelven atravesables SOLO para este jugador si
+-- tiene la velocidad. El servidor igual rechaza robos sin la velocidad.
+local function updateGates()
+	if not state then
+		return
+	end
+	for _, gate in CollectionService:GetTagged("SpeedGate") do
+		local open = state.walkSpeed >= (gate:GetAttribute("MinSpeed") or 0)
+		gate.CanCollide = not open
+		if open then
+			gate.Color = COLORS.ok
+			gate.Transparency = 0.8
+		else
+			gate.Color = COLORS.error
+			gate.Transparency = 0.3
+		end
+	end
+end
+
+local function clearGuide()
+	for _, key in { "beam", "from", "to" } do
+		if guide[key] then
+			guide[key]:Destroy()
+			guide[key] = nil
+		end
+	end
+	guide.target = nil
+end
+
+local function updateGuide()
+	local tutorial = state and state.tutorial
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local target = tutorial and findGuideTarget(tutorial.guide)
+	if not root or not target then
+		clearGuide()
+		return
+	end
+	-- Recrear si cambió el destino o si el personaje reapareció.
+	if guide.target ~= target or not guide.from or guide.from.Parent ~= root then
+		clearGuide()
+		guide.target = target
+		guide.from = new("Attachment", { Name = "GuiaOrigen", Position = Vector3.new(0, -2, 0) })
+		guide.from.Parent = root
+		guide.to = new("Attachment", { Name = "GuiaDestino", Position = Vector3.new(0, 1, 0) })
+		guide.to.Parent = target
+		guide.beam = new("Beam", {
+			Name = "GuiaTutorial",
+			Attachment0 = guide.from,
+			Attachment1 = guide.to,
+			Color = ColorSequence.new(COLORS.accent),
+			Transparency = NumberSequence.new(0.35),
+			Width0 = 0.6,
+			Width1 = 0.6,
+			FaceCamera = true,
+			LightEmission = 0.6,
+			Segments = 1,
+		})
+		guide.beam.Parent = root
+	end
+	-- Se oculta al llegar, para no estorbar.
+	local horizontal = Vector3.new(root.Position.X - target.Position.X, 0, root.Position.Z - target.Position.Z)
+	guide.beam.Enabled = horizontal.Magnitude > 18
+end
+
+local function buildHud()
+	gui = new("ScreenGui", {
+		Name = "BuildAWatchUI",
+		ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	})
+
+	local stats = new("Frame", {
+		Name = "Estadisticas",
+		Position = UDim2.fromOffset(12, 12),
+		Size = UDim2.fromOffset(230, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS.panel,
+		BackgroundTransparency = 0.15,
+	}, {
+		corner(10),
+		padding(10),
+		new("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	hud.coins = label("", 20, COLORS.accent, { LayoutOrder = 1 })
+	hud.level = label("", 16, COLORS.text, { LayoutOrder = 2 })
+	local xpBar = new("Frame", {
+		Size = UDim2.new(1, 0, 0, 16),
+		BackgroundColor3 = COLORS.row,
+		LayoutOrder = 3,
+	}, { corner(6) })
+	hud.xpFill = new("Frame", {
+		Size = UDim2.fromScale(0, 1),
+		BackgroundColor3 = COLORS.ok,
+	}, { corner(6) })
+	hud.xpFill.Parent = xpBar
+	hud.xpText = new("TextLabel", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamMedium,
+		TextSize = 12,
+		TextColor3 = COLORS.text,
+		Text = "",
+		ZIndex = 2,
+	})
+	hud.xpText.Parent = xpBar
+	hud.backpack = label("", 15, COLORS.muted, { LayoutOrder = 4 })
+	hud.museum = label("", 15, COLORS.muted, { LayoutOrder = 5 })
+	hud.speed = label("", 15, COLORS.muted, { LayoutOrder = 4 })
+	hud.loot = label("", 15, COLORS.error, { LayoutOrder = 4, Visible = false })
+	hud.objective = label("", 15, COLORS.accent, { LayoutOrder = 6, Visible = false })
+	hud.training = label("", 15, COLORS.ok, { LayoutOrder = 4, Visible = false })
+	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.speed, hud.training, hud.loot, hud.museum, hud.objective } do
+		item.Parent = stats
+	end
+	stats.Parent = gui
+
+	-- Botón de mochila (necesario en pantallas táctiles)
+	local backpackButton = button("Mochila", true, toggleBackpack)
+	backpackButton.Name = "BotonMochila"
+	backpackButton.AnchorPoint = Vector2.new(0, 0.5)
+	backpackButton.Position = UDim2.new(0, 12, 0.5, 0)
+	backpackButton.Size = UDim2.fromOffset(110, 44)
+	backpackButton.Parent = gui
+
+	local robuxButton = button("Robux", true, function()
+		if openPanelId == "robux" then
+			Ui.closePanel()
+		else
+			Ui.openPanel("robux")
+		end
+	end)
+	robuxButton.Name = "BotonRobux"
+	robuxButton.AnchorPoint = Vector2.new(0, 0.5)
+	robuxButton.Position = UDim2.new(0, 12, 0.5, 52)
+	robuxButton.Size = UDim2.fromOffset(110, 44)
+	robuxButton.Parent = gui
+
+	-- Notificaciones
+	toastList = new("Frame", {
+		Name = "Notificaciones",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 12),
+		Size = UDim2.new(0.9, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, {
+		new("UISizeConstraint", { MaxSize = Vector2.new(420, 4000) }),
+		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	toastList.Parent = gui
+
+	-- Menú central
+	panel = new("Frame", {
+		Name = "Menu",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.52),
+		Size = UDim2.fromScale(0.92, 0.72),
+		BackgroundColor3 = COLORS.panel,
+		Visible = false,
+	}, {
+		corner(12),
+		new("UISizeConstraint", { MaxSize = Vector2.new(580, 480) }),
+	})
+	panelTitle = new("TextLabel", {
+		Position = UDim2.fromOffset(14, 8),
+		Size = UDim2.new(1, -72, 0, 36),
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		TextSize = 20,
+		TextColor3 = COLORS.text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		Text = "",
+	})
+	panelTitle.Parent = panel
+	local closeButton = new("TextButton", {
+		Name = "Cerrar",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -8, 0, 8),
+		Size = UDim2.fromOffset(40, 36),
+		BackgroundColor3 = COLORS.error,
+		Font = Enum.Font.GothamBold,
+		Text = "X",
+		TextSize = 18,
+		TextColor3 = COLORS.text,
+	}, { corner(8) })
+	closeButton.Activated:Connect(Ui.closePanel)
+	closeButton.Parent = panel
+	panelList = new("ScrollingFrame", {
+		Position = UDim2.fromOffset(0, 50),
+		Size = UDim2.new(1, 0, 1, -56),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		CanvasSize = UDim2.new(),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollBarThickness = 6,
+		ScrollingDirection = Enum.ScrollingDirection.Y,
+	}, {
+		padding(10),
+		new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	panelList.Parent = panel
+	panel.Parent = gui
+
+	gui.Parent = player:WaitForChild("PlayerGui")
+end
+
+-- Cada medio segundo: guía, puertas (por si aparecieron con streaming) y
+-- cierre del menú si el jugador se aleja de la estación.
+local function watchDistance()
+	task.spawn(function()
+		while true do
+			task.wait(0.5)
+			updateGuide()
+			updateGates()
+			local treadmillId = player:GetAttribute("Training")
+			if treadmillId and GameData.Treadmills[treadmillId] and state then
+				hud.training.Visible = true
+				hud.training.Text = string.format(
+					"Entrenando ×%s: %.1f / %d (pulsa la caminadora para parar)",
+					tostring(GameData.Treadmills[treadmillId].multiplier),
+					state.trained,
+					Config.MAX_TRAINED
+				)
+			else
+				hud.training.Visible = false
+			end
+			if openPanelId == "boss" then
+				local key = bossKey()
+				if key ~= lastBossKey then
+					lastBossKey = key
+					render(true)
+				elseif bossTimerLabel and bossTimerLabel.Parent then
+					local info = bossInfo()
+					if info then
+						bossTimerLabel.Text = "<b>" .. bossTimerText(info) .. "</b>"
+					end
+				end
+			end
+			if openPanelId and openPanelId ~= "backpack" then
+				local station = findStation(openPanelId)
+				local character = player.Character
+				local root = character and character:FindFirstChild("HumanoidRootPart")
+				if station and root and (root.Position - station.Position).Magnitude > Config.STATION_DISTANCE + 4 then
+					Ui.closePanel()
+				end
+			end
+		end
+	end)
+end
+
+-- ---------------------------------------------------------------------------
+-- API
+-- ---------------------------------------------------------------------------
+
+function Ui.init(remote)
+	actionRemote = remote
+	buildHud()
+	ContextActionService:BindAction("AbrirMochila", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			toggleBackpack()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.KeyCode.B, Enum.KeyCode.ButtonY)
+	watchDistance()
+end
+
+function Ui.setState(newState)
+	state = newState
+	updateHud()
+	updateGates()
+	if openPanelId then
+		render(true)
+	end
+end
+
+return Ui
+]]></ProtectedString>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+	</Item>
+</roblox>
