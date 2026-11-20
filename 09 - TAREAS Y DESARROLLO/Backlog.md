@@ -632,3 +632,23 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Todos los sonidos por debajo de 2 s, medidos con script (`sfx_ruleta` pasó de 2,28 a 1,65 s, `3f2754a`).
 - [ ] Sonidos pulidos en Audacity con su `.aup3` en `art/audio/fuentes/` (manual).
 - [ ] Pipeline, Memoria de Área 12 y Changelog actualizados; fila de ACTIVE_TASKS Completada.
+
+### INFRA-003 — El equipo queda en Zadiel y Jhonn (DEC-020) y se aprueba DEC-018
+
+- **ID:** INFRA-003.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Coordinación / equipo.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Zadiel indica que Michael y Einell dejan el equipo: las decisiones y revisiones pasan a Zadiel y Jhonn, incluida el área de la antigua Cuenta B (mundo, arte, UX). Se registra DEC-020, se actualizan OWNERS.md, AGENTS.md y `.claude/CLAUDE.md`, y DEC-018 queda Aprobada por Zadiel. Las reglas de `.claude/rules/` no se reescriben: DEC-020 indica que, donde digan «Cuenta B» o «Michael y Einell», responden y revisan Zadiel y Jhonn.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-020 registrada como Aprobada (Zadiel) y DEC-018 marcada como Aprobada.
+- [ ] OWNERS.md, AGENTS.md y `.claude/CLAUDE.md` reflejan el equipo nuevo.
+- [ ] Fila de ACTIVE_TASKS Completada.
