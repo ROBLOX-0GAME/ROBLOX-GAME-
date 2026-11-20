@@ -65,6 +65,13 @@ Según DEC-001, **Roblox Studio guarda los assets ya importados en la place** y 
 
 > ⚠️ **Place oficial:** la place que genera `build.py` o Rojo solo contiene código. Los modelos importados se guardan en la place **publicada** de Roblox, y Rojo sincroniza el código en ella (`servePlaceIds`, ver [[Arquitectura-General]]). Hay que publicar esa place antes de empezar a importar assets.
 
+### Notas de importación (ART-002)
+
+- **Orientación:** en Blender, el **frente** de cada modelo (puertas, carteles, pantallas) mira hacia **−Y**. En Studio se rota el modelo para que el frente mire hacia donde mira su pieza provisional.
+- **Casas huecas:** son una sola malla con interior. En Studio, pon el MeshPart con `CollisionFidelity = PreciseConvexDecomposition` para poder entrar por la puerta. Si no basta, sepáralas en paredes en Blender.
+- **Piezas robables, vitrinas y decoración pequeña:** `CanCollide = false`, igual que las piezas provisionales.
+- **Revisión rápida:** `vista_previa.py` genera `art/export/vistas/_hoja_contactos.png` con todos los modelos en una imagen.
+
 ## 6. Control de recursos
 
 Según [[Recursos-y-Referencias]] §8, todo recurso externo anota su procedencia, autor, licencia y permisos. Los assets hechos por el equipo o generados por script son propios. Las referencias externas van a `art/referencias/` con su fuente.
@@ -78,12 +85,12 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | Asset | Sustituye a | Medida | Estado |
 |---|---|---|---|
 | `mdl_caminadora` | Caminadora del plot (PlotService) | 5 × 1 × 8 | ✅ Base generada (152 triángulos) |
-| `mdl_plot_suelo`, `mdl_taller`, `mdl_vitrina`, `mdl_panel_plot` | Piezas del plot | 34×40 · 14×3,5×4 · 2×2,5×2 · 4×4×2 | Pendiente |
-| `mdl_estacion_tienda`, `_robux`, `_criadero`, `_cronometro`, `_carga` | Mostradores del muro (WorldService) | 14 × 5 × 8, más techo | Pendiente |
-| `mdl_muro_frontal`, `mdl_cartel_salida` | Muro frontal | segmentos de 116 × 18 × 2 | Pendiente |
-| `mdl_casa_z1` … `mdl_casa_z5`, `mdl_pedestal` | Casas por zona (HouseService) | 26 × 12 × 24 (puerta 8 × 9) | Pendiente |
-| `mdl_pieza_engranaje`, `_resorte`, `_tornillo`, `_cristal`, `_correa`, `_rubi`, `_diamante` | Esferas robables | ≈ 1,4 | Pendiente |
-| `mdl_puerta_velocidad` | Barrera de zona | 260 × 40 × 2 | Pendiente |
+| `mdl_plot_suelo`, `mdl_taller`, `mdl_vitrina`, `mdl_panel_plot` | Piezas del plot | 34×40 · 14×3,5×4 · 2×2,5×2 · 4×4×2 | ✅ Base (72 / 268 / 48 / 36 triángulos) |
+| `mdl_estacion_tienda`, `_robux`, `_criadero`, `_cronometro`, `_carga` | Mostradores del muro (WorldService) | 14 × 5 × 8, más techo | ✅ Base (216 / 136 / 444 / 524 / 156) |
+| `mdl_muro_frontal`, `mdl_cartel_salida` | Muro frontal | segmentos de 116 × 18 × 2 | ✅ Base (444 / 48) |
+| `mdl_casa_z1` … `mdl_casa_z5`, `mdl_pedestal` | Casas por zona (HouseService) | 26 × 12 × 24 (puerta 8 × 9) | ✅ Base: madera, ladrillo, moderna, mansión y dorada con cúpula (128–336); pedestal 36 |
+| `mdl_pieza_engranaje`, `_resorte`, `_tornillo`, `_cristal`, `_correa`, `_rubi`, `_diamante` | Esferas robables | ≈ 1,4 | ✅ Base (24–480) |
+| `mdl_puerta_velocidad_poste` | Extremos de la barrera de zona (la barrera sigue siendo la pieza del código) | 2 × 2 × 40 | ✅ Base (132) |
 
 **Prioridad 2 — progresión y recompensas**
 

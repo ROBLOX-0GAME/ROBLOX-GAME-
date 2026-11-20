@@ -272,3 +272,16 @@ Reglas:
 - **2026-11-20 · ART-001 · Paso 4 — Documentación.** Nueva nota [[Pipeline-de-Arte]] (herramientas, estilo, paleta, carpetas, formatos, nombres, flujo hasta Studio y lista de assets con prioridades). También se actualizaron la tabla de herramientas de Recursos, el estilo en [[Diseño-del-Mundo]], `art/README.md`, el `.gitignore` (temporales de Blender, Krita y Audacity), el Dashboard, las memorias 05 y 12 y la propuesta DEC-016. · Verificación: revisión de archivos.
 - **2026-11-20 · ART-001 · Paso 5 — Cierre.** La fila ART-001 pasa a Completada. Pendiente: importar los FBX en la place oficial (hay que publicarla primero) y hacer la tarea de código que cambie las piezas provisionales por los modelos de `ServerStorage/Assets`. · Verificación: revisión de archivos.
 
+---
+
+## 16. ART-002 — Modelos low-poly de prioridad 1
+
+- **Responsable:** Jhonn · **Revisor:** Michael y Einell; Zadiel (técnica) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-002 · Paso 1 — Reserva.** Subida en `fc9d17e`. · Verificación: ejecutada.
+- **2026-11-20 · ART-002 · Paso 2 — Generadores.** `arte_comun.py` recibe `cono`, `anillo` y `prisma_triangular` (tejado construido por vértices). Nuevo `modelos_prioridad1.py` con 25 constructores en las medidas de las piezas provisionales. `generar_todo.py` acepta una lista de modelos. `vista_previa.py` crea la hoja de contactos con fondo blanco. · Verificación: **ejecutada con Blender 5.3**. 27 modelos exportados (con los 2 de ART-001), de 24 a 524 triángulos.
+- **2026-11-20 · ART-002 · Paso 3 — Revisión visual.** Hoja de contactos revisada: casas por zona distinguibles, estaciones con cartel y Cronómetro con esfera, y piezas reconocibles. La primera hoja salió con fondo negro y colores oscuros por la transparencia; se corrigió. · Verificación: ejecutada.
+- **2026-11-20 · ART-002 · Paso 4 — Cierre.** Lista de assets de [[Pipeline-de-Arte]] actualizada, con notas de importación (frente hacia −Y, casas con `PreciseConvexDecomposition`, piezas pequeñas sin colisión). Memoria del área 12 actualizada. La fila ART-002 pasa a Completada. · Verificación: revisión de archivos.
+

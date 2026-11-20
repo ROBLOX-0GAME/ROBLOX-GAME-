@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-002: 25 modelos base de prioridad 1 generados (plot, 5 estaciones, muro, salida, poste de puerta, 5 casas, pedestal y 7 piezas robables; de 24 a 524 triángulos). Hoja de contactos en `art/export/vistas/_hoja_contactos.png`.
 - 2026-11-20 · ART-001 (Jhonn; después Michael y Einell): pipeline de arte en [[Pipeline-de-Arte]]. Herramientas: Blender 5.3, Krita, Material Maker 1.8 y Audacity 4 (Substance no está instalado). Carpeta `art/`, paleta común y primeros modelos generados por script.
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 

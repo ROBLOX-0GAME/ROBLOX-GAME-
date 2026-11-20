@@ -37,7 +37,7 @@ def renderizar(ruta_blend):
     escena.display.shading.light = "STUDIO"
     escena.render.resolution_x = 512
     escena.render.resolution_y = 512
-    escena.render.film_transparent = False
+    escena.render.film_transparent = True
     os.makedirs(VISTAS, exist_ok=True)
     nombre = os.path.splitext(os.path.basename(ruta_blend))[0]
     escena.render.filepath = os.path.join(VISTAS, nombre + ".png")
@@ -45,6 +45,37 @@ def renderizar(ruta_blend):
     print("vista ->", escena.render.filepath)
 
 
+def hoja_de_contactos(columnas=6, tam=256):
+    """Une todas las vistas en una sola imagen (art/export/vistas/_hoja_contactos.png)."""
+    import numpy as np
+
+    archivos = sorted(f for f in os.listdir(VISTAS) if f.endswith(".png") and not f.startswith("_"))
+    filas = (len(archivos) + columnas - 1) // columnas
+    hoja = np.ones((filas * tam, columnas * tam, 4), dtype=np.float32)
+    for indice, archivo in enumerate(archivos):
+        imagen = bpy.data.images.load(os.path.join(VISTAS, archivo))
+        imagen.scale(tam, tam)
+        pixeles = np.array(imagen.pixels[:], dtype=np.float32).reshape(tam, tam, 4)
+        # Fondo transparente → blanco, para revisarla cómodamente
+        alfa = pixeles[:, :, 3:4]
+        pixeles[:, :, :3] = pixeles[:, :, :3] * alfa + (1 - alfa)
+        pixeles[:, :, 3] = 1
+        fila, columna = indice // columnas, indice % columnas
+        # Blender guarda las filas de abajo arriba
+        y = (filas - 1 - fila) * tam
+        hoja[y:y + tam, columna * tam:(columna + 1) * tam] = pixeles
+        bpy.data.images.remove(imagen)
+    salida = bpy.data.images.new("hoja", columnas * tam, filas * tam, alpha=True)
+    salida.pixels = hoja.ravel()
+    salida.filepath_raw = os.path.join(VISTAS, "_hoja_contactos.png")
+    salida.file_format = "PNG"
+    salida.save()
+    print("hoja de contactos ->", salida.filepath_raw)
+    print("orden:", ", ".join(os.path.splitext(a)[0] for a in archivos))
+
+
+pedidos = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else None
 for archivo in sorted(os.listdir(A.FUENTES_BLEND)):
-    if archivo.endswith(".blend"):
+    if archivo.endswith(".blend") and (pedidos is None or os.path.splitext(archivo)[0] in pedidos):
         renderizar(os.path.join(A.FUENTES_BLEND, archivo))
+hoja_de_contactos()

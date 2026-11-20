@@ -442,7 +442,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Michael y Einell; Zadiel revisa la parte técnica.
 - **Área:** Assets.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -450,8 +450,8 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Todos los modelos de prioridad 1 exportados (FBX + .blend + vista previa) con su conteo de triángulos.
-- [ ] Vistas previas revisadas; lista de assets del Pipeline actualizada.
-- [ ] La fila ART-002 de ACTIVE_TASKS queda Completada.
+- [x] Todos los modelos de prioridad 1 exportados (FBX + .blend + vista previa) con su conteo de triángulos.
+- [x] Vistas previas revisadas; lista de assets del Pipeline actualizada.
+- [x] La fila ART-002 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-001 (Completada).

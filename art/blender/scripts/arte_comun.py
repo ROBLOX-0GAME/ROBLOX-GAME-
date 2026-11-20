@@ -132,6 +132,38 @@ def esfera(nombre, radio, pos, color, segmentos=10, anillos=6, escala=(1, 1, 1))
     return pintar(objeto, color)
 
 
+def cono(nombre, radio_abajo, radio_arriba, alto, pos, color, lados=8, rot=(0, 0, 0)):
+    bpy.ops.mesh.primitive_cone_add(vertices=lados, radius1=radio_abajo, radius2=radio_arriba, depth=alto, location=pos, rotation=rot)
+    objeto = bpy.context.active_object
+    objeto.name = nombre
+    bpy.ops.object.transform_apply(rotation=True)
+    return pintar(objeto, color)
+
+
+def anillo(nombre, radio, grosor, pos, color, lados=12, rot=(0, 0, 0)):
+    bpy.ops.mesh.primitive_torus_add(major_radius=radio, minor_radius=grosor, major_segments=lados,
+                                     minor_segments=4, location=pos, rotation=rot)
+    objeto = bpy.context.active_object
+    objeto.name = nombre
+    bpy.ops.object.transform_apply(rotation=True)
+    return pintar(objeto, color)
+
+
+def prisma_triangular(nombre, ancho, largo, alto, pos, color):
+    """Tejado a dos aguas: prisma de base ancho (X) × largo (Y) y altura alto (Z)."""
+    w, l = ancho / 2, largo / 2
+    vertices = [(-w, -l, 0), (w, -l, 0), (0, -l, alto), (-w, l, 0), (w, l, 0), (0, l, alto)]
+    caras = [(0, 1, 2), (3, 5, 4), (0, 3, 4, 1), (1, 4, 5, 2), (2, 5, 3, 0)]
+    malla = bpy.data.meshes.new(nombre)
+    malla.from_pydata(vertices, [], caras)
+    malla.update()
+    objeto = bpy.data.objects.new(nombre, malla)
+    objeto.location = pos
+    bpy.context.collection.objects.link(objeto)
+    bpy.context.view_layer.objects.active = objeto
+    return pintar(objeto, color)
+
+
 def unir(nombre, objetos):
     """Une varias piezas en una sola malla (un MeshPart en Roblox)."""
     bpy.ops.object.select_all(action="DESELECT")

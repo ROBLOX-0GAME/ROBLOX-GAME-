@@ -1,11 +1,12 @@
 """
-generar_todo.py — genera los assets low-poly de prueba de ART-001.
+generar_todo.py — genera todos los assets low-poly base (ART-001 y ART-002).
 
     "C:\\Program Files\\Blender Foundation\\Blender 5.3\\blender.exe" --background --factory-startup ^
         --python art/blender/scripts/generar_todo.py
 
 Cada modelo usa las medidas (en studs) de la pieza provisional que sustituirá en
-el juego, para que encaje sin tocar el código.
+el juego, para que encaje sin tocar el código. Al final imprime el conteo de
+triángulos de cada uno.
 """
 
 import os
@@ -14,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 import arte_comun as A  # noqa: E402
+import modelos_prioridad1 as P1  # noqa: E402
 
 
 def caminadora():
@@ -44,20 +46,24 @@ def capsula(nombre, color):
     return A.unir(nombre, piezas)
 
 
+MODELOS = {
+    "mdl_caminadora": caminadora,
+    "mdl_capsula_laton": lambda: capsula("mdl_capsula_laton", "bronce"),
+}
+MODELOS.update(P1.MODELOS)
+
+
 def main():
-    A.limpiar_escena()
-    A.crear_paleta()
+    # Opcional: generar solo algunos → ... --python generar_todo.py -- mdl_taller mdl_vitrina
+    pedidos = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else list(MODELOS)
     resultados = []
-    for constructor, nombre in (
-        (caminadora, "mdl_caminadora"),
-        (lambda: capsula("mdl_capsula_laton", "bronce"), "mdl_capsula_laton"),
-    ):
+    for nombre in pedidos:
         A.limpiar_escena()
         A.crear_paleta()
-        objeto = constructor()
+        objeto = MODELOS[nombre]()
         ruta, tris = A.exportar(objeto, nombre)
         resultados.append((nombre, tris, ruta))
-    print("=== ART-001: assets generados ===")
+    print("=== Assets generados ===")
     for nombre, tris, ruta in resultados:
         print(f"{nombre}: {tris} triángulos -> {os.path.relpath(ruta, A.REPO)}")
     print(f"paleta -> {os.path.relpath(A.PALETA_PNG, A.REPO)}")
