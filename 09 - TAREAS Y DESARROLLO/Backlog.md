@@ -352,3 +352,24 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 **Dependencias:** DEV-010 (Completada).
 
 **Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
+### DEV-012 — Ingreso pasivo cada 30 segundos
+
+- **ID:** DEV-012.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Economía.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):** el reloj exhibido da el 30% de su valor **cada 30 segundos** en lugar de cada 10 minutos. Se ajustan los textos del tutorial, del plot y de la documentación.
+
+**Criterios de aceptación:**
+
+- [ ] `PLOT_INCOME_PERIOD_SECONDS` = 30 y textos coherentes en el tutorial y en el plot.
+- [ ] Pruebas y revisión estática sin errores.
+- [ ] La fila DEV-012 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** DEV-011 (Completada).
