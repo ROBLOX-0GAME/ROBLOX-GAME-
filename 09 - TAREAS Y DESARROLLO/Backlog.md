@@ -321,3 +321,34 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 **Dependencias:** DEV-008 (Completada).
 
 **Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
+### DEV-011 — Historia inicial, pieza del legado, tutorial nuevo e ingreso pasivo del 30%
+
+- **ID:** DEV-011.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. Cuenta B revisa la historia, los textos y la cinemática.
+- **Área:** Sistemas, economía y experiencia de inicio.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+1. **Cinemática breve** la primera vez que se entra: el jugador fue abandonado por sus padres y, al cumplir 18 años, lo dejan en un lugar desconocido (la plaza central del juego).
+2. Allí encuentra una **pieza muy luminosa de un reloj de alta categoría**, elegida al azar. La conserva para siempre: puede guardarla o usarla. Se usan nombres de piezas ficticios en vez de marcas reales (Patek Philippe, Graff), que son marcas registradas.
+3. Después empieza el **tutorial**: cómo ganar velocidad, qué hacer, qué piezas conseguir, dónde fabricar y qué hacer con los relojes.
+4. **Economía:** vender da mucho más dinero (es lo activo). Exhibir en el plot da, de forma pasiva, el **30% del valor del reloj** cada periodo configurable.
+
+**Criterios de aceptación:**
+
+- [ ] Cinemática con texto de la historia y cámara, solo la primera vez, con opción de saltar.
+- [ ] La pieza del legado se recoge una sola vez (validado en el servidor), es aleatoria, está protegida contra venta y descarte, y se puede usar en una receta especial.
+- [ ] El tutorial empieza después de la pieza y enseña velocidad, robo, taller, venta, exhibición y mejoras, con guía en el mundo.
+- [ ] Ingreso pasivo = 30% del valor de venta por periodo, con acumulación de fracciones.
+- [ ] Pruebas actualizadas y nuevas, y revisión estática sin errores.
+- [ ] La fila DEV-011 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** DEV-010 (Completada).
+
+**Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
