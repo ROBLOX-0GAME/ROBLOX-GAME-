@@ -373,3 +373,33 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - [x] La fila DEV-012 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-011 (Completada).
+### DEV-013 — HUD multiplataforma, ruleta diaria, ajustes y capacidad de carga
+
+- **ID:** DEV-013.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. **Michael y Einell revisan el HUD**, que está en la ruta de Cuenta B (`game/src/StarterPlayer/StarterPlayerScripts`).
+- **Área:** Interfaz (funcional), sistemas y economía.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+1. **HUD ordenado para móvil, tablet, PC y consola.** Muestra dinero, velocidad, recompensas diarias y por tiempo, ruleta diaria, Tienda Robux, ajustes y otros datos clave. Se adapta al tamaño de pantalla y respeta los controles táctiles. Tiene atajos de teclado y de mando. Es funcional; el diseño visual final se hará después con las herramientas de arte.
+2. **Ruleta diaria:** un giro gratis al día. También se pueden comprar giros extra con Robux, con las probabilidades visibles.
+3. **Ajustes:** guía del tutorial, notificaciones, tamaño de la interfaz y repetir la introducción.
+4. **Capacidad de carga:** un puesto para comprar más espacio para llevar objetos robados de las casas. Se empieza llevando 1 objeto por viaje y hay 3 mejoras, hasta un máximo de 4.
+
+**Criterios de aceptación:**
+
+- [ ] HUD con tarjetas de dinero, nivel, velocidad y botín, y una barra de botones (Mochila, Premios, Ruleta, Robux, Ajustes) con avisos «!» cuando hay algo por reclamar.
+- [ ] Escala según la pantalla; los botones no tapan el joystick ni el botón de salto; atajos de teclado y mando.
+- [ ] Ruleta diaria validada en el servidor (una vez al día UTC, más giros extra comprados).
+- [ ] Ajustes guardados por jugador.
+- [ ] Capacidad de carga 1 → 4 (3 mejoras) en un puesto propio; el servidor limita el botín por viaje.
+- [ ] Pruebas nuevas y revisión estática sin errores.
+- [ ] La fila DEV-013 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** DEV-012 (Completada).
