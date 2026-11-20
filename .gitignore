@@ -4,3 +4,6 @@
 /game/build/
 /game/sourcemap.json
 /game/.rojo/
+
+# Configuración personal de Claude Code
+.claude/settings.local.json

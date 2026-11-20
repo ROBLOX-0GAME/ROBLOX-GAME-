@@ -55,10 +55,15 @@ Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Regi
   - [x] La propiedad de áreas refleja Cuenta A (Jhonn/Zadiel) y Cuenta B (Michael/Einell); los archivos compartidos exigen coordinación.
   - [x] Cada tarea trabaja en `task/<ID>-<slug>` y reserva rutas antes de editarlas.
   - [x] Una comprobación automatizada bloquea la integración de un Pull Request que cambie rutas reservadas por otra tarea.
+  - [x] Claude Code bloquea Edit/Write en main, rutas sin reserva integrada y rutas activas reservadas por otra tarea.
+  - [x] Los Pull Requests de reserva que reclaman rutas superpuestas se detectan aunque solo modifiquen el registro central.
+  - [x] Los cambios de Backlog.md y ACTIVE_TASKS.md quedan limitados al ID de la tarea del Pull Request.
   - [x] Los Pull Requests usan una plantilla con responsable, revisor, rutas reservadas y verificaciones.
   - [x] `game/default.project.json` puede construir el scaffold; Rojo no permite la sincronización en vivo hasta que se añada el `placeId`.
-  - [ ] Activar en GitHub Settings la protección de `main`: Pull Request obligatorio, una aprobación y los controles de GitHub Actions.
-- **Dependencias:** protección de `main` pendiente de activación en GitHub Settings; la sincronización en vivo espera a que se cree el place y se registre su `placeId`.
+  - [ ] Activar en GitHub Settings la protección de `main`: Pull Request obligatorio, una aprobación y los controles `reservation-check` y `rojo-build`; bloquear force push y eliminación de la rama.
+  - [ ] Limitar escritura a los @handles de las cuatro personas autorizadas; mantener solo las administraciones necesarias dentro de ese grupo.
+  - [ ] Desactivar el borrado/transferencia de repositorios por miembros desde los ajustes de la organización.
+- **Dependencias:** protección y acceso de GitHub pendientes de ajustes administrativos y confirmación de los @handles de Michael y Einell; la sincronización en vivo espera a que se cree el place y se registre su `placeId`.
 - **Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Protocolo-de-Trabajo-IA]], [[Arquitectura-General]].
 
 ### Diseño

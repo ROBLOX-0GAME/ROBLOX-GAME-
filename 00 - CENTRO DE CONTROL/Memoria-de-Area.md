@@ -15,8 +15,9 @@
 
 ## Pendientes concretos
 
-- Activar en GitHub Settings la protección de main: PR obligatorio, una aprobación humana y checks reservation-check y rojo-build; la conexión actual no puede cambiar esta regla.
-- Limitar permisos de escritura a las cuatro cuentas humanas autorizadas y mantener administradores solo entre las personas autorizadas.
+- El hook compartido de `.claude/settings.json` y el check de GitHub Actions se preparan en INFRA-001. Aún debe integrarse el PR y activar la protección de main: PR obligatorio, aprobación humana, checks reservation-check y rojo-build.
+- Limitar permisos de escritura a las cuatro cuentas humanas autorizadas y mantener administradores solo entre esas personas; faltan los @handles de Michael y Einell y acceso a los ajustes de GitHub.
+- Restringir borrado/transferencia de repositorios en los ajustes de la organización; es un ajuste organizacional y no puede impedir que propietarios de la organización borren repositorios.
 - Crear el place, aprobar su placeId y completar la conexión local con Roblox Studio.
 
 ## Decisiones aprobadas del área
@@ -25,6 +26,6 @@
 
 ## Memoria reciente
 
-- INFRA-001 está en revisión en [PR #1](https://github.com/ROBLOX-0GAME/ROBLOX-GAME-/pull/1); reservation-check y rojo-build pasaron. La protección de main y el acceso limitado a las cuatro cuentas siguen pendientes.
+- INFRA-001 está en revisión en [PR #1](https://github.com/ROBLOX-0GAME/ROBLOX-GAME-/pull/1). El branch añade un hook local Edit/Write y checks para reservas repetidas; ambos checks de la revisión anterior pasaron. La protección de main y el acceso limitado a las cuatro cuentas siguen pendientes.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

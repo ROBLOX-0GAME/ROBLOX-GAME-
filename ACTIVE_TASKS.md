@@ -11,11 +11,13 @@ Registro central de rutas reservadas. Usa rutas exactas o patrones relativos a l
 
 ## Estados
 - En desarrollo, En progreso y Bloqueada: mantienen la reserva.
-- En revisión: mantiene la reserva mientras haya un Pull Request abierto para ese ID.
+- En revisión: mantiene la reserva mientras haya un Pull Request abierto para ese ID. El hook local trata En revisión como activa; al integrar el Pull Request final, marca la fila Completada para liberar la ruta.
 - Completada o Cancelada: no reserva rutas.
 - Si un Pull Request se cierra sin integrar y la tarea continúa, devuelve su estado a En desarrollo.
 
-El control automatizado solo impide integrar Pull Requests incompatibles; no bloquea la edición local antes de crear una rama. Mantén la reserva antes de empezar.
+La configuración compartida `.claude/settings.json` ejecuta un hook antes de cada herramienta Edit/Write de Claude Code. Bloquea `main`, las ramas que no sean `task/<ID>-<slug>`, las rutas no reservadas por la tarea y las rutas reservadas por otra tarea, consultando ACTIVE_TASKS.md de main. Si no puede leer el registro remoto, bloquea la edición. Una reserva debe integrarse antes de tocar su código.
+
+Este control local cubre las herramientas Edit/Write de Claude Code; Bash, editores externos y otras aplicaciones pueden saltárselo. No es un bloqueo del sistema de archivos. La barrera compartida para todos los cambios sigue siendo GitHub Actions y una protección de `main` activa.
 
 ## Reservas
 
@@ -31,7 +33,9 @@ La regla se configura en GitHub Settings → Branches / Rulesets. Requiere:
 - Los controles reservation-check y rojo-build.
 - Bloquear actualizaciones directas a main y no permitir bypasses.
 
-La rama main estaba sin protección en la última comprobación. El conector GitHub disponible no permite administrar esa configuración; se activa desde los ajustes del repositorio. El workflow ya está preparado para proporcionar los controles requeridos.
+La rama main estaba sin protección en la última comprobación. El conector GitHub disponible no permite administrar esa configuración; se activa desde los ajustes del repositorio. Configura PR obligatorio, aprobación humana, `reservation-check`, `rojo-build`, rama actualizada antes de integrar, bloqueo de force push y eliminación de la rama. El workflow ya proporciona los checks requeridos.
+
+El control de solapamientos compara también reservas introducidas por otros Pull Requests abiertos, incluidos los PR que solo reservan rutas. ACTIVE_TASKS.md y Backlog.md son las únicas rutas compartidas que admiten ediciones coordinadas en varios PR; el check limita cada PR a modificar la fila y sección de su propio ID.
 
 
 ## Navegación en Obsidian

@@ -9,11 +9,11 @@
 
 ## Respuestas directas y datos base
 
-- El Backlog registra ID, cuenta, responsable, revisor, rutas y criterios. Cada tarea usa task/<ID>-<slug>; ACTIVE_TASKS.md registra reservas. reservation-check valida rutas reservadas y solapamientos entre PR abiertos.
+- El Backlog registra ID, cuenta, responsable, revisor, rutas y criterios. Cada tarea usa task/<ID>-<slug>; ACTIVE_TASKS.md registra reservas. El hook compartido bloquea herramientas Edit/Write en main y rutas no reservadas. reservation-check valida que cada PR solo cambie su propia entrada y detecta rutas solapadas, incluso entre PRs de reserva.
 
 ## Pendientes concretos
 
-- Activar protección de main para exigir PR, aprobación y los checks requeridos. La reserva remota no bloquea escrituras locales si el hook compartido no está cargado.
+- Integrar INFRA-001 y activar protección de main para exigir PR, aprobación, checks obligatorios y no permitir force push ni eliminación de rama. Limitar permisos de escritura a las cuatro cuentas exactas y desactivar borrado/transferencia por miembros desde los ajustes de la organización.
 
 ## Decisiones aprobadas del área
 

@@ -65,15 +65,16 @@ La propiedad de Recursos y Referencias depende del área de la herramienta o mat
 
 ## Límites de GitHub
 
-La asignación anterior refleja nombres y parejas del equipo. No se inventan usuarios ni equipos de GitHub para CODEOWNERS; el repositorio no tiene esos handles registrados en la documentación revisada. La aprobación general de Pull Requests se configura como mínimo una aprobación humana. Si el equipo comparte sus handles, se podrá añadir una regla CODEOWNERS específica.
-
+La asignación anterior refleja nombres y parejas del equipo. No se inventan usuarios ni equipos de GitHub para CODEOWNERS; los handles de Michael y Einell no están registrados en la documentación revisada. Los cambios sustantivos de todos los colaboradores deben pasar por Pull Request y revisión humana.
 
 ## Cobertura del repositorio y permisos
 
 - Las rutas listadas arriba asignan áreas. Todo archivo o carpeta no listado se considera compartido hasta que Backlog.md indique responsable y ACTIVE_TASKS.md reserve la ruta.
-- Claude nunca edita la rama main directamente. Los cambios llegan por Pull Request con una aprobación humana y los checks obligatorios.
-- Política de acceso solicitada: solo Jhonn, Zadiel, Michael y Einell deben tener permiso de escritura; limita administración y borrado de repositorio a propietarios autorizados. Esa política todavía requiere ajuste en GitHub Settings y confirmación de los cuatro @handles.
-- Los nombres del equipo no bastan para CODEOWNERS o para cambiar permisos; no se inventan handles.
+- Claude nunca edita la rama `main` directamente. Los cambios llegan por Pull Request con una aprobación humana y los checks `reservation-check` y `rojo-build`.
+- La política solicitada es que solo Jhonn, Zadiel, Michael y Einell tengan permiso de escritura. Asigna Write únicamente a sus cuatro cuentas, configura el permiso base de la organización como Read, y limita Admin a las personas necesarias de ese mismo grupo. Los propietarios de la organización conservan privilegios administrativos.
+- Para evitar borrado por miembros, la organización debe desactivar el permiso de miembros para borrar o transferir repositorios; el ajuste es organizacional y los propietarios de la organización pueden seguir borrándolos. Para impedir borrar la rama `main`, activa la protección de rama o ruleset contra eliminación.
+- Estado comprobado para INFRA-001: el repositorio es público; GitHub confirmó a Zadiel (`zadiel799-lang`) y Jhonn (`jhonnhughesmadrigal-cmd`) como administradores del repositorio. `main` no tenía protección activa. La conexión no expone la lista de colaboradores ni permite cambiar los permisos, reglas de rama o ajustes de borrado.
+- La configuración de acceso no se considera aplicada hasta añadir los @handles exactos de Michael y Einell y guardar los ajustes en GitHub. No se inventan handles ni se cambia la visibilidad pública del repositorio.
 
 ## Navegación en Obsidian
 

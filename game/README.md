@@ -2,6 +2,14 @@
 
 Este es el scaffold inicial del código fuente. El place del juego todavía no existe. El flujo confirmado es parcialmente gestionado: Git guarda el código y la configuración; Roblox Studio conserva el place, el mundo y los assets.
 
+## Coordinación de edición entre los dos Claude Code
+
+La configuración compartida `.claude/settings.json` ejecuta un control antes de las herramientas Edit/Write. Bloquea ediciones en `main`, fuera de una reserva integrada en ACTIVE_TASKS.md, o sobre rutas ocupadas por otra tarea. Primero registra la tarea en el [[09 - TAREAS Y DESARROLLO/Backlog]] y [[ACTIVE_TASKS|ACTIVE_TASKS]], abre un PR de reserva y espera a que se integre. El hook consulta el registro en `main` y falla de forma cerrada si no puede leerlo.
+
+Este control actúa sobre Edit/Write de Claude Code. No bloquea programas externos ni comandos Bash que escriban archivos; la regla de Pull Request, GitHub Actions y la protección de `main` son las barreras de integración. En la PC Windows se necesita Git for Windows con Bash y Python 3.10 o posterior para que el hook funcione. No se debe usar un editor externo para evadir una reserva.
+
+[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[OWNERS|Propiedad de áreas]] · [[ACTIVE_TASKS|Reservas activas]]
+
 ## Protección hasta crear el place
 
 default.project.json declara servePlaceIds como una lista vacía. Rojo solo sincroniza en vivo con IDs enumerados, así que mientras la lista esté vacía no conectes el plugin a ningún place. La construcción local del scaffold sigue disponible.

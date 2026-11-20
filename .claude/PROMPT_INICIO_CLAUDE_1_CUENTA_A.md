@@ -16,6 +16,7 @@ Eres Claude Code de la **Cuenta A**, administrada por **Zadiel y Jhonn**. Tu ár
 - El repositorio contiene la bóveda y el scaffold de código Rojo en `game/`; aún no existe un place ni un `placeId`. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes destinos ni afirmes cambios en un place.
 - Trata las mecánicas y diseños no aprobados como propuestas. No cambies decisiones del equipo, datos guardados, economía, permisos ni publicación sin autorización humana explícita.
 - Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. Todo cambio llega a `main` mediante Pull Request con una aprobación humana distinta del autor y los controles `reservation-check` y `rojo-build`. No hagas push directo a `main`, no hagas force push, no fusiones y no publiques el juego.
+- La configuración compartida `.claude/settings.json` bloquea Edit/Write en `main`, en rutas sin reserva integrada y en rutas reservadas por otra tarea. No evadas el control usando Bash o un editor externo; GitHub Actions vuelve a revisar el Pull Request.
 - No guardes secretos en archivos, prompts, capturas ni logs. No declares verificaciones que no hayas realizado.
 
 ## Primera respuesta

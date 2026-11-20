@@ -54,7 +54,7 @@
 | Interfaz y experiencia | Teclado, mando y toque confirmados; flujos detallados por diseñar |
 | Economía y progresión | Sistemas descritos; cifras y balance por aprobar |
 | Multijugador | Propuestas de robo voluntario y jefe de taller listas para revisión |
-| Desarrollo | INFRA-001 en revisión; reservas de rutas y controles de Pull Request preparados |
+| Desarrollo | INFRA-001 en revisión; hook local de Claude Code y detección de reservas duplicadas preparados; protección efectiva de main pendiente de activar |
 | Testing | Pruebas de reservas y construcción Rojo pasan en GitHub Actions; pruebas de juego aún no ejecutadas |
 | Documentación de IA | Reglas raíz, 13 reglas de carpeta y 13 memorias en propuesta de revisión |
 
