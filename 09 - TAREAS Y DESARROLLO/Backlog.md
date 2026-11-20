@@ -1,4 +1,3 @@
-
 # 📋 BACKLOG — PRODUCCIÓN Y DESARROLLO
 
 ## 1. Propósito
@@ -41,6 +40,31 @@ Responsables de la cuenta: Michael y Einell.
 Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Registra una persona responsable y una revisora por tarea; las tareas transversales requieren revisión de ambas parejas.
 
 ## 5. Tareas pendientes
+
+### INFRA-001 — Coordinación de agentes y preparación de Rojo
+
+- **ID:** INFRA-001.
+- **Responsable:** Jhonn y Zadiel (Cuenta A).
+- **Revisión:** Jhonn y Zadiel; Michael y Einell para cambios transversales.
+- **Área:** GitHub, coordinación de archivos y entorno Rojo.
+- **Prioridad:** Alta.
+- **Estado:** En revisión.
+- **Rama:** `task/INFRA-001-coordination-rojo`.
+- **Alcance:** crear el registro de propietarios y reservas, las reglas de ramas y revisión, una comprobación de conflictos para Pull Requests, y el scaffold inicial de Rojo en `game/`.
+- **Criterios de aceptación:**
+  - [x] La propiedad de áreas refleja Cuenta A (Jhonn/Zadiel) y Cuenta B (Michael/Einell); los archivos compartidos exigen coordinación.
+  - [x] Cada tarea trabaja en `task/<ID>-<slug>` y reserva rutas antes de editarlas.
+  - [x] Una comprobación automatizada bloquea la integración de un Pull Request que cambie rutas reservadas por otra tarea.
+  - [x] Claude Code bloquea Edit/Write en main, rutas sin reserva integrada y rutas activas reservadas por otra tarea.
+  - [x] Los Pull Requests de reserva que reclaman rutas superpuestas se detectan aunque solo modifiquen el registro central.
+  - [x] Los cambios de Backlog.md y ACTIVE_TASKS.md quedan limitados al ID de la tarea del Pull Request.
+  - [x] Los Pull Requests usan una plantilla con responsable, revisor, rutas reservadas y verificaciones.
+  - [x] `game/default.project.json` puede construir el scaffold; Rojo no permite la sincronización en vivo hasta que se añada el `placeId`.
+  - [ ] Activar en GitHub Settings la protección de `main`: Pull Request obligatorio, una aprobación y los controles `reservation-check` y `rojo-build`; bloquear force push y eliminación de la rama.
+  - [ ] Limitar escritura a los @handles de las cuatro personas autorizadas; mantener solo las administraciones necesarias dentro de ese grupo.
+  - [ ] Desactivar el borrado/transferencia de repositorios por miembros desde los ajustes de la organización.
+- **Dependencias:** protección y acceso de GitHub pendientes de ajustes administrativos y confirmación de los @handles de Michael y Einell; la sincronización en vivo espera a que se cree el place y se registre su `placeId`.
+- **Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Protocolo-de-Trabajo-IA]], [[Arquitectura-General]].
 
 ### Diseño
 - [ ] Definir concepto principal del juego.
@@ -116,6 +140,8 @@ Pendiente.
 5. Las tareas bloqueadas deben documentar su causa.
 6. Las tareas completadas deben verificarse antes de cerrarse.
 7. Las decisiones importantes deben registrarse.
+8. Toda tarea que reserve rutas debe figurar en [[ACTIVE_TASKS]] antes de editarlas.
+9. Al finalizar, liberar la reserva y actualizar Backlog dentro del Pull Request de la tarea.
 
 ## 8. Documentos relacionados
 
@@ -128,6 +154,9 @@ Pendiente.
 - [[Plan-de-Pruebas]]
 - [[Equipo-y-Responsabilidades]]
 - [[Protocolo-de-Trabajo-IA]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|Memoria de Producción]]
 
 ---
 

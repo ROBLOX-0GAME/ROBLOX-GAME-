@@ -30,6 +30,9 @@
 ## 📚 04. DOCUMENTACIÓN Y RECURSOS
 
 - [[Recursos-y-Referencias|Recursos y Referencias]]
+- [[OWNERS|Propiedad de áreas y archivos]]
+- [[ACTIVE_TASKS|Tareas activas y reservas]]
+- [[game/README|Código Roblox con Rojo]]
 
 ## 👥 05. ORGANIZACIÓN DEL ESTUDIO
 
@@ -45,14 +48,14 @@
 |---|---|
 | Visión del juego | Base del formulario incorporada; visión final por aprobar |
 | Game Design Document | Propuesta 1.0 preparada para revisión del equipo |
-| Arquitectura técnica | Propuesta inicial; falta ubicar el proyecto fuente en una PC Windows de desarrollo |
+| Arquitectura técnica | Scaffold Rojo en game/; sincronización en vivo pendiente de crear el place y aprobar su placeId |
 | Sistemas del juego | Loop y mecánicas documentados como propuestas para validar |
 | Mundo y contenido | Premisa base incorporada; canon narrativo y visual por revisar |
 | Interfaz y experiencia | Teclado, mando y toque confirmados; flujos detallados por diseñar |
 | Economía y progresión | Sistemas descritos; cifras y balance por aprobar |
 | Multijugador | Propuestas de robo voluntario y jefe de taller listas para revisión |
-| Desarrollo | Protocolo de trabajo listo para la primera tarea |
-| Testing | Criterios preparados; pruebas del juego aún no ejecutadas |
+| Desarrollo | INFRA-001 en revisión; hook local de Claude Code y detección de reservas duplicadas preparados; protección efectiva de main pendiente de activar |
+| Testing | Pruebas de reservas y construcción Rojo pasan en GitHub Actions; pruebas de juego aún no ejecutadas |
 | Documentación de IA | Reglas raíz, 13 reglas de carpeta y 13 memorias en propuesta de revisión |
 
 ---
@@ -70,22 +73,22 @@
 
 **Documento principal:** Dashboard  
 **Proyecto:** Roblox Game Studio  
-**Estado:** En reconstrucción
+**Estado:** Coordinación y scaffold Rojo en revisión; protección efectiva de main pendiente de activar
 
 ## Memoria por área
 
 Consulta la memoria compacta de cada carpeta:
 
-- [[00 - CENTRO DE CONTROL/Memoria-de-Area|00 - CENTRO DE CONTROL]]
+- [[00 - CENTRO DE CONTROL/Memoria-de-Area|00 - CENTRO DE CONTROL]] — [[Protocolo-de-Trabajo-IA]] · [[OWNERS]] · [[ACTIVE_TASKS]]
 - [[01 - VISION DEL JUEGO/Memoria-de-Area|01 - VISION DEL JUEGO]]
 - [[02 - GAME DESIGN DOCUMENT/Memoria-de-Area|02 - GAME DESIGN DOCUMENT]]
-- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|03 - ARQUITECTURA TECNICA]]
+- [[03 - ARQUITECTURA TECNICA/Memoria-de-Area|03 - ARQUITECTURA TECNICA]] — [[Arquitectura-General]] · [[game/README|Código Rojo]] · [[OWNERS]]
 - [[04 - SISTEMAS DEL JUEGO/Memoria-de-Area|04 - SISTEMAS DEL JUEGO]]
 - [[05 - MUNDO Y CONTENIDO/Memoria-de-Area|05 - MUNDO Y CONTENIDO]]
 - [[06 - INTERFAZ Y EXPERIENCIA/Memoria-de-Area|06 - INTERFAZ Y EXPERIENCIA]]
 - [[07 - ECONOMIA Y PROGRESION/Memoria-de-Area|07 - ECONOMIA Y PROGRESION]]
 - [[08 - MULTIJUGADOR/Memoria-de-Area|08 - MULTIJUGADOR]]
-- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|09 - TAREAS Y DESARROLLO]]
-- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]]
+- [[09 - TAREAS Y DESARROLLO/Memoria-de-Area|09 - TAREAS Y DESARROLLO]] — [[Backlog]] · [[ACTIVE_TASKS]] · [[OWNERS]]
+- [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]] — [[Registro-de-Decisiones]] · [[OWNERS]] · [[ACTIVE_TASKS]]
 - [[11 - TESTING Y BUGS/Memoria-de-Area|11 - TESTING Y BUGS]]
 - [[12 - RECURSOS Y REFERENCIAS/Memoria-de-Area|12 - RECURSOS Y REFERENCIAS]]

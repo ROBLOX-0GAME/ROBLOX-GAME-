@@ -2,6 +2,7 @@
 paths:
   - "09 - TAREAS Y DESARROLLO/Backlog.md"
   - "09 - TAREAS Y DESARROLLO/Memoria-de-Area.md"
+  - "ACTIVE_TASKS.md"
 ---
 
 # 09 - TAREAS Y DESARROLLO
@@ -14,6 +15,7 @@ Responsable operativo: Cuenta A mantiene el índice operativo; cada responsable 
 
 ## Instrucciones por nota
 - Backlog.md: Cada tarea anunciada al equipo lleva ID, objetivo, responsable, cuenta Claude, rutas, revisor, prioridad, dependencias, criterio de aceptación y estado.
+- ACTIVE_TASKS.md: Reserva rutas por ID y rama de tarea; abre primero un Pull Request de reserva y espera a que se integre. El control de GitHub Actions valida conflictos en Pull Requests, pero no bloquea la edición local.
 
 
 ## Mantenimiento

@@ -4,25 +4,28 @@
 
 ## Notas canónicas
 
-[[00 - CENTRO DE CONTROL/Dashboard]]; [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]; [[09 - TAREAS Y DESARROLLO/Backlog]]
+[[00 - CENTRO DE CONTROL/Dashboard]]; [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA]]; [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]; [[09 - TAREAS Y DESARROLLO/Backlog]]; [[OWNERS]]; [[ACTIVE_TASKS]]
 - Registro: [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]]
 
 ## Respuestas directas y datos base
 
-- Repo público ROBLOX-0GAME/ROBLOX-GAME-, rama main; la raíz verificada es la bóveda Obsidian con 13 carpetas y 16 notas. La conexión actual funciona; jhonnhughesmadrigal-cmd tiene permiso de administración.
+- Repo público ROBLOX-0GAME/ROBLOX-GAME-, rama main; la bóveda Obsidian está en la raíz y el scaffold Roblox vive en game/. OWNERS.md y ACTIVE_TASKS.md están enlazados desde Dashboard. La nota de equipo identifica a jhonnhughesmadrigal-cmd como administrador; el conector usado en INFRA-001 no puede modificar reglas de ramas.
 - Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo. La MacBook queda para Obsidian y tareas escolares.
-- Cuatro personas (Jhonn, Zadiel, Michael, Einell), dos cuentas Claude Code y coordinación diaria/changelog del equipo por WhatsApp. Los bloqueos de edición se confirman con la persona usuaria.
+- Dos Claude Code: Cuenta A (Jhonn y Zadiel) coordina Git/Obsidian e integración; Cuenta B (Michael y Einell) lidera mundo y presentación. OWNERS.md asigna áreas; ACTIVE_TASKS.md reserva rutas. WhatsApp sigue como canal humano diario.
 
 ## Pendientes concretos
 
-- Confirmar escritura de cada cuenta de GitHub y registrar la ruta o repositorio del place al abrirlo en una PC Windows de desarrollo.
+- El hook compartido de `.claude/settings.json` y el check de GitHub Actions se preparan en INFRA-001. Aún debe integrarse el PR y activar la protección de main: PR obligatorio, aprobación humana, checks reservation-check y rojo-build.
+- Limitar permisos de escritura a las cuatro cuentas humanas autorizadas y mantener administradores solo entre esas personas; faltan los @handles de Michael y Einell y acceso a los ajustes de GitHub.
+- Restringir borrado/transferencia de repositorios en los ajustes de la organización; es un ajuste organizacional y no puede impedir que propietarios de la organización borren repositorios.
+- Crear el place, aprobar su placeId y completar la conexión local con Roblox Studio.
 
 ## Decisiones aprobadas del área
 
-- Añade una decisión solo tras aprobación humana y registro canónico.
+- DEC-001: código en game/ con flujo Rojo parcialmente gestionado. DEC-002: ramas por tarea, PR y aprobación humana; ver [[10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones]].
 
 ## Memoria reciente
 
-- Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- INFRA-001 está en revisión en [PR #1](https://github.com/ROBLOX-0GAME/ROBLOX-GAME-/pull/1). El branch añade un hook local Edit/Write y checks para reservas repetidas; ambos checks de la revisión anterior pasaron. La protección de main y el acceso limitado a las cuatro cuentas siguen pendientes.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

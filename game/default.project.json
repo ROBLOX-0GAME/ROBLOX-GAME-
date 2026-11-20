@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rojo-rbx/rojo/master/schemas/project.schema.json",
+  "name": "ROBLOX-GAME",
+  "servePlaceIds": [],
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$path": "src/ReplicatedStorage"
+    },
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService"
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$path": "src/StarterPlayer/StarterPlayerScripts"
+      }
+    }
+  }
+}

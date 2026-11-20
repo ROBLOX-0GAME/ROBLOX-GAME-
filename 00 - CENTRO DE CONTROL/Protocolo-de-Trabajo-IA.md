@@ -105,9 +105,9 @@ Al finalizar:
 
 - Revisar los archivos modificados.
 - Comprobar que no se incluyen archivos sensibles.
-- Crear un commit descriptivo.
-- Publicar los cambios cuando esté autorizado.
-- Informar del commit realizado.
+- Crear un commit descriptivo en la rama de la tarea.
+- Publicar los cambios en esa rama y abrir un Pull Request hacia main cuando esté autorizado; no hacer push directo a main ni force push.
+- Informar del commit y del Pull Request.
 
 Nunca utilizar force push para solucionar conflictos.
 
@@ -173,6 +173,19 @@ La velocidad nunca debe estar por encima de la seguridad, la calidad y la conser
 - [[Registro-de-Decisiones]]
 - [[Arquitectura-General]]
 - [[Plan-de-Pruebas]]
+- [[ACTIVE_TASKS]]
+- [[OWNERS]]
+
+
+## 14. Ramas por tarea, reservas y revisión
+
+- Usa exactamente una rama por tarea: `task/<ID>-<slug>`; las cuentas no mantienen ramas permanentes.
+- Antes de editar, revisa `git status`, la rama, `ACTIVE_TASKS.md`, `OWNERS.md` y los Pull Requests abiertos. Comprueba también que no haya cambios locales sin guardar en las rutas asignadas.
+- Registra el ID en Backlog.md y reserva las rutas exactas o patrones en ACTIVE_TASKS.md. El Pull Request inicial de reserva solo debe cambiar esos dos registros. Espera que se integre antes de editar las rutas reservadas. INFRA-001 fue la única excepción de arranque: registró e implementó el scaffold en un solo Pull Request porque el registro y el control todavía no existían.
+- El hook compartido `.claude/settings.json` bloquea las herramientas Edit/Write de Claude Code en `main`, fuera de una reserva integrada o sobre rutas activas de otra tarea. No uses Bash o editores externos para evadirlo; GitHub Actions es la barrera de integración y también rechaza cambios fuera de la reserva, cambios a filas ajenas, reservas duplicadas y rutas solapadas en Pull Requests abiertos. El hook local no es un bloqueo del sistema de archivos y puede saltarse fuera de las herramientas Edit/Write.
+- Usa una aprobación humana distinta del autor. Cuenta A coordina la integración, pero no aprueba su propio cambio. Los controles requeridos son `reservation-check` y `rojo-build`.
+- La protección efectiva de main debe activarse en GitHub Settings; el workflow por sí solo no impide un push directo. Exige PR, una aprobación distinta del autor, `reservation-check`, `rojo-build`, rama actualizada y bloquea force push/eliminación de main. Para limitar escritura a las cuatro personas, configura Write solo para sus cuentas exactas y permiso base Read. Para limitar borrado de repositorio, desactiva el borrado/transferencia por miembros en la organización; los propietarios siguen teniendo ese poder.
+- Al cerrar una tarea, actualiza Backlog.md y marca su reserva Completada en el Pull Request final. Una reserva En revisión se mantiene hasta que el Pull Request de esa tarea se integre.
 
 ---
 

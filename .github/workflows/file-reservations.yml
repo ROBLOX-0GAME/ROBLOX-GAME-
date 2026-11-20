@@ -1,0 +1,67 @@
+name: coordination
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - edited
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: coordination-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  reservation-check:
+    name: reservation-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test reservation rules
+        run: python -m unittest discover -s .github/scripts -p "test_*.py"
+      - name: Check task reservation and overlapping pull requests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python .github/scripts/check_file_reservations.py
+
+  rojo-build:
+    name: rojo-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pull request
+        uses: actions/checkout@v4
+      - name: Install the pinned Rojo release
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python -c 'import tomllib; print(tomllib.load(open("game/rokit.toml", "rb"))["tools"]["rojo"].rsplit("@", 1)[1])')"
+          archive="$RUNNER_TEMP/rojo.zip"
+          unpack="$RUNNER_TEMP/rojo"
+          mkdir -p "$unpack" "$RUNNER_TEMP/bin"
+          curl --fail --location --silent --show-error \
+            "https://github.com/rojo-rbx/rojo/releases/download/v${version}/rojo-${version}-linux-x86_64.zip" \
+            --output "$archive"
+          unzip -q "$archive" -d "$unpack"
+          binary="$(find "$unpack" -type f -name rojo -print -quit)"
+          test -n "$binary"
+          install -m 755 "$binary" "$RUNNER_TEMP/bin/rojo"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Build the initial place file
+        run: rojo build game/default.project.json --output "$RUNNER_TEMP/ROBLOX-GAME.rbxlx"
