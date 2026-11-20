@@ -1,19 +1,30 @@
 --[[
-	WorldService — construye el mapa base al iniciar el servidor.
+	WorldService — construye el mapa al iniciar el servidor.
 
-	El mapa se genera con código para que todo el proyecto viva en texto (Git).
-	Es un mapa funcional y provisional: la Cuenta B puede reemplazar las piezas
-	visuales por modelos definitivos mientras conserve los nombres de las
-	estaciones y sus ProximityPrompt.
+	Estructura (vista desde arriba, el camino avanza hacia +Z):
 
-	Estaciones:
-	  workshop → Taller (fabricar relojes)
-	  shop     → Tienda (vender relojes y comprar mejoras)
-	  museum   → Museo (exhibir relojes para ingreso pasivo)
+	  [Base segura: Z < Config.HUB_MAX_Z]  aparición, Taller, Tienda, Museo...
+	  [Zona 1: Barrio Humilde]             4 casas, sin puerta de velocidad
+	  [Puerta de velocidad 18] [Zona 2]    ...
+	  ...
+	  [Puerta de velocidad 34] [Zona 5: Colina de los Millonarios]
+
+	Las puertas de velocidad son sólidas en el servidor; cada cliente las vuelve
+	atravesables solo para su personaje si tiene la velocidad (ver Ui.luau).
+	El servidor además rechaza robos en zonas sin la velocidad necesaria.
+
+	El mapa es funcional y provisional: la Cuenta B puede sustituir lo visual
+	conservando etiquetas (CollectionService) y atributos.
+	Etiquetas: "Station" (StationId), "SpeedGate" (MinSpeed, ZoneIndex), "GuideHouse".
 ]]
 
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 
@@ -21,29 +32,35 @@ local WorldService = {}
 
 WorldService.Folder = nil
 WorldService.Stations = {} -- [stationId] = BasePart
--- Rectángulo donde aparecen las cajas de piezas (en el plano XZ)
-WorldService.CollectArea = { minX = -90, maxX = 90, minZ = 20, maxZ = 110 }
+
+-- Medidas del mapa
+local HALF_WIDTH = 110 -- el mapa va de X = -110 a X = 110
+local ZONE_START = 30 -- Z donde empieza la zona 1
+local ZONE_LENGTH = 140 -- distancia entre el inicio de dos zonas
+local ZONE_DEPTH = 130 -- largo útil de cada zona
+local MAP_END = ZONE_START + #GameData.Zones * ZONE_LENGTH
+local MAP_BACK = -100
 
 local STATIONS = {
 	{
 		id = "workshop",
 		title = "Taller",
 		action = "Fabricar relojes",
-		position = Vector3.new(-45, 0, -30),
+		position = Vector3.new(-35, 0, -25),
 		color = Color3.fromRGB(196, 134, 72),
 	},
 	{
 		id = "shop",
 		title = "Tienda",
 		action = "Vender y mejorar",
-		position = Vector3.new(45, 0, -30),
+		position = Vector3.new(35, 0, -25),
 		color = Color3.fromRGB(74, 160, 96),
 	},
 	{
 		id = "museum",
 		title = "Museo",
 		action = "Exhibir relojes",
-		position = Vector3.new(0, 0, -70),
+		position = Vector3.new(0, 0, -65),
 		color = Color3.fromRGB(92, 120, 200),
 	},
 }
@@ -58,14 +75,14 @@ local function makePart(props)
 	end
 	return part
 end
+WorldService.makePart = makePart
 
-local function makeSign(parent, title, subtitle, height)
+local function makeSign(parent, title, subtitle, height, maxDistance)
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "Cartel"
-	billboard.Size = UDim2.fromOffset(220, 70)
+	billboard.Size = UDim2.fromOffset(240, 70)
 	billboard.StudsOffset = Vector3.new(0, height, 0)
-	billboard.AlwaysOnTop = false
-	billboard.MaxDistance = 140
+	billboard.MaxDistance = maxDistance or 140
 	billboard.Parent = parent
 
 	local titleLabel = Instance.new("TextLabel")
@@ -88,11 +105,15 @@ local function makeSign(parent, title, subtitle, height)
 	subtitleLabel.TextStrokeTransparency = 0.5
 	subtitleLabel.Text = subtitle
 	subtitleLabel.Parent = billboard
+	return billboard
 end
+WorldService.makeSign = makeSign
 
-local function buildStation(folder, info)
+-- Crea una estación con su menú. Otros servicios (jefe, mascotas) también la usan.
+function WorldService.buildStation(info)
 	local model = Instance.new("Model")
 	model.Name = info.title
+	model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
 
 	local base = makePart({
 		Name = "Mostrador",
@@ -102,26 +123,25 @@ local function buildStation(folder, info)
 		Material = Enum.Material.WoodPlanks,
 	})
 	base:SetAttribute("StationId", info.id)
+	CollectionService:AddTag(base, "Station")
 	base.Parent = model
 
-	local roof = makePart({
+	makePart({
 		Name = "Techo",
 		Size = Vector3.new(18, 1, 12),
 		Position = info.position + Vector3.new(0, 11, 0),
 		Color = info.color:Lerp(Color3.new(0, 0, 0), 0.3),
 		Material = Enum.Material.SmoothPlastic,
-	})
-	roof.Parent = model
+	}).Parent = model
 
 	for _, offset in { Vector3.new(-8, 0, -5), Vector3.new(8, 0, -5), Vector3.new(-8, 0, 5), Vector3.new(8, 0, 5) } do
-		local pillar = makePart({
+		makePart({
 			Name = "Columna",
 			Size = Vector3.new(1, 10.5, 1),
 			Position = info.position + offset + Vector3.new(0, 5.25, 0),
 			Color = Color3.fromRGB(230, 225, 210),
 			Material = Enum.Material.SmoothPlastic,
-		})
-		pillar.Parent = model
+		}).Parent = model
 	end
 
 	makeSign(base, info.title, info.action, 10)
@@ -144,32 +164,143 @@ local function buildStation(folder, info)
 	end)
 
 	model.PrimaryPart = base
-	model.Parent = folder
+	model.Parent = WorldService.Folder
 	WorldService.Stations[info.id] = base
+	return base
+end
+
+-- Inicio y fin (en Z) de una zona.
+function WorldService.zoneBounds(zoneIndex)
+	local startZ = ZONE_START + (zoneIndex - 1) * ZONE_LENGTH
+	return startZ, startZ + ZONE_DEPTH
+end
+
+function WorldService.isInHub(position)
+	return position.Z < Config.HUB_MAX_Z
+end
+
+local function buildZone(folder, zoneIndex, zone)
+	local startZ, endZ = WorldService.zoneBounds(zoneIndex)
+	local model = Instance.new("Model")
+	model.Name = string.format("Zona%d_%s", zoneIndex, zone.id)
+
+	makePart({
+		Name = "Terreno",
+		Size = Vector3.new(HALF_WIDTH * 2, 0.2, endZ - startZ),
+		Position = Vector3.new(0, 0.1, (startZ + endZ) / 2),
+		Color = zone.color:Lerp(Color3.fromRGB(106, 168, 79), 0.55),
+		Material = Enum.Material.Grass,
+		CanCollide = false,
+	}).Parent = model
+
+	-- Cartel de la zona a la entrada del camino
+	local signPost = makePart({
+		Name = "CartelZona",
+		Size = Vector3.new(1, 8, 1),
+		Position = Vector3.new(14, 4, startZ + 4),
+		Color = Color3.fromRGB(90, 70, 50),
+		Material = Enum.Material.Wood,
+	})
+	makeSign(
+		signPost,
+		zone.name,
+		string.format("Zona %d · velocidad mínima %d", zoneIndex, zone.minSpeed),
+		6,
+		220
+	)
+	signPost.Parent = model
+
+	-- Puerta de velocidad (la zona 1 no tiene)
+	if zone.minSpeed > 0 then
+		local gate = Instance.new("Model")
+		gate.Name = "PuertaDeVelocidad"
+		gate.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+		local barrier = makePart({
+			Name = "Barrera",
+			Size = Vector3.new(HALF_WIDTH * 2, 40, 2),
+			Position = Vector3.new(0, 20, startZ - 5),
+			Color = Color3.fromRGB(230, 70, 70),
+			Material = Enum.Material.ForceField,
+			Transparency = 0.3,
+			CanCollide = true,
+		})
+		barrier:SetAttribute("MinSpeed", zone.minSpeed)
+		barrier:SetAttribute("ZoneIndex", zoneIndex)
+		CollectionService:AddTag(barrier, "SpeedGate")
+		barrier.Parent = gate
+		local label = makePart({
+			Name = "Rotulo",
+			Size = Vector3.new(1, 1, 1),
+			Position = Vector3.new(0, 8, startZ - 5),
+			Transparency = 1,
+			CanCollide = false,
+		})
+		makeSign(label, string.format("Velocidad %d", zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 220)
+		label.Parent = gate
+		gate.Parent = model
+	end
+
+	model.Parent = folder
+	return model
 end
 
 function WorldService.init()
 	local folder = Instance.new("Folder")
 	folder.Name = "Mapa"
+	WorldService.Folder = folder
 
-	-- Si la place ya trae una Baseplate, se deja como está y se construye encima.
+	-- Suelo general (0.1 sobre una Baseplate estándar para evitar parpadeo)
 	makePart({
 		Name = "Suelo",
-		Size = Vector3.new(320, 2, 320),
-		Position = Vector3.new(0, -0.9, 0), -- 0.1 sobre una Baseplate estándar para evitar parpadeo
+		Size = Vector3.new(HALF_WIDTH * 2 + 20, 2, MAP_END - MAP_BACK + 20),
+		Position = Vector3.new(0, -0.9, (MAP_END + MAP_BACK) / 2),
 		Color = Color3.fromRGB(106, 168, 79),
 		Material = Enum.Material.Grass,
 	}).Parent = folder
 
-	local area = WorldService.CollectArea
+	-- Base segura
 	makePart({
-		Name = "ZonaDeRecoleccion",
-		Size = Vector3.new(area.maxX - area.minX + 10, 0.2, area.maxZ - area.minZ + 10),
-		Position = Vector3.new((area.minX + area.maxX) / 2, 0.2, (area.minZ + area.maxZ) / 2),
-		Color = Color3.fromRGB(181, 155, 110),
-		Material = Enum.Material.Sand,
+		Name = "Base",
+		Size = Vector3.new(HALF_WIDTH * 2, 0.2, Config.HUB_MAX_Z - MAP_BACK),
+		Position = Vector3.new(0, 0.1, (Config.HUB_MAX_Z + MAP_BACK) / 2),
+		Color = Color3.fromRGB(205, 190, 160),
+		Material = Enum.Material.Pavement,
 		CanCollide = false,
 	}).Parent = folder
+	local baseSign = makePart({
+		Name = "CartelBase",
+		Size = Vector3.new(1, 1, 1),
+		Position = Vector3.new(0, 6, Config.HUB_MAX_Z - 2),
+		Transparency = 1,
+		CanCollide = false,
+	})
+	makeSign(baseSign, "BASE SEGURA", "Aquí el botín se guarda y nadie te persigue", 2, 200)
+	baseSign.Parent = folder
+
+	-- Camino central
+	makePart({
+		Name = "Camino",
+		Size = Vector3.new(22, 0.2, MAP_END - Config.HUB_MAX_Z),
+		Position = Vector3.new(0, 0.25, (MAP_END + Config.HUB_MAX_Z) / 2),
+		Color = Color3.fromRGB(70, 70, 75),
+		Material = Enum.Material.Asphalt,
+		CanCollide = false,
+	}).Parent = folder
+
+	-- Muros invisibles alrededor del mapa
+	for _, wall in {
+		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(-HALF_WIDTH - 1, 40, (MAP_END + MAP_BACK) / 2) },
+		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(HALF_WIDTH + 1, 40, (MAP_END + MAP_BACK) / 2) },
+		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_BACK - 1) },
+		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_END + 1) },
+	} do
+		makePart({
+			Name = "Limite",
+			Size = wall[1],
+			Position = wall[2],
+			Transparency = 1,
+		}).Parent = folder
+	end
 
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "Aparicion"
@@ -182,12 +313,19 @@ function WorldService.init()
 	spawn.Material = Enum.Material.SmoothPlastic
 	spawn.Parent = folder
 
-	for _, info in STATIONS do
-		buildStation(folder, info)
+	local zonesFolder = Instance.new("Folder")
+	zonesFolder.Name = "Zonas"
+	zonesFolder.Parent = folder
+	WorldService.ZonesFolder = zonesFolder
+	for zoneIndex, zone in GameData.Zones do
+		buildZone(zonesFolder, zoneIndex, zone)
 	end
 
 	folder.Parent = Workspace
-	WorldService.Folder = folder
+
+	for _, info in STATIONS do
+		WorldService.buildStation(info)
+	end
 end
 
 -- ¿Está el personaje del jugador cerca de la estación?

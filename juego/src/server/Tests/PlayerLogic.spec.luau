@@ -165,7 +165,14 @@ return function(t)
 
 	t.test("rollPart devuelve piezas válidas y la suerte ayuda", function()
 		t.eq(PlayerLogic.rollPart(1, 0), GameData.PartOrder[1], "roll 0 = primera pieza")
-		t.eq(PlayerLogic.rollPart(1, 0.999999), GameData.PartOrder[#GameData.PartOrder], "roll ~1 = última pieza")
+		local lastWithWeight = nil
+		for _, partId in GameData.PartOrder do
+			if GameData.Parts[partId].weight > 0 then
+				lastWithWeight = partId
+			end
+		end
+		t.eq(PlayerLogic.rollPart(1, 0.999999), lastWithWeight, "roll ~1 = última pieza con peso")
+		t.ok(PlayerLogic.rollPart(1, 0.999999) ~= "diamond", "sin tabla de zona no sale diamante")
 		local rng = Random.new(1234)
 		local rareNormal, rareLucky = 0, 0
 		for _ = 1, 4000 do
@@ -232,6 +239,83 @@ return function(t)
 
 		t.eq(PlayerLogic.reconcile({ coins = 5 }).tutorial, 1, "datos sin tutorial empiezan en 1")
 		t.eq(PlayerLogic.reconcile({ tutorial = 999 }).tutorial, #GameData.Tutorial + 1, "limita el paso máximo")
+	end)
+
+	t.test("DEV-003: robar, guardar en la base y perder el botín", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.stealPart(data, "ruby", 0.99), "roba un rubí")
+		t.eq(PlayerLogic.carriedCount(data), 1, "va al botín")
+		t.eq(data.parts.ruby, nil, "todavía no está guardado")
+		t.eq(PlayerLogic.freeSpace(data), Config.BASE_BACKPACK - 1, "el botín ocupa espacio")
+		t.eq(PlayerLogic.depositLoot(data), 1, "guarda 1 pieza")
+		t.eq(data.parts.ruby, 1, "ahora está en la mochila")
+		t.eq(data.stats.collected, 1, "cuenta para el tutorial")
+		PlayerLogic.stealPart(data, "gear", 0.99)
+		PlayerLogic.stealPart(data, "gear", 0.99)
+		t.eq(PlayerLogic.loseLoot(data), 2, "atrapado: pierde 2")
+		t.eq(PlayerLogic.carriedCount(data), 0, "botín vacío")
+		t.eq(data.parts.ruby, 1, "lo guardado no se pierde")
+		t.ok(not PlayerLogic.stealPart(data, "inventada", 0), "rechaza piezas desconocidas")
+	end)
+
+	t.test("DEV-003: la mochila limita el robo y la suerte da piezas extra", function()
+		local data = PlayerLogic.newData()
+		for _ = 1, Config.BASE_BACKPACK - 1 do
+			PlayerLogic.stealPart(data, "gear", 0.99)
+		end
+		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		local _, _, amount = PlayerLogic.stealPart(data, "gear", 0)
+		t.eq(amount, 1, "con 1 espacio libre roba solo 1 aunque tenga suerte")
+		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "mochila llena no roba")
+
+		local lucky = PlayerLogic.newData()
+		lucky.upgrades.luck = 2
+		local _, _, double = PlayerLogic.stealPart(lucky, "gear", 0)
+		t.eq(double, 2, "tirada baja con suerte = 2 piezas")
+		local _, _, single = PlayerLogic.stealPart(lucky, "gear", 0.99)
+		t.eq(single, 1, "tirada alta = 1 pieza")
+		t.eq(PlayerLogic.reconcile(lucky).carried.gear, nil, "al cargar datos el botín se descarta")
+	end)
+
+	t.test("DEV-003: zonas y velocidad", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.canEnterZone(data, 1), "zona 1 siempre abierta")
+		t.ok(not PlayerLogic.canEnterZone(data, 2), "zona 2 necesita velocidad")
+		t.ok(not PlayerLogic.canEnterZone(data, 99), "zona inexistente cerrada")
+		t.eq(PlayerLogic.highestZone(data), 1, "empieza en la zona 1")
+		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "respeta el tope de velocidad")
+		local previousMin = -1
+		for index, zone in GameData.Zones do
+			t.ok(zone.minSpeed > previousMin, "las zonas piden más velocidad en orden")
+			t.ok(zone.ownerSpeed < math.max(zone.minSpeed, Config.BASE_WALKSPEED), zone.name .. ": el dueño es alcanzable")
+			for partId in zone.weights do
+				t.ok(GameData.Parts[partId] ~= nil, zone.name .. " usa pieza válida " .. partId)
+			end
+			previousMin = zone.minSpeed
+			t.eq(#zone.owners, 4, zone.name .. " tiene 4 dueños")
+			t.ok(index >= 1, "índice válido")
+		end
+		t.ok(
+			PlayerLogic.walkSpeed(data) >= GameData.Zones[#GameData.Zones].minSpeed,
+			"la mejora de velocidad al máximo alcanza la última zona"
+		)
+	end)
+
+	t.test("DEV-003: zonas ricas dan piezas más raras", function()
+		local rng = Random.new(99)
+		local function rareShare(zone)
+			local rare = 0
+			for _ = 1, 3000 do
+				if not GameData.Parts[PlayerLogic.rollPart(1, rng:NextNumber(), zone.weights)].common then
+					rare += 1
+				end
+			end
+			return rare
+		end
+		local first = rareShare(GameData.Zones[1])
+		local last = rareShare(GameData.Zones[#GameData.Zones])
+		t.ok(last > first * 3, "la última zona da muchas más piezas raras")
 	end)
 
 	t.test("buildView es coherente", function()

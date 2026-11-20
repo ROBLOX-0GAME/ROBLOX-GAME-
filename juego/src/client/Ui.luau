@@ -11,12 +11,12 @@
 	manteniendo las llamadas a Ui.setState / Ui.openPanel / Ui.toast.
 ]]
 
+local CollectionService = game:GetService("CollectionService")
 local ContextActionService = game:GetService("ContextActionService")
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
@@ -474,6 +474,21 @@ local function renderBackpack()
 			)
 		)
 	end
+	if state.carriedCount > 0 then
+		addHeader("Botín encima (aún no es tuyo)")
+		for _, partId in GameData.PartOrder do
+			local amount = state.carried[partId]
+			if amount then
+				addRow(
+					string.format(
+						"<b>%s</b> × %d — llévalo a la base para guardarlo",
+						GameData.Parts[partId].name,
+						amount
+					)
+				)
+			end
+		end
+	end
 	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
 end
 
@@ -573,7 +588,22 @@ local function updateHud()
 		hud.xpText.Text = "Nivel máximo"
 	end
 	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
-	hud.backpack.Text = string.format("Mochila: %d/%d piezas", state.partCount, state.capacity)
+	hud.backpack.Text = string.format(
+		"Mochila: %d/%d piezas",
+		state.partCount + state.carriedCount,
+		state.capacity
+	)
+	hud.speed.Text = string.format(
+		"Velocidad: %d · Zona máx.: %s",
+		state.walkSpeed,
+		GameData.Zones[state.highestZone].name
+	)
+	if state.carriedCount > 0 then
+		hud.loot.Visible = true
+		hud.loot.Text = string.format("<b>Botín encima: %d</b> — ¡llévalo a la base!", state.carriedCount)
+	else
+		hud.loot.Visible = false
+	end
 	hud.museum.Text = string.format("Museo: +%d cada %d s", state.museumIncome, Config.MUSEUM_TICK_SECONDS)
 
 	local tutorial = state.tutorial
@@ -599,20 +629,41 @@ end
 
 local guide = { beam = nil, from = nil, to = nil, target = nil }
 
-local function findGuideTarget(guideId)
-	local map = Workspace:FindFirstChild("Mapa")
-	if not map then
-		return nil
-	end
-	if guideId == "collect" then
-		return map:FindFirstChild("ZonaDeRecoleccion")
-	end
-	for _, descendant in map:GetDescendants() do
-		if descendant:IsA("BasePart") and descendant:GetAttribute("StationId") == guideId then
-			return descendant
+-- Estación por id (etiqueta "Station"); funciona con streaming porque las
+-- estaciones son modelos persistentes.
+local function findStation(stationId)
+	for _, part in CollectionService:GetTagged("Station") do
+		if part:GetAttribute("StationId") == stationId then
+			return part
 		end
 	end
 	return nil
+end
+
+local function findGuideTarget(guideId)
+	if guideId == "house" then
+		return CollectionService:GetTagged("GuideHouse")[1]
+	end
+	return findStation(guideId)
+end
+
+-- Puertas de velocidad: se vuelven atravesables SOLO para este jugador si
+-- tiene la velocidad. El servidor igual rechaza robos sin la velocidad.
+local function updateGates()
+	if not state then
+		return
+	end
+	for _, gate in CollectionService:GetTagged("SpeedGate") do
+		local open = state.walkSpeed >= (gate:GetAttribute("MinSpeed") or 0)
+		gate.CanCollide = not open
+		if open then
+			gate.Color = COLORS.ok
+			gate.Transparency = 0.8
+		else
+			gate.Color = COLORS.error
+			gate.Transparency = 0.3
+		end
+	end
 end
 
 local function clearGuide()
@@ -704,8 +755,10 @@ local function buildHud()
 	hud.xpText.Parent = xpBar
 	hud.backpack = label("", 15, COLORS.muted, { LayoutOrder = 4 })
 	hud.museum = label("", 15, COLORS.muted, { LayoutOrder = 5 })
+	hud.speed = label("", 15, COLORS.muted, { LayoutOrder = 4 })
+	hud.loot = label("", 15, COLORS.error, { LayoutOrder = 4, Visible = false })
 	hud.objective = label("", 15, COLORS.accent, { LayoutOrder = 6, Visible = false })
-	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.museum, hud.objective } do
+	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.speed, hud.loot, hud.museum, hud.objective } do
 		item.Parent = stats
 	end
 	stats.Parent = gui
@@ -788,25 +841,14 @@ local function buildHud()
 	gui.Parent = player:WaitForChild("PlayerGui")
 end
 
--- Cierra el menú de estación si el jugador se aleja.
-local function findStation(stationId)
-	local map = Workspace:FindFirstChild("Mapa")
-	if not map then
-		return nil
-	end
-	for _, descendant in map:GetDescendants() do
-		if descendant:IsA("BasePart") and descendant:GetAttribute("StationId") == stationId then
-			return descendant
-		end
-	end
-	return nil
-end
-
+-- Cada medio segundo: guía, puertas (por si aparecieron con streaming) y
+-- cierre del menú si el jugador se aleja de la estación.
 local function watchDistance()
 	task.spawn(function()
 		while true do
 			task.wait(0.5)
 			updateGuide()
+			updateGates()
 			if openPanelId and openPanelId ~= "backpack" then
 				local station = findStation(openPanelId)
 				local character = player.Character
@@ -838,6 +880,7 @@ end
 function Ui.setState(newState)
 	state = newState
 	updateHud()
+	updateGates()
 	if openPanelId then
 		render(true)
 	end

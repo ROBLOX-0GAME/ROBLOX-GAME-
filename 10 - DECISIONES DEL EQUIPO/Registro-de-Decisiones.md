@@ -120,3 +120,9 @@ Los agentes deben:
 - **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas / UX.
 - **Propuesta:** recoger 5 cajas (20) → fabricar (30) → vender (30) → exhibir (40) → mejorar (50); guía luminosa hacia el destino. Textos en `juego/src/shared/GameData.luau`.
 - **Documentos afectados:** [[GDD]], [[UI-UX]], [[Backlog]].
+
+#### DEC-004 — Bucle principal: robo por zonas con persecución
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn; falta que el equipo apruebe las cifras). **Área:** Gameplay / economía.
+- **Propuesta:** 5 zonas con puertas de velocidad; botín que se pierde si el dueño te atrapa; reemplaza a las cajas de DEC-002. Detalle en [[GDD]] §15.2.
+- **Reemplaza en parte:** DEC-002 (la recolección por cajas).

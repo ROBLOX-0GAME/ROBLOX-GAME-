@@ -23,7 +23,8 @@ function PlayerLogic.newData()
 		version = Config.DATA_VERSION,
 		coins = Config.START_COINS,
 		xp = 0,
-		parts = {}, -- [partId] = cantidad
+		parts = {}, -- [partId] = cantidad guardada (segura)
+		carried = {}, -- [partId] = botín robado que llevas encima; se pierde si te atrapan
 		watches = {}, -- [watchId] = cantidad en inventario
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
@@ -62,6 +63,8 @@ function PlayerLogic.reconcile(data)
 	data.coins = nonNegativeInt(data.coins)
 	data.xp = nonNegativeInt(data.xp)
 	data.parts = cleanCounts(data.parts, GameData.Parts)
+	-- El botín no guardado en la base se pierde al salir del juego.
+	data.carried = {}
 	data.watches = cleanCounts(data.watches, GameData.Watches)
 	data.museum = cleanCounts(data.museum, GameData.Watches)
 
@@ -118,16 +121,47 @@ function PlayerLogic.partCount(data)
 	return sumCounts(data.parts)
 end
 
+function PlayerLogic.carriedCount(data)
+	return sumCounts(data.carried)
+end
+
+-- Espacio libre en la mochila: capacidad - piezas guardadas - botín encima.
+function PlayerLogic.freeSpace(data)
+	return math.max(0, PlayerLogic.backpackCapacity(data) - PlayerLogic.partCount(data) - PlayerLogic.carriedCount(data))
+end
+
 function PlayerLogic.walkSpeed(data)
-	return Config.BASE_WALKSPEED + PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
+	local base = Config.BASE_WALKSPEED + PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
+	return math.min(Config.MAX_WALKSPEED, base)
+end
+
+-- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?
+function PlayerLogic.canEnterZone(data, zoneIndex)
+	local zone = GameData.Zones[zoneIndex]
+	if not zone then
+		return false
+	end
+	return PlayerLogic.walkSpeed(data) >= zone.minSpeed
+end
+
+-- Zona más lejana a la que puede entrar.
+function PlayerLogic.highestZone(data)
+	local highest = 1
+	for index in GameData.Zones do
+		if PlayerLogic.canEnterZone(data, index) and index > highest then
+			highest = index
+		end
+	end
+	return highest
 end
 
 function PlayerLogic.jumpHeight(data)
 	return Config.BASE_JUMPHEIGHT + PlayerLogic.upgradeLevel(data, "jump") * GameData.Upgrades.jump.step
 end
 
-function PlayerLogic.luckMultiplier(data)
-	return 1 + PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step
+-- Probabilidad (0-1) de robar 2 piezas en vez de 1.
+function PlayerLogic.extraPartChance(data)
+	return PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step
 end
 
 function PlayerLogic.museumSlots(data)
@@ -201,12 +235,17 @@ function PlayerLogic.canCraft(data, watchId)
 end
 
 -- Elige una pieza al azar. roll es un número en [0, 1).
-function PlayerLogic.rollPart(luckMultiplier, roll)
+-- zoneWeights (opcional): tabla [partId] = peso de una zona; si falta, usa el peso base.
+-- luckMultiplier multiplica el peso de las piezas que no son comunes.
+function PlayerLogic.rollPart(luckMultiplier, roll, zoneWeights)
 	local total = 0
 	local weights = {}
 	for index, partId in GameData.PartOrder do
 		local part = GameData.Parts[partId]
 		local weight = part.weight
+		if zoneWeights then
+			weight = zoneWeights[partId] or 0
+		end
 		if not part.common then
 			weight *= luckMultiplier
 		end
@@ -214,13 +253,17 @@ function PlayerLogic.rollPart(luckMultiplier, roll)
 		total += weight
 	end
 	local target = roll * total
+	local lastValid = GameData.PartOrder[1]
 	for index, partId in GameData.PartOrder do
-		target -= weights[index]
-		if target < 0 then
-			return partId
+		if weights[index] > 0 then
+			lastValid = partId
+			target -= weights[index]
+			if target < 0 then
+				return partId
+			end
 		end
 	end
-	return GameData.PartOrder[#GameData.PartOrder]
+	return lastValid
 end
 
 -- Valor actual de lo que mide un paso del tutorial.
@@ -270,6 +313,11 @@ function PlayerLogic.buildView(data)
 		levelXp = levelXp,
 		levelNeed = levelNeed,
 		parts = table.clone(data.parts),
+		carried = table.clone(data.carried),
+		carriedCount = PlayerLogic.carriedCount(data),
+		freeSpace = PlayerLogic.freeSpace(data),
+		walkSpeed = PlayerLogic.walkSpeed(data),
+		highestZone = PlayerLogic.highestZone(data),
 		watches = table.clone(data.watches),
 		museum = table.clone(data.museum),
 		upgrades = table.clone(data.upgrades),
@@ -309,12 +357,52 @@ function PlayerLogic.addPart(data, partId)
 	if not part then
 		return false, "Pieza desconocida."
 	end
-	if PlayerLogic.partCount(data) >= PlayerLogic.backpackCapacity(data) then
+	if PlayerLogic.freeSpace(data) < 1 then
 		return false, "Mochila llena: fabrica relojes, vende piezas en la Tienda o tira piezas desde la Mochila."
 	end
 	data.parts[partId] = (data.parts[partId] or 0) + 1
 	data.stats.collected += 1
 	return true, string.format("+1 %s (%s)", part.name, part.rarity)
+end
+
+-- Roba una pieza en una casa: va al botín que llevas encima (DEV-003).
+-- bonusRoll en [0, 1): si es menor que la suerte, roba 2 (si caben).
+-- Devuelve ok, mensaje, cantidad.
+function PlayerLogic.stealPart(data, partId, bonusRoll)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida.", 0
+	end
+	local free = PlayerLogic.freeSpace(data)
+	if free < 1 then
+		return false, "Mochila llena: vuelve a la base, fabrica relojes o vende piezas.", 0
+	end
+	local amount = 1
+	if free >= 2 and bonusRoll < PlayerLogic.extraPartChance(data) then
+		amount = 2
+	end
+	data.carried[partId] = (data.carried[partId] or 0) + amount
+	local message = string.format("Robaste %d %s (%s). ¡Llévalo a la base!", amount, part.name, part.rarity)
+	return true, message, amount
+end
+
+-- Guarda el botín al llegar a la base. Devuelve cuántas piezas se guardaron.
+function PlayerLogic.depositLoot(data)
+	local total = 0
+	for partId, amount in data.carried do
+		data.parts[partId] = (data.parts[partId] or 0) + amount
+		total += amount
+	end
+	data.carried = {}
+	data.stats.collected += total
+	return total
+end
+
+-- El dueño te atrapó (o caíste): se pierde el botín. Devuelve cuántas piezas se perdieron.
+function PlayerLogic.loseLoot(data)
+	local total = PlayerLogic.carriedCount(data)
+	data.carried = {}
+	return total
 end
 
 -- Devuelve ok, mensaje, subióDeNivel

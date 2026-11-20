@@ -192,3 +192,16 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Completar los 5 objetivos con datos nuevos; premios recibidos una sola vez | Manual en Studio | Pendiente |
 | La guía apunta al destino correcto, se oculta al llegar y vuelve tras reaparecer | Manual en Studio | Pendiente |
 | Corrección de BUG-001: vender piezas en la Tienda y tirarlas desde la Mochila | Manual en Studio | Pendiente |
+
+## 11. Pruebas de DEV-003 (robo por zonas)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 25 pruebas de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| Robar en la zona 1 y llegar a la base: el botín pasa a la mochila | Manual | Pendiente |
+| Dejarse atrapar: se pierde solo el botín, no lo guardado | Manual | Pendiente |
+| Reiniciar el personaje con botín encima: se pierde el botín | Manual | Pendiente |
+| La puerta de la zona 2 bloquea con velocidad 16 y deja pasar con 18 | Manual | Pendiente |
+| 2 jugadores roban la misma casa: el dueño persigue a uno y luego al otro | Multijugador | Pendiente |
+| El dueño no se atasca al salir de la casa | Manual | Pendiente |

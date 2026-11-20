@@ -155,6 +155,25 @@ Cinco objetivos en orden que enseñan el bucle principal: recoger 5 cajas → fa
 
 **Documentos relacionados:** [[Changelog]], [[GDD]], [[Plan-de-Pruebas]], [[Registro-de-Decisiones]].
 
+### DEV-003 — Robo por zonas con persecución (nuevo bucle principal)
+
+- **ID:** DEV-003 · **Responsable:** Jhonn · **Cuenta Claude:** Claude 1 — Cuenta A · **Revisor:** Zadiel; Cuenta B revisa mapa y casas.
+- **Área:** Gameplay, sistemas, economía. **Prioridad:** Crítica (define el juego). **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-003-robo-zonas` (encadenada: DEV-001 → DEV-002 → DEV-003). **Fecha:** 2026-11-20.
+
+**Descripción:** reemplaza las cajas por 5 zonas con 20 casas, piezas robables por rareza, botín que se pierde si te atrapan, dueños que persiguen y puertas de velocidad. Diseño en [[GDD]] §15.
+
+**Rutas:** `juego/src/shared/{Config,GameData,PlayerLogic}.luau`, `juego/src/server/Services/{WorldService,HouseService,OwnerNpc}.luau`, `juego/src/server/Main.server.luau`, `juego/src/server/Tests/PlayerLogic.spec.luau`, `juego/src/client/{Ui,Main.client}.luau`; se elimina `PartSpawner.luau`.
+
+**Criterios de aceptación:**
+
+- [x] 5 zonas, cada una más exigente y con mejores piezas; puertas de velocidad por jugador.
+- [x] Robar → botín → persecución al salir → guardar en la base o perderlo al ser atrapado.
+- [x] El servidor valida zona, distancia y espacio; el botín no se guarda entre sesiones.
+- [x] 4 pruebas nuevas (25 en total).
+- [ ] Prueba en Studio: robar en la zona 1, escapar, ser atrapado, cruzar una puerta tras mejorar la velocidad.
+- [ ] El equipo aprueba zonas y cifras (DEC-004).
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea

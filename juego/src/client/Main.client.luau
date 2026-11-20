@@ -28,4 +28,4 @@ openPanelRemote.OnClientEvent:Connect(function(panelId)
 	Ui.openPanel(panelId)
 end)
 
-Ui.toast("¡Bienvenido a BUILD A WATCH! Recoge cajas de piezas en la zona de arena.", "info")
+Ui.toast("¡Bienvenido a BUILD A WATCH! Roba piezas en las casas y vuelve a la base antes de que te atrape el dueño.", "info")

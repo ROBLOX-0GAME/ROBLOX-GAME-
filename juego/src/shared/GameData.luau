@@ -1,25 +1,49 @@
 --[[
-	GameData — catálogo de piezas, relojes y mejoras.
+	GameData — catálogo de piezas, relojes, mejoras, zonas y tutorial.
 
-	Todo el contenido y sus cifras son PROPUESTA DEV-001, pendiente de
-	aprobación del equipo. Los textos visibles están en español.
+	Todo el contenido y sus cifras son PROPUESTA, pendiente de aprobación del
+	equipo. Los textos visibles están en español.
 ]]
 
 local GameData = {}
 
--- Piezas que salen de las cajas del área de recolección.
--- weight: probabilidad relativa. La suerte multiplica el peso de lo que no es común.
--- sell: monedas al vender la pieza suelta en la Tienda (BUG-001: salida si la
--- mochila se llena). Es bajo a propósito: fabricar relojes siempre rinde más.
+-- Piezas. Se roban en las casas de cada zona (ver GameData.Zones).
+-- weight: probabilidad base (la usa rollPart sin tabla de zona)
+-- sell: monedas al vender la pieza suelta en la Tienda (salida de BUG-001; menor que fabricar)
+-- holdTime: segundos manteniendo el botón para robarla
 GameData.Parts = {
-	gear = { id = "gear", name = "Engranaje", rarity = "Común", common = true, weight = 40, sell = 2 },
-	spring = { id = "spring", name = "Resorte", rarity = "Común", common = true, weight = 30, sell = 2 },
-	screw = { id = "screw", name = "Tornillo", rarity = "Común", common = true, weight = 30, sell = 2 },
-	crystal = { id = "crystal", name = "Cristal", rarity = "Poco común", common = false, weight = 14, sell = 6 },
-	strap = { id = "strap", name = "Correa", rarity = "Poco común", common = false, weight = 12, sell = 6 },
-	ruby = { id = "ruby", name = "Rubí", rarity = "Raro", common = false, weight = 4, sell = 25 },
+	gear = { id = "gear", name = "Engranaje", rarity = "Común", common = true, weight = 40, sell = 2, holdTime = 0.3 },
+	spring = { id = "spring", name = "Resorte", rarity = "Común", common = true, weight = 30, sell = 2, holdTime = 0.3 },
+	screw = { id = "screw", name = "Tornillo", rarity = "Común", common = true, weight = 30, sell = 2, holdTime = 0.3 },
+	crystal = {
+		id = "crystal",
+		name = "Cristal",
+		rarity = "Poco común",
+		common = false,
+		weight = 14,
+		sell = 6,
+		holdTime = 0.6,
+	},
+	strap = { id = "strap", name = "Correa", rarity = "Poco común", common = false, weight = 12, sell = 6, holdTime = 0.6 },
+	ruby = { id = "ruby", name = "Rubí", rarity = "Raro", common = false, weight = 4, sell = 25, holdTime = 1 },
+	diamond = {
+		id = "diamond",
+		name = "Diamante",
+		rarity = "Legendario",
+		common = false,
+		weight = 0, -- solo aparece en zonas ricas
+		sell = 80,
+		holdTime = 1.5,
+	},
 }
-GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby" }
+GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby", "diamond" }
+
+GameData.RarityColors = {
+	["Común"] = Color3.fromRGB(170, 170, 180),
+	["Poco común"] = Color3.fromRGB(80, 150, 230),
+	["Raro"] = Color3.fromRGB(220, 60, 70),
+	["Legendario"] = Color3.fromRGB(255, 200, 40),
+}
 
 -- Relojes que se fabrican en el taller.
 -- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender
@@ -61,8 +85,17 @@ GameData.Watches = {
 		income = 25,
 		cost = { gear = 8, spring = 4, crystal = 4, strap = 2, ruby = 2 },
 	},
+	millionaire = {
+		id = "millionaire",
+		name = "Reloj del millonario",
+		level = 8,
+		xp = 400,
+		sell = 5000,
+		income = 60,
+		cost = { gear = 10, spring = 6, crystal = 6, strap = 4, ruby = 4, diamond = 2 },
+	},
 }
-GameData.WatchOrder = { "pocket", "wrist", "chrono", "royal" }
+GameData.WatchOrder = { "pocket", "wrist", "chrono", "royal", "millionaire" }
 
 -- Mejoras compradas con monedas. Precio del siguiente nivel:
 -- floor(baseCost * growth ^ nivelActual)
@@ -79,10 +112,10 @@ GameData.Upgrades = {
 	speed = {
 		id = "speed",
 		name = "Velocidad",
-		desc = "+2 de velocidad al caminar",
-		maxLevel = 5,
+		desc = "+2 de velocidad (abre zonas más ricas)",
+		maxLevel = 10,
 		baseCost = 150,
-		growth = 2,
+		growth = 1.8,
 		step = 2,
 	},
 	jump = {
@@ -97,11 +130,11 @@ GameData.Upgrades = {
 	luck = {
 		id = "luck",
 		name = "Suerte",
-		desc = "+15% de piezas poco comunes y raras",
+		desc = "+7.5% de probabilidad de robar 2 piezas en vez de 1",
 		maxLevel = 5,
 		baseCost = 250,
 		growth = 2.2,
-		step = 0.15,
+		step = 0.075,
 	},
 	museum = {
 		id = "museum",
@@ -115,17 +148,70 @@ GameData.Upgrades = {
 }
 GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck", "museum" }
 
+-- Zonas de robo (DEV-003, PROPUESTA). Se recorren en línea recta desde la base.
+-- minSpeed: velocidad necesaria para cruzar la puerta de la zona y robar en ella
+-- ownerSpeed: velocidad del dueño que te persigue (algo menor que minSpeed:
+--   quien apenas cumple el mínimo puede escapar si no se deja alcanzar)
+-- weights: probabilidad relativa de cada pieza en las casas de la zona
+GameData.Zones = {
+	{
+		id = "humble",
+		name = "Barrio Humilde",
+		minSpeed = 0,
+		ownerSpeed = 14,
+		color = Color3.fromRGB(150, 120, 90),
+		owners = { "Don Tomás", "Doña Rosa", "Don Pepe", "Doña Lupe" },
+		weights = { gear = 40, spring = 30, screw = 30, crystal = 4, strap = 4 },
+	},
+	{
+		id = "worker",
+		name = "Barrio Obrero",
+		minSpeed = 18,
+		ownerSpeed = 17,
+		color = Color3.fromRGB(170, 110, 80),
+		owners = { "Señor Ramírez", "Señora Ortiz", "Señor Vega", "Señora Luna" },
+		weights = { gear = 30, spring = 25, screw = 25, crystal = 12, strap = 10, ruby = 1 },
+	},
+	{
+		id = "residential",
+		name = "Zona Residencial",
+		minSpeed = 22,
+		ownerSpeed = 21,
+		color = Color3.fromRGB(200, 200, 205),
+		owners = { "Licenciado Mora", "Doctora Paz", "Ingeniero Soto", "Arquitecta Real" },
+		weights = { gear = 20, spring = 20, screw = 15, crystal = 20, strap = 18, ruby = 5, diamond = 0.5 },
+	},
+	{
+		id = "mansions",
+		name = "Mansiones",
+		minSpeed = 28,
+		ownerSpeed = 26,
+		color = Color3.fromRGB(235, 225, 200),
+		owners = { "Magnate Duarte", "Condesa Ibarra", "Barón Salcedo", "Duquesa Alba" },
+		weights = { gear = 10, spring = 10, screw = 10, crystal = 25, strap = 25, ruby = 14, diamond = 3 },
+	},
+	{
+		id = "millionaires",
+		name = "Colina de los Millonarios",
+		minSpeed = 34,
+		ownerSpeed = 32,
+		color = Color3.fromRGB(240, 200, 90),
+		owners = { "Sir Oro", "Lady Platino", "Rey del Tiempo", "Reina del Cuarzo" },
+		weights = { gear = 5, spring = 5, screw = 5, crystal = 20, strap = 20, ruby = 30, diamond = 10 },
+	},
+}
+
 -- Tutorial guiado (DEV-002, PROPUESTA). Los pasos se completan en orden.
 -- stat: qué se mide (ver PlayerLogic.tutorialValue) · target: meta
 -- reward: monedas al completar · guide: a dónde apunta la guía en el mundo
 GameData.Tutorial = {
 	{
 		id = "collect",
-		text = "Recoge 5 cajas de piezas en la zona de arena",
+		text = "Roba 5 piezas en una casa y llévalas a la base",
 		stat = "collected",
 		target = 5,
 		reward = 20,
-		guide = "collect",
+		guide = "house",
 	},
 	{
 		id = "craft",

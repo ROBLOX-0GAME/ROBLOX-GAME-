@@ -1,9 +1,9 @@
 --[[
 	Config — valores técnicos y de balance de BUILD A WATCH!
 
-	IMPORTANTE: todas las cifras de balance (monedas, capacidades, tiempos)
-	son PROPUESTAS de la tarea DEV-001 y están pendientes de aprobación del
-	equipo. Cambiar un número aquí cambia el juego sin tocar otro código.
+	IMPORTANTE: todas las cifras de balance (monedas, capacidades, tiempos,
+	velocidades) son PROPUESTAS y están pendientes de aprobación del equipo.
+	Cambiar un número aquí cambia el juego sin tocar otro código.
 ]]
 
 local Config = {
@@ -18,8 +18,9 @@ local Config = {
 
 	-- Jugador (bases antes de mejoras)
 	START_COINS = 0,
-	BASE_BACKPACK = 20, -- piezas que caben en la mochila
+	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
 	BASE_WALKSPEED = 16,
+	MAX_WALKSPEED = 60, -- tope de seguridad para la física
 	BASE_JUMPHEIGHT = 7.2,
 	BASE_MUSEUM_SLOTS = 3,
 	MAX_WATCHES_PER_TYPE = 999,
@@ -29,12 +30,18 @@ local Config = {
 	MAX_LEVEL = 20,
 
 	-- Mundo
-	PART_SPAWN_COUNT = 30,
-	PART_RESPAWN_SECONDS = 8,
+	HUB_MAX_Z = 20, -- todo lo que tenga Z menor es la base (zona segura)
+	HOUSE_SPOT_RESPAWN_SECONDS = 20, -- una pieza robada reaparece tras este tiempo
 	MUSEUM_TICK_SECONDS = 10,
 
+	-- Robo y persecución (DEV-003)
+	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en salir tras de ti
+	CHASE_MAX_SECONDS = 25, -- el dueño se rinde después de este tiempo
+	CHASE_LOSE_DISTANCE = 140, -- el dueño se rinde si te alejas tanto
+	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
+
 	-- Seguridad
-	INTERACT_DISTANCE = 14, -- distancia máxima para recoger una caja
+	INTERACT_DISTANCE = 14, -- distancia máxima para robar una pieza
 	STATION_DISTANCE = 20, -- distancia máxima a una estación para usar su menú
 	REQUESTS_PER_SECOND = 8, -- límite de solicitudes cliente → servidor
 	MAX_SELL_AMOUNT = 999,

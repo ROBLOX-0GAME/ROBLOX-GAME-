@@ -60,3 +60,18 @@ Reglas:
 1. Jhonn: `python juego/build.py`, Play en Studio y confirmar `[Pruebas] 17 correctas, 0 fallidas`.
 2. Completar los 5 objetivos con datos nuevos y comprobar que la guía apunta bien.
 3. Revisión de Zadiel y aprobación de textos y premios (DEC-003).
+
+---
+
+## 4. DEV-003 — Robo por zonas con persecución
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Rama:** `task/DEV-003-robo-zonas`
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-003 · Paso 1 — Dirección del juego.** Jhonn define la estructura: correr por zonas cada vez más ricas, entrar en casas con piezas de distintas rarezas, el dueño persigue al salir y la velocidad decide hasta dónde llegas (las mascotas multiplicarán la velocidad). Orden pedido: robo → jefe → mascotas. Diseño escrito en [[GDD]] §15. · Verificación: ejecutada.
+- **2026-11-20 · DEV-003 · Paso 2 — Datos.** `GameData`: 5 zonas con 4 dueños cada una, pieza Diamante, Reloj del millonario, Velocidad hasta nivel 10 y Suerte = probabilidad de robar 2 piezas. `Config`: base segura, tiempos de persecución y tope de velocidad 60. · Verificación: revisión estática.
+- **2026-11-20 · DEV-003 · Paso 3 — Reglas.** `PlayerLogic`: botín (`carried`), `stealPart`, `depositLoot`, `loseLoot`, `freeSpace`, `canEnterZone`, `highestZone` y `rollPart` con tabla de zona. Se elimina `luckMultiplier`. · Verificación: revisión estática.
+- **2026-11-20 · DEV-003 · Paso 4 — Mundo y casas.** `WorldService` se rehace: base segura, camino, 5 zonas, puertas de velocidad y muros límite; las estaciones se marcan con CollectionService y son persistentes con streaming. Nuevo `HouseService`: 20 casas con 3 piezas que reaparecen, robo validado, cola de persecución, botín guardado al entrar a la base y botín perdido al morir. Nuevo `OwnerNpc`: el dueño (un personaje de bloques) sale por la puerta y te persigue con `MoveTo`. Se elimina `PartSpawner`. · Verificación: revisión estática; prueba en Studio pendiente.
+- **2026-11-20 · DEV-003 · Paso 5 — Interfaz.** El HUD muestra la velocidad, la zona máxima y el botín encima. Las puertas se abren solo en el cliente que cumple la velocidad. La guía del tutorial apunta a la primera casa y la Mochila muestra el botín. El primer paso del tutorial pasa a ser «Roba 5 piezas y llévalas a la base». · Verificación: revisión estática.
+- **2026-11-20 · DEV-003 · Paso 6 — Pruebas.** Hay 4 pruebas nuevas: robo, guardado y pérdida del botín, límite de mochila con suerte, zonas y velocidad, y rareza por zona. Se ajusta la prueba de `rollPart`. Total: 25. · Verificación: **pendiente** en Studio. Revisión estática ejecutada: 0 errores, 42 `require`.
