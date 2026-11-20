@@ -561,12 +561,12 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Pipeline comprobado en macOS (Blender 5.3) y comandos de macOS documentados en `art/Pipeline-de-Arte.md` y `art/README.md`.
-- [ ] Mapas PBR en `art/texturas/export/tex_*_{color,normal,rugosidad,metalico}.png` y sus fuentes en `art/texturas/fuentes/`.
-- [ ] Los 6 relojes separados por material, con UV y menos de 3.000 triángulos, exportados a `art/export/modelos/` con el mismo nombre y su `.blend` en `art/blender/fuentes/`.
-- [ ] Vistas previas con materiales y hoja de contactos actualizada.
-- [ ] Sección «Materiales PBR de los relojes» en [[Pipeline-de-Arte]] con instrucciones de `SurfaceAppearance` para quien importe en Studio.
-- [ ] Changelog, memoria del área 12 y propuestas en el Registro de Decisiones (materiales PBR; MacBook también para arte).
+- [x] Pipeline comprobado en macOS (Blender 5.3) y comandos de macOS documentados en `art/Pipeline-de-Arte.md` y `art/README.md`.
+- [x] Mapas PBR en `art/texturas/export/tex_*_{color,normal,rugosidad,metalico}.png` y sus fuentes en `art/texturas/fuentes/`.
+- [x] Los 6 relojes separados por material, con UV y menos de 3.000 triángulos, exportados a `art/export/modelos/` con el mismo nombre y su `.blend` en `art/blender/fuentes/`.
+- [x] Vistas previas con materiales y hoja de contactos actualizada.
+- [x] Sección «Materiales PBR de los relojes» en [[Pipeline-de-Arte]] con instrucciones de `SurfaceAppearance` para quien importe en Studio.
+- [x] Changelog, memoria del área 12 y propuestas en el Registro de Decisiones (materiales PBR; MacBook también para arte).
 - [ ] La fila ART-006 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-003 (relojes base), DEV-014 (`AssetLibrary` acepta Models). No toca `game/src`.

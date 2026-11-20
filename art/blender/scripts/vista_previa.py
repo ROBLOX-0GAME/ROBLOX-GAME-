@@ -18,6 +18,36 @@ import arte_comun as A  # noqa: E402
 VISTAS = os.path.join(A.ART, "export", "vistas")
 
 
+def preparar_eevee(escena):
+    """EEVEE con un cielo en degradado (los metales necesitan algo que reflejar) y luz de estudio."""
+    motores = [i.identifier for i in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items]
+    escena.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in motores else "BLENDER_EEVEE_NEXT"
+    mundo = bpy.data.worlds.new("estudio")
+    escena.world = mundo
+    mundo.use_nodes = True
+    nodos, enlaces = mundo.node_tree.nodes, mundo.node_tree.links
+    coordenadas = nodos.new("ShaderNodeTexCoord")
+    separar = nodos.new("ShaderNodeSeparateXYZ")
+    rampa = nodos.new("ShaderNodeValToRGB")
+    rampa.color_ramp.elements[0].position = 0.35
+    rampa.color_ramp.elements[0].color = (0.08, 0.07, 0.06, 1)  # suelo oscuro
+    rampa.color_ramp.elements[1].position = 0.6
+    rampa.color_ramp.elements[1].color = (1.0, 0.98, 0.95, 1)  # cielo claro
+    mapa = nodos.new("ShaderNodeMapRange")
+    mapa.inputs["From Min"].default_value = -1
+    enlaces.new(coordenadas.outputs["Generated"], separar.inputs["Vector"])
+    enlaces.new(separar.outputs["Z"], mapa.inputs["Value"])
+    enlaces.new(mapa.outputs["Result"], rampa.inputs["Fac"])
+    fondo = nodos.get("Background")
+    enlaces.new(rampa.outputs["Color"], fondo.inputs["Color"])
+    fondo.inputs["Strength"].default_value = 1.2
+    bpy.ops.object.light_add(type="AREA", location=(-3, -4, 4))
+    luz = bpy.context.active_object
+    luz.data.energy = 300
+    luz.data.size = 3
+    luz.rotation_euler = (math.radians(50), 0, math.radians(-35))
+
+
 def renderizar(ruta_blend):
     bpy.ops.wm.open_mainfile(filepath=ruta_blend)
     escena = bpy.context.scene
@@ -32,9 +62,12 @@ def renderizar(ruta_blend):
     camara.rotation_euler = (math.atan2(math.hypot(direccion[0], direccion[1]), -direccion[2]), 0, math.atan2(direccion[1], direccion[0]) - math.pi / 2)
     escena.camera = camara
     bpy.ops.object.light_add(type="SUN", location=(5, -5, 10))
-    escena.render.engine = "BLENDER_WORKBENCH"
-    escena.display.shading.color_type = "TEXTURE"
-    escena.display.shading.light = "STUDIO"
+    if escena.get("render_pbr"):
+        preparar_eevee(escena)  # modelos con materiales PBR (relojes de ART-006)
+    else:
+        escena.render.engine = "BLENDER_WORKBENCH"
+        escena.display.shading.color_type = "TEXTURE"
+        escena.display.shading.light = "STUDIO"
     escena.render.resolution_x = 512
     escena.render.resolution_y = 512
     escena.render.film_transparent = True

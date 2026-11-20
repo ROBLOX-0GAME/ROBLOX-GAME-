@@ -5,13 +5,13 @@
 
 ## 1. Herramientas
 
-| Herramienta | Versión instalada (PC de Jhonn) | Uso |
+| Herramienta | Versión instalada (PC de Jhonn · MacBook de Zadiel) | Uso |
 |---|---|---|
-| Blender | 5.3 | Modelado 3D low-poly, exportación FBX. Admite scripts: Claude genera modelos base con Python. |
+| Blender | 5.3 · 5.3 (Apple Silicon) | Modelado 3D low-poly, exportación FBX. Admite scripts: Claude genera modelos base con Python. |
 | Krita | instalada | Paleta, texturas pintadas, iconos de la interfaz y arte 2D. |
-| Material Maker | 1.8 (portable, en el Escritorio) | Materiales procedurales (metal, madera, cristal) cuando se pase a más detalle. |
+| Material Maker | 1.8 (portable, en el Escritorio) · 1.8 (`/Applications`, binario universal) | Materiales procedurales (metal, madera, cristal) cuando se pase a más detalle. |
 | Audacity | 4 | Edición de efectos de sonido y música. |
-| Roblox Studio | — | Importar modelos (3D Importer), subir texturas y audio (Asset Manager). |
+| Roblox Studio | — (solo en las PC Windows; la MacBook no lo tiene) | Importar modelos (3D Importer), subir texturas y audio (Asset Manager). |
 | Substance 3D Painter | no instalado | Mencionado en la idea original; Material Maker cubre su papel por ahora. |
 
 ## 2. Estilo visual (propuesta)
@@ -52,10 +52,14 @@ Según DEC-001, **Roblox Studio guarda los assets ya importados en la place** y 
 
 ## 5. Flujo de trabajo
 
-1. **Modelo base:** ejecuta los generadores.
+1. **Modelo base:** ejecuta los generadores desde la raíz del repositorio.
    ```
+   # Windows
    "C:\Program Files\Blender Foundation\Blender 5.3\blender.exe" --background --factory-startup --python art/blender/scripts/generar_todo.py
+   # macOS
+   /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/blender/scripts/generar_todo.py
    ```
+   Desde ART-006, `generar_todo.py` **no** regenera los relojes (los hace `relojes_detallados.py`, ver «Materiales PBR de los relojes»); solo lo hace si se piden por nombre.
    O modela a mano en Blender respetando la escala y la paleta.
 2. **Vista previa:** con `vista_previa.py` (mismo comando) se generan `art/export/vistas/*.png`, para revisar en Obsidian o GitHub.
 3. **Detallar a mano** en Blender, Krita y Material Maker. Guarda la fuente en `art/` y vuelve a exportar.
@@ -77,6 +81,52 @@ Según DEC-001, **Roblox Studio guarda los assets ya importados en la place** y 
 - **Casas huecas:** son una sola malla con interior. En Studio, pon el MeshPart con `CollisionFidelity = PreciseConvexDecomposition` para poder entrar por la puerta. Si no basta, sepáralas en paredes en Blender.
 - **Piezas robables, vitrinas y decoración pequeña:** `CanCollide = false`, igual que las piezas provisionales.
 - **Revisión rápida:** `vista_previa.py` genera `art/export/vistas/_hoja_contactos.png` con todos los modelos en una imagen.
+
+### Materiales PBR de los relojes (ART-006, propuesta)
+
+Los 6 relojes dejan la textura de paleta y usan **materiales PBR** (metal, cristal, esmalte, cuero y gemas), sin perder la forma low-poly ni el sombreado plano. El resto de modelos sigue con la paleta.
+
+**1. Materiales (Material Maker 1.8).** `art/blender/scripts/materiales_pbr.py` escribe un proyecto por material (`art/texturas/fuentes/mm_<material>.ptex`), lo exporta con Material Maker por línea de comandos (`--export-material`, 512 px) y deja 4 mapas por material en `art/texturas/export/`:
+
+| Material | Uso | Rugosidad | Metálico |
+|---|---|---|---|
+| `metal_oro_pulido` | Cajas, coronas y asas de oro | 0,12–0,22 | 1 |
+| `metal_oro_cepillado` | Biseles y esfera del Real (vetas finas) | 0,30–0,45 | 1 |
+| `metal_acero` | Pulsera y cronógrafo, índices | 0,26–0,40 | 1 |
+| `cristal_zafiro` | Cristal (azulado, liso) | 0,02–0,06 | 0 |
+| `esmalte_blanco`, `esmalte_negro`, `esmalte_azul` | Esferas, números romanos y agujas | 0,08–0,16 | 0 |
+| `cuero_correa` | Correa de la pulsera (grano) | 0,55–0,80 | 0 |
+| `gema_rubi`, `gema_diamante`, `gema_zafiro` | Gemas talladas (facetas en el normal) | 0,01–0,08 | 0 |
+
+Archivos de cada material: `tex_<material>_color.png`, `_normal.png` (espacio tangente, convención OpenGL, la de Roblox), `_rugosidad.png` y `_metalico.png`. Los `.ptex` se pueden abrir y retocar en Material Maker; después se exporta con `-- sin_ptex` para no sobrescribirlos.
+
+**2. Modelos (Blender).** `art/blender/scripts/relojes_detallados.py` construye cada reloj con caja, tapa, bisel, esfera, índices o números romanos, agujas a las 10:10, cristal, corona y gemas talladas. Une las piezas **por material** (una malla por material, con el nombre del material), desenvuelve las UV con *Smart UV Project* y exporta a `art/export/modelos/` con el **mismo nombre** de antes. El `.blend` queda en `art/blender/fuentes/` con los materiales enlazados por ruta relativa.
+
+| Reloj | Triángulos | Mallas (MeshParts) |
+|---|---|---|
+| `mdl_reloj_bolsillo` | 1.456 | oro pulido, oro cepillado, esmalte blanco/negro/azul, cristal |
+| `mdl_reloj_pulsera` | 960 | acero, esmalte azul, cuero, cristal |
+| `mdl_reloj_cronografo` | 1.376 | acero, esmalte azul/blanco/negro, cristal |
+| `mdl_reloj_legado` | 1.538 | oro pulido/cepillado, esmalte blanco/negro/azul, zafiros, cristal |
+| `mdl_reloj_real` | 1.566 | oro pulido/cepillado, esmalte negro, rubíes, cristal |
+| `mdl_reloj_millonario` | 2.090 | oro pulido, esmalte negro, diamantes, cristal |
+
+**3. Vistas previas.** `vista_previa.py` renderiza con **EEVEE** (cielo en degradado y luz de estudio) los `.blend` marcados con `render_pbr`; el resto sigue con Workbench. También actualiza la hoja de contactos.
+
+**Comandos** (desde la raíz del repositorio; en Windows cambia la ruta de Blender por `"C:\Program Files\Blender Foundation\Blender 5.3\blender.exe"`):
+```
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/blender/scripts/materiales_pbr.py
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/blender/scripts/relojes_detallados.py
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/blender/scripts/vista_previa.py
+```
+`materiales_pbr.py` busca Material Maker en `/Applications` (macOS) o en `Escritorio/material_maker*` (Windows); si está en otro sitio, indica su ruta en la variable de entorno `MATERIAL_MAKER`.
+
+**4. Montarlos en Roblox Studio (PC Windows).**
+1. **3D Importer** → `mdl_reloj_<nombre>.fbx` → unidad **Stud**. Se importa como un **Model** con un MeshPart por material (`metal_oro_pulido`, `cristal_zafiro`…). Guárdalo en `ReplicatedStorage/Assets` con su nombre exacto (`mdl_reloj_bolsillo`). `AssetLibrary` ya acepta Models.
+2. Sube con el **Asset Manager** los 4 mapas de cada material usado (`art/texturas/export/tex_<material>_*.png`). Se suben una vez y se reutilizan en todos los relojes.
+3. En cada MeshPart: borra el `TextureID` si lo trae y añade un **`SurfaceAppearance`** con `ColorMap` = `_color`, `NormalMap` = `_normal`, `RoughnessMap` = `_rugosidad` y `MetalnessMap` = `_metalico`. Truco: monta un `SurfaceAppearance` por material una vez y cópialo a los MeshParts con el mismo nombre.
+4. **Cristal:** en el MeshPart `cristal_zafiro`, sube `Transparency` (entre 0,8 y 0,9, ajústalo a ojo) para que se vea la esfera. Metales, esmaltes, cuero y gemas no necesitan más ajustes: el aspecto lo da el `SurfaceAppearance`.
+5. Comprueba la orientación (frente hacia −Z en Studio); si sale girado, usa el atributo `GiroY` (§5).
 
 ## 6. Control de recursos
 
@@ -104,7 +154,7 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 |---|---|---|
 | `mdl_capsula_laton` | Cápsula (Criadero, Premios) | ✅ Base generada (328 triángulos) |
 | `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | ✅ Base (328 / 328 / 382; la Cósmica lleva estrellas) |
-| `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | ✅ Base (72–452) |
+| `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | ✅ Detallados con materiales PBR (ART-006): Model con una malla por material, 960–2.090 triángulos |
 | `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | ✅ Base (488 / 272 / 160) |
 | `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ Base (96–450) |
 | Dueños de las casas | NPC de bloques (OwnerNpc) | Pendiente: personaje R15 con skins originales «al estilo» de Roblox, sin copiar personajes reales |
@@ -120,9 +170,14 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 
 **Regenerar sonido e iconos**
 ```
+# Windows
 python art/audio/sonidos.py
 "C:\Program Files\Blender Foundation\Blender 5.3\blender.exe" --background --factory-startup --python art/audio/convertir_ogg.py
 "C:\Program Files\Blender Foundation\Blender 5.3\blender.exe" --background --factory-startup --python art/blender/scripts/iconos.py
+# macOS
+python3 art/audio/sonidos.py
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/audio/convertir_ogg.py
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python art/blender/scripts/iconos.py
 ```
 
 ---

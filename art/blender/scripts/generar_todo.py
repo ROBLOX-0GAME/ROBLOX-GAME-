@@ -59,7 +59,10 @@ MODELOS.update(P3.MODELOS)
 
 def main():
     # Opcional: generar solo algunos → ... --python generar_todo.py -- mdl_taller mdl_vitrina
-    pedidos = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else list(MODELOS)
+    # Los relojes llevan materiales PBR y los genera relojes_detallados.py (ART-006). Para no
+    # sobrescribirlos con la versión de paleta, aquí solo se generan si se piden por nombre.
+    pedidos = (sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv
+               else [n for n in MODELOS if not n.startswith("mdl_reloj_")])
     resultados = []
     for nombre in pedidos:
         A.limpiar_escena()

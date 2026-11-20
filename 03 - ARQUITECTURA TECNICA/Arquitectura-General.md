@@ -19,6 +19,7 @@ Definir la estructura técnica del proyecto Roblox Game Studio, sus componentes,
 
 - Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo.
 - La MacBook se usará para Obsidian y tareas escolares; no se planifica el desarrollo de Roblox Studio en ella.
+  - *Propuesta DEC-019 (ART-006, pendiente de aprobación):* la MacBook también se usa para arte (Blender, Material Maker, Krita y Audacity con los scripts de `art/`), sin Roblox Studio ni Rojo.
 - El repositorio GitHub contiene la bóveda de Obsidian y el código fuente inicial en game/; el place de Roblox todavía no existe.
 - El flujo acordado es parcialmente gestionado: Git contiene código y configuración, y Roblox Studio conserva el place, el mundo y los assets.
 - game/default.project.json deja servePlaceIds vacío para impedir la sincronización en vivo hasta que el equipo cree el place y apruebe su placeId.

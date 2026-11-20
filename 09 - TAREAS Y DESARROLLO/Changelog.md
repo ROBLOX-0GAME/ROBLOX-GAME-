@@ -363,3 +363,17 @@ Reglas:
 
   Enlazado desde `art/README.md`. · Verificación: revisión del archivo (sin caracteres de control). No se pudo comprobar la MacBook desde aquí: esa verificación es el primer paso del prompt.
 
+## 21. ART-006 — Materiales PBR de los relojes (MacBook de Zadiel)
+
+- **Responsable:** Zadiel · **Revisor:** Michael y Einell; Jhonn (técnica) · **Cuenta:** Claude (Cuenta A, MacBook) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-006 · Paso 1 — Inicio y herramientas.** Lectura del prompt de traspaso (ART-005), reglas, ACTIVE_TASKS, Pipeline de Arte y `git pull`. MacBook: macOS 27.0.1, Apple Silicon (arm64), Blender 5.3.0, git y python3 del sistema. Faltaban Krita, Audacity, Material Maker y Homebrew. Con permiso de Zadiel se instala **Material Maker 1.8** (dmg oficial de GitHub, binario universal) en `/Applications`. Homebrew pide la contraseña de administrador: queda para que Zadiel lo ejecute, y después `brew install --cask krita audacity`. · Verificación: ejecutada (`sw_vers`, `uname -m`, `Blender --version`, `file` del binario de Material Maker).
+- **2026-11-20 · ART-006 · Paso 2 — Pipeline en macOS.** `generar_todo.py -- mdl_reloj_bolsillo` y `vista_previa.py -- mdl_reloj_bolsillo` en una copia temporal del repositorio: 236 triángulos e imagen correcta. No hizo falta cambiar ningún script. · Verificación: ejecutada (salida del script y revisión de la imagen).
+- **2026-11-20 · ART-006 · Paso 3 — Reserva.** ART-006 en Backlog y ACTIVE_TASKS (En desarrollo), commit `e925ff3`.
+- **2026-11-20 · ART-006 · Paso 4 — Materiales.** `art/blender/scripts/materiales_pbr.py`: 11 proyectos `art/texturas/fuentes/mm_*.ptex` exportados con Material Maker por línea de comandos (`--export-material`, objetivo Godot 4 ORM, `--size 512`) y separados en 44 mapas `art/texturas/export/tex_<material>_{color,normal,rugosidad,metalico}.png`. Se bajó el relieve del metal cepillado y del cuero tras revisar una lámina de los mapas. · Verificación: ejecutada (512 px; metálico medio 1,00 en metales y 0,00 en el resto; rugosidad media de 0,02 a 0,65; lámina revisada). Commit `2655c94`.
+- **2026-11-20 · ART-006 · Paso 5 — Relojes detallados.** `art/blender/scripts/relojes_detallados.py`: los 6 relojes con caja, tapa, bisel, esfera, índices o números romanos, agujas a las 10:10, cristal, corona y gemas talladas; una malla por material, UV con Smart UV Project, exportados con el mismo nombre a `art/export/modelos/` y `.blend` en `art/blender/fuentes/`. Triángulos: bolsillo 1.456, pulsera 960, cronógrafo 1.376, legado 1.538, real 1.566, millonario 2.090 (límite 3.000). `generar_todo.py` ya no regenera los relojes salvo que se pidan por nombre. · Verificación: ejecutada (conteo impreso por el script).
+- **2026-11-20 · ART-006 · Paso 6 — Vistas previas.** `vista_previa.py` usa EEVEE (cielo en degradado y luz de área) en los `.blend` marcados con `render_pbr`. Primera revisión: el cristal tapaba la esfera y la corona de la pulsera salía suelta; corregidos y revisados de nuevo. Hoja de contactos actualizada. · Verificación: ejecutada (revisión visual de las 6 vistas). Pendiente: importar en Studio y montar los `SurfaceAppearance` (PC Windows).
+- **2026-11-20 · ART-006 · Paso 7 — Documentación.** [[Pipeline-de-Arte]] (comandos de macOS y sección «Materiales PBR de los relojes» con el montaje en Studio), `art/README.md`, memoria del área 12, propuestas DEC-018 y DEC-019 en [[Registro-de-Decisiones]] y nota en [[Arquitectura-General]].
+

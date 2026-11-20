@@ -258,3 +258,13 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** Propuesta. **Área:** Arquitectura / arte.
 - **Propuesta:** los modelos importados se guardan en `ReplicatedStorage/Assets` con su nombre; el código los coloca sobre las piezas provisionales, que conservan la lógica; sin asset, se usa la pieza provisional. Sonidos e iconos por ID en `Config`. Detalle en [[Pipeline-de-Arte]] §5.
 
+#### DEC-018 — Materiales PBR para los relojes
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-006, Zadiel). **Área:** Arte / dirección visual. **Revisan:** Michael y Einell (Cuenta B).
+- **Propuesta:** los 6 relojes usan materiales PBR (oro pulido y cepillado, acero, cristal de zafiro, esmaltes, cuero y gemas) con `SurfaceAppearance`, una malla por material y menos de 3.000 triángulos, sin perder la forma low-poly ni el sombreado plano. El resto de modelos sigue con la paleta común (DEC-016). Si se aprueba, el mismo tratamiento podría pasar a las piezas robables, la pieza del legado y las cápsulas. Detalle en [[Pipeline-de-Arte]].
+
+#### DEC-019 — La MacBook también se usa para arte (sin Roblox Studio)
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-006, Zadiel). **Área:** Arquitectura / equipo.
+- **Propuesta:** la MacBook de Zadiel, además de Obsidian y tareas escolares, se usa para el arte (Blender, Material Maker, Krita y Audacity, con los scripts de `art/`). Sigue sin Roblox Studio ni Rojo: la importación de assets se hace en las PC Windows. Cambia lo dicho en [[Arquitectura-General]] («Entorno de trabajo por dispositivo»).
+
