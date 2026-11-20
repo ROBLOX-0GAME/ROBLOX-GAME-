@@ -164,3 +164,19 @@ Una tarea podrá considerarse completada cuando:
 | 2+ jugadores (Test → Clients and Servers): cajas compartidas y sin errores | Multijugador | Pendiente |
 
 Registra aquí el resultado real de cada prueba al ejecutarla.
+
+### BUG-001 — La mochila se llena sin piezas para ningún reloj (bloqueo)
+
+- **Fecha:** 2026-11-20. **Prioridad:** Alta. **Estado:** Abierto. **Responsable:** Jhonn. **Sistema afectado:** Mochila / economía (DEV-001).
+
+**Descripción:** al recoger cajas, la mochila (20 piezas) se llena con una mezcla que no alcanza para fabricar ningún reloj. Como las piezas no se pueden vender ni tirar, el jugador queda bloqueado.
+
+**Pasos para reproducir:** 1. Entrar con datos nuevos. 2. Recoger cajas hasta llenar la mochila. 3. Abrir el Taller: ningún reloj se puede fabricar.
+
+**Resultado esperado:** siempre debe existir una salida (fabricar, vender o tirar piezas).
+
+**Resultado obtenido:** mochila llena y sin acciones posibles.
+
+**Evidencias:** reportado por Jhonn en prueba manual en Studio; sin errores en Output.
+
+**Solución propuesta (pendiente):** vender o tirar piezas sueltas en la Tienda y/o ajustar capacidad y probabilidades.

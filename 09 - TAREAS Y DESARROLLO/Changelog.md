@@ -31,6 +31,7 @@ Reglas:
 - **2026-11-20 · DEV-001 · Paso 8 — Compilación.** `juego/build.py` + `juego/default.project.json` (formato Rojo). El script revisa bloques, `require` y campos de módulos, y genera `juego/build/BuildAWatch.rbxlx`. · Verificación: **ejecutada** — 15 scripts, 38 `require` verificados, 0 errores; XML válido; el revisor detectó correctamente errores introducidos a propósito (bloque sin cerrar, `require` y campo inexistentes).
 - **2026-11-20 · DEV-001 · Paso 9 — Documentación.** `juego/README.md`, `.gitignore` (`juego/build/`, bloqueos de Studio), [[Arquitectura-General]] §13, [[Plan-de-Pruebas]] §9, [[Registro-de-Decisiones]] (DEC-001 y DEC-002 como propuestas), memorias de 03, 07 y 09, enlace en [[Dashboard]] y estado en [[Backlog]]. · Verificación: ejecutada (revisión de archivos).
 - **2026-11-20 · DEV-001 · Paso 10 — Prueba en Studio (Jhonn).** Jhonn abrió la place en Studio y reporta que el bucle es totalmente funcional, con algunos errores menores aún sin detallar. El guardado real sigue sin probarse porque no se ha activado el acceso a API (requiere publicar la experiencia). · Verificación: manual, reportada por Jhonn.
+- **2026-11-20 · DEV-001 · Paso 11 — Primer error registrado.** BUG-001 en [[Plan-de-Pruebas]]: la mochila se llena sin piezas suficientes para ningún reloj y el jugador queda bloqueado. Jhonn decide corregirlo más adelante. · Verificación: reportado por Jhonn en Studio.
 
 ### Pendiente para cerrar DEV-001
 
