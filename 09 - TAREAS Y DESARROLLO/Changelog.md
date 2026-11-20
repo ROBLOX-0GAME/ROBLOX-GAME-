@@ -30,9 +30,11 @@ Reglas:
 - **2026-11-20 · DEV-001 · Paso 7 — Pruebas.** `juego/src/server/Tests/`: 13 pruebas de `PlayerLogic` y un ejecutor que solo corre en Studio al pulsar Play. · Verificación: **pendiente** (requiere Studio; no se ejecutaron en esta sesión).
 - **2026-11-20 · DEV-001 · Paso 8 — Compilación.** `juego/build.py` + `juego/default.project.json` (formato Rojo). El script revisa bloques, `require` y campos de módulos, y genera `juego/build/BuildAWatch.rbxlx`. · Verificación: **ejecutada** — 15 scripts, 38 `require` verificados, 0 errores; XML válido; el revisor detectó correctamente errores introducidos a propósito (bloque sin cerrar, `require` y campo inexistentes).
 - **2026-11-20 · DEV-001 · Paso 9 — Documentación.** `juego/README.md`, `.gitignore` (`juego/build/`, bloqueos de Studio), [[Arquitectura-General]] §13, [[Plan-de-Pruebas]] §9, [[Registro-de-Decisiones]] (DEC-001 y DEC-002 como propuestas), memorias de 03, 07 y 09, enlace en [[Dashboard]] y estado en [[Backlog]]. · Verificación: ejecutada (revisión de archivos).
+- **2026-11-20 · DEV-001 · Paso 10 — Prueba en Studio (Jhonn).** Jhonn abrió la place en Studio y reporta que el bucle es totalmente funcional, con algunos errores menores aún sin detallar. El guardado real sigue sin probarse porque no se ha activado el acceso a API (requiere publicar la experiencia). · Verificación: manual, reportada por Jhonn.
 
 ### Pendiente para cerrar DEV-001
 
-1. Jhonn: `python juego/build.py`, abrir `juego/build/BuildAWatch.rbxlx` en Studio, pulsar Play y confirmar `[Pruebas] N correctas, 0 fallidas` y el bucle completo (recoger → fabricar → vender/exhibir → mejorar).
+1. ~~Probar el bucle en Studio~~ (hecho, Paso 10). Registrar como BUG-00X en [[Plan-de-Pruebas]] los errores menores encontrados.
+1b. Probar el guardado: publicar la experiencia (privada) y activar *Enable Studio Access to API Services*.
 2. Probar con mando y en el emulador de dispositivos móviles de Studio.
 3. Zadiel revisa la solicitud de cambios; el equipo aprueba o corrige las cifras de balance.
