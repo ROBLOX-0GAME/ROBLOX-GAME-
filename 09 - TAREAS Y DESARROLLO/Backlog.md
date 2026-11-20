@@ -590,3 +590,44 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Prompt con reglas, verificación de herramientas en Windows, importación en Studio, tratamiento PBR condicionado a DEC-018, iconos, sonidos e informe.
 - [x] Enlazado desde `art/README.md` y registrado en el Changelog.
 - [x] La fila ART-007 de ACTIVE_TASKS queda Completada.
+
+### ART-008 — Importar los relojes PBR en Roblox Studio
+
+- **ID:** ART-008.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows).
+- **Responsable:** Zadiel.
+- **Revisor:** Michael y Einell (dueños del arte); Jhonn (técnica).
+- **Área:** Arte / Studio.
+- **Prioridad:** Alta.
+- **Estado:** Bloqueada (no hay place oficial publicada; `servePlaceIds` vacío).
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** importar los 6 `mdl_reloj_*.fbx` con el 3D Importer en `ReplicatedStorage/Assets`, subir los 44 mapas PBR, anotar sus IDs en `art/texturas/ids_roblox.md` y montar los `SurfaceAppearance` (31 MeshParts), según §3 de `art/PROMPT_ARTE_WINDOWS_STUDIO.md`.
+
+**Criterios de aceptación:**
+
+- [ ] Existe la place oficial publicada (requisito; la crea una persona).
+- [ ] 6 relojes en `ReplicatedStorage/Assets` y 31 `SurfaceAppearance` montados sin avisos.
+- [ ] Prueba en Play realizada y anotada en el Changelog.
+
+### ART-010 — Retocar iconos del HUD y sonidos
+
+- **ID:** ART-010.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows).
+- **Responsable:** Zadiel.
+- **Revisor:** Michael y Einell (dueños del arte).
+- **Área:** Arte / interfaz y audio.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** mejorar la legibilidad de los 8 iconos del HUD (`iconos.py`: contorno oscuro y borde de luz; rehacer monedas, mochila y carga) para retocarlos después en Krita, y pulir los 10 sonidos en Audacity (normalizar, recortar, fundidos, menos de 2 s; `sfx_entrenar` en bucle de 1 s). Los cambios de estilo son propuesta para Michael y Einell. ART-009 (PBR de piezas, legado y cápsulas) no se abre: DEC-018 sigue como Propuesta.
+
+**Criterios de aceptación:**
+
+- [ ] Iconos regenerados, revisados a 256 px y a tamaño pequeño, con el mismo nombre.
+- [ ] Fuentes `.kra` en `art/texturas/fuentes/` (retoque manual en Krita).
+- [ ] Sonidos pulidos con su `.aup3` en `art/audio/fuentes/`; todos por debajo de 2 s, medidos con script (hoy `sfx_ruleta` dura 2,28 s).
+- [ ] Pipeline, Memoria de Área 12 y Changelog actualizados; fila de ACTIVE_TASKS Completada.
