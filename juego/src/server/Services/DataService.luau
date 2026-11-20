@@ -256,11 +256,15 @@ function DataService.forEach(callback)
 	end
 end
 
--- Envía el estado al cliente y actualiza la tabla de clasificación.
+-- Se llama después de cada cambio de datos: completa objetivos del tutorial
+-- cumplidos, envía el estado al cliente y actualiza la tabla de clasificación.
 function DataService.replicate(player)
 	local data = DataService.get(player)
 	if not data then
 		return
+	end
+	for _, message in PlayerLogic.advanceTutorial(data) do
+		Net.notify(player, message, "ok")
 	end
 	local view = PlayerLogic.buildView(data)
 	Net.State:FireClient(player, view)

@@ -190,6 +190,50 @@ return function(t)
 		end
 	end)
 
+	t.test("DEV-002: el tutorial avanza en orden y paga una sola vez", function()
+		local data = PlayerLogic.newData()
+		local steps = GameData.Tutorial
+		t.eq(data.tutorial, 1, "empieza en el paso 1")
+		t.eq(#PlayerLogic.advanceTutorial(data), 0, "sin progreso no avanza")
+
+		for _ = 1, steps[1].target - 1 do
+			PlayerLogic.addPart(data, "gear")
+		end
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 1, "a una pieza de la meta no avanza")
+		PlayerLogic.addPart(data, "gear")
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 2, "completa el paso 1")
+		t.eq(data.coins, steps[1].reward, "paga el premio del paso 1")
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.coins, steps[1].reward, "no paga dos veces")
+
+		-- Cumplir el paso 3 (vender) antes que el 2 no lo salta: se completan en orden.
+		data.stats.sold = 1
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 2, "sigue en fabricar")
+		data.stats.crafted = 1
+		PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, 4, "completa fabricar y vender de una vez")
+	end)
+
+	t.test("DEV-002: el tutorial termina y los datos antiguos se reparan", function()
+		local data = PlayerLogic.newData()
+		data.stats.collected = 99
+		data.stats.crafted = 9
+		data.stats.sold = 9
+		data.museum.pocket = 1
+		data.upgrades.speed = 1
+		local messages = PlayerLogic.advanceTutorial(data)
+		t.eq(data.tutorial, #GameData.Tutorial + 1, "tutorial terminado")
+		t.eq(#messages, #GameData.Tutorial + 1, "un mensaje por paso y otro final")
+		t.eq(PlayerLogic.tutorialStep(data), nil, "sin paso actual")
+		t.eq(PlayerLogic.buildView(data).tutorial, false, "la vista no muestra tutorial")
+
+		t.eq(PlayerLogic.reconcile({ coins = 5 }).tutorial, 1, "datos sin tutorial empiezan en 1")
+		t.eq(PlayerLogic.reconcile({ tutorial = 999 }).tutorial, #GameData.Tutorial + 1, "limita el paso máximo")
+	end)
+
 	t.test("buildView es coherente", function()
 		local data = PlayerLogic.newData()
 		data.parts.gear = 4

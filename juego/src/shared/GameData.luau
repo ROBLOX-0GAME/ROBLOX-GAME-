@@ -115,4 +115,50 @@ GameData.Upgrades = {
 }
 GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck", "museum" }
 
+-- Tutorial guiado (DEV-002, PROPUESTA). Los pasos se completan en orden.
+-- stat: qué se mide (ver PlayerLogic.tutorialValue) · target: meta
+-- reward: monedas al completar · guide: a dónde apunta la guía en el mundo
+GameData.Tutorial = {
+	{
+		id = "collect",
+		text = "Recoge 5 cajas de piezas en la zona de arena",
+		stat = "collected",
+		target = 5,
+		reward = 20,
+		guide = "collect",
+	},
+	{
+		id = "craft",
+		text = "Fabrica un reloj de bolsillo en el Taller",
+		stat = "crafted",
+		target = 1,
+		reward = 30,
+		guide = "workshop",
+	},
+	{
+		id = "sell",
+		text = "Vende un reloj en la Tienda",
+		stat = "sold",
+		target = 1,
+		reward = 30,
+		guide = "shop",
+	},
+	{
+		id = "display",
+		text = "Fabrica otro reloj y exhíbelo en el Museo",
+		stat = "museum",
+		target = 1,
+		reward = 40,
+		guide = "museum",
+	},
+	{
+		id = "upgrade",
+		text = "Compra tu primera mejora en la Tienda",
+		stat = "upgrades",
+		target = 1,
+		reward = 50,
+		guide = "shop",
+	},
+}
+
 return GameData

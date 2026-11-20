@@ -114,3 +114,9 @@ Los agentes deben:
 - **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas, economía y progresión.
 - **Propuesta:** cajas de piezas → Taller → Tienda/Museo → mejoras, con las cifras de `juego/src/shared/Config.luau` y `GameData.luau`. Sin robo, mascotas ni compras con Robux en esta versión.
 - **Documentos afectados:** [[Economia-y-Progresion]], [[Lista-de-Sistemas]], [[Backlog]].
+
+#### DEC-003 — Tutorial de 5 objetivos con premios
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas / UX.
+- **Propuesta:** recoger 5 cajas (20) → fabricar (30) → vender (30) → exhibir (40) → mejorar (50); guía luminosa hacia el destino. Textos en `juego/src/shared/GameData.luau`.
+- **Documentos afectados:** [[GDD]], [[UI-UX]], [[Backlog]].

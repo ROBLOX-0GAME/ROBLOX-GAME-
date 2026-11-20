@@ -40,3 +40,23 @@ Reglas:
 1b. Probar el guardado: publicar la experiencia (privada) y activar *Enable Studio Access to API Services*.
 2. Probar con mando y en el emulador de dispositivos móviles de Studio.
 3. Zadiel revisa la solicitud de cambios; el equipo aprueba o corrige las cifras de balance.
+
+---
+
+## 3. DEV-002 — Tutorial guiado para jugadores nuevos
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Cuenta:** Claude 1 (Cuenta A) · **Rama:** `task/DEV-002-tutorial` (sale de DEV-001)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-002 · Paso 1 — Elección y registro.** Jhonn pidió continuar con la creación del juego después de BUG-001. Se elige el tutorial: estaba pendiente en la memoria del GDD y es lo que más ayuda a un jugador nuevo. El robo, el jefe, las mascotas y las compras con Robux quedan fuera porque necesitan aprobación del equipo. Rama creada y tarea registrada en [[Backlog]]. · Verificación: ejecutada.
+- **2026-11-20 · DEV-002 · Paso 2 — Datos y reglas.** `GameData.Tutorial` define 5 pasos con 170 monedas de premio en total (propuesta). `PlayerLogic` incorpora el campo guardado `tutorial`, con reparación para partidas anteriores, y las funciones `tutorialValue`, `tutorialStep` y `advanceTutorial`. El tutorial también se incluye en la vista que recibe el cliente. · Verificación: revisión estática ejecutada sin errores.
+- **2026-11-20 · DEV-002 · Paso 3 — Servidor.** `DataService.replicate` completa los objetivos cumplidos después de cada cambio y avisa al jugador. · Verificación: revisión estática ejecutada.
+- **2026-11-20 · DEV-002 · Paso 4 — Interfaz.** El HUD muestra el objetivo, el progreso y el premio. Una línea luminosa (Beam) va del personaje a la zona de arena o a la estación y se oculta a menos de 18 studs del destino. · Verificación: revisión estática ejecutada; prueba en Studio pendiente.
+- **2026-11-20 · DEV-002 · Paso 5 — Pruebas.** Hay 2 pruebas nuevas: el orden, el pago único y el fin del tutorial, más la reparación de datos. El total pasa a 17. · Verificación: **pendiente** (se ejecutan con Play en Studio).
+
+### Pendiente para cerrar DEV-002
+
+1. Jhonn: `python juego/build.py`, Play en Studio y confirmar `[Pruebas] 17 correctas, 0 fallidas`.
+2. Completar los 5 objetivos con datos nuevos y comprobar que la guía apunta bien.
+3. Revisión de Zadiel y aprobación de textos y premios (DEC-003).

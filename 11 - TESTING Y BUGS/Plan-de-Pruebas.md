@@ -182,3 +182,13 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 **Solución aplicada (2026-11-20):** las piezas sueltas se pueden **vender en la Tienda** (2 monedas las comunes, 6 las poco comunes y 25 el rubí) y **tirar desde la Mochila** en cualquier lugar. El aviso de mochila llena explica ambas salidas. Los precios son bajos para que fabricar siempre rinda más; lo comprueba una prueba automática.
 
 **Verificación:** 2 pruebas nuevas en `PlayerLogic.spec.luau` (pendientes de ejecutar en Studio) y revisión estática sin errores. Falta repetir los pasos para reproducir en Studio.
+
+## 10. Pruebas de DEV-002 (tutorial)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática `python juego/build.py --check` | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 2 pruebas de tutorial en `PlayerLogic.spec.luau` (17 en total) | Automática | Pendiente |
+| Completar los 5 objetivos con datos nuevos; premios recibidos una sola vez | Manual en Studio | Pendiente |
+| La guía apunta al destino correcto, se oculta al llegar y vuelve tras reaparecer | Manual en Studio | Pendiente |
+| Corrección de BUG-001: vender piezas en la Tienda y tirarlas desde la Mochila | Manual en Studio | Pendiente |

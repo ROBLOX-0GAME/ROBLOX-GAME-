@@ -124,6 +124,37 @@ Roblox Studio instalado en la PC Windows de desarrollo. Python 3 para compilar l
 
 [[Changelog]], [[Arquitectura-General]], [[Economia-y-Progresion]], [[Plan-de-Pruebas]], [[Registro-de-Decisiones]].
 
+### DEV-002 — Tutorial guiado para jugadores nuevos
+
+- **ID:** DEV-002
+- **Responsable:** Jhonn (Cuenta A)
+- **Cuenta Claude:** Claude 1 — Cuenta A
+- **Revisor:** Zadiel; Cuenta B revisa textos y la guía visual.
+- **Área:** Sistemas (misiones), UI/UX.
+- **Prioridad:** Alta.
+- **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-002-tutorial` (sale de `task/DEV-001-base-mvp`; fusionar DEV-001 primero).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:**
+
+Cinco objetivos en orden que enseñan el bucle principal: recoger 5 cajas → fabricar un reloj → vender → exhibir → comprar una mejora. Cada objetivo da monedas. El HUD muestra el objetivo y su progreso, y una línea luminosa apunta al destino. Textos y premios son propuesta.
+
+**Rutas:** `juego/src/shared/GameData.luau`, `juego/src/shared/PlayerLogic.luau`, `juego/src/server/Services/DataService.luau`, `juego/src/server/Tests/PlayerLogic.spec.luau`, `juego/src/client/Ui.luau` y notas de 02, 09, 10 y 11.
+
+**Criterios de aceptación:**
+
+- [x] Los objetivos se completan en orden y cada premio se paga una sola vez (servidor).
+- [x] El progreso del tutorial se guarda; las partidas anteriores lo reciben sin perder datos.
+- [x] El HUD muestra objetivo, progreso y premio; la guía apunta al destino y se oculta al llegar.
+- [x] 2 pruebas automáticas nuevas.
+- [ ] Jhonn completa el tutorial en Studio con datos nuevos.
+- [ ] El equipo aprueba textos, orden y premios.
+
+**Dependencias:** DEV-001.
+
+**Documentos relacionados:** [[Changelog]], [[GDD]], [[Plan-de-Pruebas]], [[Registro-de-Decisiones]].
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea

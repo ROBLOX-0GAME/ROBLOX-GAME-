@@ -28,6 +28,7 @@ function PlayerLogic.newData()
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
 		stats = { collected = 0, crafted = 0, sold = 0, earned = 0 },
+		tutorial = 1, -- paso actual del tutorial; #GameData.Tutorial + 1 = terminado
 	}
 end
 
@@ -84,6 +85,10 @@ function PlayerLogic.reconcile(data)
 		stats[key] = nonNegativeInt(oldStats[key])
 	end
 	data.stats = stats
+
+	-- Datos guardados antes de DEV-002 no tienen tutorial: empiezan en el paso 1
+	-- y los pasos ya cumplidos se completan solos al cargar.
+	data.tutorial = math.clamp(nonNegativeInt(data.tutorial), 1, #GameData.Tutorial + 1)
 
 	data.version = Config.DATA_VERSION
 	return data
@@ -218,6 +223,25 @@ function PlayerLogic.rollPart(luckMultiplier, roll)
 	return GameData.PartOrder[#GameData.PartOrder]
 end
 
+-- Valor actual de lo que mide un paso del tutorial.
+function PlayerLogic.tutorialValue(data, stat)
+	if stat == "museum" then
+		return PlayerLogic.museumCount(data)
+	elseif stat == "upgrades" then
+		return sumCounts(data.upgrades)
+	end
+	return data.stats[stat] or 0
+end
+
+-- Paso actual del tutorial y su progreso, o nil si ya terminó.
+function PlayerLogic.tutorialStep(data)
+	local step = GameData.Tutorial[data.tutorial]
+	if not step then
+		return nil, 0
+	end
+	return step, math.min(PlayerLogic.tutorialValue(data, step.stat), step.target)
+end
+
 -- Vista que el servidor envía al cliente (solo lectura en el cliente).
 function PlayerLogic.buildView(data)
 	local level, levelXp, levelNeed = PlayerLogic.levelInfo(data.xp)
@@ -225,7 +249,21 @@ function PlayerLogic.buildView(data)
 	for _, upgradeId in GameData.UpgradeOrder do
 		upgradeCosts[upgradeId] = PlayerLogic.upgradeCost(data, upgradeId) or false
 	end
+	local tutorial = false
+	local step, progress = PlayerLogic.tutorialStep(data)
+	if step then
+		tutorial = {
+			index = data.tutorial,
+			total = #GameData.Tutorial,
+			text = step.text,
+			progress = progress,
+			target = step.target,
+			reward = step.reward,
+			guide = step.guide,
+		}
+	end
 	return {
+		tutorial = tutorial,
 		coins = data.coins,
 		xp = data.xp,
 		level = level,
@@ -404,6 +442,26 @@ function PlayerLogic.withdraw(data, watchId)
 	removeCount(data.museum, watchId, 1)
 	data.watches[watchId] = (data.watches[watchId] or 0) + 1
 	return true, string.format("%s retirado del museo.", watch.name)
+end
+
+-- Completa todos los pasos del tutorial ya cumplidos y entrega sus premios.
+-- Devuelve la lista de mensajes para mostrar al jugador.
+function PlayerLogic.advanceTutorial(data)
+	local messages = {}
+	while true do
+		local step, progress = PlayerLogic.tutorialStep(data)
+		if not step or progress < step.target then
+			break
+		end
+		data.coins += step.reward
+		data.stats.earned += step.reward
+		data.tutorial += 1
+		table.insert(messages, string.format("¡Objetivo cumplido! +%d monedas", step.reward))
+		if data.tutorial > #GameData.Tutorial then
+			table.insert(messages, "¡Tutorial completado! Ahora fabrica relojes mejores y llena tu museo.")
+		end
+	end
+	return messages
 end
 
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.

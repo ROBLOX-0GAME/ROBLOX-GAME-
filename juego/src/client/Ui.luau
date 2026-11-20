@@ -575,6 +575,90 @@ local function updateHud()
 	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
 	hud.backpack.Text = string.format("Mochila: %d/%d piezas", state.partCount, state.capacity)
 	hud.museum.Text = string.format("Museo: +%d cada %d s", state.museumIncome, Config.MUSEUM_TICK_SECONDS)
+
+	local tutorial = state.tutorial
+	if tutorial then
+		hud.objective.Visible = true
+		hud.objective.Text = string.format(
+			"<b>Objetivo %d/%d</b>\n%s (%d/%d)\n<font color=\"#aaaab9\">Premio: %d monedas</font>",
+			tutorial.index,
+			tutorial.total,
+			tutorial.text,
+			tutorial.progress,
+			tutorial.target,
+			tutorial.reward
+		)
+	else
+		hud.objective.Visible = false
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- Guía del tutorial: una línea luminosa del personaje al destino (DEV-002)
+-- ---------------------------------------------------------------------------
+
+local guide = { beam = nil, from = nil, to = nil, target = nil }
+
+local function findGuideTarget(guideId)
+	local map = Workspace:FindFirstChild("Mapa")
+	if not map then
+		return nil
+	end
+	if guideId == "collect" then
+		return map:FindFirstChild("ZonaDeRecoleccion")
+	end
+	for _, descendant in map:GetDescendants() do
+		if descendant:IsA("BasePart") and descendant:GetAttribute("StationId") == guideId then
+			return descendant
+		end
+	end
+	return nil
+end
+
+local function clearGuide()
+	for _, key in { "beam", "from", "to" } do
+		if guide[key] then
+			guide[key]:Destroy()
+			guide[key] = nil
+		end
+	end
+	guide.target = nil
+end
+
+local function updateGuide()
+	local tutorial = state and state.tutorial
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local target = tutorial and findGuideTarget(tutorial.guide)
+	if not root or not target then
+		clearGuide()
+		return
+	end
+	-- Recrear si cambió el destino o si el personaje reapareció.
+	if guide.target ~= target or not guide.from or guide.from.Parent ~= root then
+		clearGuide()
+		guide.target = target
+		guide.from = new("Attachment", { Name = "GuiaOrigen", Position = Vector3.new(0, -2, 0) })
+		guide.from.Parent = root
+		guide.to = new("Attachment", { Name = "GuiaDestino", Position = Vector3.new(0, 1, 0) })
+		guide.to.Parent = target
+		guide.beam = new("Beam", {
+			Name = "GuiaTutorial",
+			Attachment0 = guide.from,
+			Attachment1 = guide.to,
+			Color = ColorSequence.new(COLORS.accent),
+			Transparency = NumberSequence.new(0.35),
+			Width0 = 0.6,
+			Width1 = 0.6,
+			FaceCamera = true,
+			LightEmission = 0.6,
+			Segments = 1,
+		})
+		guide.beam.Parent = root
+	end
+	-- Se oculta al llegar, para no estorbar.
+	local horizontal = Vector3.new(root.Position.X - target.Position.X, 0, root.Position.Z - target.Position.Z)
+	guide.beam.Enabled = horizontal.Magnitude > 18
 end
 
 local function buildHud()
@@ -620,7 +704,8 @@ local function buildHud()
 	hud.xpText.Parent = xpBar
 	hud.backpack = label("", 15, COLORS.muted, { LayoutOrder = 4 })
 	hud.museum = label("", 15, COLORS.muted, { LayoutOrder = 5 })
-	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.museum } do
+	hud.objective = label("", 15, COLORS.accent, { LayoutOrder = 6, Visible = false })
+	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.museum, hud.objective } do
 		item.Parent = stats
 	end
 	stats.Parent = gui
@@ -721,6 +806,7 @@ local function watchDistance()
 	task.spawn(function()
 		while true do
 			task.wait(0.5)
+			updateGuide()
 			if openPanelId and openPanelId ~= "backpack" then
 				local station = findStation(openPanelId)
 				local character = player.Character

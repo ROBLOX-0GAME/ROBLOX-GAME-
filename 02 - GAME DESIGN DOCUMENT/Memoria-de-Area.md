@@ -23,5 +23,6 @@
 ## Memoria reciente
 
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- 2026-11-20 · DEV-002 (Jhonn, en revisión): tutorial de 5 objetivos con premios y guía luminosa, implementado como propuesta DEC-003. BUG-001 (mochila sin salida) corregido en DEV-001 con venta y descarte de piezas.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.
