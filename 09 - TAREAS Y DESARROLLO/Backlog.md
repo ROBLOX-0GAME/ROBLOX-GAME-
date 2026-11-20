@@ -434,3 +434,24 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila ART-001 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ninguna (el código del juego ya es funcional).
+### ART-002 — Modelos low-poly de prioridad 1
+
+- **ID:** ART-002.
+- **Cuenta Claude:** Claude 1 — Cuenta A (temporal; área de Cuenta B).
+- **Responsable:** Jhonn.
+- **Revisor:** Michael y Einell; Zadiel revisa la parte técnica.
+- **Área:** Assets.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** generar con los scripts de Blender los modelos base de prioridad 1 de [[Pipeline-de-Arte]] §7: piezas del plot, 5 estaciones, muro frontal y cartel, casas de las 5 zonas y pedestal, las 7 piezas robables y el marco de la puerta de velocidad. Cada uno con la medida de su pieza provisional, en FBX con su fuente y su vista previa.
+
+**Criterios de aceptación:**
+
+- [ ] Todos los modelos de prioridad 1 exportados (FBX + .blend + vista previa) con su conteo de triángulos.
+- [ ] Vistas previas revisadas; lista de assets del Pipeline actualizada.
+- [ ] La fila ART-002 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ART-001 (Completada).
