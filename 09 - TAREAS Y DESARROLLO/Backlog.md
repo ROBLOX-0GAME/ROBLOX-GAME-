@@ -195,6 +195,34 @@ Contenido que se integra (todo como propuesta, salvo lo aprobado): bucle de robo
 **Dependencias:** INFRA-001 (Completada).
 
 **Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Registro-de-Decisiones]], [[Arquitectura-General]].
+
+### INFRA-002 — Trabajo directo en main y sincronización automática de Obsidian
+
+- **ID:** INFRA-002.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn; Michael y Einell como revisión transversal (afecta a ambas cuentas).
+- **Área:** Coordinación, Git y Obsidian.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Rama:** `task/INFRA-002-sync-directo-main` (solo para aplicar este cambio; después se trabaja en `main`).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:**
+
+Por decisión de Zadiel para todo el equipo, se deja de usar ramas por tarea y Pull Requests. Claude trabaja directamente en `main`: anota lo que hace en la memoria de Obsidian y lo sube a GitHub. Obsidian Git hace commit, subida y bajada cada 5 minutos. Se mantienen las reservas de rutas en ACTIVE_TASKS.md para que dos personas no editen lo mismo a la vez. Reemplaza DEC-002 por DEC-009.
+
+**Criterios de aceptación:**
+
+- [ ] El hook de `.claude/settings.json` permite editar en `main` y sigue bloqueando rutas reservadas por otra tarea.
+- [ ] `.claude/CLAUDE.md`, el Protocolo, OWNERS.md, AGENTS.md, ACTIVE_TASKS.md, las reglas y los prompts describen el flujo nuevo.
+- [ ] DEC-009 queda registrada y DEC-002 marcada como Reemplazada.
+- [ ] Obsidian Git de la Mac de Zadiel sincroniza cada 5 minutos en ambos sentidos.
+- [ ] La fila INFRA-002 de ACTIVE_TASKS.md queda Completada.
+
+**Dependencias:** INFRA-001 y DEV-007 (Completadas).
+
+**Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Registro-de-Decisiones]], [[Protocolo-de-Trabajo-IA]].
 ### DEV-008 — Plot personal con mesa, vitrinas y caminadora mejorables
 
 - **ID:** DEV-008.
@@ -225,6 +253,6 @@ El plot y la caminadora se **mejoran** con monedas: el plot añade vitrinas y la
 - [ ] Pruebas automáticas nuevas y revisión estática y `rojo-build` sin errores.
 - [ ] Al terminar, la fila DEV-008 queda Completada en el Pull Request final.
 
-**Dependencias:** DEV-007 (Completada).
+**Dependencias:** DEV-007 (Completada). Para no solaparse con INFRA-002 (en desarrollo), esta tarea no toca `game/README.md` ni el Registro de Decisiones; su decisión se registrará cuando INFRA-002 termine.
 
 **Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
