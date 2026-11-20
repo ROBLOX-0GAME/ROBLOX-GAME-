@@ -28,6 +28,12 @@ Centralizar los recursos, documentación externa, referencias visuales, herramie
 | Git | Control de versiones |
 | GitHub | Repositorio central |
 | Claude Code | Asistencia de desarrollo mediante IA |
+| Blender 5.3 | Modelado 3D low-poly y exportación FBX (ART-001) |
+| Krita | Paleta, texturas, iconos y arte 2D (ART-001) |
+| Material Maker 1.8 | Materiales procedurales (ART-001) |
+| Audacity 4 | Efectos de sonido y música (ART-001) |
+
+Flujo, estilo, formatos y lista de assets: [[Pipeline-de-Arte]].
 
 ## 4. Referencias visuales
 

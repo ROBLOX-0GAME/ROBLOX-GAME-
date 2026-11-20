@@ -13,3 +13,10 @@
 *.rbxlx.lock
 __pycache__/
 .claude/tarea-activa
+
+# Arte (ART-001): copias automáticas y temporales
+*.blend1
+*.blend@
+*.kra~
+*.aup3-wal
+*.aup3-shm

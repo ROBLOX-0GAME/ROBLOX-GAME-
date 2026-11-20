@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-001 (Jhonn; después Michael y Einell): pipeline de arte en [[Pipeline-de-Arte]]. Herramientas: Blender 5.3, Krita, Material Maker 1.8 y Audacity 4 (Substance no está instalado). Carpeta `art/`, paleta común y primeros modelos generados por script.
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

@@ -10,7 +10,7 @@ Documentar la estructura del mundo del juego, sus regiones, zonas, personajes, e
 - **Nombre del mundo:** Pendiente de definir.
 - **Temática:** Pendiente de definir.
 - **Ambientación:** Pendiente de definir.
-- **Estilo visual:** Pendiente de definir.
+- **Estilo visual:** Propuesta (ART-001, Jhonn): low-poly colorido tipo simulador de Roblox, con una paleta común, para detallar después a mano. Ver [[Pipeline-de-Arte]].
 - **Narrativa principal:** Pendiente de definir.
 
 ## 3. Estructura geográfica

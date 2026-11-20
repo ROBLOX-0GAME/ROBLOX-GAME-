@@ -257,3 +257,18 @@ Reglas:
   - · Verificación: revisión estática sin errores.
 - **2026-11-20 · DEV-013 · Paso 5 — Pruebas.** 3 pruebas nuevas: carga, ruleta y ajustes. Se adaptaron las de robo de DEV-003 a la carga por viaje. Total: 43 bloques. · Verificación: pendiente en Studio.
 - **2026-11-20 · DEV-013 · Paso 6 — Cierre.** GDD §15.10, Plan de Pruebas §20, propuesta DEC-015 y memorias. La fila DEV-013 pasa a Completada. · Verificación: revisión de archivos.
+
+---
+
+## 15. ART-001 — Pipeline de arte y primeros assets
+
+- **Responsable:** Jhonn (después Michael y Einell) · **Revisor:** Michael y Einell; Zadiel (parte técnica) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-001 · Paso 1 — Revisión.** En el repositorio no había herramientas de arte definidas: la tabla de Recursos solo tenía Roblox Studio, Obsidian, Git, GitHub y Claude Code, y el estilo visual estaba «Pendiente». La memoria del área 12 citaba Blender, Substance, Krita y Audacity. En la PC están instalados Blender 5.3, Krita, Audacity 4 y Material Maker 1.8 (portable); Substance no. · Verificación: ejecutada.
+- **2026-11-20 · ART-001 · Paso 2 — Dirección y reserva.** Jhonn elige el estilo low-poly propuesto, para detallar después, y lleva el arte por ahora; luego pasará a Michael y Einell. Reserva subida en `630fb6c`. · Verificación: ejecutada.
+- **2026-11-20 · ART-001 · Paso 3 — Generadores.** `art/blender/scripts/arte_comun.py` (paleta de 16 colores, material único, primitivas, unión, exportación FBX y conteo de triángulos), `generar_todo.py` y `vista_previa.py`. · Verificación: **ejecutada con Blender 5.3 en modo consola**. `mdl_caminadora` tiene 152 triángulos y `mdl_capsula_laton` 328; se exportaron sus FBX y `tex_paleta.png`, y se renderizaron vistas previas revisadas visualmente.
+- **2026-11-20 · ART-001 · Paso 4 — Documentación.** Nueva nota [[Pipeline-de-Arte]] (herramientas, estilo, paleta, carpetas, formatos, nombres, flujo hasta Studio y lista de assets con prioridades). También se actualizaron la tabla de herramientas de Recursos, el estilo en [[Diseño-del-Mundo]], `art/README.md`, el `.gitignore` (temporales de Blender, Krita y Audacity), el Dashboard, las memorias 05 y 12 y la propuesta DEC-016. · Verificación: revisión de archivos.
+- **2026-11-20 · ART-001 · Paso 5 — Cierre.** La fila ART-001 pasa a Completada. Pendiente: importar los FBX en la place oficial (hay que publicarla primero) y hacer la tarea de código que cambie las piezas provisionales por los modelos de `ServerStorage/Assets`. · Verificación: revisión de archivos.
+

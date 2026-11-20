@@ -411,7 +411,7 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - **Revisor:** Michael y Einell (dirección visual); Zadiel revisa la parte técnica.
 - **Área:** Dirección visual, assets y audio.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pipeline listo; faltan la importación en Studio y la conexión en el código).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -427,10 +427,10 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Nota «Pipeline-de-Arte» con herramientas, estilo, paleta, formatos, límites, nombres, flujo de importación y lista de assets.
-- [ ] Tabla de herramientas actualizada y estilo visual registrado como propuesta.
-- [ ] Carpeta `art/` con estructura documentada y `.gitignore` para archivos temporales.
-- [ ] Al menos un modelo y la paleta exportados por script desde Blender, con su conteo de triángulos.
-- [ ] La fila ART-001 de ACTIVE_TASKS queda Completada.
+- [x] Nota «Pipeline-de-Arte» con herramientas, estilo, paleta, formatos, límites, nombres, flujo de importación y lista de assets.
+- [x] Tabla de herramientas actualizada y estilo visual registrado como propuesta.
+- [x] Carpeta `art/` con estructura documentada y `.gitignore` para archivos temporales.
+- [x] Al menos un modelo y la paleta exportados por script desde Blender, con su conteo de triángulos.
+- [x] La fila ART-001 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ninguna (el código del juego ya es funcional).

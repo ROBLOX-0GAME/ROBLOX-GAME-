@@ -97,3 +97,4 @@ Consulta la memoria compacta de cada carpeta:
 
 - [[Changelog|Changelog de desarrollo]]: registro paso a paso de DEV-001 a DEV-007.
 - Diseño del juego (propuesta): [[GDD]] §15. Código: `game/src`.
+- Arte: [[Pipeline-de-Arte]] (ART-001). Fuentes y exportaciones en `art/`.

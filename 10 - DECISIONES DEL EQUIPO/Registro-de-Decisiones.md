@@ -247,3 +247,8 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Interfaz / economía.
 - **Propuesta:** HUD con barra de botones a la derecha, escala por dispositivo y atajos; ruleta diaria con 7 premios y giros extra con Robux; ajustes guardados; carga por viaje de 1 a 4 con 3 mejoras (500 / 1.500 / 4.500). Detalle en [[GDD]] §15.10.
+
+#### DEC-016 — Pipeline de arte y estilo low-poly
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn; la dirección visual pasará a Michael y Einell). **Área:** Arte / assets.
+- **Propuesta:** estilo low-poly colorido tipo simulador de Roblox con una textura de paleta común; herramientas Blender, Krita, Material Maker y Audacity; carpeta `art/` para fuentes y exportaciones; 1 unidad = 1 stud; modelos base generados por script y detallados a mano. Detalle en [[Pipeline-de-Arte]].

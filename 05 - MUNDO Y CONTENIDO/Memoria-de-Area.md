@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-001: estilo visual propuesto: low-poly colorido tipo simulador de Roblox, que se detallará a mano. [[Pipeline-de-Arte]].
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.
