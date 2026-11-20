@@ -152,3 +152,40 @@ Los agentes deben:
 **Estado:** Activo  
 **Responsable:** Equipo Roblox Game Studio
 
+## 8. Propuestas abiertas
+
+Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no chocar con DEC-001 y DEC-002 aprobadas. Ninguna está aprobada: el equipo debe revisarlas.
+
+#### DEC-003 — Bucle MVP y cifras de balance iniciales
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas, economía y progresión.
+- **Propuesta:** cajas de piezas → Taller → Tienda/Museo → mejoras, con las cifras de `game/src/ReplicatedStorage/Shared/Config.luau` y `GameData.luau`. Sin robo, mascotas ni compras con Robux en esta versión.
+- **Documentos afectados:** [[Economia-y-Progresion]], [[Lista-de-Sistemas]], [[Backlog]].
+
+#### DEC-004 — Tutorial de 5 objetivos con premios
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas / UX.
+- **Propuesta:** recoger 5 cajas (20) → fabricar (30) → vender (30) → exhibir (40) → mejorar (50); guía luminosa hacia el destino. Textos en `game/src/ReplicatedStorage/Shared/GameData.luau`.
+- **Documentos afectados:** [[GDD]], [[UI-UX]], [[Backlog]].
+
+#### DEC-005 — Bucle principal: robo por zonas con persecución
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn; falta que el equipo apruebe las cifras). **Área:** Gameplay / economía.
+- **Propuesta:** 5 zonas con puertas de velocidad; botín que se pierde si el dueño te atrapa; reemplaza a las cajas de DEC-003. Detalle en [[GDD]] §15.2.
+- **Reemplaza en parte:** DEC-003 (la recolección por cajas).
+
+#### DEC-006 — Jefe cooperativo: Cronómetro Maestro
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Área:** Sistemas / multijugador.
+- **Propuesta:** evento cada 7 min; entrega de piezas por puntos de rareza; 12 monedas por punto si se repara; reembolso si falla. Detalle en [[GDD]] §15.3.
+
+#### DEC-007 — Mascotas con multiplicador de velocidad
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Progresión / economía.
+- **Propuesta:** 3 huevos (500 / 5.000 / 40.000), 5 mascotas de +5% a +60%, hasta 3 equipadas, tope de velocidad 60; solo monedas del juego. Detalle en [[GDD]] §15.4.
+
+#### DEC-008 — Velocidad como eje y monetización con ventajas
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Economía / monetización.
+- **Propuesta:** sin fuerza; caminadoras de entrenamiento; 6 pases (incluye ventajas fuertes de velocidad) y 5 productos. Detalle en [[GDD]] §15.5.
+- **Nota:** los números DEC de las ramas DEV-001 a DEV-006 chocan con DEC-001 y DEC-003 aprobadas en `main`. Se renumerarán al integrar.

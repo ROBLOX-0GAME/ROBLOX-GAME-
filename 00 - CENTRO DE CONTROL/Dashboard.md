@@ -92,3 +92,8 @@ Consulta la memoria compacta de cada carpeta:
 - [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]] — [[Registro-de-Decisiones]] · [[OWNERS]] · [[ACTIVE_TASKS]]
 - [[11 - TESTING Y BUGS/Memoria-de-Area|11 - TESTING Y BUGS]]
 - [[12 - RECURSOS Y REFERENCIAS/Memoria-de-Area|12 - RECURSOS Y REFERENCIAS]]
+
+## Desarrollo activo
+
+- [[Changelog|Changelog de desarrollo]]: registro paso a paso de DEV-001 a DEV-007.
+- Diseño del juego (propuesta): [[GDD]] §15. Código: `game/src`.

@@ -128,3 +128,14 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 
 **Estado:** Borrador inicial  
 **Aprobación técnica:** Pendiente
+
+## 13. Implementación del juego (DEV-007) — propuesta en revisión
+
+- **Código:** `game/src` según DEC-001. Compartido en `ReplicatedStorage/Shared` (Config, GameData, PlayerLogic); servidor en `ServerScriptService/Server` (Main, Services, Tests); cliente en `StarterPlayer/StarterPlayerScripts/Client` (Main, Ui).
+- **Compilación:** el control oficial es `rojo build game/default.project.json` (Rojo 7.7.1). Como ayuda local sin Rojo, `python game/tools/build.py` revisa bloques, `require`, campos de módulos y locales usados antes de declararse, y genera `game/build/ROBLOX-GAME.rbxlx`.
+- **Pruebas:** `Server/Tests` ejecuta las pruebas de `PlayerLogic` al pulsar Play en Studio (nunca en servidores publicados).
+- **Comunicación:** `ReplicatedStorage.Remotes`. `Action` (RemoteFunction) es la única entrada de acciones del cliente. `State`, `Notify` y `OpenPanel` (RemoteEvent) van del servidor al cliente. El servidor valida tipos, límite de solicitudes, distancia a estaciones y reglas de `PlayerLogic`.
+- **Datos:** DataStore `BuildAWatch_PlayerData_v1`, formato `{ data, lock }`. Incluye bloqueo de sesión (300 s), autoguardado (120 s), guardado al salir y en `BindToClose`, y reparación con `PlayerLogic.reconcile`. El botín encima y los pases son solo de la sesión.
+- **Robux:** `MonetizationService`. Los pases se consultan a Roblox al entrar. Los productos se entregan una sola vez (id de compra guardado) y solo se confirman tras guardar. Los IDs se configuran en `Config` (0 = próximamente).
+- **Mundo:** `WorldService`, `HouseService` y `TrainingService` generan piezas funcionales provisionales, marcadas con CollectionService (`Station`, `SpeedGate`, `GuideHouse`, `Treadmill`). El arte final se hará con Krita, Blender, Audacity y Material Maker y podrá sustituirlas conservando etiquetas y atributos.
+- Diseño: [[GDD]] §15. Historial: [[Changelog]]. Propuestas: [[Registro-de-Decisiones]] DEC-003 a DEC-008.

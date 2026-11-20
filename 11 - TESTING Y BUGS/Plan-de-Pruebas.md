@@ -151,3 +151,90 @@ Una tarea podrá considerarse completada cuando:
 
 **Estado:** Borrador inicial
 **Aprobación:** Pendiente del equipo
+
+## 9. Pruebas de DEV-001
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática `python game/tools/build.py --check` (bloques, `require`, campos) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 13 pruebas de `PlayerLogic` (`game/src/ServerScriptService/Server/Tests`) al pulsar Play en Studio | Automática | Pendiente: no ejecutada todavía |
+| Bucle completo: recoger → fabricar → vender/exhibir → mejorar | Manual en Studio | **Ejecutada 2026-11-20 por Jhonn: funcional; errores menores por detallar** |
+| Guardado: salir y volver a entrar conserva el progreso (con acceso a API activado) | Manual en Studio | Pendiente |
+| Controles con mando y en el emulador móvil de Studio | Manual | Pendiente |
+| 2+ jugadores (Test → Clients and Servers): cajas compartidas y sin errores | Multijugador | Pendiente |
+
+Registra aquí el resultado real de cada prueba al ejecutarla.
+
+### BUG-001 — La mochila se llena sin piezas para ningún reloj (bloqueo)
+
+- **Fecha:** 2026-11-20. **Prioridad:** Alta. **Estado:** Corregido, pendiente de verificar en Studio. **Responsable:** Jhonn. **Sistema afectado:** Mochila / economía (DEV-001).
+
+**Descripción:** al recoger cajas, la mochila (20 piezas) se llena con una mezcla que no alcanza para fabricar ningún reloj. Como las piezas no se pueden vender ni tirar, el jugador queda bloqueado.
+
+**Pasos para reproducir:** 1. Entrar con datos nuevos. 2. Recoger cajas hasta llenar la mochila. 3. Abrir el Taller: ningún reloj se puede fabricar.
+
+**Resultado esperado:** siempre debe existir una salida (fabricar, vender o tirar piezas).
+
+**Resultado obtenido:** mochila llena y sin acciones posibles.
+
+**Evidencias:** reportado por Jhonn en prueba manual en Studio; sin errores en Output.
+
+**Solución aplicada (2026-11-20):** las piezas sueltas se pueden **vender en la Tienda** (2 monedas las comunes, 6 las poco comunes y 25 el rubí) y **tirar desde la Mochila** en cualquier lugar. El aviso de mochila llena explica ambas salidas. Los precios son bajos para que fabricar siempre rinda más; lo comprueba una prueba automática.
+
+**Verificación:** 2 pruebas nuevas en `PlayerLogic.spec.luau` (pendientes de ejecutar en Studio) y revisión estática sin errores. Falta repetir los pasos para reproducir en Studio.
+
+## 10. Pruebas de DEV-002 (tutorial)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática `python game/tools/build.py --check` | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 2 pruebas de tutorial en `PlayerLogic.spec.luau` (17 en total) | Automática | Pendiente |
+| Completar los 5 objetivos con datos nuevos; premios recibidos una sola vez | Manual en Studio | Pendiente |
+| La guía apunta al destino correcto, se oculta al llegar y vuelve tras reaparecer | Manual en Studio | Pendiente |
+| Corrección de BUG-001: vender piezas en la Tienda y tirarlas desde la Mochila | Manual en Studio | Pendiente |
+
+## 11. Pruebas de DEV-003 (robo por zonas)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 25 pruebas de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| Robar en la zona 1 y llegar a la base: el botín pasa a la mochila | Manual | Pendiente |
+| Dejarse atrapar: se pierde solo el botín, no lo guardado | Manual | Pendiente |
+| Reiniciar el personaje con botín encima: se pierde el botín | Manual | Pendiente |
+| La puerta de la zona 2 bloquea con velocidad 16 y deja pasar con 18 | Manual | Pendiente |
+| 2 jugadores roban la misma casa: el dueño persigue a uno y luego al otro | Multijugador | Pendiente |
+| El dueño no se atasca al salir de la casa | Manual | Pendiente |
+
+## 12. Pruebas de DEV-004 (Cronómetro Maestro)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 27 pruebas de `PlayerLogic` | Automática | Pendiente |
+| A los 90 s llega el aviso de avería y el reloj echa humo | Manual | Pendiente |
+| Llegar a la meta: monedas = 12 × puntos aportados | Manual | Pendiente |
+| Dejar que se acabe el tiempo: se devuelven las piezas | Manual | Pendiente |
+| 2 jugadores aportan; la meta escala a 50 puntos | Multijugador | Pendiente |
+
+## 13. Pruebas de DEV-005 (mascotas)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 30 pruebas de `PlayerLogic` | Automática | Pendiente |
+| Abrir un Huevo de Latón: cobra 500 y la mascota aparece junto al personaje | Manual | Pendiente |
+| Equipar un Zorro: la puerta del Barrio Obrero se vuelve verde | Manual | Pendiente |
+| Reaparecer: las mascotas vuelven a aparecer | Manual | Pendiente |
+| Botones de mascotas en pantalla de móvil (3 botones por fila) | Manual | Pendiente |
+
+## 14. Pruebas de DEV-006 (velocidad y Robux)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 35 pruebas de `PlayerLogic` | Automática | Pendiente |
+| Entrenar en la Caminadora Básica: el HUD sube la velocidad entrenada; alejarse detiene | Manual | Pendiente |
+| Con `STUDIO_GRANT_ALL_PASSES = true`: Mascota Suprema equipada, Turbo disponible, +25% de velocidad | Manual | Pendiente |
+| Compra de prueba de un producto en Studio: se entrega una sola vez | Manual | Pendiente (requiere IDs reales) |
+| Tienda Robux muestra «Próximamente» con IDs en 0 | Manual | Pendiente |

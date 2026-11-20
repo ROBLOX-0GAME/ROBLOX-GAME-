@@ -1,1 +1,0 @@
--- Punto de entrada vacío; no añade sistemas al juego.

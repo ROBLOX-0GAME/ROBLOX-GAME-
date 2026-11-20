@@ -1,6 +1,6 @@
 # Código Roblox con Rojo
 
-Este es el scaffold inicial del código fuente. El place del juego todavía no existe. El flujo confirmado es parcialmente gestionado: Git guarda el código y la configuración; Roblox Studio conserva el place, el mundo y los assets.
+Código fuente de BUILD A WATCH! (mecánicas, DEV-001 a DEV-007). El place oficial todavía no existe. El flujo confirmado es parcialmente gestionado: Git guarda el código y la configuración; Roblox Studio conserva el place, el mundo y los assets.
 
 ## Coordinación de edición entre los dos Claude Code
 
@@ -27,14 +27,35 @@ Cuando el equipo cree el place:
 
 El servidor local de Rojo y Roblox Studio deben ejecutarse en la misma PC para usar localhost. GitHub almacena el repositorio, pero no mantiene abierta esa conexión local.
 
-## Estructura inicial
+## Estructura
 
-- src/ReplicatedStorage/Shared: módulos compartidos.
-- src/ServerScriptService: scripts del servidor.
-- src/StarterPlayer/StarterPlayerScripts: scripts del cliente.
-- build/: salida local de place, ignorada por Git.
+- `src/ReplicatedStorage/Shared`: `Config` (cifras de balance y técnicas, PROPUESTA), `GameData` (piezas, relojes, zonas, mascotas, caminadoras y pases), `PlayerLogic` (reglas puras y probadas).
+- `src/ServerScriptService/Server`: `Main` y `Services` (datos, mundo, casas y dueños, acciones, museo, jefe, mascotas, entrenamiento, Robux, remotos), además de `Tests`.
+- `src/StarterPlayer/StarterPlayerScripts/Client`: `Main` y `Ui` (HUD y menús funcionales; ruta de Cuenta B según OWNERS.md).
+- `tools/build.py`: revisión estática y place local sin Rojo.
+- `build/`: salida local de place, ignorada por Git.
 
-Los archivos Bootstrap y Placeholder no implementan mecánicas. Se retirarán o sustituirán cuando la arquitectura del juego se apruebe.
+DEV-007 retiró los archivos Bootstrap y Placeholder de INFRA-001 al llegar el código real.
+
+## Probar sin Rojo
+
+1. `python game/tools/build.py`: revisa el código y genera `game/build/ROBLOX-GAME.rbxlx`.
+2. Abre ese archivo en Roblox Studio y pulsa Play. En Output deben aparecer `[BUILD A WATCH!] Servidor iniciado.` y `[Pruebas] N correctas, 0 fallidas`.
+3. Opcional: `Config.STUDIO_GRANT_ALL_PASSES = true` activa todos los pases de Robux solo en esa sesión de Studio.
+4. El guardado real requiere publicar la experiencia y activar Game Settings → Security → Enable Studio Access to API Services. Sin eso el juego avisa «Modo de prueba».
+
+Lo que se cambie dentro de Studio debe copiarse a `game/src`; si no, se pierde al recompilar.
+
+## Mecánicas (propuesta; diseño en el GDD §15)
+
+1. Robo por 5 zonas, cada una más rica. Para entrar a cada zona hace falta velocidad. Al salir de una casa, el dueño te persigue; si te atrapa, pierdes el botín.
+2. Fabricar relojes en el Taller, venderlos en la Tienda o exhibirlos en el Museo, que da ingreso pasivo.
+3. Velocidad = (base + mejoras + entrenamiento en caminadoras) × mascotas × pase.
+4. Jefe cooperativo: el Cronómetro Maestro.
+5. Tutorial de 5 objetivos.
+6. Pases y productos con Robux; sus IDs van en `Config` y valen 0 hasta publicarse.
+
+Reglas: el servidor decide todo, las reglas nuevas van en `PlayerLogic` con su prueba, y cada paso se registra en el Changelog.
 
 
 ## Navegación en Obsidian
