@@ -484,7 +484,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Michael y Einell; Zadiel revisa la parte técnica.
 - **Área:** Assets y audio.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (música pendiente).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -496,9 +496,9 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Modelos de ambiente exportados con vista previa.
-- [ ] 8 iconos `ico_*` en `art/texturas/export/`.
-- [ ] 10 efectos `sfx_*` en `art/audio/export/` (OGG), con su fuente reproducible.
-- [ ] La fila ART-004 de ACTIVE_TASKS queda Completada.
+- [x] Modelos de ambiente exportados con vista previa.
+- [x] 8 iconos `ico_*` en `art/texturas/export/`.
+- [x] 10 efectos `sfx_*` en `art/audio/export/` (OGG), con su fuente reproducible.
+- [x] La fila ART-004 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-003 (Completada).

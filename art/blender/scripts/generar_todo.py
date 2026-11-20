@@ -1,5 +1,5 @@
 """
-generar_todo.py — genera todos los assets low-poly base (ART-001, ART-002 y ART-003).
+generar_todo.py — genera todos los assets low-poly base (ART-001 a ART-004).
 
     "C:\\Program Files\\Blender Foundation\\Blender 5.3\\blender.exe" --background --factory-startup ^
         --python art/blender/scripts/generar_todo.py
@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import arte_comun as A  # noqa: E402
 import modelos_prioridad1 as P1  # noqa: E402
 import modelos_prioridad2 as P2  # noqa: E402
+import modelos_prioridad3 as P3  # noqa: E402
 
 
 def caminadora():
@@ -53,6 +54,7 @@ MODELOS = {
 }
 MODELOS.update(P1.MODELOS)
 MODELOS.update(P2.MODELOS)
+MODELOS.update(P3.MODELOS)
 
 
 def main():

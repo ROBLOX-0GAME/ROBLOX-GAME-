@@ -29,7 +29,7 @@ Este control local cubre las herramientas Edit/Write de Claude Code; Bash, edito
 | ART-001 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>.gitignore<br>00 - CENTRO DE CONTROL/Dashboard.md<br>05 - MUNDO Y CONTENIDO/Diseño-del-Mundo.md<br>05 - MUNDO Y CONTENIDO/Memoria-de-Area.md<br>12 - RECURSOS Y REFERENCIAS/**<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md | Completada |
 | ART-002 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Pipeline-de-Arte.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
 | ART-003 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Pipeline-de-Arte.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
-| ART-004 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | En desarrollo |
+| ART-004 | Cuenta A (temporal; área de Cuenta B) | Jhonn | Michael y Einell; Zadiel (técnica) | art/**<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md | Completada |
 ## main sin protección (DEC-009)
 Por DEC-009, `main` no tiene protección de rama: se sube directamente, sin Pull Request ni aprobación. Nunca uses force push. Si alguien abre un Pull Request de forma opcional, GitHub Actions sigue ejecutando `reservation-check` y `rojo-build`.
 

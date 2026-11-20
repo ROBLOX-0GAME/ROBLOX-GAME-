@@ -164,8 +164,30 @@ def prisma_triangular(nombre, ancho, largo, alto, pos, color):
     return pintar(objeto, color)
 
 
+def prisma_poligono(nombre, puntos, grosor, pos, color):
+    """Extruye un contorno 2D (lista de (x, z), en orden) con grosor en Y. Útil para iconos."""
+    n = len(puntos)
+    frente = [(x, -grosor / 2, z) for x, z in puntos]
+    detras = [(x, grosor / 2, z) for x, z in puntos]
+    caras = [tuple(range(n - 1, -1, -1)), tuple(range(n, 2 * n))]
+    for i in range(n):
+        j = (i + 1) % n
+        caras.append((i, j, n + j, n + i))
+    malla = bpy.data.meshes.new(nombre)
+    malla.from_pydata(frente + detras, [], caras)
+    malla.update()
+    objeto = bpy.data.objects.new(nombre, malla)
+    objeto.location = pos
+    bpy.context.collection.objects.link(objeto)
+    bpy.context.view_layer.objects.active = objeto
+    return pintar(objeto, color)
+
+
 def unir(nombre, objetos):
     """Une varias piezas en una sola malla (un MeshPart en Roblox)."""
+    # Recalcula las matrices: si una pieza se giró después de crearla, sin esto
+    # se uniría en su posición antigua (error encontrado en ART-004).
+    bpy.context.view_layer.update()
     bpy.ops.object.select_all(action="DESELECT")
     for objeto in objetos:
         objeto.select_set(True)

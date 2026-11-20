@@ -304,3 +304,22 @@ Reglas:
 - **2026-11-20 · ART-003 · Paso 3 — Nota movida.** Zadiel movió desde Obsidian la nota del pipeline a `art/Pipeline-de-Arte.md` (`c66f57e`). Se respeta la nueva ubicación: la lista se actualiza allí y se corrige el enlace de `art/README.md`. Los enlaces `[[Pipeline-de-Arte]]` siguen funcionando porque buscan la nota por nombre. · Verificación: ejecutada (`git log`, `git diff -M`).
 - **2026-11-20 · ART-003 · Paso 4 — Cierre.** La fila ART-003 pasa a Completada. · Verificación: revisión de archivos.
 
+---
+
+## 18. ART-004 — Ambiente, iconos del HUD y efectos de sonido
+
+- **Responsable:** Jhonn · **Revisor:** Michael y Einell; Zadiel (técnica) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · ART-004 · Paso 1 — Reserva.** Subida en `e4e42eb`. · Verificación: ejecutada.
+- **2026-11-20 · ART-004 · Paso 2 — Ambiente.** `modelos_prioridad3.py`: árbol, arbusto, farola, banca, valla, roca, cartel de zona y caja de madera. · Verificación: **ejecutada con Blender**; de 36 a 126 triángulos, con vistas previas.
+- **2026-11-20 · ART-004 · Paso 3 — Iconos.** `iconos.py` renderiza 8 iconos de 256×256 con fondo transparente y contorno. Al revisarlos en una hoja de iconos aparecieron tres errores:
+  - Engranaje y ruleta incompletos: las piezas giradas se unían en su posición antigua. Se corrige `unir` (`view_layer.update()`) y se regenera la caja de madera, el único modelo afectado.
+  - Rayo mal dibujado: se dibuja por contorno con el nuevo `prisma_poligono`.
+  - Ruleta con gajos tapándose: se hacen como porciones de tarta reales.
+
+  · Verificación: ejecutada (hoja de iconos revisada tras cada corrección).
+- **2026-11-20 · ART-004 · Paso 4 — Sonido.** `art/audio/sonidos.py` (solo biblioteca estándar) sintetiza 10 efectos en WAV. `convertir_ogg.py` los pasa a OGG/Vorbis con el motor de audio de Blender (en Blender 5 la colección se llama `strips`; se corrigió). · Verificación: **ejecutada**: 10 OGG con cabecera válida, decodificados con `aud`, con duración igual a la sintetizada (±0,01 s) y pico ≈ 0,65. No se pudieron escuchar desde aquí.
+- **2026-11-20 · ART-004 · Paso 5 — Cierre.** [[Pipeline-de-Arte]] (prioridad 3 y comandos), memoria del área 12 y hoja de contactos actualizadas. La música queda pendiente. La fila ART-004 pasa a Completada. · Verificación: revisión de archivos.
+

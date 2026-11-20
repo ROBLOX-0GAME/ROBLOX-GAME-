@@ -103,13 +103,21 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ Base (96–450) |
 | Dueños de las casas | NPC de bloques (OwnerNpc) | Pendiente: personaje R15 con skins originales «al estilo» de Roblox, sin copiar personajes reales |
 
-**Prioridad 3 — ambiente, interfaz y sonido**
+**Prioridad 3 — ambiente, interfaz y sonido** (ART-004)
 
-- **Escenografía por zona:** árboles, farolas, bancos, vallas y carteles.
-- **Iconos** (Krita, 256×256): `ico_monedas`, `ico_velocidad`, `ico_mochila`, `ico_premios`, `ico_ruleta`, `ico_robux`, `ico_ajustes`, `ico_carga`.
-- **Sonido** (Audacity):
-  - Efectos: `sfx_robar`, `sfx_alarma_dueno`, `sfx_atrapado`, `sfx_guardar_botin`, `sfx_comprar`, `sfx_abrir_capsula`, `sfx_ruleta`, `sfx_subir_nivel`, `sfx_entrenar` (bucle), `sfx_boton`.
-  - Música: `mus_base`, `mus_persecucion`.
+| Asset | Uso | Estado |
+|---|---|---|
+| `mdl_arbol`, `mdl_arbusto`, `mdl_farola`, `mdl_banca`, `mdl_valla`, `mdl_roca`, `mdl_cartel_zona`, `mdl_caja_madera` | Ambiente de la base y de las zonas | ✅ Base (36–126 triángulos) |
+| `ico_monedas`, `ico_velocidad`, `ico_mochila`, `ico_premios`, `ico_ruleta`, `ico_robux`, `ico_ajustes`, `ico_carga` | Iconos del HUD (PNG 256×256 con transparencia, en `art/texturas/export/`) | ✅ Base, renderizados en Blender (`iconos.py`); retocar en Krita |
+| `sfx_robar`, `sfx_alarma_dueno`, `sfx_atrapado`, `sfx_guardar_botin`, `sfx_comprar`, `sfx_abrir_capsula`, `sfx_ruleta`, `sfx_subir_nivel`, `sfx_entrenar` (bucle de 1 s), `sfx_boton` | Efectos (OGG en `art/audio/export/`) | ✅ Base sintetizada (`art/audio/sonidos.py` → `convertir_ogg.py`); pulir en Audacity |
+| `mus_base`, `mus_persecucion` | Música | Pendiente: hacerla a mano o con licencia; no se sintetiza |
+
+**Regenerar sonido e iconos**
+```
+python art/audio/sonidos.py
+"C:\Program Files\Blender Foundation\Blender 5.3lender.exe" --background --factory-startup --python art/audio/convertir_ogg.py
+"C:\Program Files\Blender Foundation\Blender 5.3lender.exe" --background --factory-startup --python art/blender/scripts/iconos.py
+```
 
 ---
 
