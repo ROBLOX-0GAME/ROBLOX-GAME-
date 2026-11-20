@@ -52,6 +52,7 @@ local PANEL_TITLES = {
 	robux = "Tienda Robux — Pases y productos",
 }
 
+local HUD_PANELS = { backpack = true, robux = true, rewards = true }
 local state = nil
 local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
 local lastBossKey = ""
@@ -1312,7 +1313,8 @@ local function watchDistance()
 					end
 				end
 			end
-			if openPanelId and openPanelId ~= "backpack" then
+			-- Los menús que se abren desde el HUD (Mochila, Robux, Premios) no se cierran al alejarse.
+			if openPanelId and not HUD_PANELS[openPanelId] then
 				local station = findStation(openPanelId)
 				local character = player.Character
 				local root = character and character:FindFirstChild("HumanoidRootPart")

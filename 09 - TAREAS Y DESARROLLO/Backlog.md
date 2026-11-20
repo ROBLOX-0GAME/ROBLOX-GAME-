@@ -298,7 +298,7 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - **Revisor:** Zadiel. Cuenta B revisa la distribución, que es visible para el jugador.
 - **Área:** Sistemas y mundo (distribución funcional; el arte final va aparte).
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -310,11 +310,11 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 
 **Criterios de aceptación:**
 
-- [ ] 6 plots en arco, orientados hacia la plaza; cada uno con la caminadora delante, las vitrinas (hasta 15) y el taller al fondo.
-- [ ] Muro frontal con la abertura central y las 4 estaciones pegadas a él.
-- [ ] Nada se superpone: plots, estaciones, aparición y camino.
-- [ ] Revisión estática sin errores y pruebas actualizadas.
-- [ ] La fila DEV-010 de ACTIVE_TASKS queda Completada.
+- [x] 6 plots en arco, orientados hacia la plaza; cada uno con la caminadora delante, las vitrinas (hasta 15) y el taller al fondo.
+- [x] Muro frontal con la abertura central y las 4 estaciones pegadas a él.
+- [x] Nada se superpone: plots, estaciones, aparición y camino.
+- [x] Revisión estática sin errores y pruebas actualizadas.
+- [x] La fila DEV-010 de ACTIVE_TASKS queda Completada.
 
 **Nota:** el límite de 6 jugadores se configura en Roblox (Game Settings → Places → Max Players) al publicar; el código prepara 6 plots.
 

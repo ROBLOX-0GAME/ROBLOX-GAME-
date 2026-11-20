@@ -97,8 +97,8 @@ function PetService.init()
 	WorldService.buildStation({
 		id = "pets",
 		title = "Criadero",
-		action = "Huevos y mascotas",
-		position = Vector3.new(55, 0, -70),
+		action = "Cápsulas y mascotas",
+		position = WorldService.WallSlots.pets, -- pegado al muro frontal (DEV-010)
 		color = Color3.fromRGB(220, 150, 60),
 	})
 	Players.PlayerAdded:Connect(watchPlayer)

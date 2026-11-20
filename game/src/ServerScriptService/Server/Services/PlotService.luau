@@ -1,15 +1,17 @@
 --[[
-	PlotService — plot personal de cada jugador (DEV-008).
+	PlotService — plot personal de cada jugador (DEV-008; media luna en DEV-010).
 
-	Hay Config.PLOT_COUNT plots en la base, 5 a cada lado. Al cargar sus datos,
-	cada jugador recibe el primer plot libre; al salir se libera.
+	Hay Config.PLOT_COUNT plots (6, uno por jugador) colocados en media luna
+	alrededor de la plaza de la base (WorldService.PlazaCenter), abierta hacia
+	el muro frontal por donde se sale a correr. Al cargar sus datos, cada
+	jugador recibe el primer plot libre; al salir se libera.
 
-	Distribución de un plot (de fuera hacia el centro de la base):
-	  - Taller (mesa de elaboración) al fondo: fabricar relojes.
-	  - Vitrinas en el centro: los relojes exhibidos dan ingreso pasivo y un
-	    poco de suerte (funciona como el antiguo Museo). Se gestionan desde el
-	    panel del plot, que también vende las mejoras de vitrinas y caminadora.
-	  - Caminadora enfrente: entrenar velocidad (TrainingService).
+	Cada plot mira hacia la plaza. De delante hacia atrás:
+	  - Caminadora (fuera del plot, hacia la plaza): entrenar velocidad.
+	  - Vitrinas (centro): los relojes exhibidos dan ingreso pasivo y un poco
+	    de suerte. Se gestionan desde el panel del plot (esquina delantera),
+	    que también vende las mejoras de vitrinas y caminadora.
+	  - Taller (al fondo): mesa de elaboración para fabricar relojes.
 
 	Solo el dueño puede usar su plot (se valida en el servidor). Las piezas son
 	marcadores funcionales; el arte final se hará aparte. Etiquetas: "Station"
@@ -34,11 +36,14 @@ local plots = {} -- lista de plots
 local plotByPlayer = {} -- [Player] = plot
 local treadmillHandler = nil -- función(player) que pone TrainingService
 
-local PLOT_WIDTH = 30 -- eje X
-local PLOT_DEPTH = 24 -- eje Z
-local PLOT_CENTER_X = 88
-local PLOT_Z = { 6, -22, -50, -78, -106 }
-local FREE_COLOR = Color3.fromRGB(150, 150, 150)
+-- Medidas (en coordenadas locales del plot: -Z mira hacia la plaza)
+local PLOT_WIDTH = 34 -- eje X local
+local PLOT_DEPTH = 40 -- eje Z local
+local ARC_RADIUS = 95 -- distancia del centro de la plaza al centro de cada plot
+local ARC_FROM = 200 -- ángulos (grados, plano XZ) del primer y último plot
+local ARC_TO = 340
+local DISPLAY_COLUMNS = { -10, -5, 0, 5, 10 } -- X local de las vitrinas
+local DISPLAY_ROWS = { -10, -4, 2 } -- Z local de las filas (de delante hacia atrás)
 
 local function makePrompt(parent, actionText, objectText)
 	local prompt = Instance.new("ProximityPrompt")
@@ -72,83 +77,84 @@ local function ownerOnly(plot, player)
 	return false
 end
 
-local function buildPlot(folder, index, side, centerZ)
-	local makePart = WorldService.makePart
-	local centerX = side * PLOT_CENTER_X
+-- Pieza colocada en coordenadas locales del plot.
+local function plotPart(plot, props, localCFrame)
+	props.CFrame = plot.cframe * localCFrame
+	return WorldService.makePart(props)
+end
+
+local function buildPlot(folder, index, angle)
+	local plaza = WorldService.PlazaCenter
+	local position = plaza + Vector3.new(math.cos(angle) * ARC_RADIUS, 0, math.sin(angle) * ARC_RADIUS)
+	local plot = {
+		index = index,
+		cframe = CFrame.lookAt(position, Vector3.new(plaza.X, 0, plaza.Z)), -- -Z local mira a la plaza
+		owner = nil,
+	}
+
 	local model = Instance.new("Model")
 	model.Name = "Plot" .. index
 	model.ModelStreamingMode = Enum.ModelStreamingMode.Persistent
+	plot.model = model
 
-	makePart({
+	plotPart(plot, {
 		Name = "Suelo",
 		Size = Vector3.new(PLOT_WIDTH, 0.4, PLOT_DEPTH),
-		Position = Vector3.new(centerX, 0.3, centerZ),
 		Color = Color3.fromRGB(120, 110, 100),
 		Material = Enum.Material.Concrete,
-	}).Parent = model
+	}, CFrame.new(0, 0.3, 0)).Parent = model
 
-	-- Taller al fondo (lado exterior)
-	local workshop = makePart({
+	-- Taller al fondo
+	local workshop = plotPart(plot, {
 		Name = "Taller",
-		Size = Vector3.new(4, 3.5, 12),
-		Position = Vector3.new(centerX + side * 12, 2, centerZ),
+		Size = Vector3.new(14, 3.5, 4),
 		Color = Color3.fromRGB(196, 134, 72),
 		Material = Enum.Material.WoodPlanks,
-	})
+	}, CFrame.new(0, 2, PLOT_DEPTH / 2 - 4))
 	workshop:SetAttribute("StationId", "workshop")
 	CollectionService:AddTag(workshop, "Station")
 	workshop.Parent = model
 
-	-- Panel del plot en el centro (vitrinas y mejoras)
-	local panel = makePart({
+	-- Panel del plot en la esquina delantera (vitrinas y mejoras)
+	local panel = plotPart(plot, {
 		Name = "PanelDelPlot",
-		Size = Vector3.new(2, 4, 4),
-		Position = Vector3.new(centerX - side * 10, 2.5, centerZ + PLOT_DEPTH / 2 - 3),
+		Size = Vector3.new(4, 4, 2),
 		Color = Color3.fromRGB(92, 120, 200),
 		Material = Enum.Material.SmoothPlastic,
-	})
+	}, CFrame.new(PLOT_WIDTH / 2 - 3, 2.5, -PLOT_DEPTH / 2 + 3))
 	panel:SetAttribute("StationId", "plot")
 	CollectionService:AddTag(panel, "Station")
 	panel.Parent = model
 
-	-- Caminadora enfrente (lado hacia el centro de la base)
-	local treadmill = makePart({
+	-- Caminadora delante del plot, hacia la plaza
+	local treadmill = plotPart(plot, {
 		Name = "Caminadora",
 		Size = Vector3.new(5, 1, 8),
-		Position = Vector3.new(centerX - side * (PLOT_WIDTH / 2 + 4), 0.5, centerZ),
 		Color = Color3.fromRGB(60, 60, 70),
 		Material = Enum.Material.Metal,
-	})
+	}, CFrame.new(0, 0.5, -PLOT_DEPTH / 2 - 7))
 	CollectionService:AddTag(treadmill, "PlotTreadmill")
 	treadmill.Parent = model
 
-	-- Cartel con el nombre del dueño
-	local sign = makePart({
+	-- Cartel con el nombre del dueño, sobre el borde delantero
+	local sign = plotPart(plot, {
 		Name = "Cartel",
 		Size = Vector3.new(1, 1, 1),
-		Position = Vector3.new(centerX, 9, centerZ - PLOT_DEPTH / 2 + 1),
 		Transparency = 1,
 		CanCollide = false,
 		CanQuery = false,
-	})
+	}, CFrame.new(0, 10, -PLOT_DEPTH / 2 + 1))
 	sign.Parent = model
 
 	local displays = Instance.new("Folder")
 	displays.Name = "Vitrinas"
 	displays.Parent = model
 
-	local plot = {
-		index = index,
-		side = side,
-		center = Vector3.new(centerX, 0, centerZ),
-		model = model,
-		workshop = workshop,
-		panel = panel,
-		treadmill = treadmill,
-		sign = sign,
-		displays = displays,
-		owner = nil,
-	}
+	plot.workshop = workshop
+	plot.panel = panel
+	plot.treadmill = treadmill
+	plot.sign = sign
+	plot.displays = displays
 
 	makePrompt(workshop, "Fabricar relojes", "Taller del plot").Triggered:Connect(function(player)
 		if ownerOnly(plot, player) and DataService.get(player) then
@@ -185,34 +191,28 @@ function PlotService.refresh(player)
 			table.insert(watches, watchId)
 		end
 	end
-	local slots = PlayerLogic.museumSlots(data)
-	local columns = 5
+	local slots = math.min(PlayerLogic.museumSlots(data), #DISPLAY_COLUMNS * #DISPLAY_ROWS)
 	for slot = 1, slots do
-		local row = (slot - 1) // columns
-		local column = (slot - 1) % columns
-		local position = plot.center
-			+ Vector3.new(plot.side * (6 - row * 4), 0, -8 + column * 4)
-		local pedestal = WorldService.makePart({
+		local row = DISPLAY_ROWS[(slot - 1) // #DISPLAY_COLUMNS + 1]
+		local column = DISPLAY_COLUMNS[(slot - 1) % #DISPLAY_COLUMNS + 1]
+		plotPart(plot, {
 			Name = "Vitrina" .. slot,
 			Size = Vector3.new(2, 2.5, 2),
-			Position = position + Vector3.new(0, 1.65, 0),
 			Color = Color3.fromRGB(230, 225, 210),
 			Material = Enum.Material.Glass,
 			Transparency = 0.2,
-		})
-		pedestal.Parent = plot.displays
+		}, CFrame.new(column, 1.65, row)).Parent = plot.displays
 		local watchId = watches[slot]
 		if watchId then
 			local watch = GameData.Watches[watchId]
-			local marker = WorldService.makePart({
+			local marker = plotPart(plot, {
 				Name = watch.name,
 				Shape = Enum.PartType.Cylinder,
 				Size = Vector3.new(0.4, 1.4, 1.4),
-				CFrame = CFrame.new(position + Vector3.new(0, 3.6, 0)) * CFrame.Angles(0, 0, math.rad(90)),
 				Color = Color3.fromRGB(255, 210, 90),
 				Material = Enum.Material.Neon,
 				CanCollide = false,
-			})
+			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
 			WorldService.makeSign(marker, watch.name, string.format("+%d monedas", watch.income), 1.5, 50)
 			marker.Parent = plot.displays
 		end
@@ -254,14 +254,14 @@ local function release(player)
 	setSign(plot, string.format("Plot %d", plot.index), "Libre")
 end
 
--- Lleva al jugador delante de su plot (al reaparecer).
-local function moveToPlot(player)
+-- Lleva al jugador delante de su plot, mirando hacia él.
+function PlotService.moveToPlot(player)
 	local plot = plotByPlayer[player]
 	local character = player.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart")
 	if plot and root then
-		local front = plot.center + Vector3.new(-plot.side * (PLOT_WIDTH / 2 + 10), 4, 0)
-		root.CFrame = CFrame.lookAt(front, plot.center + Vector3.new(0, 4, 0))
+		local front = (plot.cframe * CFrame.new(0, 4, -PLOT_DEPTH / 2 - 16)).Position
+		root.CFrame = CFrame.lookAt(front, plot.cframe.Position + Vector3.new(0, 4, 0))
 	end
 end
 
@@ -293,25 +293,31 @@ function PlotService.onTreadmill(handler)
 	treadmillHandler = handler
 end
 
+-- Otros servicios (p. ej. la introducción de DEV-011) pueden decidir si el
+-- jugador aparece en su plot; por defecto, sí.
+PlotService.shouldMoveToPlot = function()
+	return true
+end
+
 function PlotService.init()
 	local folder = Instance.new("Folder")
 	folder.Name = "Plots"
 	folder.Parent = WorldService.Folder
 
-	local index = 0
-	for _, side in { -1, 1 } do
-		for _, z in PLOT_Z do
-			index += 1
-			if index <= Config.PLOT_COUNT then
-				buildPlot(folder, index, side, z)
-			end
+	for index = 1, Config.PLOT_COUNT do
+		local t = 0
+		if Config.PLOT_COUNT > 1 then
+			t = (index - 1) / (Config.PLOT_COUNT - 1)
 		end
+		buildPlot(folder, index, math.rad(ARC_FROM + (ARC_TO - ARC_FROM) * t))
 	end
 
 	DataService.onLoaded(function(player)
 		if assign(player) then
-			Net.notify(player, "Tu plot tiene tu nombre en el cartel: taller al fondo, vitrinas y caminadora.", "info")
-			moveToPlot(player)
+			Net.notify(player, "Tu plot tiene tu nombre en el cartel: caminadora delante, vitrinas y taller al fondo.", "info")
+			if PlotService.shouldMoveToPlot(player) then
+				PlotService.moveToPlot(player)
+			end
 		else
 			Net.notify(player, "No quedan plots libres en este servidor.", "error")
 		end
@@ -320,7 +326,9 @@ function PlotService.init()
 		player.CharacterAdded:Connect(function(character)
 			character:WaitForChild("HumanoidRootPart", 10)
 			task.wait(0.1)
-			moveToPlot(player)
+			if PlotService.shouldMoveToPlot(player) then
+				PlotService.moveToPlot(player)
+			end
 		end)
 	end
 	Players.PlayerAdded:Connect(watchPlayer)

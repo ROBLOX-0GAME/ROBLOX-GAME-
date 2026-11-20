@@ -226,3 +226,8 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Economía / monetización.
 - **Propuesta:** cápsulas en lugar de huevos; racha diaria de 7 días; 5 premios por tiempo jugado al día; Cápsula Cósmica solo con Robux con mascotas de +80% a +150% y probabilidades visibles. Detalle en [[GDD]] §15.7.
+
+#### DEC-012 — Base en media luna con 6 plots y muro frontal
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Mundo / sistemas.
+- **Propuesta:** 6 jugadores y 6 plots de 34 × 40 en media luna alrededor de la plaza; caminadora delante y taller al fondo; muro frontal con abertura y las estaciones Tienda, Robux, Criadero y Cronómetro. Detalle en [[GDD]] §15.8.

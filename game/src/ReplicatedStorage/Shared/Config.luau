@@ -57,7 +57,7 @@ local Config = {
 	MAX_EQUIPPED_PETS = 3,
 
 	-- Plot personal (DEV-008)
-	PLOT_COUNT = 10, -- uno por jugador (servidor de 10)
+	PLOT_COUNT = 6, -- uno por jugador: servidores de 6 (DEV-010; Max Players se fija en Game Settings)
 	MAX_PLOT_LUCK = 0.15, -- tope de suerte que dan los relojes exhibidos
 	MAX_EXTRA_PART_CHANCE = 0.6, -- tope total de probabilidad de robar 2 piezas
 

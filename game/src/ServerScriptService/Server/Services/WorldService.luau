@@ -34,22 +34,44 @@ WorldService.Folder = nil
 WorldService.Stations = {} -- [stationId] = BasePart
 
 -- Medidas del mapa
-local HALF_WIDTH = 110 -- el mapa va de X = -110 a X = 110
+local HALF_WIDTH = 130 -- el mapa va de X = -130 a X = 130 (DEV-010: cabe la media luna)
 local ZONE_START = 30 -- Z donde empieza la zona 1
 local ZONE_LENGTH = 140 -- distancia entre el inicio de dos zonas
 local ZONE_DEPTH = 130 -- largo útil de cada zona
 local MAP_END = ZONE_START + #GameData.Zones * ZONE_LENGTH
-local MAP_BACK = -130 -- base más grande para los 10 plots (DEV-008)
+local MAP_BACK = -205 -- fondo de la base: detrás de los plots en media luna (DEV-010)
 
--- Estaciones compartidas. El Taller y el Museo pasaron al plot de cada
--- jugador (DEV-008); el Jefe y el Criadero los crean BossService y PetService.
+-- Muro frontal de la base (DEV-010): separa la base de la zona de carrera,
+-- con una abertura central para salir a correr. Las estaciones compartidas
+-- van pegadas a su cara interior.
+local FRONT_WALL_Z = 14 -- centro del muro (la base segura llega hasta Config.HUB_MAX_Z)
+local FRONT_OPENING = 14 -- media anchura de la abertura central
+local STATION_Z = FRONT_WALL_Z - 6 -- estaciones pegadas al muro, del lado de la base
+WorldService.WallSlots = {
+	shop = Vector3.new(-80, 0, STATION_Z),
+	robux = Vector3.new(-40, 0, STATION_Z),
+	pets = Vector3.new(40, 0, STATION_Z),
+	boss = Vector3.new(80, 0, STATION_Z),
+}
+-- Centro de la plaza: el arco de plots mira hacia aquí (PlotService)
+WorldService.PlazaCenter = Vector3.new(0, 0, -70)
+
+-- Estaciones compartidas creadas aquí. El Jefe (BossService) y el Criadero
+-- (PetService) usan también WallSlots. El Taller y el Museo están en cada plot.
 local STATIONS = {
 	{
 		id = "shop",
 		title = "Tienda",
 		action = "Vender y mejorar",
-		position = Vector3.new(0, 0, -25),
+		position = WorldService.WallSlots.shop,
 		color = Color3.fromRGB(74, 160, 96),
+	},
+	{
+		id = "robux",
+		title = "Tienda Robux",
+		action = "Pases y productos",
+		position = WorldService.WallSlots.robux,
+		color = Color3.fromRGB(0, 170, 90),
 	},
 }
 
@@ -258,7 +280,7 @@ function WorldService.init()
 	local baseSign = makePart({
 		Name = "CartelBase",
 		Size = Vector3.new(1, 1, 1),
-		Position = Vector3.new(0, 6, Config.HUB_MAX_Z - 2),
+		Position = Vector3.new(0, 6, WorldService.PlazaCenter.Z + 25),
 		Transparency = 1,
 		CanCollide = false,
 	})
@@ -274,6 +296,27 @@ function WorldService.init()
 		Material = Enum.Material.Asphalt,
 		CanCollide = false,
 	}).Parent = folder
+
+	-- Muro frontal con abertura para salir a correr
+	local wallLength = HALF_WIDTH - FRONT_OPENING
+	for _, side in { -1, 1 } do
+		makePart({
+			Name = "MuroFrontal",
+			Size = Vector3.new(wallLength, 18, 2),
+			Position = Vector3.new(side * (FRONT_OPENING + wallLength / 2), 9, FRONT_WALL_Z),
+			Color = Color3.fromRGB(150, 140, 125),
+			Material = Enum.Material.Brick,
+		}).Parent = folder
+	end
+	local exitSign = makePart({
+		Name = "CartelSalida",
+		Size = Vector3.new(1, 1, 1),
+		Position = Vector3.new(0, 14, FRONT_WALL_Z),
+		Transparency = 1,
+		CanCollide = false,
+	})
+	makeSign(exitSign, "SALIDA", "¡A correr! Las zonas ricas están adelante", 2, 220)
+	exitSign.Parent = folder
 
 	-- Muros invisibles alrededor del mapa
 	for _, wall in {
@@ -294,7 +337,7 @@ function WorldService.init()
 	spawn.Name = "Aparicion"
 	spawn.Anchored = true
 	spawn.Size = Vector3.new(10, 1, 10)
-	spawn.Position = Vector3.new(0, 0.5, 0)
+	spawn.Position = WorldService.PlazaCenter + Vector3.new(0, 0.5, 40) -- plaza, frente a la salida
 	spawn.Neutral = true
 	spawn.Duration = 0
 	spawn.Color = Color3.fromRGB(240, 200, 80)

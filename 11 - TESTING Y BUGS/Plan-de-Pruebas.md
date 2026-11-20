@@ -263,3 +263,14 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Comprar y abrir una Cápsula de Latón en el Criadero | Manual | Pendiente |
 | Abrir una cápsula guardada desde la Mochila | Manual | Pendiente |
 | La Cápsula Cósmica muestra «Próximamente» mientras su ID sea 0 | Manual | Pendiente |
+
+## 17. Pruebas de DEV-010 (base en media luna)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Comprobación geométrica de los 6 plots (sin solapes, dentro del mapa) | Automática (Python) | **Ejecutada 2026-11-20: correcta** |
+| Revisión estática (`python game/tools/build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| Se ven 6 plots en media luna mirando a la plaza; el tuyo tiene tu nombre | Manual | Pendiente |
+| En tu plot: caminadora delante, vitrinas en el centro, taller al fondo | Manual | Pendiente |
+| Muro frontal con abertura; Tienda, Robux, Criadero y Cronómetro pegados al muro | Manual | Pendiente |
+| Salir por la abertura lleva al camino de las zonas; al volver se guarda el botín | Manual | Pendiente |

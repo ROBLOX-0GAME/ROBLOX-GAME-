@@ -154,7 +154,7 @@ function BossService.init()
 		id = "boss",
 		title = "Cronómetro Maestro",
 		action = "Entregar piezas",
-		position = Vector3.new(-55, 0, -70),
+		position = WorldService.WallSlots.boss, -- pegado al muro frontal (DEV-010)
 		color = Color3.fromRGB(150, 110, 200),
 	})
 
@@ -171,7 +171,7 @@ function BossService.init()
 	clockHand = WorldService.makePart({
 		Name = "Aguja",
 		Size = Vector3.new(0.4, 3.6, 0.4),
-		Position = station.Position + Vector3.new(0, 10.6, 0.7),
+		Position = station.Position + Vector3.new(0, 10.6, -0.7),
 		Color = Color3.fromRGB(30, 30, 35),
 		CanCollide = false,
 	})
@@ -203,7 +203,7 @@ function BossService.init()
 			-- La aguja gira solo cuando el reloj funciona.
 			if not active then
 				angle = (angle + 6) % 360
-				clockHand.CFrame = CFrame.new(station.Position + Vector3.new(0, 9, 0.7))
+				clockHand.CFrame = CFrame.new(station.Position + Vector3.new(0, 9, -0.7))
 					* CFrame.Angles(0, 0, math.rad(angle))
 					* CFrame.new(0, 1.6, 0)
 			end

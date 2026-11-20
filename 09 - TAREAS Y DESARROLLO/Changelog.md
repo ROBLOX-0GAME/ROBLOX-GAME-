@@ -178,3 +178,20 @@ Reglas:
   - · Verificación: revisión estática ejecutada (22 scripts, 88 `require`, 0 errores).
 - **2026-11-20 · DEV-009 · Paso 3 — Pruebas.** 3 pruebas nuevas: cápsulas y Cósmica, racha diaria, y tiempo jugado. Se ajustó la de productos, porque la cápsula ahora va a la Mochila. Total: 37 bloques. · Verificación: pendiente en Studio.
 - **2026-11-20 · DEV-009 · Paso 4 — Documentación y cierre.** GDD §15.7, Plan de Pruebas §16, propuesta DEC-011, memorias y Backlog. La fila DEV-009 pasa a Completada. · Verificación: revisión de archivos.
+
+---
+
+## 11. DEV-010 — Base en media luna con muro frontal
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Cuenta B revisa la distribución · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-010 · Paso 1 — Prueba de DEV-009 y dirección.** Jhonn probó DEV-009 y pidió 6 jugadores y 6 plots en media luna, más amplios, con la caminadora delante y el taller al fondo, y un muro frontal con las estaciones y una abertura para correr. Reserva subida en `7bd2dda`. · Verificación: reportada por Jhonn.
+- **2026-11-20 · DEV-010 · Paso 2 — Código.**
+  - `PlotService` rehecho: 6 plots en arco (radio 95, de 200° a 340°) orientados con `CFrame.lookAt` hacia la plaza, de 34 × 40, con la caminadora delante, las vitrinas (hasta 15) y el taller al fondo. Tiene un gancho `shouldMoveToPlot` para la introducción de DEV-011.
+  - `WorldService`: muro frontal con abertura de 28 studs y cartel «SALIDA», `WallSlots` para 4 estaciones, estación nueva «Tienda Robux», `PlazaCenter`, mapa más ancho (±130) y fondo en −205.
+  - `BossService` y `PetService` se colocan en el muro.
+  - Interfaz: los menús que se abren desde el HUD (Mochila, Robux, Premios) ya no se cierran al alejarse.
+  - · Verificación: comprobación geométrica en Python (0 solapamientos, todo dentro del mapa, estaciones y aparición libres) y revisión estática (0 errores).
+- **2026-11-20 · DEV-010 · Paso 3 — Cierre.** GDD §15.8, Plan de Pruebas §17, propuesta DEC-012 y memorias. La fila DEV-010 pasa a Completada. Las pruebas automáticas siguen siendo 37 porque la distribución no cambia reglas de `PlayerLogic`. · Verificación: revisión de archivos.

@@ -313,3 +313,13 @@ Las mascotas de la Cápsula Cósmica son exclusivas de Robux y más fuertes que 
 - El botón **«Premios»** abre el panel. El juego avisa al entrar y cuando hay un premio listo.
 - El premio extra del Cronómetro Maestro ahora es una Cápsula de Latón en la Mochila.
 - **Seguridad:** el servidor controla las fechas (UTC) y el tiempo jugado; el cliente solo pide reclamar.
+
+### 15.8 Distribución de la base en media luna (DEV-010)
+
+> Dirección de Jhonn (2026-11-20). Propuesta DEC-012. Distribución funcional: el arte final se hará aparte.
+
+- **6 jugadores por servidor** y **6 plots** en **media luna** alrededor de la plaza central de la base. La media luna se abre hacia el muro frontal. El límite de 6 se fija al publicar, en Game Settings → Places → Max Players.
+- **Cada plot** mide 34 × 40 studs y mira hacia la plaza. De delante hacia atrás tiene: la **caminadora** (fuera del plot, del lado de la plaza), el **panel** del plot (esquina delantera), las **vitrinas** (hasta 15, en el centro) y el **taller** (al fondo).
+- **Muro frontal** amplio, en el borde de la base, con una **abertura central** para salir a correr hacia las zonas. Pegados a su cara interior están la **Tienda**, la **Tienda Robux**, el **Criadero de cápsulas** y el **Cronómetro Maestro**.
+- Se aparece en la plaza, frente a la salida. Cuando tienes plot, al reaparecer vas delante de él.
+- Para que quepa la media luna, el mapa se ensancha a 260 studs de ancho y la base llega hasta Z = −205.
