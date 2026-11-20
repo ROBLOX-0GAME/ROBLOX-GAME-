@@ -52,6 +52,8 @@ GameData.RarityColors = {
 	["Raro"] = Color3.fromRGB(220, 60, 70),
 	["Épico"] = Color3.fromRGB(170, 90, 230),
 	["Legendario"] = Color3.fromRGB(255, 200, 40),
+	["Mítico"] = Color3.fromRGB(255, 90, 160),
+	["Divino"] = Color3.fromRGB(120, 255, 240),
 }
 
 -- Mascotas (DEV-005, PROPUESTA). bonus: velocidad extra (0.10 = +10%).
@@ -62,6 +64,10 @@ GameData.Pets = {
 	fox = { id = "fox", name = "Zorro Relojero", rarity = "Raro", bonus = 0.20 },
 	hawk = { id = "hawk", name = "Halcón de Cuarzo", rarity = "Épico", bonus = 0.35 },
 	dragon = { id = "dragon", name = "Dragón del Tiempo", rarity = "Legendario", bonus = 0.60 },
+	-- Exclusivas de la Cápsula Cósmica (solo Robux, DEV-009): más poderosas
+	phoenix = { id = "phoenix", name = "Fénix Cronal", rarity = "Mítico", bonus = 0.80, robux = true },
+	titan = { id = "titan", name = "Titán de Cuarzo", rarity = "Mítico", bonus = 1.00, robux = true },
+	chronolord = { id = "chronolord", name = "Señor del Tiempo", rarity = "Divino", bonus = 1.50, robux = true },
 	-- Exclusiva del pase «Mascota Suprema»: su bonus se calcula como 20% más
 	-- que tu mejor mascota (PlayerLogic.petBonus). No sale de huevos ni se libera.
 	supreme = {
@@ -73,7 +79,7 @@ GameData.Pets = {
 	},
 }
 -- Orden de menor a mayor bonus (la Suprema siempre es la mejor)
-GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon", "supreme" }
+GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon", "phoenix", "titan", "chronolord", "supreme" }
 
 -- Caminadora personal del plot (DEV-008). Multiplicador de entrenamiento =
 -- 1 + nivel de la mejora «treadmill» × 0.5; el pase Caminadora Turbo lo multiplica.
@@ -132,35 +138,72 @@ GameData.Products = {
 	},
 	goldEgg = {
 		id = "goldEgg",
-		name = "Huevo de Oro instantáneo",
-		desc = "Abre un Huevo de Oro (probabilidades visibles en el Criadero)",
+		name = "Cápsula de Oro",
+		desc = "Una Cápsula de Oro para tu Mochila (probabilidades en el Criadero)",
 		egg = "gold",
 	},
+	cosmicCapsule = {
+		id = "cosmicCapsule",
+		name = "Cápsula Cósmica",
+		desc = "Mascotas exclusivas: Fénix Cronal +80%, Titán de Cuarzo +100%, Señor del Tiempo +150%",
+		egg = "cosmic",
+	},
 }
-GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg" }
+GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg", "cosmicCapsule" }
 
--- Huevos del Criadero. chances: probabilidad relativa de cada mascota.
+-- Cápsulas de mascota (DEV-009; antes «huevos»; los ids se conservan).
+-- cost: monedas en el Criadero (nil = no se vende por monedas)
+-- robuxProduct: producto de Robux que la entrega · chances: probabilidad relativa
 GameData.Eggs = {
 	brass = {
 		id = "brass",
-		name = "Huevo de Latón",
+		name = "Cápsula de Latón",
 		cost = 500,
 		chances = { mouse = 60, cat = 30, fox = 10 },
 	},
 	silver = {
 		id = "silver",
-		name = "Huevo de Plata",
+		name = "Cápsula de Plata",
 		cost = 5000,
 		chances = { cat = 50, fox = 35, hawk = 15 },
 	},
 	gold = {
 		id = "gold",
-		name = "Huevo de Oro",
+		name = "Cápsula de Oro",
 		cost = 40000,
 		chances = { fox = 50, hawk = 35, dragon = 15 },
 	},
+	cosmic = {
+		id = "cosmic",
+		name = "Cápsula Cósmica",
+		cost = nil,
+		robuxProduct = "cosmicCapsule",
+		chances = { phoenix = 60, titan = 30, chronolord = 10 },
+	},
 }
-GameData.EggOrder = { "brass", "silver", "gold" }
+GameData.EggOrder = { "brass", "silver", "gold", "cosmic" }
+
+-- Recompensa diaria (DEV-009, PROPUESTA): racha de 7 días; se reclama una vez
+-- por día (UTC) y vuelve al día 1 si se salta un día.
+GameData.DailyRewards = {
+	{ coins = 250 },
+	{ capsule = "brass", amount = 1 },
+	{ coins = 750 },
+	{ capsule = "brass", amount = 2 },
+	{ coins = 2000 },
+	{ capsule = "silver", amount = 1 },
+	{ capsule = "gold", amount = 1 },
+}
+
+-- Recompensas por tiempo jugado en el día (DEV-009, PROPUESTA). Cada nivel
+-- se reclama una vez por día al acumular esos minutos.
+GameData.PlaytimeRewards = {
+	{ minutes = 5, reward = { coins = 150 } },
+	{ minutes = 15, reward = { capsule = "brass", amount = 1 } },
+	{ minutes = 30, reward = { coins = 1000 } },
+	{ minutes = 60, reward = { capsule = "silver", amount = 1 } },
+	{ minutes = 120, reward = { capsule = "gold", amount = 1 } },
+}
 
 -- Relojes que se fabrican en el taller.
 -- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender

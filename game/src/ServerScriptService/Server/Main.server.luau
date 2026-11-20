@@ -16,6 +16,7 @@ local PetService = require(Services.PetService)
 local PlotService = require(Services.PlotService)
 local TrainingService = require(Services.TrainingService)
 local MonetizationService = require(Services.MonetizationService)
+local RewardService = require(Services.RewardService)
 
 DataService.init()
 WorldService.init()
@@ -28,6 +29,7 @@ PetService.init()
 PlotService.init()
 TrainingService.init()
 MonetizationService.init()
+RewardService.init()
 DataService.start() -- al final: los demás servicios ya escuchan onLoaded
 
 print("[BUILD A WATCH!] Servidor iniciado.")

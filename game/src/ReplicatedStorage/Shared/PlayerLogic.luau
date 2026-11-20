@@ -35,6 +35,9 @@ function PlayerLogic.newData()
 		trained = 0, -- velocidad permanente ganada en caminadoras (DEV-006)
 		passes = {}, -- [passId] = true; SOLO de la sesión: se consulta a Roblox al entrar
 		receipts = {}, -- últimas compras con Robux entregadas (evita entregar dos veces)
+		capsules = {}, -- [capsuleId] = cápsulas sin abrir en la Mochila (DEV-009)
+		daily = { streak = 0, lastDay = -1 }, -- racha de recompensa diaria
+		playtime = { day = -1, seconds = 0, claimed = {} }, -- tiempo jugado hoy
 	}
 end
 
@@ -143,6 +146,38 @@ function PlayerLogic.reconcile(data)
 		end
 	end
 	data.receipts = receipts
+
+	-- Cápsulas y recompensas (DEV-009)
+	data.capsules = cleanCounts(data.capsules, GameData.Eggs)
+	for capsuleId, amount in data.capsules do
+		data.capsules[capsuleId] = math.min(amount, Config.MAX_CAPSULES)
+	end
+	local daily = data.daily
+	if type(daily) ~= "table" then
+		daily = {}
+	end
+	data.daily = {
+		streak = math.clamp(nonNegativeInt(daily.streak), 0, #GameData.DailyRewards),
+		lastDay = (type(daily.lastDay) == "number" and math.floor(daily.lastDay)) or -1,
+	}
+	local playtime = data.playtime
+	if type(playtime) ~= "table" then
+		playtime = {}
+	end
+	local claimed = {}
+	if type(playtime.claimed) == "table" then
+		for index, value in playtime.claimed do
+			local tier = tonumber(index)
+			if value == true and tier and GameData.PlaytimeRewards[tier] then
+				claimed[tostring(tier)] = true
+			end
+		end
+	end
+	data.playtime = {
+		day = (type(playtime.day) == "number" and math.floor(playtime.day)) or -1,
+		seconds = nonNegativeInt(playtime.seconds),
+		claimed = claimed,
+	}
 
 	data.version = Config.DATA_VERSION
 	return data
@@ -424,7 +459,8 @@ function PlayerLogic.tutorialStep(data)
 end
 
 -- Vista que el servidor envía al cliente (solo lectura en el cliente).
-function PlayerLogic.buildView(data)
+function PlayerLogic.buildView(data, now)
+	now = now or os.time()
 	local level, levelXp, levelNeed = PlayerLogic.levelInfo(data.xp)
 	local upgradeCosts = {}
 	for upgradeId in GameData.Upgrades do
@@ -447,8 +483,18 @@ function PlayerLogic.buildView(data)
 			guide = step.guide,
 		}
 	end
+	local canClaimDaily, dailyStreak, untilTomorrow = PlayerLogic.dailyStatus(data, now)
+	local today = PlayerLogic.dayNumber(now)
+	local playtimeSeconds, playtimeClaimed = 0, {}
+	if data.playtime.day == today then
+		playtimeSeconds = data.playtime.seconds
+		playtimeClaimed = table.clone(data.playtime.claimed)
+	end
 	return {
 		tutorial = tutorial,
+		capsules = table.clone(data.capsules),
+		daily = { canClaim = canClaimDaily, streak = dailyStreak, untilTomorrow = untilTomorrow },
+		playtime = { seconds = playtimeSeconds, claimed = playtimeClaimed },
 		coins = data.coins,
 		xp = data.xp,
 		level = level,
@@ -803,7 +849,10 @@ end
 function PlayerLogic.hatchEgg(data, eggId, roll)
 	local egg = GameData.Eggs[eggId]
 	if not egg then
-		return false, "Ese huevo no existe.", nil
+		return false, "Esa cápsula no existe.", nil
+	end
+	if not egg.cost then
+		return false, egg.name .. " solo se consigue con Robux.", nil
 	end
 	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
 		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS), nil
@@ -951,16 +1000,117 @@ function PlayerLogic.grantProduct(data, productId, roll)
 		return true, string.format("Compra recibida: velocidad entrenada %.1f/%d.", data.trained, Config.MAX_TRAINED)
 	end
 	if product.egg then
-		local egg = GameData.Eggs[product.egg]
-		if PlayerLogic.petCount(data) >= Config.MAX_PETS then
-			-- Sin espacio para mascotas: se compensa con el precio del huevo.
-			data.coins += egg.cost
-			return true, string.format("No caben más mascotas: recibes %d monedas.", egg.cost)
-		end
-		local _, message = PlayerLogic.grantPet(data, PlayerLogic.rollPet(product.egg, roll))
-		return true, egg.name .. ": " .. message
+		-- La cápsula comprada va a la Mochila: nunca se pierde aunque no quepan mascotas.
+		local _, message = PlayerLogic.giveReward(data, { capsule = product.egg, amount = 1 })
+		return true, "Compra recibida: " .. message
 	end
 	return false, "Producto sin contenido."
+end
+
+-- ---------------------------------------------------------------------------
+-- Cápsulas y recompensas (DEV-009)
+-- ---------------------------------------------------------------------------
+
+-- Día (UTC) de un instante en segundos Unix.
+function PlayerLogic.dayNumber(now)
+	return math.floor(now / 86400)
+end
+
+-- Entrega una recompensa { coins = n } o { capsule = id, amount = n }. Devuelve ok, mensaje.
+function PlayerLogic.giveReward(data, reward)
+	if reward.coins then
+		data.coins += reward.coins
+		return true, string.format("+%d monedas", reward.coins)
+	end
+	local capsule = GameData.Eggs[reward.capsule]
+	if capsule then
+		local amount = reward.amount or 1
+		data.capsules[reward.capsule] = math.min(Config.MAX_CAPSULES, (data.capsules[reward.capsule] or 0) + amount)
+		return true, string.format("+%d %s (en tu Mochila)", amount, capsule.name)
+	end
+	return false, "Recompensa vacía."
+end
+
+-- Texto corto de una recompensa para la interfaz.
+function PlayerLogic.rewardText(reward)
+	if reward.coins then
+		return string.format("%d monedas", reward.coins)
+	end
+	local capsule = GameData.Eggs[reward.capsule]
+	return string.format("%d× %s", reward.amount or 1, capsule and capsule.name or "?")
+end
+
+-- Abre una cápsula de la Mochila. Devuelve ok, mensaje, petId.
+function PlayerLogic.openCapsule(data, capsuleId, roll)
+	local capsule = GameData.Eggs[capsuleId]
+	if not capsule then
+		return false, "Esa cápsula no existe.", nil
+	end
+	if (data.capsules[capsuleId] or 0) < 1 then
+		return false, "No tienes " .. capsule.name .. ".", nil
+	end
+	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS), nil
+	end
+	local petId = PlayerLogic.rollPet(capsuleId, roll)
+	removeCount(data.capsules, capsuleId, 1)
+	local _, message = PlayerLogic.grantPet(data, petId)
+	return true, capsule.name .. ": " .. message, petId
+end
+
+-- Estado de la recompensa diaria: puedeReclamar, díaDeLaRacha (1-7), segundosHastaMañana.
+function PlayerLogic.dailyStatus(data, now)
+	local today = PlayerLogic.dayNumber(now)
+	local nextStreak = 1
+	if data.daily.lastDay == today - 1 or data.daily.lastDay == today then
+		nextStreak = data.daily.streak % #GameData.DailyRewards + 1
+	end
+	local untilTomorrow = (today + 1) * 86400 - now
+	return data.daily.lastDay ~= today, nextStreak, untilTomorrow
+end
+
+function PlayerLogic.claimDaily(data, now)
+	local canClaim, streak = PlayerLogic.dailyStatus(data, now)
+	if not canClaim then
+		return false, "Ya reclamaste la recompensa de hoy. Vuelve mañana."
+	end
+	data.daily.lastDay = PlayerLogic.dayNumber(now)
+	data.daily.streak = streak
+	local _, message = PlayerLogic.giveReward(data, GameData.DailyRewards[streak])
+	return true, string.format("Recompensa diaria (día %d): %s", streak, message)
+end
+
+-- Pone a cero el tiempo jugado si cambió el día.
+local function syncPlaytimeDay(data, now)
+	local today = PlayerLogic.dayNumber(now)
+	if data.playtime.day ~= today then
+		data.playtime = { day = today, seconds = 0, claimed = {} }
+	end
+end
+
+function PlayerLogic.addPlaytime(data, now, seconds)
+	syncPlaytimeDay(data, now)
+	data.playtime.seconds += math.max(0, math.floor(seconds))
+	return data.playtime.seconds
+end
+
+function PlayerLogic.claimPlaytime(data, now, tierIndex)
+	syncPlaytimeDay(data, now)
+	local index = tonumber(tierIndex)
+	local tier = index and GameData.PlaytimeRewards[index]
+	if not tier then
+		return false, "Esa recompensa no existe."
+	end
+	local key = tostring(index)
+	if data.playtime.claimed[key] then
+		return false, "Ya reclamaste esa recompensa hoy."
+	end
+	if data.playtime.seconds < tier.minutes * 60 then
+		return false, string.format("Juega %d minutos hoy para reclamarla.", tier.minutes)
+	end
+	data.playtime.claimed[key] = true
+	local _, message = PlayerLogic.giveReward(data, tier.reward)
+	return true, string.format("Premio por %d minutos: %s", tier.minutes, message)
 end
 
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.

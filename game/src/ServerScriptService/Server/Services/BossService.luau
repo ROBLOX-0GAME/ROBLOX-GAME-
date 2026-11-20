@@ -99,15 +99,10 @@ local function finish(success)
 					string.format("¡Cronómetro reparado! Tu aporte: %d puntos → +%d monedas.", entry.points, coins),
 					"ok"
 				)
-				-- Premio extra: huevo de mascota para quien aportó bastante (DEV-005)
+				-- Premio extra: cápsula de mascota a la Mochila para quien aportó bastante (DEV-009)
 				if entry.points >= Config.BOSS_EGG_MIN_POINTS then
-					local petId = PlayerLogic.rollPet(Config.BOSS_EGG, random:NextNumber())
-					local granted, message = PlayerLogic.grantPet(data, petId)
-					Net.notify(player, "Premio del Cronómetro: " .. message, granted and "ok" or "error")
-					if granted then
-						CharacterService.apply(player)
-						PetService.refresh(player)
-					end
+					local _, message = PlayerLogic.giveReward(data, { capsule = Config.BOSS_EGG, amount = 1 })
+					Net.notify(player, "Premio del Cronómetro: " .. message, "ok")
 				end
 			else
 				local refunded = PlayerLogic.refundParts(data, entry.parts)

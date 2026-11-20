@@ -50,8 +50,10 @@ local Config = {
 	BOSS_EGG_MIN_POINTS = 20, -- con este aporte también se gana un huevo de mascota
 	BOSS_EGG = "brass",
 
-	-- Mascotas (DEV-005)
+	-- Mascotas (DEV-005) y cápsulas (DEV-009)
 	MAX_PETS = 50,
+	MAX_CAPSULES = 99, -- por tipo, en la Mochila
+	PLAYTIME_TICK_SECONDS = 30, -- cada cuánto se suma el tiempo jugado
 	MAX_EQUIPPED_PETS = 3,
 
 	-- Plot personal (DEV-008)
@@ -82,6 +84,7 @@ local Config = {
 		coinsLarge = 0,
 		instantTraining = 0,
 		goldEgg = 0,
+		cosmicCapsule = 0,
 	},
 	-- Solo para probar en Studio: da todos los pases durante la sesión (no se guardan).
 	STUDIO_GRANT_ALL_PASSES = false,

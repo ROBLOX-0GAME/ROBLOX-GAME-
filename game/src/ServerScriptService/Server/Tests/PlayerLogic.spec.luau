@@ -521,8 +521,8 @@ return function(t)
 		t.eq(data.coins, GameData.Products.coinsSmall.coins, "cantidad correcta")
 		t.ok(PlayerLogic.grantProduct(data, "instantTraining", 0), "entrega entrenamiento")
 		t.eq(data.trained, GameData.Products.instantTraining.trained, "velocidad entrenada")
-		t.ok(PlayerLogic.grantProduct(data, "goldEgg", 0), "entrega huevo")
-		t.eq(PlayerLogic.petCount(data), 1, "mascota recibida")
+		t.ok(PlayerLogic.grantProduct(data, "goldEgg", 0), "entrega la cápsula")
+		t.eq(data.capsules.gold, 1, "la cápsula comprada va a la Mochila")
 		t.ok(not PlayerLogic.grantProduct(data, "falso", 0), "rechaza productos desconocidos")
 		t.ok(not PlayerLogic.hasReceipt(data, "abc"), "recibo nuevo")
 		PlayerLogic.addReceipt(data, "abc")
@@ -536,6 +536,75 @@ return function(t)
 		end
 		for _, key in GameData.GamePassOrder do
 			t.ok(Config.GAMEPASS_IDS[key] ~= nil, "id configurado para " .. key)
+		end
+	end)
+
+	t.test("DEV-009: cápsulas en la Mochila y Cápsula Cósmica solo con Robux", function()
+		local data = PlayerLogic.newData()
+		t.ok(not PlayerLogic.openCapsule(data, "brass", 0), "sin cápsulas no abre")
+		PlayerLogic.giveReward(data, { capsule = "brass", amount = 2 })
+		t.eq(data.capsules.brass, 2, "recompensa guarda 2 cápsulas")
+		local ok, _, petId = PlayerLogic.openCapsule(data, "brass", 0)
+		t.ok(ok, "abre una cápsula")
+		t.eq(petId, "mouse", "roll 0 = primera mascota de la cápsula")
+		t.eq(data.capsules.brass, 1, "consume la cápsula")
+		data.coins = 10 ^ 7
+		t.ok(not PlayerLogic.hatchEgg(data, "cosmic", 0), "la Cósmica no se compra con monedas")
+		t.ok(PlayerLogic.grantProduct(data, "cosmicCapsule", 0), "la Cósmica se compra con Robux")
+		t.eq(data.capsules.cosmic, 1, "va a la Mochila")
+		local _, _, robuxPet = PlayerLogic.openCapsule(data, "cosmic", 0.999999)
+		t.ok(GameData.Pets[robuxPet].robux == true, "da una mascota exclusiva de Robux")
+		for petId in GameData.Eggs.cosmic.chances do
+			t.ok(GameData.Pets[petId].bonus > GameData.Pets.dragon.bonus, petId .. " es más fuerte que el Dragón")
+		end
+		for _, eggId in { "brass", "silver", "gold" } do
+			for petId in GameData.Eggs[eggId].chances do
+				t.ok(not GameData.Pets[petId].robux, eggId .. " no da mascotas de Robux")
+			end
+		end
+		data.capsules.gold = 10 ^ 6
+		t.eq(PlayerLogic.reconcile(data).capsules.gold, Config.MAX_CAPSULES, "tope de cápsulas")
+	end)
+
+	t.test("DEV-009: recompensa diaria con racha de 7 días", function()
+		local data = PlayerLogic.newData()
+		local day = 20000 * 86400 + 3600 -- un instante cualquiera
+		local canClaim, streak = PlayerLogic.dailyStatus(data, day)
+		t.ok(canClaim, "el primer día se puede reclamar")
+		t.eq(streak, 1, "empieza en el día 1")
+		t.ok(PlayerLogic.claimDaily(data, day), "reclama el día 1")
+		t.eq(data.coins, GameData.DailyRewards[1].coins, "da la recompensa del día 1")
+		t.ok(not PlayerLogic.claimDaily(data, day + 60), "no reclama dos veces el mismo día")
+		for index = 2, #GameData.DailyRewards do
+			t.ok(PlayerLogic.claimDaily(data, day + (index - 1) * 86400), "reclama el día " .. index)
+		end
+		t.eq(data.daily.streak, #GameData.DailyRewards, "llega al día 7")
+		t.eq(data.capsules.gold, 1, "el día 7 da una Cápsula de Oro")
+		PlayerLogic.claimDaily(data, day + 7 * 86400)
+		t.eq(data.daily.streak, 1, "tras el día 7 vuelve al día 1")
+		PlayerLogic.claimDaily(data, day + 9 * 86400)
+		t.eq(data.daily.streak, 1, "saltarse un día reinicia la racha")
+		local view = PlayerLogic.buildView(data, day + 9 * 86400 + 10)
+		t.ok(not view.daily.canClaim and view.daily.untilTomorrow > 0, "la vista muestra cuándo vuelve")
+	end)
+
+	t.test("DEV-009: premios por tiempo jugado, una vez por día", function()
+		local data = PlayerLogic.newData()
+		local day = 20000 * 86400
+		local first = GameData.PlaytimeRewards[1]
+		t.ok(not PlayerLogic.claimPlaytime(data, day, 1), "sin tiempo no reclama")
+		PlayerLogic.addPlaytime(data, day, first.minutes * 60)
+		t.ok(PlayerLogic.claimPlaytime(data, day, "1"), "reclama al cumplir los minutos")
+		t.ok(not PlayerLogic.claimPlaytime(data, day, 1), "no reclama dos veces")
+		t.ok(not PlayerLogic.claimPlaytime(data, day, 99), "nivel inexistente")
+		PlayerLogic.addPlaytime(data, day + 86400, 1)
+		t.eq(data.playtime.seconds, 1, "el tiempo se reinicia al cambiar de día")
+		t.ok(not PlayerLogic.claimPlaytime(data, day + 86400, 1), "al día siguiente hay que volver a jugar")
+		local saved = PlayerLogic.reconcile({ playtime = { day = 5, seconds = -3, claimed = { ["2"] = true, ["99"] = true } } })
+		t.eq(saved.playtime.seconds, 0, "repara segundos negativos")
+		t.ok(saved.playtime.claimed["2"] == true and saved.playtime.claimed["99"] == nil, "conserva solo niveles válidos")
+		for index = 2, #GameData.PlaytimeRewards do
+			t.ok(GameData.PlaytimeRewards[index].minutes > GameData.PlaytimeRewards[index - 1].minutes, "niveles en orden")
 		end
 	end)
 

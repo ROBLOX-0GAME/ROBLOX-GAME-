@@ -22,6 +22,7 @@ local Workspace = game:GetService("Workspace")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
 local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic) -- solo funciones de lectura (textos)
 
 local player = Players.LocalPlayer
 
@@ -46,7 +47,8 @@ local PANEL_TITLES = {
 	plot = "Tu plot — Vitrinas y mejoras",
 	backpack = "Mochila",
 	boss = "Cronómetro Maestro — Reparación",
-	pets = "Criadero — Huevos y mascotas",
+	pets = "Criadero — Cápsulas y mascotas",
+	rewards = "Premios — Diario y por tiempo",
 	robux = "Tienda Robux — Pases y productos",
 }
 
@@ -266,6 +268,9 @@ end
 
 local function formatTime(seconds)
 	seconds = math.max(0, math.floor(seconds))
+	if seconds >= 3600 then
+		return string.format("%dh %02dm", seconds // 3600, (seconds % 3600) // 60)
+	end
 	return string.format("%d:%02d", seconds // 60, seconds % 60)
 end
 
@@ -511,7 +516,7 @@ local function addPetRows()
 		)
 	)
 	if state.petCount == 0 then
-		addRow("Todavía no tienes mascotas. Compra huevos en el Criadero de la base.")
+		addRow("Todavía no tienes mascotas. Consigue cápsulas en el Criadero, en «Premios» o con Robux.")
 		return
 	end
 	addRow("Equipa las mascotas con más bonus para correr más rápido.", {
@@ -589,20 +594,97 @@ local function renderPets()
 				)
 			end
 		end
+		local price = "solo Robux"
+		local buttons = {}
+		if egg.cost then
+			price = formatNumber(egg.cost) .. " monedas"
+			table.insert(buttons, {
+				text = "Comprar y abrir",
+				enabled = state.coins >= egg.cost,
+				onActivated = function()
+					request("hatchEgg", eggId)
+				end,
+			})
+		elseif egg.robuxProduct then
+			local available = (Config.PRODUCT_IDS[egg.robuxProduct] or 0) ~= 0
+			local robuxText = "Próximamente"
+			if available then
+				robuxText = "Comprar (Robux)"
+			end
+			table.insert(buttons, {
+				text = robuxText,
+				enabled = available,
+				onActivated = function()
+					request("buyProduct", egg.robuxProduct)
+				end,
+			})
+		end
+		local stored = state.capsules[eggId] or 0
+		if stored > 0 then
+			table.insert(buttons, {
+				text = string.format("Abrir guardada (%d)", stored),
+				onActivated = function()
+					request("openCapsule", eggId)
+				end,
+			})
+		end
 		addRow(
-			string.format("<b>%s</b> — %s monedas\n%s", egg.name, formatNumber(egg.cost), table.concat(odds, " · ")),
-			{
-				{
-					text = "Abrir",
-					enabled = state.coins >= egg.cost,
-					onActivated = function()
-						request("hatchEgg", eggId)
-					end,
-				},
-			}
+			string.format("<b>%s</b> — %s\n%s", egg.name, price, table.concat(odds, " · ")),
+			buttons
 		)
 	end
 	addPetRows()
+end
+
+-- Premios diarios y por tiempo jugado (DEV-009)
+local function renderRewards()
+	local daily = state.daily
+	addHeader(string.format("Recompensa diaria · racha: día %d de %d", daily.streak, #GameData.DailyRewards))
+	local days = {}
+	for index, reward in GameData.DailyRewards do
+		local mark = ""
+		if index == daily.streak then
+			mark = "<b>➜ </b>"
+		end
+		table.insert(days, string.format("%sDía %d: %s", mark, index, PlayerLogic.rewardText(reward)))
+	end
+	local dailyButton = "Reclamar"
+	if not daily.canClaim then
+		dailyButton = "Vuelve en " .. formatTime(daily.untilTomorrow)
+	end
+	addRow(table.concat(days, "\n"), {
+		{
+			text = dailyButton,
+			enabled = daily.canClaim,
+			onActivated = function()
+				request("claimDaily", "daily")
+			end,
+		},
+	})
+	addRow("Si saltas un día, la racha vuelve al día 1.")
+
+	local minutes = math.floor(state.playtime.seconds / 60)
+	addHeader(string.format("Premios por tiempo jugado hoy · llevas %d min", minutes))
+	for index, tier in GameData.PlaytimeRewards do
+		local claimed = state.playtime.claimed[tostring(index)] == true
+		local ready = state.playtime.seconds >= tier.minutes * 60
+		local text = "Reclamar"
+		if claimed then
+			text = "Reclamado"
+		elseif not ready then
+			text = string.format("Faltan %d min", math.max(1, tier.minutes - minutes))
+		end
+		addRow(string.format("<b>%d minutos</b> — %s", tier.minutes, PlayerLogic.rewardText(tier.reward)), {
+			{
+				text = text,
+				enabled = ready and not claimed,
+				onActivated = function()
+					request("claimPlaytime", tostring(index))
+				end,
+			},
+		})
+	end
+	addRow("Los premios por tiempo se reinician cada día. Las cápsulas van a tu Mochila.")
 end
 
 local function renderBackpack()
@@ -656,6 +738,25 @@ local function renderBackpack()
 				)
 			end
 		end
+	end
+	addHeader("Cápsulas sin abrir")
+	local anyCapsule = false
+	for _, eggId in GameData.EggOrder do
+		local amount = state.capsules[eggId] or 0
+		if amount > 0 then
+			anyCapsule = true
+			addRow(string.format("<b>%s</b> × %d", GameData.Eggs[eggId].name, amount), {
+				{
+					text = "Abrir",
+					onActivated = function()
+						request("openCapsule", eggId)
+					end,
+				},
+			})
+		end
+	end
+	if not anyCapsule then
+		addRow("No tienes cápsulas. Gánalas en «Premios» o cómpralas en el Criadero.")
 	end
 	addPetRows()
 	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
@@ -786,7 +887,7 @@ local function renderRobux()
 			},
 		})
 	end
-	addRow("Las compras las procesa Roblox. Los huevos muestran sus probabilidades en el Criadero.")
+	addRow("Las compras las procesa Roblox. Las cápsulas muestran sus probabilidades en el Criadero.")
 end
 
 local function bossKey()
@@ -808,6 +909,7 @@ local RENDERERS = {
 	boss = renderBoss,
 	pets = renderPets,
 	robux = renderRobux,
+	rewards = renderRewards,
 }
 
 -- ---------------------------------------------------------------------------
@@ -1095,6 +1197,19 @@ local function buildHud()
 	robuxButton.Position = UDim2.new(0, 12, 0.5, 52)
 	robuxButton.Size = UDim2.fromOffset(110, 44)
 	robuxButton.Parent = gui
+
+	local rewardsButton = button("Premios", true, function()
+		if openPanelId == "rewards" then
+			Ui.closePanel()
+		else
+			Ui.openPanel("rewards")
+		end
+	end)
+	rewardsButton.Name = "BotonPremios"
+	rewardsButton.AnchorPoint = Vector2.new(0, 0.5)
+	rewardsButton.Position = UDim2.new(0, 12, 0.5, 104)
+	rewardsButton.Size = UDim2.fromOffset(110, 44)
+	rewardsButton.Parent = gui
 
 	-- Notificaciones
 	toastList = new("Frame", {

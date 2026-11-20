@@ -107,6 +107,24 @@ local ACTIONS = {
 			return PlayerLogic.buyUpgrade(data, id)
 		end,
 	},
+	-- Cápsulas y recompensas (DEV-009): en cualquier lugar
+	openCapsule = {
+		affectsCharacter = true,
+		run = function(data, id)
+			local ok, message = PlayerLogic.openCapsule(data, id, random:NextNumber())
+			return ok, message
+		end,
+	},
+	claimDaily = {
+		run = function(data)
+			return PlayerLogic.claimDaily(data, os.time())
+		end,
+	},
+	claimPlaytime = {
+		run = function(data, id)
+			return PlayerLogic.claimPlaytime(data, os.time(), id)
+		end,
+	},
 	-- Robux (DEV-006)
 	buyPass = {
 		run = function(data, id, _, player)
