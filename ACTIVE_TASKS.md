@@ -36,7 +36,7 @@ Este control local cubre las herramientas Edit/Write de Claude Code; Bash, edito
 | ART-007 | Cuenta A | Zadiel | Jhonn; Michael y Einell | art/PROMPT_ARTE_WINDOWS_STUDIO.md<br>art/README.md<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
 | ART-008 | Cuenta A (temporal; área de Cuenta B) | Zadiel | Michael y Einell; Jhonn (técnica) | art/texturas/ids_roblox.md<br>art/export/vistas/studio_*.png<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md | En desarrollo |
 | ART-010 | Cuenta A (temporal; área de Cuenta B) | Zadiel | Michael y Einell | art/blender/scripts/iconos.py<br>art/texturas/export/ico_*.png<br>art/texturas/fuentes/**<br>art/audio/**<br>art/Pipeline-de-Arte.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | En desarrollo |
-| INFRA-003 | Cuenta A | Zadiel | Jhonn | OWNERS.md<br>AGENTS.md<br>.claude/CLAUDE.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md | En desarrollo |
+| INFRA-003 | Cuenta A | Zadiel | Jhonn | OWNERS.md<br>AGENTS.md<br>.claude/CLAUDE.md<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md | Completada |
 ## main sin protección (DEC-009)
 Por DEC-009, `main` no tiene protección de rama: se sube directamente, sin Pull Request ni aprobación. Nunca uses force push. Si alguien abre un Pull Request de forma opcional, GitHub Actions sigue ejecutando `reservation-check` y `rojo-build`.
 

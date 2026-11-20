@@ -25,7 +25,7 @@ Rutas principales:
 
 ## Cuenta B — Claude 2
 
-Administrada por Michael y Einell.
+Sin asignar desde DEC-020 (2026-11-20): Michael y Einell ya no forman parte del equipo. Zadiel y Jhonn llevan estas rutas y revisan sus cambios; la Cuenta A puede trabajar en ellas.
 
 Lidera mundo, narrativa, personajes, dirección visual, contenido y experiencia de usuario.
 
@@ -44,6 +44,7 @@ Rutas principales:
 - Cuenta B lidera mundo, narrativa y UX; Cuenta A revisa dependencias técnicas, seguridad y rendimiento.
 - La persona responsable y su revisor se identifican en Backlog.md. La revisión se hace sobre los commits ya subidos a main.
 - Las tareas que afectan ambas áreas requieren revisión de ambas parejas.
+- Desde DEC-020, la única pareja es Zadiel y Jhonn: donde este archivo hable de la Cuenta B o de Michael y Einell, revisan Zadiel y Jhonn.
 
 ## Rutas compartidas
 

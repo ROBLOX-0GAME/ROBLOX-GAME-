@@ -404,3 +404,8 @@ Reglas:
 - **2026-11-20 · ART-010 · Paso 3 — Sonidos.** Duración medida con un script (cabecera Vorbis y última página OGG): `sfx_ruleta` duraba 2,28 s; ahora tiene 14 tics que se frenan y dura 1,65 s. Los demás: 0,04–1,09 s; `sfx_entrenar` 1,01 s (bucle de 1 s). Solo se sube la ruleta; los otros OGG no cambian. · Verificación: ejecutada (medición de los 10 OGG). Commit `3f2754a`. **No** se ha pulido nada en Audacity ni se ha escuchado el bucle de `sfx_entrenar`.
 - **Pendiente (manual):** retoque en Krita de los iconos (`.kra` en `art/texturas/fuentes/`) y pulido en Audacity (`.aup3` en `art/audio/fuentes/`); `sfx_boton` (0,04 s) conviene escucharlo. Subir iconos y sonidos a Roblox cuando exista la place y pegar sus IDs en `Config` dentro de una tarea de código.
 
+## 24. INFRA-003 — El equipo queda en Zadiel y Jhonn
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · INFRA-003 · Paso 1 — Equipo y decisiones.** Zadiel indica que Michael y Einell dejan el equipo y que decidirán Zadiel y Jhonn. Se registra **DEC-020** (Aprobada por Zadiel) y Zadiel aprueba **DEC-018** con la ampliación a piezas robables, legado y cápsulas (ART-009). Se actualizan [[OWNERS]], AGENTS.md y `.claude/CLAUDE.md`, que además anota la place oficial **84500108687089** («Reloj creation oficial 1», universo 10778093657; consultada en la API pública de Roblox). ART-008 pasa a En desarrollo. · Verificación: lectura de los cambios y consulta de la API.

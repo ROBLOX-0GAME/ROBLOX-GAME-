@@ -260,7 +260,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-018 — Materiales PBR para los relojes
 
-- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-006, Zadiel). **Área:** Arte / dirección visual. **Revisan:** Michael y Einell (Cuenta B).
+- **Fecha:** 2026-11-20. **Estado:** **Aprobada** por Zadiel el 2026-11-20 (INFRA-003; antes, Propuesta de ART-006). Incluye la ampliación a piezas robables, pieza del legado y cápsulas (ART-009). **Área:** Arte / dirección visual. **Revisan:** Zadiel y Jhonn (DEC-020).
 - **Propuesta:** los 6 relojes usan materiales PBR (oro pulido y cepillado, acero, cristal de zafiro, esmaltes, cuero y gemas) con `SurfaceAppearance`, una malla por material y menos de 3.000 triángulos, sin perder la forma low-poly ni el sombreado plano. El resto de modelos sigue con la paleta común (DEC-016). Si se aprueba, el mismo tratamiento podría pasar a las piezas robables, la pieza del legado y las cápsulas. Detalle en [[Pipeline-de-Arte]].
 
 #### DEC-019 — La MacBook también se usa para arte (sin Roblox Studio)
@@ -268,3 +268,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-006, Zadiel). **Área:** Arquitectura / equipo.
 - **Propuesta:** la MacBook de Zadiel, además de Obsidian y tareas escolares, se usa para el arte (Blender, Material Maker, Krita y Audacity, con los scripts de `art/`). Sigue sin Roblox Studio ni Rojo: la importación de assets se hace en las PC Windows. Cambia lo dicho en [[Arquitectura-General]] («Entorno de trabajo por dispositivo»).
 
+#### DEC-020 — El equipo queda en Zadiel y Jhonn
+
+- **Fecha:** 2026-11-20. **Estado:** **Aprobada** por Zadiel (INFRA-003). **Área:** Equipo / coordinación.
+- **Decisión:** Michael y Einell dejan de participar. Zadiel y Jhonn toman todas las decisiones y revisan todo, también el área que era de la Cuenta B (mundo, narrativa, personajes, dirección visual, arte, contenido y UX). Las propuestas que esperaban a Michael y Einell (por ejemplo DEC-016, DEC-018 y DEC-019) las deciden ahora Zadiel y Jhonn. Donde reglas o notas antiguas digan «Cuenta B» o «Michael y Einell», se entiende Zadiel y Jhonn. Actualizados [[OWNERS]], AGENTS.md y `.claude/CLAUDE.md`.

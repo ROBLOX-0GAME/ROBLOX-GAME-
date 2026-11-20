@@ -641,7 +641,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn.
 - **Área:** Coordinación / equipo.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -649,6 +649,6 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] DEC-020 registrada como Aprobada (Zadiel) y DEC-018 marcada como Aprobada.
-- [ ] OWNERS.md, AGENTS.md y `.claude/CLAUDE.md` reflejan el equipo nuevo.
-- [ ] Fila de ACTIVE_TASKS Completada.
+- [x] DEC-020 registrada como Aprobada (Zadiel) y DEC-018 marcada como Aprobada.
+- [x] OWNERS.md, AGENTS.md y `.claude/CLAUDE.md` reflejan el equipo nuevo (y `.claude/CLAUDE.md` anota la place oficial 84500108687089).
+- [x] Fila de ACTIVE_TASKS Completada.

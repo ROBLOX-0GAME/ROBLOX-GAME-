@@ -17,7 +17,8 @@ Estas reglas rigen al abrir Codex desde la raíz de la bóveda. Las reglas de .C
 
 ## Equipo
 - Cuenta A: Jhonn y Zadiel. Foco operativo: gameplay, mecánicas y sistemas del juego, progresión, economía e implementación técnica Roblox; lleva también Git y Obsidian.
-- Cuenta B: Michael y Einell. Foco operativo: mundo, narrativa, personajes, dirección visual, assets, contenido y UX.
+- Cuenta B: sin asignar desde DEC-020. Su foco (mundo, narrativa, personajes, dirección visual, assets, contenido y UX) lo llevan Zadiel y Jhonn.
+- **DEC-020 (2026-11-20):** Michael y Einell ya no forman parte del equipo. Zadiel y Jhonn deciden y revisan todo, también el área que era de la Cuenta B (mundo, narrativa, arte, assets y UX). Donde otras reglas o notas digan «Cuenta B» o «Michael y Einell», responden y revisan Zadiel y Jhonn.
 - Una persona humana responde por cada tarea. La pareja de su área revisa; ambas parejas revisan decisiones transversales.
 - WhatsApp es el canal diario del equipo para coordinación, asignación y changelog. Codex no contacta a otros agentes por WhatsApp ni prepara mensajes para reenviar.
 

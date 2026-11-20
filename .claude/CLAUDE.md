@@ -17,7 +17,8 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 
 ## Equipo
 - Cuenta A: Jhonn y Zadiel. Foco operativo: gameplay, mecánicas y sistemas del juego, progresión, economía e implementación técnica Roblox; lleva también Git y Obsidian.
-- Cuenta B: Michael y Einell. Foco operativo: mundo, narrativa, personajes, dirección visual, assets, contenido y UX.
+- Cuenta B: sin asignar desde DEC-020. Su foco (mundo, narrativa, personajes, dirección visual, assets, contenido y UX) lo llevan Zadiel y Jhonn.
+- **DEC-020 (2026-11-20):** Michael y Einell ya no forman parte del equipo. Zadiel y Jhonn deciden y revisan todo, también el área que era de la Cuenta B (mundo, narrativa, arte, assets y UX). Donde otras reglas o notas digan «Cuenta B» o «Michael y Einell», responden y revisan Zadiel y Jhonn.
 - Una persona humana responde por cada tarea. La pareja de su área revisa; ambas parejas revisan decisiones transversales.
 - WhatsApp es el canal diario del equipo para coordinación, asignación y changelog. Claude no contacta a otros agentes por WhatsApp ni prepara mensajes para reenviar.
 
@@ -38,7 +39,7 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 - Si hay desacuerdo sustantivo, conserva la última decisión aprobada y consulta al responsable mientras avanzas tareas independientes.
 
 ## Límites y seguridad
-- El repositorio contiene la bóveda Obsidian y el scaffold de código fuente en game/. El place aún no existe; no inventes un placeId ni afirmes que modificaste un place. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares.
+- El repositorio contiene la bóveda Obsidian y el scaffold de código fuente en game/. La place oficial es **84500108687089** («Reloj creation oficial 1», universo 10778093657, creada el 2026-11-20); no inventes otros placeId ni afirmes que modificaste o guardaste la place si no lo hiciste. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares.
 - No guardes contraseñas, tokens, cookies, claves privadas ni datos personales innecesarios.
 - Las respuestas directas del formulario son la base operativa. Las decisiones de juego diseñadas por Claude siguen siendo propuestas hasta que las personas responsables las aprueben.
 - No declares pruebas realizadas si no se ejecutaron.
