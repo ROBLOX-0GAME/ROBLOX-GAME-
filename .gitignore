@@ -12,3 +12,4 @@
 *.rbxl.lock
 *.rbxlx.lock
 __pycache__/
+.claude/tarea-activa
