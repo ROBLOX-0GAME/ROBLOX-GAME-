@@ -476,3 +476,29 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila ART-003 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-002 (Completada).
+### ART-004 — Prioridad 3: ambiente, iconos del HUD y efectos de sonido
+
+- **ID:** ART-004.
+- **Cuenta Claude:** Claude 1 — Cuenta A (temporal; área de Cuenta B).
+- **Responsable:** Jhonn.
+- **Revisor:** Michael y Einell; Zadiel revisa la parte técnica.
+- **Área:** Assets y audio.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** completar la prioridad 3 de [[Pipeline-de-Arte]]:
+
+1. Modelos de ambiente low-poly.
+2. Iconos del HUD (PNG 256×256 con transparencia, renderizados en Blender con la paleta).
+3. Efectos de sonido base, sintetizados por script y convertidos a OGG con el motor de audio de Blender, para pulir después en Audacity.
+
+**Criterios de aceptación:**
+
+- [ ] Modelos de ambiente exportados con vista previa.
+- [ ] 8 iconos `ico_*` en `art/texturas/export/`.
+- [ ] 10 efectos `sfx_*` en `art/audio/export/` (OGG), con su fuente reproducible.
+- [ ] La fila ART-004 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ART-003 (Completada).
