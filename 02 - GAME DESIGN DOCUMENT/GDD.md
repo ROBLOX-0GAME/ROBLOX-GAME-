@@ -218,3 +218,42 @@ Pendiente de definir.
 - Gestión desde la Mochila, en cualquier lugar: Equipar, Quitar, Liberar y «Equipar mejores». Máximo 50 mascotas.
 - **Cronómetro Maestro:** quien aporte 20 puntos o más a una reparación exitosa gana además un Huevo de Latón.
 - Solo se compran con monedas del juego. Las compras con Robux siguen sin implementarse hasta que el equipo las apruebe.
+
+### 15.5 Velocidad como eje del juego y Robux (DEV-006)
+
+> Jhonn (2026-11-20): el juego se centra en la **velocidad**; **no hay fuerza**. Los pases pueden dar ventajas fuertes («pay to win»).
+
+**Fórmula de velocidad**
+
+Velocidad = (16 + 2 × nivel de la mejora Velocidad + velocidad entrenada) × multiplicador de mascotas × 1,25 si tienes el pase Corredor VIP. Tiene un tope de 80.
+
+**Caminadoras de entrenamiento** (en la base, a la izquierda)
+
+- Pulsas para entrenar y vuelves a pulsar para parar. Mientras entrenas no te mueves.
+- Cada segundo ganas 0,01 de velocidad × el multiplicador de la caminadora, hasta **+30**.
+
+| Caminadora | Multiplicador | Cómo se consigue |
+|---|---|---|
+| Básica | ×1 | Gratis |
+| De Acero | ×2,5 | 2.500 monedas |
+| Turbo | ×6 | Pase de Robux |
+
+**Pases (Robux, permanentes)**
+
+| Pase | Efecto |
+|---|---|
+| Mascota Suprema | Mascota exclusiva un **20% mejor que tu mejor mascota**; mejora sola cuando consigues mejores |
+| Caminadora Turbo | Entrenamiento ×6 |
+| Corredor VIP | +25% de velocidad |
+| VIP | +20% de monedas al vender y en el museo |
+| Mochila Gigante | +20 espacios |
+| Ranura de Mascota | +1 mascota equipada |
+
+**Productos (Robux, repetibles):** Bolsa, Cofre y Bóveda de monedas (2.500 / 15.000 / 75.000), Entrenamiento instantáneo (+5 de velocidad entrenada) y Huevo de Oro instantáneo, con las probabilidades visibles como exige Roblox.
+
+**Reglas técnicas**
+
+- Los pases se consultan a Roblox cada vez que entras; no se guardan como datos propios.
+- Cada producto se entrega una sola vez por compra: se guarda el id de la compra y solo se confirma a Roblox después de guardar.
+- Los IDs se copian del Creator Hub en `Config.GAMEPASS_IDS` y `Config.PRODUCT_IDS`. Mientras valgan 0, la tienda muestra «Próximamente».
+- Para probar en Studio: `Config.STUDIO_GRANT_ALL_PASSES = true` activa todos los pases solo durante esa sesión.

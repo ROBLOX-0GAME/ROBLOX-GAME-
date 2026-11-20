@@ -403,6 +403,104 @@ return function(t)
 		t.ok(PlayerLogic.canEnterZone(fresh, 2), "un zorro (+20%) abre el Barrio Obrero")
 	end)
 
+	t.test("DEV-006: entrenar en caminadoras", function()
+		local data = PlayerLogic.newData()
+		local before = PlayerLogic.walkSpeed(data)
+		local gained = PlayerLogic.trainTick(data, "basic", 10)
+		t.ok(math.abs(gained - Config.TRAIN_RATE * 10) < 1e-9, "la básica entrena ×1")
+		t.ok(PlayerLogic.walkSpeed(data) > before, "entrenar sube la velocidad")
+		t.eq(PlayerLogic.trainTick(data, "advanced", 10), 0, "la de acero exige desbloquearla")
+		t.eq(PlayerLogic.trainTick(data, "turbo", 10), 0, "la turbo exige el pase")
+		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "sin monedas no la desbloquea")
+		data.coins = GameData.Treadmills.advanced.cost
+		t.ok(PlayerLogic.buyTreadmill(data, "advanced"), "desbloquea la de acero")
+		t.ok(not PlayerLogic.buyTreadmill(data, "advanced"), "no la compra dos veces")
+		t.ok(not PlayerLogic.buyTreadmill(data, "turbo"), "la turbo no se compra con monedas")
+		local advanced = PlayerLogic.trainTick(data, "advanced", 10)
+		t.ok(math.abs(advanced - Config.TRAIN_RATE * 10 * GameData.Treadmills.advanced.multiplier) < 1e-9, "×2.5")
+		PlayerLogic.trainTick(data, "basic", 10 ^ 7)
+		t.eq(data.trained, Config.MAX_TRAINED, "tope de velocidad entrenada")
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad total")
+		t.eq(PlayerLogic.reconcile({ trained = -5 }).trained, 0, "repara entrenamiento negativo")
+		t.eq(PlayerLogic.reconcile({ trained = 999 }).trained, Config.MAX_TRAINED, "limita entrenamiento")
+		t.eq(PlayerLogic.reconcile({ treadmills = { advanced = true, falsa = true } }).treadmills.falsa, nil, "descarta caminadoras falsas")
+	end)
+
+	t.test("DEV-006: pases de velocidad, monedas, mochila y ranura", function()
+		local data = PlayerLogic.newData()
+		data.watches.pocket = 2
+		local baseSpeed = PlayerLogic.walkSpeed(data)
+		local baseCapacity = PlayerLogic.backpackCapacity(data)
+		PlayerLogic.setPasses(data, { runner = true, vip = true, bigBackpack = true, petSlot = true, falso = true })
+		t.eq(data.passes.falso, nil, "ignora pases desconocidos")
+		t.ok(PlayerLogic.walkSpeed(data) > baseSpeed, "Corredor VIP da velocidad")
+		t.eq(PlayerLogic.backpackCapacity(data), baseCapacity + GameData.GamePasses.bigBackpack.backpack, "Mochila Gigante")
+		t.eq(PlayerLogic.petSlots(data), Config.MAX_EQUIPPED_PETS + 1, "ranura extra")
+		PlayerLogic.sell(data, "pocket", 1)
+		t.eq(data.coins, math.floor(GameData.Watches.pocket.sell * GameData.GamePasses.vip.coinMultiplier), "VIP +20% al vender")
+		t.eq(next(PlayerLogic.reconcile(data).passes), nil, "los pases no se guardan: se consultan al entrar")
+	end)
+
+	t.test("DEV-006: Mascota Suprema es 20% mejor que tu mejor mascota", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.setPasses(data, { supremePet = true })
+		t.eq(data.pets.supreme, 1, "el pase da la mascota")
+		t.eq(data.equipped.supreme, 1, "se equipa sola")
+		t.eq(PlayerLogic.petBonus(data, "supreme"), Config.SUPREME_PET_MIN_BONUS, "sin mascotas usa el mínimo")
+		data.pets.dragon = 1
+		t.ok(
+			math.abs(PlayerLogic.petBonus(data, "supreme") - GameData.Pets.dragon.bonus * Config.SUPREME_PET_FACTOR) < 1e-9,
+			"20% más que el dragón"
+		)
+		t.ok(not PlayerLogic.releasePet(data, "supreme"), "no se puede liberar")
+		t.ok(not PlayerLogic.grantPet(data, "supreme"), "no sale de huevos ni regalos")
+		PlayerLogic.equipBest(data)
+		t.eq(data.equipped.supreme, 1, "equipar mejores la incluye")
+		local reloaded = PlayerLogic.reconcile(data)
+		t.eq(reloaded.pets.supreme, nil, "al cargar se quita hasta comprobar el pase")
+		PlayerLogic.setPasses(reloaded, {})
+		t.eq(reloaded.equipped.supreme, nil, "sin pase no queda equipada")
+		for _, eggId in GameData.EggOrder do
+			t.eq(GameData.Eggs[eggId].chances.supreme, nil, eggId .. " no contiene la Suprema")
+		end
+	end)
+
+	t.test("DEV-006: perder la ranura extra desequipa la de menor bonus", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.setPasses(data, { petSlot = true })
+		data.pets = { mouse = 1, dragon = 3 }
+		data.equipped = {}
+		PlayerLogic.equipBest(data)
+		t.eq(PlayerLogic.equippedCount(data), 4, "4 equipadas con el pase")
+		PlayerLogic.setPasses(data, {})
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "vuelve al límite")
+		t.eq(data.equipped.mouse, nil, "quita primero la de menor bonus")
+	end)
+
+	t.test("DEV-006: productos con Robux y recibos", function()
+		local data = PlayerLogic.newData()
+		t.ok(PlayerLogic.grantProduct(data, "coinsSmall", 0), "entrega monedas")
+		t.eq(data.coins, GameData.Products.coinsSmall.coins, "cantidad correcta")
+		t.ok(PlayerLogic.grantProduct(data, "instantTraining", 0), "entrega entrenamiento")
+		t.eq(data.trained, GameData.Products.instantTraining.trained, "velocidad entrenada")
+		t.ok(PlayerLogic.grantProduct(data, "goldEgg", 0), "entrega huevo")
+		t.eq(PlayerLogic.petCount(data), 1, "mascota recibida")
+		t.ok(not PlayerLogic.grantProduct(data, "falso", 0), "rechaza productos desconocidos")
+		t.ok(not PlayerLogic.hasReceipt(data, "abc"), "recibo nuevo")
+		PlayerLogic.addReceipt(data, "abc")
+		t.ok(PlayerLogic.hasReceipt(data, "abc"), "recuerda el recibo")
+		for index = 1, Config.MAX_RECEIPTS + 5 do
+			PlayerLogic.addReceipt(data, "r" .. index)
+		end
+		t.eq(#data.receipts, Config.MAX_RECEIPTS, "guarda solo los últimos")
+		for _, key in GameData.ProductOrder do
+			t.ok(Config.PRODUCT_IDS[key] ~= nil, "id configurado para " .. key)
+		end
+		for _, key in GameData.GamePassOrder do
+			t.ok(Config.GAMEPASS_IDS[key] ~= nil, "id configurado para " .. key)
+		end
+	end)
+
 	t.test("buildView es coherente", function()
 		local data = PlayerLogic.newData()
 		data.parts.gear = 4

@@ -62,8 +62,88 @@ GameData.Pets = {
 	fox = { id = "fox", name = "Zorro Relojero", rarity = "Raro", bonus = 0.20 },
 	hawk = { id = "hawk", name = "Halcón de Cuarzo", rarity = "Épico", bonus = 0.35 },
 	dragon = { id = "dragon", name = "Dragón del Tiempo", rarity = "Legendario", bonus = 0.60 },
+	-- Exclusiva del pase «Mascota Suprema»: su bonus se calcula como 20% más
+	-- que tu mejor mascota (PlayerLogic.petBonus). No sale de huevos ni se libera.
+	supreme = {
+		id = "supreme",
+		name = "Mascota Suprema",
+		rarity = "Legendario",
+		bonus = 0,
+		exclusive = true,
+	},
 }
-GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon" }
+-- Orden de menor a mayor bonus (la Suprema siempre es la mejor)
+GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon", "supreme" }
+
+-- Caminadoras de entrenamiento de velocidad (DEV-006, PROPUESTA)
+-- multiplier: multiplica Config.TRAIN_RATE · cost: monedas para desbloquear
+-- pass: pase de Robux necesario
+GameData.Treadmills = {
+	basic = { id = "basic", name = "Caminadora Básica", multiplier = 1, cost = 0 },
+	advanced = { id = "advanced", name = "Caminadora de Acero", multiplier = 2.5, cost = 2500 },
+	turbo = { id = "turbo", name = "Caminadora Turbo", multiplier = 6, cost = 0, pass = "turboTreadmill" },
+}
+GameData.TreadmillOrder = { "basic", "advanced", "turbo" }
+
+-- Pases de juego (compra única con Robux, permanentes). DEV-006, PROPUESTA.
+-- Por decisión de Jhonn incluyen ventajas fuertes de velocidad.
+GameData.GamePasses = {
+	supremePet = {
+		id = "supremePet",
+		name = "Mascota Suprema",
+		desc = "Mascota exclusiva 20% mejor que tu mejor mascota (mejora sola cuando consigues mejores)",
+	},
+	turboTreadmill = {
+		id = "turboTreadmill",
+		name = "Caminadora Turbo",
+		desc = "Acceso a la caminadora que entrena velocidad ×6",
+	},
+	runner = {
+		id = "runner",
+		name = "Corredor VIP",
+		desc = "+25% de velocidad permanente",
+		speedMultiplier = 1.25,
+	},
+	vip = {
+		id = "vip",
+		name = "VIP",
+		desc = "+20% de monedas al vender y en el museo",
+		coinMultiplier = 1.2,
+	},
+	bigBackpack = {
+		id = "bigBackpack",
+		name = "Mochila Gigante",
+		desc = "+20 espacios para piezas",
+		backpack = 20,
+	},
+	petSlot = {
+		id = "petSlot",
+		name = "Ranura de Mascota",
+		desc = "+1 mascota equipada",
+		petSlots = 1,
+	},
+}
+GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "bigBackpack", "petSlot" }
+
+-- Productos (compra repetible con Robux). DEV-006, PROPUESTA.
+GameData.Products = {
+	coinsSmall = { id = "coinsSmall", name = "Bolsa de monedas", desc = "+2.500 monedas", coins = 2500 },
+	coinsMedium = { id = "coinsMedium", name = "Cofre de monedas", desc = "+15.000 monedas", coins = 15000 },
+	coinsLarge = { id = "coinsLarge", name = "Bóveda de monedas", desc = "+75.000 monedas", coins = 75000 },
+	instantTraining = {
+		id = "instantTraining",
+		name = "Entrenamiento instantáneo",
+		desc = "+5 de velocidad entrenada",
+		trained = 5,
+	},
+	goldEgg = {
+		id = "goldEgg",
+		name = "Huevo de Oro instantáneo",
+		desc = "Abre un Huevo de Oro (probabilidades visibles en el Criadero)",
+		egg = "gold",
+	},
+}
+GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg" }
 
 -- Huevos del Criadero. chances: probabilidad relativa de cada mascota.
 GameData.Eggs = {

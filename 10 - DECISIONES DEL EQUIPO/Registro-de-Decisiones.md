@@ -136,3 +136,9 @@ Los agentes deben:
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Progresión / economía.
 - **Propuesta:** 3 huevos (500 / 5.000 / 40.000), 5 mascotas de +5% a +60%, hasta 3 equipadas, tope de velocidad 60; solo monedas del juego. Detalle en [[GDD]] §15.4.
+
+#### DEC-007 — Velocidad como eje y monetización con ventajas
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Economía / monetización.
+- **Propuesta:** sin fuerza; caminadoras de entrenamiento; 6 pases (incluye ventajas fuertes de velocidad) y 5 productos. Detalle en [[GDD]] §15.5.
+- **Nota:** los números DEC de las ramas DEV-001 a DEV-006 chocan con DEC-001 y DEC-002 aprobadas en `main`. Se renumerarán al integrar.

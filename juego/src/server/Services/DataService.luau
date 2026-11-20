@@ -233,6 +233,16 @@ function DataService.start()
 	end)
 end
 
+-- Guarda ya (usado tras compras con Robux). Devuelve true si quedó guardado
+-- o si la sesión no guarda (Studio sin acceso a API).
+function DataService.saveNow(player)
+	local profile = profiles[player]
+	if not profile then
+		return false
+	end
+	return writeProfile(player, profile, false)
+end
+
 -- Llama a callback(player, data) cuando los datos de un jugador están listos.
 function DataService.onLoaded(callback)
 	table.insert(loadedCallbacks, callback)

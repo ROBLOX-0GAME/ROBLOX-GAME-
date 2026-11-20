@@ -22,6 +22,7 @@
 ## Memoria reciente
 
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- 2026-11-20 · DEV-006 (Jhonn, en revisión): el juego se centra en la velocidad, sin fuerza. Caminadoras ×1/×2,5/×6, 6 pases de Robux (algunos «pay to win» por decisión de Jhonn) y 5 productos. Ver [[GDD]] §15.5. Propuesta DEC-007.
 - 2026-11-20 · DEV-001 (Jhonn, en revisión): cifras iniciales implementadas como propuesta en `juego/src/shared/Config.luau` y `GameData.luau` (moneda: monedas; 4 relojes de 60 a 1200; 5 mejoras con precio base × crecimiento^nivel; museo +1 a +25 cada 10 s). Propuesta DEC-002, pendiente de aprobación.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

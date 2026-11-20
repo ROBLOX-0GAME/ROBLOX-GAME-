@@ -47,6 +47,7 @@ local PANEL_TITLES = {
 	backpack = "Mochila",
 	boss = "Cronómetro Maestro — Reparación",
 	pets = "Criadero — Huevos y mascotas",
+	robux = "Tienda Robux — Pases y productos",
 }
 
 local state = nil
@@ -380,6 +381,50 @@ local function renderShop()
 		addRow("No tienes piezas sueltas.")
 	end
 
+	addHeader("Caminadoras de entrenamiento")
+	for _, treadmillId in GameData.TreadmillOrder do
+		local treadmill = GameData.Treadmills[treadmillId]
+		local status = "Gratis"
+		local buttons = nil
+		if treadmill.pass then
+			status = "Pase de Robux «" .. GameData.GamePasses[treadmill.pass].name .. "»"
+			if state.passes[treadmill.pass] then
+				status = "Tienes el pase"
+			end
+		elseif treadmill.cost > 0 then
+			if state.treadmills[treadmillId] then
+				status = "Desbloqueada"
+			else
+				status = formatNumber(treadmill.cost) .. " monedas"
+				buttons = {
+					{
+						text = "Desbloquear",
+						enabled = state.coins >= treadmill.cost,
+						onActivated = function()
+							request("buyTreadmill", treadmillId)
+						end,
+					},
+				}
+			end
+		end
+		addRow(
+			string.format(
+				"<b>%s</b> — entrena ×%s\n<font color=\"#aaaab9\">%s</font>",
+				treadmill.name,
+				tostring(treadmill.multiplier),
+				status
+			),
+			buttons
+		)
+	end
+	addRow(
+		string.format(
+			"Velocidad entrenada: %.1f / %d. Las caminadoras están a la izquierda de la base.",
+			state.trained,
+			Config.MAX_TRAINED
+		)
+	)
+
 	addHeader("Mejoras")
 	for _, upgradeId in GameData.UpgradeOrder do
 		local upgrade = GameData.Upgrades[upgradeId]
@@ -467,7 +512,7 @@ local function addPetRows()
 			state.petCount,
 			Config.MAX_PETS,
 			state.equippedCount,
-			Config.MAX_EQUIPPED_PETS,
+			state.petSlots,
 			state.petMultiplier
 		)
 	)
@@ -495,13 +540,13 @@ local function addPetRows()
 					pet.name,
 					owned,
 					pet.rarity,
-					math.floor(pet.bonus * 100 + 0.5),
+					math.floor((state.petBonuses[petId] or pet.bonus) * 100 + 0.5),
 					equipped
 				),
 				{
 					{
 						text = "Equipar",
-						enabled = owned > equipped and state.equippedCount < Config.MAX_EQUIPPED_PETS,
+						enabled = owned > equipped and state.equippedCount < state.petSlots,
 						onActivated = function()
 							request("equipPet", petId)
 						end,
@@ -706,6 +751,50 @@ local function renderBoss()
 	end
 end
 
+-- Tienda Robux (DEV-006). Los IDs en 0 se muestran como «Próximamente».
+local function renderRobux()
+	addHeader("Pases (compra única, para siempre)")
+	for _, passKey in GameData.GamePassOrder do
+		local pass = GameData.GamePasses[passKey]
+		local owned = state.passes[passKey] == true
+		local available = (Config.GAMEPASS_IDS[passKey] or 0) ~= 0
+		local text = "Comprar"
+		if owned then
+			text = "Lo tienes"
+		elseif not available then
+			text = "Próximamente"
+		end
+		addRow(string.format("<b>%s</b>\n%s", pass.name, pass.desc), {
+			{
+				text = text,
+				enabled = available and not owned,
+				onActivated = function()
+					request("buyPass", passKey)
+				end,
+			},
+		})
+	end
+	addHeader("Productos (se pueden comprar varias veces)")
+	for _, productKey in GameData.ProductOrder do
+		local product = GameData.Products[productKey]
+		local available = (Config.PRODUCT_IDS[productKey] or 0) ~= 0
+		local text = "Comprar"
+		if not available then
+			text = "Próximamente"
+		end
+		addRow(string.format("<b>%s</b>\n%s", product.name, product.desc), {
+			{
+				text = text,
+				enabled = available,
+				onActivated = function()
+					request("buyProduct", productKey)
+				end,
+			},
+		})
+	end
+	addRow("Las compras las procesa Roblox. Los huevos muestran sus probabilidades en el Criadero.")
+end
+
 local function bossKey()
 	local info = bossInfo()
 	if not info then
@@ -721,6 +810,7 @@ local RENDERERS = {
 	backpack = renderBackpack,
 	boss = renderBoss,
 	pets = renderPets,
+	robux = renderRobux,
 }
 
 -- ---------------------------------------------------------------------------
@@ -818,9 +908,10 @@ local function updateHud()
 		state.capacity
 	)
 	hud.speed.Text = string.format(
-		"Velocidad: %.1f (mascotas ×%.2f) · Zona máx.: %s",
+		"Velocidad: %.1f (base %.1f × %.2f) · Zona máx.: %s",
 		state.walkSpeed,
-		state.petMultiplier,
+		state.baseSpeed,
+		state.speedMultiplier,
 		GameData.Zones[state.highestZone].name
 	)
 	if state.carriedCount > 0 then
@@ -976,7 +1067,8 @@ local function buildHud()
 	hud.speed = label("", 15, COLORS.muted, { LayoutOrder = 4 })
 	hud.loot = label("", 15, COLORS.error, { LayoutOrder = 4, Visible = false })
 	hud.objective = label("", 15, COLORS.accent, { LayoutOrder = 6, Visible = false })
-	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.speed, hud.loot, hud.museum, hud.objective } do
+	hud.training = label("", 15, COLORS.ok, { LayoutOrder = 4, Visible = false })
+	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.speed, hud.training, hud.loot, hud.museum, hud.objective } do
 		item.Parent = stats
 	end
 	stats.Parent = gui
@@ -988,6 +1080,19 @@ local function buildHud()
 	backpackButton.Position = UDim2.new(0, 12, 0.5, 0)
 	backpackButton.Size = UDim2.fromOffset(110, 44)
 	backpackButton.Parent = gui
+
+	local robuxButton = button("Robux", true, function()
+		if openPanelId == "robux" then
+			Ui.closePanel()
+		else
+			Ui.openPanel("robux")
+		end
+	end)
+	robuxButton.Name = "BotonRobux"
+	robuxButton.AnchorPoint = Vector2.new(0, 0.5)
+	robuxButton.Position = UDim2.new(0, 12, 0.5, 52)
+	robuxButton.Size = UDim2.fromOffset(110, 44)
+	robuxButton.Parent = gui
 
 	-- Notificaciones
 	toastList = new("Frame", {
@@ -1067,6 +1172,18 @@ local function watchDistance()
 			task.wait(0.5)
 			updateGuide()
 			updateGates()
+			local treadmillId = player:GetAttribute("Training")
+			if treadmillId and GameData.Treadmills[treadmillId] and state then
+				hud.training.Visible = true
+				hud.training.Text = string.format(
+					"Entrenando ×%s: %.1f / %d (pulsa la caminadora para parar)",
+					tostring(GameData.Treadmills[treadmillId].multiplier),
+					state.trained,
+					Config.MAX_TRAINED
+				)
+			else
+				hud.training.Visible = false
+			end
 			if openPanelId == "boss" then
 				local key = bossKey()
 				if key ~= lastBossKey then

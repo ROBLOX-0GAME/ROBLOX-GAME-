@@ -103,3 +103,18 @@ Reglas:
 - **2026-11-20 · DEV-005 · Paso 3 — Servidor.** `PetService` crea el Criadero y las esferas que siguen al jugador. `ActionService` recibe 5 acciones nuevas y vuelve a aplicar la velocidad y las mascotas tras cada cambio. `BossService` entrega el huevo de premio. · Verificación: revisión estática (0 errores, 56 `require`).
 - **2026-11-20 · DEV-005 · Paso 4 — Interfaz.** Menú del Criadero con precios y probabilidades. La Mochila incorpora una sección de mascotas con Equipar, Quitar, Liberar y «Equipar mejores». El HUD muestra la velocidad con el multiplicador. · Verificación: revisión estática.
 - **2026-11-20 · DEV-005 · Paso 5 — Pruebas.** 3 pruebas nuevas: huevos, equipar con límite y multiplicador, y reparación de datos con tope de velocidad. Total: 30. · Verificación: **pendiente** en Studio.
+
+---
+
+## 7. DEV-006 — Velocidad como eje: caminadoras y Robux
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Rama:** `task/DEV-006-velocidad-robux`
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-006 · Paso 1 — Búsqueda en el repositorio.** Se revisaron la bóveda, todas las ramas y `main`. Mecánicas del formulario: fuerza/velocidad/salto, herramientas, piezas, fabricación, venta, museo, suerte, mascotas, compras opcionales, robo, jefe y 10 jugadores. La rama `Roblox-game-studio-v2` solo tiene notas vacías. Se detecta que `main` incorporó INFRA-001: código en `game/`, reservas de rutas y decisiones DEC-001 y DEC-002 aprobadas. Se informa a Jhonn. · Verificación: ejecutada (`git grep`, `git diff`).
+- **2026-11-20 · DEV-006 · Paso 2 — Dirección.** Jhonn decide que el juego se enfoca en velocidad, sin fuerza; que algunos pases pueden ser «pay to win» (por ejemplo, una mascota 20% mejor que tu mejor y una caminadora con mucho multiplicador); y que el diseño visual se hará con Krita, Blender, Audacity y Material Maker, así que por ahora solo se programan mecánicas. · Verificación: ejecutada.
+- **2026-11-20 · DEV-006 · Paso 3 — Datos y reglas.** `Config` recibe el entrenamiento, los IDs de Robux en 0, el modo de prueba y el tope de velocidad 80. `GameData` recibe `Treadmills`, `GamePasses`, `Products` y la Mascota Suprema. `PlayerLogic` incorpora la velocidad base con entrenamiento, `speedMultiplier`, `coinMultiplier`, `petSlots`, `petBonus` (Suprema dinámica), `setPasses`, caminadoras, `trainTick`, `grantProduct` y recibos. · Verificación: revisión estática.
+- **2026-11-20 · DEV-006 · Paso 4 — Servidor.** `MonetizationService` consulta los pases al entrar, abre las compras y procesa los recibos sin entregar dos veces. `TrainingService` crea 3 caminadoras, inicia y detiene el entrenamiento y entrena cada segundo. `DataService.saveNow` guarda al momento tras una compra. `CharacterService` deja quieto al jugador mientras entrena. `ActionService` recibe `buyTreadmill`, `buyPass` y `buyProduct`. · Verificación: revisión estática (0 errores, 73 `require`).
+- **2026-11-20 · DEV-006 · Paso 5 — Interfaz mínima.** Botón y menú «Robux», sección de caminadoras en la Tienda, línea de entrenamiento y velocidad (base × multiplicador) en el HUD, y ranuras y bonus reales en las mascotas. · Verificación: revisión estática.
+- **2026-11-20 · DEV-006 · Paso 6 — Pruebas.** 5 pruebas nuevas: caminadoras, pases, Mascota Suprema, pérdida de ranura, y productos y recibos. Total: 35. · Verificación: **pendiente** en Studio.

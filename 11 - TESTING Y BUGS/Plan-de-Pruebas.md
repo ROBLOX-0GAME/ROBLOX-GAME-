@@ -227,3 +227,14 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Equipar un Zorro: la puerta del Barrio Obrero se vuelve verde | Manual | Pendiente |
 | Reaparecer: las mascotas vuelven a aparecer | Manual | Pendiente |
 | Botones de mascotas en pantalla de móvil (3 botones por fila) | Manual | Pendiente |
+
+## 14. Pruebas de DEV-006 (velocidad y Robux)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 35 pruebas de `PlayerLogic` | Automática | Pendiente |
+| Entrenar en la Caminadora Básica: el HUD sube la velocidad entrenada; alejarse detiene | Manual | Pendiente |
+| Con `STUDIO_GRANT_ALL_PASSES = true`: Mascota Suprema equipada, Turbo disponible, +25% de velocidad | Manual | Pendiente |
+| Compra de prueba de un producto en Studio: se entrega una sola vez | Manual | Pendiente (requiere IDs reales) |
+| Tienda Robux muestra «Próximamente» con IDs en 0 | Manual | Pendiente |

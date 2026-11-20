@@ -20,7 +20,7 @@ local Config = {
 	START_COINS = 0,
 	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
 	BASE_WALKSPEED = 16,
-	MAX_WALKSPEED = 60, -- tope de seguridad para la física
+	MAX_WALKSPEED = 80, -- tope de seguridad para la física
 	BASE_JUMPHEIGHT = 7.2,
 	BASE_MUSEUM_SLOTS = 3,
 	MAX_WATCHES_PER_TYPE = 999,
@@ -53,6 +53,36 @@ local Config = {
 	-- Mascotas (DEV-005)
 	MAX_PETS = 50,
 	MAX_EQUIPPED_PETS = 3,
+
+	-- Entrenamiento de velocidad en caminadoras (DEV-006)
+	TRAIN_RATE = 0.01, -- velocidad permanente ganada por segundo con multiplicador ×1
+	MAX_TRAINED = 30, -- velocidad máxima que se puede ganar entrenando
+	TRAIN_TICK_SECONDS = 1,
+	TREADMILL_DISTANCE = 8, -- si te alejas más, dejas de entrenar
+
+	-- Pases y productos con Robux (DEV-006). 0 = todavía no creado en Roblox
+	-- (se muestra «Próximamente»). Los IDs reales se copian del Creator Hub
+	-- al publicar la experiencia.
+	GAMEPASS_IDS = {
+		supremePet = 0,
+		turboTreadmill = 0,
+		runner = 0,
+		vip = 0,
+		bigBackpack = 0,
+		petSlot = 0,
+	},
+	PRODUCT_IDS = {
+		coinsSmall = 0,
+		coinsMedium = 0,
+		coinsLarge = 0,
+		instantTraining = 0,
+		goldEgg = 0,
+	},
+	-- Solo para probar en Studio: da todos los pases durante la sesión (no se guardan).
+	STUDIO_GRANT_ALL_PASSES = false,
+	SUPREME_PET_FACTOR = 1.2, -- la Mascota Suprema es 20% mejor que tu mejor mascota
+	SUPREME_PET_MIN_BONUS = 0.06, -- bonus mínimo si aún no tienes mascotas
+	MAX_RECEIPTS = 50, -- compras recordadas para no entregar dos veces
 
 	-- Seguridad
 	INTERACT_DISTANCE = 14, -- distancia máxima para robar una pieza

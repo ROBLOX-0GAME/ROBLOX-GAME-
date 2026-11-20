@@ -19,6 +19,7 @@ local WorldService = require(script.Parent.WorldService)
 local CharacterService = require(script.Parent.CharacterService)
 local BossService = require(script.Parent.BossService)
 local PetService = require(script.Parent.PetService)
+local MonetizationService = require(script.Parent.MonetizationService)
 
 local random = Random.new()
 
@@ -87,6 +88,23 @@ local ACTIONS = {
 	releasePet = {
 		run = function(data, id)
 			return PlayerLogic.releasePet(data, id)
+		end,
+	},
+	-- Caminadoras y Robux (DEV-006)
+	buyTreadmill = {
+		station = "shop",
+		run = function(data, id)
+			return PlayerLogic.buyTreadmill(data, id)
+		end,
+	},
+	buyPass = {
+		run = function(data, id, _, player)
+			return MonetizationService.promptPass(player, data, id)
+		end,
+	},
+	buyProduct = {
+		run = function(_, id, _, player)
+			return MonetizationService.promptProduct(player, id)
 		end,
 	},
 	contribute = {

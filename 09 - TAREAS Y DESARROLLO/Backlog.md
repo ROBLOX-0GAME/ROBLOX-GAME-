@@ -213,6 +213,26 @@ Cinco objetivos en orden que enseñan el bucle principal: recoger 5 cajas → fa
 - [ ] Prueba en Studio: abrir un huevo, equipar y cruzar una puerta gracias a la mascota.
 - [ ] El equipo aprueba bonus, precios y probabilidades (DEC-006).
 
+### DEV-006 — Velocidad como eje: caminadoras, pases y productos con Robux
+
+- **ID:** DEV-006 · **Responsable:** Jhonn · **Cuenta Claude:** Claude 1 — Cuenta A · **Revisor:** Zadiel; Cuenta B revisa la Tienda Robux.
+- **Área:** Economía, progresión, monetización. **Prioridad:** Alta. **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-006-velocidad-robux` (sale de DEV-005). **Fecha:** 2026-11-20.
+- **⚠ Bloqueo de integración:** `main` incorporó INFRA-001 (código en `game/`, reservas en ACTIVE_TASKS.md, DEC-001 y DEC-002 aprobadas). DEV-001 a DEV-006 deben pasarse a `game/`, renumerar sus decisiones y reservar rutas antes de fusionarse.
+
+**Descripción:** caminadoras de entrenamiento de velocidad; 6 pases (algunos con ventaja fuerte, por decisión de Jhonn) y 5 productos con entrega segura. No hay fuerza. Diseño en [[GDD]] §15.5.
+
+**Criterios de aceptación:**
+
+- [x] Velocidad = (base + mejoras + entrenada) × mascotas × pase, con tope de 80.
+- [x] 3 caminadoras (gratis, monedas, pase) con entrenamiento validado en el servidor.
+- [x] Pases consultados a Roblox al entrar; productos entregados una sola vez y confirmados tras guardar.
+- [x] Tienda Robux con «Próximamente» mientras no haya IDs.
+- [x] 5 pruebas nuevas (35 en total).
+- [ ] Crear los pases y productos en el Creator Hub y copiar sus IDs (requiere publicar la experiencia).
+- [ ] Prueba en Studio con `STUDIO_GRANT_ALL_PASSES` y compras de prueba.
+- [ ] El equipo aprueba precios y efectos (DEC-007).
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea

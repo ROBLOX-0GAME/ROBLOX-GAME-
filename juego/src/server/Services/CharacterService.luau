@@ -18,8 +18,14 @@ function CharacterService.apply(player)
 	if not data or not humanoid then
 		return
 	end
-	humanoid.WalkSpeed = PlayerLogic.walkSpeed(data)
 	humanoid.UseJumpPower = false
+	-- Mientras entrena en una caminadora (TrainingService) se queda quieto.
+	if player:GetAttribute("Training") then
+		humanoid.WalkSpeed = 0
+		humanoid.JumpHeight = 0
+		return
+	end
+	humanoid.WalkSpeed = PlayerLogic.walkSpeed(data)
 	humanoid.JumpHeight = PlayerLogic.jumpHeight(data)
 end
 
