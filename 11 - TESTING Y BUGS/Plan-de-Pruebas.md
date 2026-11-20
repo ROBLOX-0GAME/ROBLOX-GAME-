@@ -167,7 +167,7 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 
 ### BUG-001 — La mochila se llena sin piezas para ningún reloj (bloqueo)
 
-- **Fecha:** 2026-11-20. **Prioridad:** Alta. **Estado:** Abierto. **Responsable:** Jhonn. **Sistema afectado:** Mochila / economía (DEV-001).
+- **Fecha:** 2026-11-20. **Prioridad:** Alta. **Estado:** Corregido, pendiente de verificar en Studio. **Responsable:** Jhonn. **Sistema afectado:** Mochila / economía (DEV-001).
 
 **Descripción:** al recoger cajas, la mochila (20 piezas) se llena con una mezcla que no alcanza para fabricar ningún reloj. Como las piezas no se pueden vender ni tirar, el jugador queda bloqueado.
 
@@ -179,4 +179,6 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 
 **Evidencias:** reportado por Jhonn en prueba manual en Studio; sin errores en Output.
 
-**Solución propuesta (pendiente):** vender o tirar piezas sueltas en la Tienda y/o ajustar capacidad y probabilidades.
+**Solución aplicada (2026-11-20):** las piezas sueltas se pueden **vender en la Tienda** (2 monedas las comunes, 6 las poco comunes y 25 el rubí) y **tirar desde la Mochila** en cualquier lugar. El aviso de mochila llena explica ambas salidas. Los precios son bajos para que fabricar siempre rinda más; lo comprueba una prueba automática.
+
+**Verificación:** 2 pruebas nuevas en `PlayerLogic.spec.luau` (pendientes de ejecutar en Studio) y revisión estática sin errores. Falta repetir los pasos para reproducir en Studio.

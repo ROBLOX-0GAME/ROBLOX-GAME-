@@ -96,6 +96,34 @@ return function(t)
 		t.eq(data.watches.pocket, 1, "quedan 1")
 	end)
 
+	t.test("BUG-001: vender y tirar piezas libera la mochila", function()
+		local data = PlayerLogic.newData()
+		for _ = 1, Config.BASE_BACKPACK do
+			PlayerLogic.addPart(data, "screw")
+		end
+		t.ok(not PlayerLogic.addPart(data, "gear"), "mochila llena")
+		t.ok(not PlayerLogic.sellPart(data, "screw", Config.BASE_BACKPACK + 1), "no vende más de lo que tiene")
+		t.ok(not PlayerLogic.sellPart(data, "screw", 0.5), "rechaza decimales")
+		t.ok(PlayerLogic.sellPart(data, "screw", 5), "vende 5")
+		t.eq(data.coins, GameData.Parts.screw.sell * 5, "paga las piezas")
+		t.ok(PlayerLogic.discardPart(data, "screw", 5), "tira 5")
+		t.eq(data.coins, GameData.Parts.screw.sell * 5, "tirar no paga")
+		t.eq(PlayerLogic.partCount(data), Config.BASE_BACKPACK - 10, "libera 10 espacios")
+		t.ok(PlayerLogic.addPart(data, "gear"), "ya cabe otra pieza")
+		t.ok(not PlayerLogic.discardPart(data, "ruby", 1), "no tira lo que no tiene")
+	end)
+
+	t.test("vender piezas siempre rinde menos que fabricar", function()
+		for _, watchId in GameData.WatchOrder do
+			local watch = GameData.Watches[watchId]
+			local partsValue = 0
+			for partId, amount in watch.cost do
+				partsValue += GameData.Parts[partId].sell * amount
+			end
+			t.ok(watch.sell > partsValue, watch.name .. " vale más que sus piezas")
+		end
+	end)
+
 	t.test("buyUpgrade cobra y respeta el máximo", function()
 		local data = PlayerLogic.newData()
 		local upgrade = GameData.Upgrades.jump

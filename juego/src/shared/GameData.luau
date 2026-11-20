@@ -9,13 +9,15 @@ local GameData = {}
 
 -- Piezas que salen de las cajas del área de recolección.
 -- weight: probabilidad relativa. La suerte multiplica el peso de lo que no es común.
+-- sell: monedas al vender la pieza suelta en la Tienda (BUG-001: salida si la
+-- mochila se llena). Es bajo a propósito: fabricar relojes siempre rinde más.
 GameData.Parts = {
-	gear = { id = "gear", name = "Engranaje", rarity = "Común", common = true, weight = 40 },
-	spring = { id = "spring", name = "Resorte", rarity = "Común", common = true, weight = 30 },
-	screw = { id = "screw", name = "Tornillo", rarity = "Común", common = true, weight = 30 },
-	crystal = { id = "crystal", name = "Cristal", rarity = "Poco común", common = false, weight = 14 },
-	strap = { id = "strap", name = "Correa", rarity = "Poco común", common = false, weight = 12 },
-	ruby = { id = "ruby", name = "Rubí", rarity = "Raro", common = false, weight = 4 },
+	gear = { id = "gear", name = "Engranaje", rarity = "Común", common = true, weight = 40, sell = 2 },
+	spring = { id = "spring", name = "Resorte", rarity = "Común", common = true, weight = 30, sell = 2 },
+	screw = { id = "screw", name = "Tornillo", rarity = "Común", common = true, weight = 30, sell = 2 },
+	crystal = { id = "crystal", name = "Cristal", rarity = "Poco común", common = false, weight = 14, sell = 6 },
+	strap = { id = "strap", name = "Correa", rarity = "Poco común", common = false, weight = 12, sell = 6 },
+	ruby = { id = "ruby", name = "Rubí", rarity = "Raro", common = false, weight = 4, sell = 25 },
 }
 GameData.PartOrder = { "gear", "spring", "screw", "crystal", "strap", "ruby" }
 

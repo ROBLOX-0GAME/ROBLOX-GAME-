@@ -188,6 +188,26 @@ def check_blocks(node, code, errors):
         errors.append(f"{rel(node)}:{line}: '{word}' sin cerrar")
 
 
+LOCAL_DECL_RE = re.compile(r"^\s*local\s+function\s+(\w+)|^\s*local\s+(\w+)\s*=", re.M)
+
+
+def check_use_before_local(node, code, errors):
+    """Un local usado antes de declararse se resuelve como global (nil) en Luau."""
+    seen = {}
+    for m in LOCAL_DECL_RE.finditer(code):
+        name = m.group(1) or m.group(2)
+        line = code.count("\n", 0, m.start()) + 1
+        seen.setdefault(name, line)
+    for name, line in seen.items():
+        prefix = "\n".join(code.split("\n")[: line - 1])
+        if re.search(rf"(?<![\w.:]){re.escape(name)}\s*\(", prefix) and not re.search(
+            rf"^\s*local\s+{re.escape(name)}\b|^\s*local\s+function\s+{re.escape(name)}\b|function\s+{re.escape(name)}\s*\(",
+            prefix,
+            re.M,
+        ):
+            errors.append(f"{rel(node)}:{line}: '{name}' se usa antes de declararse como local")
+
+
 REQUIRE_RE = re.compile(r"require\(([^()]*(?:\([^()]*\)[^()]*)*)\)")
 TOKEN_RE = re.compile(r'[.:]WaitForChild\("([^"]+)"[^)]*\)|\.(\w+)|^(\w+)')
 
@@ -312,7 +332,9 @@ def main():
     scripts = [n for n in tree.walk() if n.source is not None]
     errors, warnings = [], []
     for node in scripts:
-        check_blocks(node, strip_code(node.source), errors)
+        code = strip_code(node.source)
+        check_blocks(node, code, errors)
+        check_use_before_local(node, code, errors)
     requires = check_requires_and_fields(tree, errors, warnings)
 
     print(f"Scripts encontrados: {len(scripts)}")

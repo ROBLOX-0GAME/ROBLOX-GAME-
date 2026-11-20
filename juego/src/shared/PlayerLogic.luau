@@ -257,13 +257,22 @@ local function removeCount(map, id, amount)
 	end
 end
 
+-- Cantidad entera entre 1 y Config.MAX_SELL_AMOUNT (rechaza NaN y decimales).
+local function validAmount(amount)
+	return type(amount) == "number"
+		and amount == amount
+		and amount >= 1
+		and amount % 1 == 0
+		and amount <= Config.MAX_SELL_AMOUNT
+end
+
 function PlayerLogic.addPart(data, partId)
 	local part = GameData.Parts[partId]
 	if not part then
 		return false, "Pieza desconocida."
 	end
 	if PlayerLogic.partCount(data) >= PlayerLogic.backpackCapacity(data) then
-		return false, "Mochila llena: fabrica relojes o mejora la mochila."
+		return false, "Mochila llena: fabrica relojes, vende piezas en la Tienda o tira piezas desde la Mochila."
 	end
 	data.parts[partId] = (data.parts[partId] or 0) + 1
 	data.stats.collected += 1
@@ -297,7 +306,7 @@ function PlayerLogic.sell(data, watchId, amount)
 	if not watch then
 		return false, "Ese reloj no existe."
 	end
-	if type(amount) ~= "number" or amount ~= amount or amount < 1 or amount % 1 ~= 0 or amount > Config.MAX_SELL_AMOUNT then
+	if not validAmount(amount) then
 		return false, "Cantidad no válida."
 	end
 	local owned = data.watches[watchId] or 0
@@ -310,6 +319,41 @@ function PlayerLogic.sell(data, watchId, amount)
 	data.stats.sold += amount
 	data.stats.earned += earned
 	return true, string.format("Vendiste %d × %s por %d monedas.", amount, watch.name, earned)
+end
+
+-- Vende piezas sueltas en la Tienda (BUG-001).
+function PlayerLogic.sellPart(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo."
+	end
+	local earned = part.sell * amount
+	removeCount(data.parts, partId, amount)
+	data.coins += earned
+	data.stats.earned += earned
+	return true, string.format("Vendiste %d × %s por %d monedas.", amount, part.name, earned)
+end
+
+-- Tira piezas desde la Mochila, en cualquier lugar y sin pago (BUG-001).
+function PlayerLogic.discardPart(data, partId, amount)
+	local part = GameData.Parts[partId]
+	if not part then
+		return false, "Pieza desconocida."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	if (data.parts[partId] or 0) < amount then
+		return false, "No tienes suficientes piezas de ese tipo."
+	end
+	removeCount(data.parts, partId, amount)
+	return true, string.format("Tiraste %d × %s.", amount, part.name)
 end
 
 function PlayerLogic.buyUpgrade(data, upgradeId)

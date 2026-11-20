@@ -35,6 +35,18 @@ local ACTIONS = {
 			return PlayerLogic.sell(data, id, amount)
 		end,
 	},
+	sellPart = {
+		station = "shop",
+		run = function(data, id, amount)
+			return PlayerLogic.sellPart(data, id, amount)
+		end,
+	},
+	discardPart = {
+		station = nil, -- se puede tirar en cualquier lugar (BUG-001)
+		run = function(data, id, amount)
+			return PlayerLogic.discardPart(data, id, amount)
+		end,
+	},
 	buyUpgrade = {
 		station = "shop",
 		run = function(data, id)
@@ -91,7 +103,7 @@ local function handle(player, actionName, id, amount)
 	if not data then
 		return reply(false, "Tus datos aún se están cargando…")
 	end
-	if not WorldService.isNearStation(player, action.station, Config.STATION_DISTANCE) then
+	if action.station and not WorldService.isNearStation(player, action.station, Config.STATION_DISTANCE) then
 		return reply(false, "Acércate a la estación para hacer eso.")
 	end
 

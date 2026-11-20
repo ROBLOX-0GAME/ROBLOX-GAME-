@@ -331,6 +331,33 @@ local function renderShop()
 		addRow("No tienes relojes para vender. Fabrícalos en el Taller.")
 	end
 
+	addHeader("Vender piezas sueltas")
+	local anyPart = false
+	for _, partId in GameData.PartOrder do
+		local owned = state.parts[partId] or 0
+		if owned > 0 then
+			anyPart = true
+			local part = GameData.Parts[partId]
+			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", part.name, owned, part.sell), {
+				{
+					text = "Vender 1",
+					onActivated = function()
+						request("sellPart", partId, 1)
+					end,
+				},
+				{
+					text = "Vender todas",
+					onActivated = function()
+						request("sellPart", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			})
+		end
+	end
+	if not anyPart then
+		addRow("No tienes piezas sueltas.")
+	end
+
 	addHeader("Mejoras")
 	for _, upgradeId in GameData.UpgradeOrder do
 		local upgrade = GameData.Upgrades[upgradeId]
@@ -414,14 +441,26 @@ local function renderBackpack()
 	addHeader(string.format("Piezas %d/%d", state.partCount, state.capacity))
 	for _, partId in GameData.PartOrder do
 		local part = GameData.Parts[partId]
-		addRow(
-			string.format(
-				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>",
-				part.name,
-				state.parts[partId] or 0,
-				part.rarity
-			)
-		)
+		local owned = state.parts[partId] or 0
+		local buttons = nil
+		if owned > 0 then
+			-- Tirar piezas libera espacio en cualquier lugar (BUG-001).
+			buttons = {
+				{
+					text = "Tirar 1",
+					onActivated = function()
+						request("discardPart", partId, 1)
+					end,
+				},
+				{
+					text = "Tirar todas",
+					onActivated = function()
+						request("discardPart", partId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			}
+		end
+		addRow(string.format("<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>", part.name, owned, part.rarity), buttons)
 	end
 	addHeader("Relojes")
 	for _, watchId in GameData.WatchOrder do
@@ -435,7 +474,7 @@ local function renderBackpack()
 			)
 		)
 	end
-	addRow("Consejo: recoge cajas en la zona de arena y fabrica relojes en el Taller.")
+	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
 end
 
 local RENDERERS = {
