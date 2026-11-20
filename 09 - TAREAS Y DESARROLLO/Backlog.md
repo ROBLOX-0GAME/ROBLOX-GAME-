@@ -544,3 +544,29 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 - [x] Prompt con reglas del equipo, verificación e instalación de herramientas, prueba del pipeline en macOS, tarea de materiales PBR y siguientes pasos.
 - [x] Enlazado desde `art/README.md` y registrado en el Changelog.
+
+### ART-006 — Materiales PBR de los relojes (MacBook de Zadiel)
+
+- **ID:** ART-006.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel (cubre de forma temporal el área de arte de la Cuenta B).
+- **Revisor:** Michael y Einell (dueños del arte); Jhonn (técnica e importación en Studio).
+- **Área:** Arte — relojes.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** que los 6 relojes (`mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario`) parezcan de lujo sin perder el estilo low-poly. Materiales procedurales (metal dorado pulido y cepillado, acero, cristal de zafiro, esmalte blanco/negro/azul, cuero y gemas rubí/diamante/zafiro) exportados como mapas PBR de 512×512 (`_color`, `_normal`, `_rugosidad`, `_metalico`). Cada reloj pasa a ser un Model con una malla por material para usar `SurfaceAppearance` en Roblox. Mismos nombres de FBX para que el juego los use sin tocar código.
+
+**Criterios de aceptación:**
+
+- [ ] Pipeline comprobado en macOS (Blender 5.3) y comandos de macOS documentados en `art/Pipeline-de-Arte.md` y `art/README.md`.
+- [ ] Mapas PBR en `art/texturas/export/tex_*_{color,normal,rugosidad,metalico}.png` y sus fuentes en `art/texturas/fuentes/`.
+- [ ] Los 6 relojes separados por material, con UV y menos de 3.000 triángulos, exportados a `art/export/modelos/` con el mismo nombre y su `.blend` en `art/blender/fuentes/`.
+- [ ] Vistas previas con materiales y hoja de contactos actualizada.
+- [ ] Sección «Materiales PBR de los relojes» en [[Pipeline-de-Arte]] con instrucciones de `SurfaceAppearance` para quien importe en Studio.
+- [ ] Changelog, memoria del área 12 y propuestas en el Registro de Decisiones (materiales PBR; MacBook también para arte).
+- [ ] La fila ART-006 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ART-003 (relojes base), DEV-014 (`AssetLibrary` acepta Models). No toca `game/src`.
