@@ -46,6 +46,7 @@ TAM_LOG2 = 9  # 2^9 = 512 px
 # ---------------------------------------------------------------------------
 # Definición de los materiales (PROPUESTA ART-006). Colores en sRGB 0–1.
 #   ruido:  ("perlin", escala, iteraciones) | ("cepillado", escala_vetas)
+#           | ("nube", escala, iteraciones)  (fbm2 con ruido Perlin; en Windows el nodo «perlin» no exporta)
 #           | ("celdas", escala)  (voronoi: grano del cuero o facetas de gema)
 #   color:  gradiente (oscuro, claro) aplicado al ruido
 #   rug:    rugosidad mínima y máxima · metal: 0 o 1 · relieve: fuerza del normal
@@ -62,6 +63,10 @@ MATERIALES = {
     "gema_rubi":           dict(ruido=("celdas", 4), color=((0.45, 0.02, 0.06), (0.88, 0.10, 0.18)), rug=(0.02, 0.08), metal=0, relieve=1.0),
     "gema_diamante":       dict(ruido=("celdas", 4), color=((0.80, 0.86, 0.94), (1.00, 1.00, 1.00)), rug=(0.01, 0.05), metal=0, relieve=1.0),
     "gema_zafiro":         dict(ruido=("celdas", 4), color=((0.04, 0.10, 0.45), (0.16, 0.32, 0.88)), rug=(0.02, 0.08), metal=0, relieve=1.0),
+    # ART-009 (DEC-018 aprobada): piezas robables, legado y cápsulas
+    "metal_laton":         dict(ruido=("cepillado", 192), color=((0.62, 0.45, 0.20), (0.82, 0.64, 0.34)), rug=(0.28, 0.42), metal=1, relieve=0.12),
+    "metal_plata":         dict(ruido=("nube", 6, 4), color=((0.78, 0.79, 0.82), (0.95, 0.96, 0.98)), rug=(0.10, 0.20), metal=1, relieve=0.2),
+    "esmalte_cosmico":     dict(ruido=("nube", 4, 5), color=((0.30, 0.10, 0.55), (0.25, 0.80, 0.90)), rug=(0.08, 0.16), metal=0, relieve=0.15),
 }
 
 
@@ -98,6 +103,10 @@ def ptex(nombre, d):
     elif tipo == "cepillado":  # vetas finas horizontales (metal cepillado)
         nodos.append(_nodo("ruido", "fbm2", -600, 0, noise=0, scale_x=2, scale_y=d["ruido"][1],
                            folds=0, iterations=3, persistence=0.5, offset=0))
+        color_src = alto_src = ("ruido", 0)
+    elif tipo == "nube":  # ruido Perlin fractal con fbm2 (ART-009)
+        nodos.append(_nodo("ruido", "fbm2", -600, 0, noise=1, scale_x=d["ruido"][1], scale_y=d["ruido"][1],
+                           folds=0, iterations=d["ruido"][2], persistence=0.5, offset=0))
         color_src = alto_src = ("ruido", 0)
     else:  # celdas (voronoi): 0 = distancia, 1 = bordes, 2 = color aleatorio por celda
         e = d["ruido"][1]
@@ -148,11 +157,17 @@ def buscar_material_maker():
 
 def exportar_mm(mm, ruta_ptex, salida):
     # «Godot 4 ORM» exporta albedo, normal (OpenGL) y ORM (R = oclusión, G = rugosidad, B = metálico)
+    # En Windows, Material Maker no exporta si las rutas llevan «\» (ART-009): se pasan con «/»
+    salida, ruta_ptex = salida.replace("\\", "/"), ruta_ptex.replace("\\", "/")
     comando = [mm, "--export-material", "-t", "Godot/Godot 4 ORM", "-o", salida, "--size", str(2 ** TAM_LOG2), ruta_ptex]
-    resultado = subprocess.run(comando, capture_output=True, text=True, timeout=300)
-    if "succesfully exported" not in resultado.stdout and "successfully exported" not in resultado.stdout:
-        print(resultado.stdout[-2000:], resultado.stderr[-2000:])
-        raise SystemExit(f"Material Maker no exportó {ruta_ptex}")
+    base = os.path.join(salida, os.path.splitext(os.path.basename(ruta_ptex))[0])
+    # En Windows a veces sale sin exportar ni avisar: se comprueban los archivos y se reintenta
+    for _ in range(3):
+        resultado = subprocess.run(comando, capture_output=True, text=True, timeout=300, cwd=os.path.dirname(mm))
+        if all(os.path.isfile(f"{base}_{s}.png") for s in ("albedo", "normal", "orm")):
+            return
+    print(resultado.stdout[-2000:], resultado.stderr[-2000:])
+    raise SystemExit(f"Material Maker no exportó {ruta_ptex}")
 
 
 def _leer(ruta):
@@ -191,17 +206,20 @@ def convertir(nombre, carpeta):
 
 def main():
     opciones = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    # Con nombres de material tras «--» solo se generan esos (ART-009), p. ej. «-- metal_laton metal_plata»
+    pedidos = [n for n in opciones if n in MATERIALES] or list(MATERIALES)
     os.makedirs(FUENTES, exist_ok=True)
     os.makedirs(EXPORT, exist_ok=True)
     if "sin_ptex" not in opciones:
-        for nombre, d in MATERIALES.items():
+        for nombre in pedidos:
+            d = MATERIALES[nombre]
             with open(os.path.join(FUENTES, f"mm_{nombre}.ptex"), "w", encoding="utf-8") as f:
                 json.dump(ptex("mm_" + nombre, d), f, indent=1)
     carpeta = tempfile.mkdtemp(prefix="mm_relojes_")
     mm = buscar_material_maker()
     print("Material Maker:", mm)
     resumen = []
-    for nombre in MATERIALES:
+    for nombre in pedidos:
         exportar_mm(mm, os.path.join(FUENTES, f"mm_{nombre}.ptex"), carpeta)
         rug, met, tam = convertir(nombre, carpeta)
         resumen.append(f"{nombre}: {tam}px · rugosidad media {rug:.2f} · metálico medio {met:.2f}")
