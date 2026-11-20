@@ -28,7 +28,7 @@ El control automatizado solo impide integrar Pull Requests incompatibles; no blo
 La regla se configura en GitHub Settings → Branches / Rulesets. Requiere:
 - Pull Request antes de integrar.
 - Una aprobación humana; no aceptar autoaprobación del autor del cambio.
-- Los controles coordination / reservation-check y coordination / rojo-build.
+- Los controles reservation-check y rojo-build.
 - Bloquear actualizaciones directas a main y no permitir bypasses.
 
 La rama main estaba sin protección en la última comprobación. El conector GitHub disponible no permite administrar esa configuración; se activa desde los ajustes del repositorio. El workflow ya está preparado para proporcionar los controles requeridos.

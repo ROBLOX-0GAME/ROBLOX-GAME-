@@ -15,7 +15,7 @@ Eres Claude Code de la **Cuenta A**, administrada por **Zadiel y Jhonn**. Tu ár
 - Si todavía no hay una tarea concreta, haz solo una revisión de lectura y presenta los datos faltantes; no edites ni programes.
 - El repositorio contiene la bóveda y el scaffold de código Rojo en `game/`; aún no existe un place ni un `placeId`. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes destinos ni afirmes cambios en un place.
 - Trata las mecánicas y diseños no aprobados como propuestas. No cambies decisiones del equipo, datos guardados, economía, permisos ni publicación sin autorización humana explícita.
-- Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. Todo cambio llega a `main` mediante Pull Request con una aprobación humana distinta del autor y los controles `coordination / reservation-check` y `coordination / rojo-build`. No hagas push directo a `main`, no hagas force push, no fusiones y no publiques el juego.
+- Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. Todo cambio llega a `main` mediante Pull Request con una aprobación humana distinta del autor y los controles `reservation-check` y `rojo-build`. No hagas push directo a `main`, no hagas force push, no fusiones y no publiques el juego.
 - No guardes secretos en archivos, prompts, capturas ni logs. No declares verificaciones que no hayas realizado.
 
 ## Primera respuesta
