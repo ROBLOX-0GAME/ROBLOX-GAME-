@@ -28,6 +28,8 @@ function PlayerLogic.newData()
 		watches = {}, -- [watchId] = cantidad en inventario
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
+		pets = {}, -- [petId] = cantidad que posee
+		equipped = {}, -- [petId] = cantidad equipada (≤ pets[petId])
 		stats = { collected = 0, crafted = 0, sold = 0, earned = 0 },
 		tutorial = 1, -- paso actual del tutorial; #GameData.Tutorial + 1 = terminado
 	}
@@ -65,6 +67,23 @@ function PlayerLogic.reconcile(data)
 	data.parts = cleanCounts(data.parts, GameData.Parts)
 	-- El botín no guardado en la base se pierde al salir del juego.
 	data.carried = {}
+
+	-- Mascotas: nunca más equipadas que poseídas ni más del límite.
+	data.pets = cleanCounts(data.pets, GameData.Pets)
+	local equipped = {}
+	local slots = Config.MAX_EQUIPPED_PETS
+	for _, petId in GameData.PetOrder do
+		local wanted = 0
+		if type(data.equipped) == "table" and type(data.equipped[petId]) == "number" then
+			wanted = math.floor(data.equipped[petId])
+		end
+		local amount = math.clamp(wanted, 0, math.min(data.pets[petId] or 0, slots))
+		if amount > 0 then
+			equipped[petId] = amount
+			slots -= amount
+		end
+	end
+	data.equipped = equipped
 	data.watches = cleanCounts(data.watches, GameData.Watches)
 	data.museum = cleanCounts(data.museum, GameData.Watches)
 
@@ -130,9 +149,20 @@ function PlayerLogic.freeSpace(data)
 	return math.max(0, PlayerLogic.backpackCapacity(data) - PlayerLogic.partCount(data) - PlayerLogic.carriedCount(data))
 end
 
+-- Multiplicador de velocidad de las mascotas equipadas (DEV-005).
+function PlayerLogic.petMultiplier(data)
+	local bonus = 0
+	for petId, amount in data.equipped do
+		bonus += GameData.Pets[petId].bonus * amount
+	end
+	return 1 + bonus
+end
+
+-- Velocidad = (base + mejoras) × mascotas, con tope de seguridad.
 function PlayerLogic.walkSpeed(data)
 	local base = Config.BASE_WALKSPEED + PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
-	return math.min(Config.MAX_WALKSPEED, base)
+	local speed = base * PlayerLogic.petMultiplier(data)
+	return math.min(Config.MAX_WALKSPEED, math.floor(speed * 10 + 0.5) / 10)
 end
 
 -- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?
@@ -321,6 +351,11 @@ function PlayerLogic.buildView(data)
 		watches = table.clone(data.watches),
 		museum = table.clone(data.museum),
 		upgrades = table.clone(data.upgrades),
+		pets = table.clone(data.pets),
+		equipped = table.clone(data.equipped),
+		petCount = PlayerLogic.petCount(data),
+		equippedCount = PlayerLogic.equippedCount(data),
+		petMultiplier = PlayerLogic.petMultiplier(data),
 		upgradeCosts = upgradeCosts,
 		capacity = PlayerLogic.backpackCapacity(data),
 		partCount = PlayerLogic.partCount(data),
@@ -585,6 +620,134 @@ end
 
 function PlayerLogic.bossReward(points)
 	return math.floor(points * Config.BOSS_COINS_PER_POINT)
+end
+
+-- ---------------------------------------------------------------------------
+-- Mascotas (DEV-005)
+-- ---------------------------------------------------------------------------
+
+function PlayerLogic.petCount(data)
+	return sumCounts(data.pets)
+end
+
+function PlayerLogic.equippedCount(data)
+	return sumCounts(data.equipped)
+end
+
+-- Elige una mascota de un huevo. roll en [0, 1). Devuelve petId o nil.
+function PlayerLogic.rollPet(eggId, roll)
+	local egg = GameData.Eggs[eggId]
+	if not egg then
+		return nil
+	end
+	local total = 0
+	for _, petId in GameData.PetOrder do
+		total += egg.chances[petId] or 0
+	end
+	local target = roll * total
+	local last = nil
+	for _, petId in GameData.PetOrder do
+		local weight = egg.chances[petId] or 0
+		if weight > 0 then
+			last = petId
+			target -= weight
+			if target < 0 then
+				return petId
+			end
+		end
+	end
+	return last
+end
+
+-- Añade una mascota; se equipa sola si hay espacio. Devuelve ok, mensaje.
+function PlayerLogic.grantPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS)
+	end
+	data.pets[petId] = (data.pets[petId] or 0) + 1
+	local extra = ""
+	if PlayerLogic.equippedCount(data) < Config.MAX_EQUIPPED_PETS then
+		data.equipped[petId] = (data.equipped[petId] or 0) + 1
+		extra = " (equipada)"
+	end
+	return true, string.format("¡%s %s! +%d%% de velocidad%s", pet.name, pet.rarity, math.floor(pet.bonus * 100 + 0.5), extra)
+end
+
+-- Compra y abre un huevo. Devuelve ok, mensaje, petId.
+function PlayerLogic.hatchEgg(data, eggId, roll)
+	local egg = GameData.Eggs[eggId]
+	if not egg then
+		return false, "Ese huevo no existe.", nil
+	end
+	if PlayerLogic.petCount(data) >= Config.MAX_PETS then
+		return false, string.format("Tienes el máximo de %d mascotas. Libera alguna.", Config.MAX_PETS), nil
+	end
+	if data.coins < egg.cost then
+		return false, string.format("Te faltan %d monedas.", egg.cost - data.coins), nil
+	end
+	local petId = PlayerLogic.rollPet(eggId, roll)
+	data.coins -= egg.cost
+	local _, message = PlayerLogic.grantPet(data, petId)
+	return true, egg.name .. ": " .. message, petId
+end
+
+function PlayerLogic.equipPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if (data.pets[petId] or 0) <= (data.equipped[petId] or 0) then
+		return false, "No tienes otra " .. pet.name .. " sin equipar."
+	end
+	if PlayerLogic.equippedCount(data) >= Config.MAX_EQUIPPED_PETS then
+		return false, string.format("Solo puedes equipar %d mascotas.", Config.MAX_EQUIPPED_PETS)
+	end
+	data.equipped[petId] = (data.equipped[petId] or 0) + 1
+	return true, pet.name .. " equipada."
+end
+
+function PlayerLogic.unequipPet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if (data.equipped[petId] or 0) < 1 then
+		return false, pet.name .. " no está equipada."
+	end
+	removeCount(data.equipped, petId, 1)
+	return true, pet.name .. " desequipada."
+end
+
+-- Equipa las mascotas con mayor bonus.
+function PlayerLogic.equipBest(data)
+	data.equipped = {}
+	local slots = Config.MAX_EQUIPPED_PETS
+	for index = #GameData.PetOrder, 1, -1 do
+		local petId = GameData.PetOrder[index]
+		local amount = math.min(data.pets[petId] or 0, slots)
+		if amount > 0 then
+			data.equipped[petId] = amount
+			slots -= amount
+		end
+	end
+	return true, string.format("Mejores mascotas equipadas: velocidad ×%.2f", PlayerLogic.petMultiplier(data))
+end
+
+-- Libera una mascota que no esté equipada.
+function PlayerLogic.releasePet(data, petId)
+	local pet = GameData.Pets[petId]
+	if not pet then
+		return false, "Mascota desconocida."
+	end
+	if (data.pets[petId] or 0) - (data.equipped[petId] or 0) < 1 then
+		return false, "Desequipa esa mascota antes de liberarla."
+	end
+	removeCount(data.pets, petId, 1)
+	return true, pet.name .. " liberada."
 end
 
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.

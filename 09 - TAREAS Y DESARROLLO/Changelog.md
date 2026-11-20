@@ -89,3 +89,17 @@ Reglas:
 - **2026-11-20 · DEV-004 · Paso 3 — Servidor.** `BossService` crea la estación con la esfera, la aguja que gira y el humo, maneja el ciclo del evento y publica su estado en atributos; además evita cerrar el evento dos veces. `ActionService` incorpora la acción `contribute`, que ahora recibe también al jugador. · Verificación: revisión estática; prueba en Studio pendiente.
 - **2026-11-20 · DEV-004 · Paso 4 — Interfaz.** Menú «Cronómetro Maestro» con temporizador en vivo, progreso, aporte propio y botones para entregar. Se refresca cuando cambia el estado. · Verificación: revisión estática (0 errores, 49 `require`).
 - **2026-11-20 · DEV-004 · Paso 5 — Pruebas.** 2 pruebas nuevas: entregas y reembolso, y rarezas con puntos y color. Total: 27. · Verificación: **pendiente** en Studio.
+
+---
+
+## 6. DEV-005 — Mascotas con multiplicador de velocidad
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel · **Rama:** `task/DEV-005-mascotas`
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-005 · Paso 1 — Diseño.** Jhonn pidió que las mascotas den un multiplicador de velocidad, porque la velocidad decide hasta qué zona se llega. Se definen 5 mascotas, 3 huevos y un máximo de 3 equipadas. Escrito en [[GDD]] §15.4. · Verificación: ejecutada.
+- **2026-11-20 · DEV-005 · Paso 2 — Reglas.** `GameData` recibe `Pets`, `Eggs` y la rareza Épico. `Config` recibe los límites y el huevo de premio del jefe. `PlayerLogic` incorpora `petMultiplier` (ahora `walkSpeed` multiplica y redondea), `rollPet`, `grantPet`, `hatchEgg`, `equipPet`, `unequipPet`, `equipBest` y `releasePet`, y repara los datos de mascotas. · Verificación: revisión estática.
+- **2026-11-20 · DEV-005 · Paso 3 — Servidor.** `PetService` crea el Criadero y las esferas que siguen al jugador. `ActionService` recibe 5 acciones nuevas y vuelve a aplicar la velocidad y las mascotas tras cada cambio. `BossService` entrega el huevo de premio. · Verificación: revisión estática (0 errores, 56 `require`).
+- **2026-11-20 · DEV-005 · Paso 4 — Interfaz.** Menú del Criadero con precios y probabilidades. La Mochila incorpora una sección de mascotas con Equipar, Quitar, Liberar y «Equipar mejores». El HUD muestra la velocidad con el multiplicador. · Verificación: revisión estática.
+- **2026-11-20 · DEV-005 · Paso 5 — Pruebas.** 3 pruebas nuevas: huevos, equipar con límite y multiplicador, y reparación de datos con tope de velocidad. Total: 30. · Verificación: **pendiente** en Studio.

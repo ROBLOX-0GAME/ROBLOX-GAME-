@@ -131,3 +131,8 @@ Los agentes deben:
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta. **Área:** Sistemas / multijugador.
 - **Propuesta:** evento cada 7 min; entrega de piezas por puntos de rareza; 12 monedas por punto si se repara; reembolso si falla. Detalle en [[GDD]] §15.3.
+
+#### DEC-006 — Mascotas con multiplicador de velocidad
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (dirección dada por Jhonn). **Área:** Progresión / economía.
+- **Propuesta:** 3 huevos (500 / 5.000 / 40.000), 5 mascotas de +5% a +60%, hasta 3 equipadas, tope de velocidad 60; solo monedas del juego. Detalle en [[GDD]] §15.4.

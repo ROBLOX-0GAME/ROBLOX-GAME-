@@ -194,3 +194,27 @@ Pendiente de definir.
 - Sin combate. Le da otro uso a las piezas y empuja a cooperar en un juego de robo.
 - El aviso llega a todo el servidor. El menú muestra el tiempo, el progreso y el aporte de cada jugador; la esfera echa humo mientras está averiado.
 - **Futuro (no implementado):** fases de diagnóstico y calibración en equipo, y premio de huevo de mascota (pendiente de DEV-005).
+
+### 15.4 Mascotas: multiplicador de velocidad (DEV-005)
+
+- Se compran como **huevos** en el **Criadero** de la base. Al abrir un huevo sale una mascota al azar, que se equipa sola si hay espacio.
+- Se pueden equipar **hasta 3**. **Velocidad = (16 + mejoras de Velocidad) × (1 + suma de los bonus de las mascotas equipadas)**, con un tope de 60.
+
+| Mascota | Rareza | Bonus |
+|---|---|---|
+| Ratón de Cuerda | Común | +5% |
+| Gato Engranaje | Poco común | +10% |
+| Zorro Relojero | Raro | +20% |
+| Halcón de Cuarzo | Épico | +35% |
+| Dragón del Tiempo | Legendario | +60% |
+
+| Huevo | Precio | Probabilidades |
+|---|---|---|
+| Latón | 500 | Ratón 60% · Gato 30% · Zorro 10% |
+| Plata | 5.000 | Gato 50% · Zorro 35% · Halcón 15% |
+| Oro | 40.000 | Zorro 50% · Halcón 35% · Dragón 15% |
+
+- **Relación con las zonas:** un Zorro solo (16 × 1,2 = 19,2) ya abre el Barrio Obrero (18). Con 3 Dragones y Velocidad al máximo se llega al tope de 60. Mascotas y mejoras de Velocidad son dos caminos que se suman.
+- Gestión desde la Mochila, en cualquier lugar: Equipar, Quitar, Liberar y «Equipar mejores». Máximo 50 mascotas.
+- **Cronómetro Maestro:** quien aporte 20 puntos o más a una reparación exitosa gana además un Huevo de Latón.
+- Solo se compran con monedas del juego. Las compras con Robux siguen sin implementarse hasta que el equipo las apruebe.

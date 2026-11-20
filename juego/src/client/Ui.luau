@@ -46,6 +46,7 @@ local PANEL_TITLES = {
 	museum = "Museo — Exhibir relojes",
 	backpack = "Mochila",
 	boss = "Cronómetro Maestro — Reparación",
+	pets = "Criadero — Huevos y mascotas",
 }
 
 local state = nil
@@ -458,6 +459,113 @@ local function renderMuseum()
 	end
 end
 
+-- Lista de mascotas con botones para equipar, desequipar y liberar (DEV-005).
+local function addPetRows()
+	addHeader(
+		string.format(
+			"Mascotas %d/%d · equipadas %d/%d · velocidad ×%.2f",
+			state.petCount,
+			Config.MAX_PETS,
+			state.equippedCount,
+			Config.MAX_EQUIPPED_PETS,
+			state.petMultiplier
+		)
+	)
+	if state.petCount == 0 then
+		addRow("Todavía no tienes mascotas. Compra huevos en el Criadero de la base.")
+		return
+	end
+	addRow("Equipa las mascotas con más bonus para correr más rápido.", {
+		{
+			text = "Equipar mejores",
+			onActivated = function()
+				request("equipBest", "best")
+			end,
+		},
+	})
+	for index = #GameData.PetOrder, 1, -1 do
+		local petId = GameData.PetOrder[index]
+		local owned = state.pets[petId] or 0
+		if owned > 0 then
+			local pet = GameData.Pets[petId]
+			local equipped = state.equipped[petId] or 0
+			addRow(
+				string.format(
+					"<b>%s</b> × %d  <font color=\"#aaaab9\">(%s · +%d%% velocidad · %d equipada(s))</font>",
+					pet.name,
+					owned,
+					pet.rarity,
+					math.floor(pet.bonus * 100 + 0.5),
+					equipped
+				),
+				{
+					{
+						text = "Equipar",
+						enabled = owned > equipped and state.equippedCount < Config.MAX_EQUIPPED_PETS,
+						onActivated = function()
+							request("equipPet", petId)
+						end,
+					},
+					{
+						text = "Quitar",
+						enabled = equipped > 0,
+						onActivated = function()
+							request("unequipPet", petId)
+						end,
+					},
+					{
+						text = "Liberar",
+						enabled = owned > equipped,
+						onActivated = function()
+							request("releasePet", petId)
+						end,
+					},
+				}
+			)
+		end
+	end
+end
+
+local function renderPets()
+	addHeader(string.format("Tus monedas: %s", formatNumber(state.coins)))
+	for _, eggId in GameData.EggOrder do
+		local egg = GameData.Eggs[eggId]
+		local total = 0
+		for _, chance in egg.chances do
+			total += chance
+		end
+		local odds = {}
+		for _, petId in GameData.PetOrder do
+			local chance = egg.chances[petId]
+			if chance then
+				local pet = GameData.Pets[petId]
+				table.insert(
+					odds,
+					string.format(
+						"%s %d%% (+%d%%)",
+						pet.name,
+						math.floor(chance / total * 100 + 0.5),
+						math.floor(pet.bonus * 100 + 0.5)
+					)
+				)
+			end
+		end
+		addRow(
+			string.format("<b>%s</b> — %s monedas\n%s", egg.name, formatNumber(egg.cost), table.concat(odds, " · ")),
+			{
+				{
+					text = "Abrir",
+					enabled = state.coins >= egg.cost,
+					onActivated = function()
+						request("hatchEgg", eggId)
+					end,
+				},
+			}
+		)
+	end
+	addPetRows()
+end
+
 local function renderBackpack()
 	addHeader(string.format("Piezas %d/%d", state.partCount, state.capacity))
 	for _, partId in GameData.PartOrder do
@@ -510,6 +618,7 @@ local function renderBackpack()
 			end
 		end
 	end
+	addPetRows()
 	addRow("Consejo: si la mochila se llena, vende piezas en la Tienda o tira las que no necesites.")
 end
 
@@ -611,6 +720,7 @@ local RENDERERS = {
 	museum = renderMuseum,
 	backpack = renderBackpack,
 	boss = renderBoss,
+	pets = renderPets,
 }
 
 -- ---------------------------------------------------------------------------
@@ -708,8 +818,9 @@ local function updateHud()
 		state.capacity
 	)
 	hud.speed.Text = string.format(
-		"Velocidad: %d · Zona máx.: %s",
+		"Velocidad: %.1f (mascotas ×%.2f) · Zona máx.: %s",
 		state.walkSpeed,
+		state.petMultiplier,
 		GameData.Zones[state.highestZone].name
 	)
 	if state.carriedCount > 0 then

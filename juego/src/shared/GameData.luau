@@ -50,8 +50,43 @@ GameData.RarityColors = {
 	["Común"] = Color3.fromRGB(170, 170, 180),
 	["Poco común"] = Color3.fromRGB(80, 150, 230),
 	["Raro"] = Color3.fromRGB(220, 60, 70),
+	["Épico"] = Color3.fromRGB(170, 90, 230),
 	["Legendario"] = Color3.fromRGB(255, 200, 40),
 }
+
+-- Mascotas (DEV-005, PROPUESTA). bonus: velocidad extra (0.10 = +10%).
+-- El multiplicador total es 1 + suma de los bonus de las mascotas equipadas.
+GameData.Pets = {
+	mouse = { id = "mouse", name = "Ratón de Cuerda", rarity = "Común", bonus = 0.05 },
+	cat = { id = "cat", name = "Gato Engranaje", rarity = "Poco común", bonus = 0.10 },
+	fox = { id = "fox", name = "Zorro Relojero", rarity = "Raro", bonus = 0.20 },
+	hawk = { id = "hawk", name = "Halcón de Cuarzo", rarity = "Épico", bonus = 0.35 },
+	dragon = { id = "dragon", name = "Dragón del Tiempo", rarity = "Legendario", bonus = 0.60 },
+}
+GameData.PetOrder = { "mouse", "cat", "fox", "hawk", "dragon" }
+
+-- Huevos del Criadero. chances: probabilidad relativa de cada mascota.
+GameData.Eggs = {
+	brass = {
+		id = "brass",
+		name = "Huevo de Latón",
+		cost = 500,
+		chances = { mouse = 60, cat = 30, fox = 10 },
+	},
+	silver = {
+		id = "silver",
+		name = "Huevo de Plata",
+		cost = 5000,
+		chances = { cat = 50, fox = 35, hawk = 15 },
+	},
+	gold = {
+		id = "gold",
+		name = "Huevo de Oro",
+		cost = 40000,
+		chances = { fox = 50, hawk = 35, dragon = 15 },
+	},
+}
+GameData.EggOrder = { "brass", "silver", "gold" }
 
 -- Relojes que se fabrican en el taller.
 -- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender

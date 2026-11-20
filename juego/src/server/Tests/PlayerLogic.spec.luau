@@ -343,6 +343,66 @@ return function(t)
 		end
 	end)
 
+	t.test("DEV-005: abrir huevos cobra y da mascotas válidas", function()
+		local data = PlayerLogic.newData()
+		local egg = GameData.Eggs.brass
+		t.ok(not PlayerLogic.hatchEgg(data, "brass", 0), "sin monedas no abre")
+		t.ok(not PlayerLogic.hatchEgg(data, "falso", 0), "huevo inexistente")
+		data.coins = egg.cost
+		local ok, _, petId = PlayerLogic.hatchEgg(data, "brass", 0)
+		t.ok(ok, "abre el huevo")
+		t.eq(data.coins, 0, "cobra el precio")
+		t.eq(petId, "mouse", "roll 0 = primera mascota del huevo")
+		t.eq(data.equipped.mouse, 1, "se equipa sola si hay espacio")
+		for _, eggId in GameData.EggOrder do
+			for chancePet in GameData.Eggs[eggId].chances do
+				t.ok(GameData.Pets[chancePet] ~= nil, eggId .. " contiene mascota válida " .. chancePet)
+			end
+			t.ok(GameData.Pets[PlayerLogic.rollPet(eggId, 0.999999)] ~= nil, "roll alto da mascota válida")
+		end
+	end)
+
+	t.test("DEV-005: equipar, límite, multiplicador y liberar", function()
+		local data = PlayerLogic.newData()
+		data.pets = { mouse = 2, fox = 1, dragon = 2 }
+		data.equipped = {}
+		t.eq(PlayerLogic.petMultiplier(data), 1, "sin equipar = ×1")
+		local baseSpeed = PlayerLogic.walkSpeed(data)
+		t.ok(PlayerLogic.equipPet(data, "fox"), "equipa zorro")
+		t.ok(not PlayerLogic.equipPet(data, "fox"), "no equipa más de las que tiene")
+		t.ok(PlayerLogic.walkSpeed(data) > baseSpeed, "la mascota da velocidad")
+		PlayerLogic.equipPet(data, "mouse")
+		PlayerLogic.equipPet(data, "mouse")
+		t.ok(not PlayerLogic.equipPet(data, "dragon"), "máximo de equipadas")
+		t.ok(not PlayerLogic.releasePet(data, "fox"), "no libera una equipada")
+		PlayerLogic.equipBest(data)
+		t.eq(data.equipped.dragon, 2, "equipar mejores elige dragones")
+		t.eq(data.equipped.fox, 1, "y luego el zorro")
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "llena los espacios")
+		local expected = 1 + 2 * GameData.Pets.dragon.bonus + GameData.Pets.fox.bonus
+		t.ok(math.abs(PlayerLogic.petMultiplier(data) - expected) < 1e-9, "multiplicador = 1 + suma de bonus")
+		t.ok(PlayerLogic.releasePet(data, "mouse"), "libera un ratón sin equipar")
+		t.eq(data.pets.mouse, 1, "queda 1 ratón")
+		t.ok(PlayerLogic.unequipPet(data, "dragon"), "desequipa")
+		t.ok(not PlayerLogic.unequipPet(data, "mouse"), "no desequipa lo que no está equipado")
+	end)
+
+	t.test("DEV-005: datos de mascotas dañados se reparan y la velocidad tiene tope", function()
+		local data = PlayerLogic.reconcile({
+			pets = { dragon = 5, falsa = 2 },
+			equipped = { dragon = 9, mouse = 2 },
+		})
+		t.eq(data.pets.falsa, nil, "descarta mascotas desconocidas")
+		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "no más equipadas que el límite")
+		t.eq(data.equipped.mouse, nil, "no equipa mascotas que no posee")
+		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "velocidad con tope")
+		local fresh = PlayerLogic.newData()
+		fresh.pets.fox = 1
+		fresh.equipped.fox = 1
+		t.ok(PlayerLogic.canEnterZone(fresh, 2), "un zorro (+20%) abre el Barrio Obrero")
+	end)
+
 	t.test("buildView es coherente", function()
 		local data = PlayerLogic.newData()
 		data.parts.gear = 4

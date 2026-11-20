@@ -23,6 +23,10 @@ local PlayerLogic = require(Shared.PlayerLogic)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local WorldService = require(script.Parent.WorldService)
+local CharacterService = require(script.Parent.CharacterService)
+local PetService = require(script.Parent.PetService)
+
+local random = Random.new()
 
 local BossService = {}
 
@@ -95,6 +99,16 @@ local function finish(success)
 					string.format("¡Cronómetro reparado! Tu aporte: %d puntos → +%d monedas.", entry.points, coins),
 					"ok"
 				)
+				-- Premio extra: huevo de mascota para quien aportó bastante (DEV-005)
+				if entry.points >= Config.BOSS_EGG_MIN_POINTS then
+					local petId = PlayerLogic.rollPet(Config.BOSS_EGG, random:NextNumber())
+					local granted, message = PlayerLogic.grantPet(data, petId)
+					Net.notify(player, "Premio del Cronómetro: " .. message, granted and "ok" or "error")
+					if granted then
+						CharacterService.apply(player)
+						PetService.refresh(player)
+					end
+				end
 			else
 				local refunded = PlayerLogic.refundParts(data, entry.parts)
 				Net.notify(player, string.format("No se logró repararlo. Te devolvimos %d piezas.", refunded), "error")

@@ -193,6 +193,26 @@ Cinco objetivos en orden que enseñan el bucle principal: recoger 5 cajas → fa
 - [ ] Prueba en Studio con 2 jugadores (Test → Clients and Servers).
 - [ ] El equipo aprueba tiempos, meta y premios (DEC-005).
 
+### DEV-005 — Mascotas con multiplicador de velocidad
+
+- **ID:** DEV-005 · **Responsable:** Jhonn · **Cuenta Claude:** Claude 1 — Cuenta A · **Revisor:** Zadiel; Cuenta B revisa la apariencia de las mascotas.
+- **Área:** Sistemas, progresión, economía. **Prioridad:** Alta. **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-005-mascotas` (sale de DEV-004). **Fecha:** 2026-11-20.
+
+**Descripción:** Criadero con 3 huevos y 5 mascotas; hasta 3 equipadas que multiplican la velocidad y siguen al jugador; premio de huevo en el Cronómetro Maestro. Diseño en [[GDD]] §15.4.
+
+**Rutas:** `juego/src/shared/{Config,GameData,PlayerLogic}.luau`, `juego/src/server/Services/{PetService,ActionService,BossService}.luau`, `juego/src/server/Main.server.luau`, `juego/src/server/Tests/PlayerLogic.spec.luau`, `juego/src/client/Ui.luau`, `juego/README.md`.
+
+**Criterios de aceptación:**
+
+- [x] Huevos con probabilidades; cobro y límites validados en el servidor.
+- [x] El multiplicador de velocidad afecta al personaje y a las puertas de zona.
+- [x] Mascotas visibles junto al jugador; se gestionan desde la Mochila.
+- [x] Huevo de premio del Cronómetro para quien aporte 20 puntos o más.
+- [x] 3 pruebas nuevas (30 en total).
+- [ ] Prueba en Studio: abrir un huevo, equipar y cruzar una puerta gracias a la mascota.
+- [ ] El equipo aprueba bonus, precios y probabilidades (DEC-006).
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea

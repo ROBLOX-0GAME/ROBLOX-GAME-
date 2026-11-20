@@ -47,6 +47,12 @@ local Config = {
 	BOSS_POINTS_PER_PLAYER = 25, -- meta = esto × jugadores conectados
 	BOSS_MIN_GOAL = 30,
 	BOSS_COINS_PER_POINT = 12, -- premio por punto aportado si se repara
+	BOSS_EGG_MIN_POINTS = 20, -- con este aporte también se gana un huevo de mascota
+	BOSS_EGG = "brass",
+
+	-- Mascotas (DEV-005)
+	MAX_PETS = 50,
+	MAX_EQUIPPED_PETS = 3,
 
 	-- Seguridad
 	INTERACT_DISTANCE = 14, -- distancia máxima para robar una pieza

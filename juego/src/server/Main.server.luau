@@ -12,6 +12,7 @@ local CharacterService = require(Services.CharacterService)
 local ActionService = require(Services.ActionService)
 local MuseumService = require(Services.MuseumService)
 local BossService = require(Services.BossService)
+local PetService = require(Services.PetService)
 
 DataService.init()
 WorldService.init()
@@ -20,6 +21,7 @@ CharacterService.init()
 ActionService.init()
 MuseumService.init()
 BossService.init()
+PetService.init()
 DataService.start() -- al final: los demás servicios ya escuchan onLoaded
 
 print("[BUILD A WATCH!] Servidor iniciado.")

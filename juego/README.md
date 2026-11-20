@@ -40,21 +40,22 @@ juego/
     PlayerLogic.luau     reglas puras del juego (probadas)
   src/server/            ServerScriptService.Server
     Main.server.luau     arranque de servicios
-    Services/            Datos, mundo, cajas, acciones, museo, personaje, remotos
+    Services/            Datos, mundo, casas y dueños, acciones, museo, jefe, mascotas, personaje, remotos
     Tests/               pruebas que corren al pulsar Play en Studio
   src/client/            StarterPlayerScripts.Client
     Main.client.luau     conecta remotos con la interfaz
     Ui.luau              HUD, notificaciones y menús
 ```
 
-## Bucle de juego (propuesta)
+## Bucle de juego (propuesta; detalle en el GDD §15)
 
-1. Recoger **cajas de piezas** en la zona de arena (la pieza depende de la suerte).
-2. Fabricar **relojes** en el **Taller** (dan XP; los relojes mejores piden más nivel).
-3. **Vender** relojes en la **Tienda** o **exhibirlos** en el **Museo** (ingreso cada 10 s).
-4. Comprar **mejoras** en la Tienda: mochila, velocidad, salto, suerte y vitrinas.
+1. Sal de la **base segura** y corre a una zona. Hay 5 zonas cada vez más ricas y para entrar a cada una necesitas velocidad.
+2. Entra a una casa y **roba** piezas. Al salir, **el dueño te persigue**: llega a la base para guardar el botín; si te atrapa, lo pierdes.
+3. Fabrica **relojes** en el **Taller** y **véndelos** en la **Tienda** o **exhíbelos** en el **Museo**.
+4. Compra **mejoras** en la Tienda y **huevos de mascota** en el **Criadero**; las mascotas multiplican la velocidad.
+5. Cuando el **Cronómetro Maestro** se averíe, entrégale piezas junto a todo el servidor para ganar monedas y huevos.
 
-Controles: E / botón X / tocar para estaciones y cajas · B / botón Y / botón “Mochila” para la mochila · botón B del mando o “X” para cerrar menús.
+Controles: E / botón X del mando / tocar para estaciones y robos · B / botón Y / botón «Mochila» para la mochila · botón B del mando o «X» para cerrar menús.
 
 ## Reglas para editar
 

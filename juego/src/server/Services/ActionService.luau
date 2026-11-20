@@ -18,6 +18,9 @@ local Net = require(script.Parent.Net)
 local WorldService = require(script.Parent.WorldService)
 local CharacterService = require(script.Parent.CharacterService)
 local BossService = require(script.Parent.BossService)
+local PetService = require(script.Parent.PetService)
+
+local random = Random.new()
 
 local ActionService = {}
 
@@ -52,6 +55,38 @@ local ACTIONS = {
 		station = "shop",
 		run = function(data, id)
 			return PlayerLogic.buyUpgrade(data, id)
+		end,
+	},
+	hatchEgg = {
+		station = "pets",
+		affectsCharacter = true,
+		run = function(data, id)
+			local ok, message = PlayerLogic.hatchEgg(data, id, random:NextNumber())
+			return ok, message
+		end,
+	},
+	-- Manejo de mascotas: desde la Mochila, en cualquier lugar.
+	equipPet = {
+		affectsCharacter = true,
+		run = function(data, id)
+			return PlayerLogic.equipPet(data, id)
+		end,
+	},
+	unequipPet = {
+		affectsCharacter = true,
+		run = function(data, id)
+			return PlayerLogic.unequipPet(data, id)
+		end,
+	},
+	equipBest = {
+		affectsCharacter = true,
+		run = function(data)
+			return PlayerLogic.equipBest(data)
+		end,
+	},
+	releasePet = {
+		run = function(data, id)
+			return PlayerLogic.releasePet(data, id)
 		end,
 	},
 	contribute = {
@@ -117,8 +152,11 @@ local function handle(player, actionName, id, amount)
 	local ok, message = action.run(data, id, amount or 1, player)
 	if ok then
 		DataService.replicate(player)
-		if actionName == "buyUpgrade" then
+		if actionName == "buyUpgrade" or action.affectsCharacter then
 			CharacterService.apply(player)
+		end
+		if action.affectsCharacter then
+			PetService.refresh(player)
 		end
 	end
 	return reply(ok, message)

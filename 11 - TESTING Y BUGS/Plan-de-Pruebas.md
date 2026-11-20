@@ -216,3 +216,14 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Llegar a la meta: monedas = 12 × puntos aportados | Manual | Pendiente |
 | Dejar que se acabe el tiempo: se devuelven las piezas | Manual | Pendiente |
 | 2 jugadores aportan; la meta escala a 50 puntos | Multijugador | Pendiente |
+
+## 13. Pruebas de DEV-005 (mascotas)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 30 pruebas de `PlayerLogic` | Automática | Pendiente |
+| Abrir un Huevo de Latón: cobra 500 y la mascota aparece junto al personaje | Manual | Pendiente |
+| Equipar un Zorro: la puerta del Barrio Obrero se vuelve verde | Manual | Pendiente |
+| Reaparecer: las mascotas vuelven a aparecer | Manual | Pendiente |
+| Botones de mascotas en pantalla de móvil (3 botones por fila) | Manual | Pendiente |
