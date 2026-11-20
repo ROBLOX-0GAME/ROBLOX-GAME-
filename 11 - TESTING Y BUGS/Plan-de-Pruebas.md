@@ -317,3 +317,26 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 | Casas con modelo: se puede entrar por la puerta y robar | Manual | Pendiente |
 | Con un ID en `Config.SOUND_IDS.robar`: suena al robar | Manual | Pendiente (requiere subir audio) |
 
+## 22. Pruebas de DEV-015 (errores que impedían jugar)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Búsqueda de cadenas sin cerrar en los 25 scripts de `game/src` | Automática (script) | **Ejecutada 2026-11-20: solo `Ui.luau:766`; corregida con `
+`** |
+| `build.py --check` detecta la cadena sin cerrar en el código anterior | Automática | **Ejecutada 2026-11-20: «Revisión fallida: 1 error»** |
+| `build.py` con el arreglo | Automática | **Ejecutada 2026-11-20: sin errores; place generada** |
+| `AssetLibrary.place` sin `parent` devuelve una copia viva (causa de «place apoya la base en el suelo») | Revisión de código | **Corregido**: la copia se sacaba del ancla antes de destruirla. Falta confirmarlo en Play |
+| 47/47 pruebas en Play | Automática (Studio) | Pendiente: cargar el código nuevo en la place y pulsar Play |
+| Cliente: HUD, menús e historia inicial cargan sin errores en Output | Manual (Studio) | Pendiente |
+| Origen de `rbxassetid://203785492` («Asset type does not match») | Investigación (Studio) | Pendiente: no está en el repositorio; buscarlo en la place |
+
+### BUG-002 — El cliente no carga la interfaz (`Ui.luau:766: Malformed string`)
+
+- **Gravedad:** crítica (bloquea jugar). **Origen:** `a644eac` (DEV-011). **Detectado:** ART-008 (Play en Studio). **Corregido:** DEV-015 (`dda2573`).
+- **Causa:** salto de línea real dentro de una cadena entre comillas (texto de la pieza del legado). `build.py` no lo veía; ahora sí.
+
+### BUG-003 — Falla la prueba «place apoya la base en el suelo»
+
+- **Gravedad:** baja (solo la prueba; el juego siempre pasa `parent`). **Corregido:** DEV-015 (`dda2573`).
+- **Causa:** sin `parent`, `AssetLibrary.dress` dejaba la copia dentro del ancla temporal y `place` la destruía con ella.
+

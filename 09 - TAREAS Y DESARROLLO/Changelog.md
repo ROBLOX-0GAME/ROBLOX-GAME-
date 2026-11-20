@@ -468,3 +468,10 @@ Reglas:
   - Publicar cuando Jhonn lo apruebe.
   - Propuesta DEC-021 (Studio en la MacBook).
 
+## 27. DEV-015 — Errores que impedían jugar
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · DEV-015 · Paso 1 — Arreglos.** Zadiel pide probar el juego. Según INFRA-004, el cliente fallaba en `Ui.luau:766` («Malformed string») y fallaba 1 de 47 pruebas. (1) La cadena con salto de línea real pasa a usar `
+`; era la única de `game/src`. (2) `AssetLibrary.place` sin `parent` devolvía una copia destruida con el ancla temporal: ahora la saca antes. (3) `build.py` marca como error las cadenas sin cerrar. · Verificación: ejecutada (`build.py` falla con el código anterior y pasa con el arreglo). Commit `dda2573`. **Falta** probar en Studio: hay que cargar el código nuevo en la place (Rojo no está conectado: `servePlaceIds` vacío) y pulsar Play.
+
