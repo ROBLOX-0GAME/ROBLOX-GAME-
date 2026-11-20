@@ -696,3 +696,23 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Prompt para Jhonn con creación de la API key, ejecución, montaje en Studio y reglas de reserva.
 - [x] La clave nunca se guarda en el repositorio.
 
+
+### INFRA-004 — Documento de estado del proyecto (hecho y pendiente)
+
+- **ID:** INFRA-004.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Centro de control.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** nota `00 - CENTRO DE CONTROL/Estado-del-Proyecto.md` con todo lo hecho hasta hoy (infraestructura, código, arte y place oficial), lo comprobado de verdad y lo que falta, por prioridad.
+
+**Criterios de aceptación:**
+
+- [ ] Nota creada con lo hecho, lo verificado, lo pendiente y las decisiones por aprobar.
+- [ ] Sin secretos: se confirma que no hay ninguna API key en el repositorio.
+- [ ] La fila INFRA-004 de ACTIVE_TASKS queda Completada.
