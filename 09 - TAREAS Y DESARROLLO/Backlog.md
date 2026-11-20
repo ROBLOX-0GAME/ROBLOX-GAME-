@@ -290,3 +290,34 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 **Dependencias:** DEV-005, DEV-006 y DEV-008 (Completadas).
 
 **Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
+### DEV-010 — Base en media luna: 6 plots, muro frontal con estaciones y salida a correr
+
+- **ID:** DEV-010.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. Cuenta B revisa la distribución, que es visible para el jugador.
+- **Área:** Sistemas y mundo (distribución funcional; el arte final va aparte).
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+- Servidores de **6 jugadores**, con **6 plots** colocados en **media luna** alrededor de la plaza central de la base.
+- **Plots más amplios:** la caminadora va **delante** de cada plot, las vitrinas en el centro y el taller **al fondo**.
+- En la parte delantera de la base (donde empieza la carrera) va un **muro amplio**. Pegadas a él están la Tienda, el Criadero de cápsulas, el puesto de Robux y el Cronómetro Maestro. El muro deja una **abertura** para salir a correr hacia las zonas.
+
+**Criterios de aceptación:**
+
+- [ ] 6 plots en arco, orientados hacia la plaza; cada uno con la caminadora delante, las vitrinas (hasta 15) y el taller al fondo.
+- [ ] Muro frontal con la abertura central y las 4 estaciones pegadas a él.
+- [ ] Nada se superpone: plots, estaciones, aparición y camino.
+- [ ] Revisión estática sin errores y pruebas actualizadas.
+- [ ] La fila DEV-010 de ACTIVE_TASKS queda Completada.
+
+**Nota:** el límite de 6 jugadores se configura en Roblox (Game Settings → Places → Max Players) al publicar; el código prepara 6 plots.
+
+**Dependencias:** DEV-008 (Completada).
+
+**Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
