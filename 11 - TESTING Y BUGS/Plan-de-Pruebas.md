@@ -151,3 +151,16 @@ Una tarea podrá considerarse completada cuando:
 
 **Estado:** Borrador inicial
 **Aprobación:** Pendiente del equipo
+
+## 9. Pruebas de DEV-001
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática `python juego/build.py --check` (bloques, `require`, campos) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 13 pruebas de `PlayerLogic` (`juego/src/server/Tests`) al pulsar Play en Studio | Automática | Pendiente: no ejecutada todavía |
+| Bucle completo: recoger → fabricar → vender/exhibir → mejorar | Manual en Studio | Pendiente |
+| Guardado: salir y volver a entrar conserva el progreso (con acceso a API activado) | Manual en Studio | Pendiente |
+| Controles con mando y en el emulador móvil de Studio | Manual | Pendiente |
+| 2+ jugadores (Test → Clients and Servers): cajas compartidas y sin errores | Multijugador | Pendiente |
+
+Registra aquí el resultado real de cada prueba al ejecutarla.

@@ -22,5 +22,6 @@
 ## Memoria reciente
 
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- 2026-11-20 · DEV-001 registrada (Jhonn responsable, Zadiel revisor, rama `task/DEV-001-base-mvp`). Se crea [[Changelog]] como registro obligatorio de cada paso.
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

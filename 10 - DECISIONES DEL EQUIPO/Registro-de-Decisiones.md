@@ -99,3 +99,18 @@ Los agentes deben:
 **Estado:** Activo  
 **Responsable:** Equipo Roblox Game Studio
 
+
+## 8. Propuestas abiertas
+
+#### DEC-001 — Código del juego en texto con estructura Rojo
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Arquitectura.
+- **Propuesta:** el código vive en `juego/src` dentro de este repositorio; la place se genera con `juego/build.py` o se sincroniza con Rojo. Studio no es la fuente del código.
+- **Motivo:** historial, revisión y fusión con Git; los archivos binarios `.rbxl` no se pueden revisar ni fusionar.
+- **Documentos afectados:** [[Arquitectura-General]], [[Changelog]].
+
+#### DEC-002 — Bucle MVP y cifras de balance iniciales
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta. **Responsable:** Jhonn. **Área:** Sistemas, economía y progresión.
+- **Propuesta:** cajas de piezas → Taller → Tienda/Museo → mejoras, con las cifras de `juego/src/shared/Config.luau` y `GameData.luau`. Sin robo, mascotas ni compras con Robux en esta versión.
+- **Documentos afectados:** [[Economia-y-Progresion]], [[Lista-de-Sistemas]], [[Backlog]].

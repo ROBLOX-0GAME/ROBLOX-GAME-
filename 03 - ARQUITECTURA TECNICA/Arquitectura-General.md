@@ -120,3 +120,13 @@ Registrar aquí las decisiones que el equipo todavía debe aprobar.
 
 **Estado:** Borrador inicial  
 **Aprobación técnica:** Pendiente
+
+## 13. Implementación inicial (DEV-001) — propuesta en revisión
+
+- **Ruta del proyecto:** `C:\Users\Cliente001\Desktop\ROBLOX-GAME-` (PC de Jhonn). Código en `juego/`; place base de Studio: `Proyecto Roblox Studio.rbxl` (sin cambios).
+- **Flujo:** el código vive en `juego/src` (texto, Git). `python juego/build.py` lo revisa y genera `juego/build/BuildAWatch.rbxlx`. Compatible con Rojo (`juego/default.project.json`).
+- **Cliente / servidor / compartido:** `ReplicatedStorage.Shared` (Config, GameData, PlayerLogic), `ServerScriptService.Server` (Main + Services + Tests), `StarterPlayerScripts.Client` (Main + Ui).
+- **Comunicación:** `ReplicatedStorage.Remotes` — `Action` (RemoteFunction, cliente → servidor, única entrada de acciones), `State`, `Notify`, `OpenPanel` (RemoteEvent, servidor → cliente). Validación: tipos, límite de solicitudes, distancia a la estación y reglas de `PlayerLogic`.
+- **Datos:** DataStore `BuildAWatch_PlayerData_v1`, clave `player_<UserId>`, formato `{ data, lock }`. Bloqueo de sesión de 300 s, autoguardado de 120 s, guardado al salir y en `BindToClose`, reparación de datos con `PlayerLogic.reconcile`. Si la carga falla en un servidor real, se expulsa al jugador para no sobrescribir su progreso.
+- **Mapa:** generado por código (`WorldService`); la Cuenta B puede sustituir lo visual conservando estaciones y ProximityPrompt.
+- Detalle y uso: `juego/README.md`. Historial: [[Changelog]]. Decisiones propuestas: [[Registro-de-Decisiones]] DEC-001 y DEC-002.

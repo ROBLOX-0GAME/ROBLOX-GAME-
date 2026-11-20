@@ -1,0 +1,721 @@
+--[[
+	Ui — HUD, notificaciones y menús de las estaciones.
+
+	Controles (teclado, mando y táctil):
+	  - Estaciones y cajas: ProximityPrompt (E / botón X del mando / tocar).
+	  - Mochila: tecla B, botón Y del mando o el botón "Mochila" en pantalla.
+	  - Cerrar menú: botón X del menú, botón B del mando o alejarse de la estación.
+	  - Con mando, al abrir un menú se selecciona el primer botón automáticamente.
+
+	La interfaz es provisional y funcional; la Cuenta B puede rediseñarla
+	manteniendo las llamadas a Ui.setState / Ui.openPanel / Ui.toast.
+]]
+
+local ContextActionService = game:GetService("ContextActionService")
+local GuiService = game:GetService("GuiService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Config = require(Shared.Config)
+local GameData = require(Shared.GameData)
+
+local player = Players.LocalPlayer
+
+local Ui = {}
+
+local COLORS = {
+	panel = Color3.fromRGB(28, 30, 38),
+	row = Color3.fromRGB(42, 45, 56),
+	text = Color3.fromRGB(240, 240, 245),
+	muted = Color3.fromRGB(170, 172, 185),
+	accent = Color3.fromRGB(240, 196, 80),
+	ok = Color3.fromRGB(76, 175, 106),
+	error = Color3.fromRGB(214, 84, 84),
+	info = Color3.fromRGB(80, 130, 210),
+	button = Color3.fromRGB(80, 130, 210),
+	buttonOff = Color3.fromRGB(88, 90, 102),
+}
+
+local PANEL_TITLES = {
+	workshop = "Taller — Fabricar relojes",
+	shop = "Tienda — Vender y mejorar",
+	museum = "Museo — Exhibir relojes",
+	backpack = "Mochila",
+}
+
+local state = nil
+local actionRemote = nil
+local busy = false
+local openPanelId = nil
+
+local gui, panel, panelTitle, panelList
+local hud = {}
+local toastList
+
+-- ---------------------------------------------------------------------------
+-- Ayudas de construcción
+-- ---------------------------------------------------------------------------
+
+local function new(className, props, children)
+	local instance = Instance.new(className)
+	for key, value in props do
+		instance[key] = value
+	end
+	if children then
+		for _, child in children do
+			child.Parent = instance
+		end
+	end
+	return instance
+end
+
+local function corner(radius)
+	return new("UICorner", { CornerRadius = UDim.new(0, radius or 8) })
+end
+
+local function padding(px)
+	return new("UIPadding", {
+		PaddingTop = UDim.new(0, px),
+		PaddingBottom = UDim.new(0, px),
+		PaddingLeft = UDim.new(0, px),
+		PaddingRight = UDim.new(0, px),
+	})
+end
+
+local function label(text, size, color, props)
+	local item = new("TextLabel", {
+		BackgroundTransparency = 1,
+		Font = Enum.Font.Gotham,
+		Text = text,
+		TextSize = size or 16,
+		TextColor3 = color or COLORS.text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextWrapped = true,
+		RichText = true,
+		AutomaticSize = Enum.AutomaticSize.Y,
+		Size = UDim2.new(1, 0, 0, 0),
+	})
+	if props then
+		for key, value in props do
+			item[key] = value
+		end
+	end
+	return item
+end
+
+local function button(text, enabled, onActivated)
+	local item = new("TextButton", {
+		Size = UDim2.fromOffset(120, 40),
+		BackgroundColor3 = COLORS.buttonOff,
+		Font = Enum.Font.GothamBold,
+		Text = text,
+		TextSize = 15,
+		TextColor3 = COLORS.text,
+		AutoButtonColor = true,
+		Selectable = true,
+	}, { corner(8) })
+	if enabled then
+		item.BackgroundColor3 = COLORS.button
+	end
+	-- Activated funciona con clic, toque y botón A del mando.
+	item.Activated:Connect(onActivated)
+	return item
+end
+
+local function formatNumber(value)
+	local text = tostring(math.floor(value))
+	local formatted = text:reverse():gsub("(%d%d%d)", "%1."):reverse()
+	if formatted:sub(1, 1) == "." then
+		formatted = formatted:sub(2)
+	end
+	return formatted
+end
+
+-- ---------------------------------------------------------------------------
+-- Notificaciones
+-- ---------------------------------------------------------------------------
+
+function Ui.toast(text, kind)
+	if not toastList or type(text) ~= "string" or text == "" then
+		return
+	end
+	local item = new("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS[kind] or COLORS.info,
+		BackgroundTransparency = 0.1,
+		Font = Enum.Font.GothamMedium,
+		Text = text,
+		TextSize = 16,
+		TextWrapped = true,
+		TextColor3 = COLORS.text,
+	}, { corner(8), padding(8) })
+	item.Parent = toastList
+	task.delay(3, function()
+		item:Destroy()
+	end)
+	local items = {}
+	for _, child in toastList:GetChildren() do
+		if child:IsA("TextLabel") then
+			table.insert(items, child)
+		end
+	end
+	if #items > 4 then
+		items[1]:Destroy()
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- Acciones al servidor
+-- ---------------------------------------------------------------------------
+
+local function request(action, id, amount)
+	if busy or not actionRemote then
+		return
+	end
+	busy = true
+	local success, result = pcall(function()
+		return actionRemote:InvokeServer(action, id, amount)
+	end)
+	busy = false
+	if not success or type(result) ~= "table" then
+		Ui.toast("No se pudo contactar con el servidor.", "error")
+		return
+	end
+	local kind = "error"
+	if result.ok then
+		kind = "ok"
+	end
+	Ui.toast(result.message, kind)
+end
+
+-- ---------------------------------------------------------------------------
+-- Filas de los menús
+-- ---------------------------------------------------------------------------
+
+local rowOrder = 0
+
+local function addRow(text, buttons)
+	rowOrder += 1
+	local row = new("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS.row,
+		LayoutOrder = rowOrder,
+	}, {
+		corner(8),
+		padding(10),
+		new("UIListLayout", {
+			FillDirection = Enum.FillDirection.Vertical,
+			Padding = UDim.new(0, 8),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+	})
+	label(text, 16, COLORS.text, { LayoutOrder = 1 }).Parent = row
+
+	if buttons and #buttons > 0 then
+		local bar = new("Frame", {
+			Size = UDim2.new(1, 0, 0, 40),
+			BackgroundTransparency = 1,
+			LayoutOrder = 2,
+		}, {
+			new("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = UDim.new(0, 8),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+			}),
+		})
+		for index, info in buttons do
+			local item = button(info.text, info.enabled ~= false, info.onActivated)
+			item.LayoutOrder = index
+			item.Parent = bar
+		end
+		bar.Parent = row
+	end
+	row.Parent = panelList
+	return row
+end
+
+local function addHeader(text)
+	rowOrder += 1
+	label("<b>" .. text .. "</b>", 18, COLORS.accent, { LayoutOrder = rowOrder }).Parent = panelList
+end
+
+local function costText(cost)
+	local pieces = {}
+	for _, partId in GameData.PartOrder do
+		local needed = cost[partId]
+		if needed then
+			local have = state.parts[partId] or 0
+			local color = "#7fd38f"
+			if have < needed then
+				color = "#e57373"
+			end
+			table.insert(
+				pieces,
+				string.format('<font color="%s">%d/%d</font> %s', color, have, needed, GameData.Parts[partId].name)
+			)
+		end
+	end
+	return table.concat(pieces, " · ")
+end
+
+-- ---------------------------------------------------------------------------
+-- Contenido de cada menú
+-- ---------------------------------------------------------------------------
+
+local function canCraftLocal(watch)
+	if state.level < watch.level then
+		return false
+	end
+	for partId, needed in watch.cost do
+		if (state.parts[partId] or 0) < needed then
+			return false
+		end
+	end
+	return true
+end
+
+local function renderWorkshop()
+	addHeader(string.format("Nivel %d · Piezas %d/%d", state.level, state.partCount, state.capacity))
+	for _, watchId in GameData.WatchOrder do
+		local watch = GameData.Watches[watchId]
+		local title = string.format(
+			"<b>%s</b>  <font color=\"#aaaab9\">(nivel %d · +%d XP · vende %d)</font>\n%s",
+			watch.name,
+			watch.level,
+			watch.xp,
+			watch.sell,
+			costText(watch.cost)
+		)
+		addRow(title, {
+			{
+				text = "Fabricar",
+				enabled = canCraftLocal(watch),
+				onActivated = function()
+					request("craft", watchId)
+				end,
+			},
+		})
+	end
+end
+
+local function renderShop()
+	addHeader("Vender relojes")
+	local any = false
+	for _, watchId in GameData.WatchOrder do
+		local owned = state.watches[watchId] or 0
+		if owned > 0 then
+			any = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", watch.name, owned, watch.sell), {
+				{
+					text = "Vender 1",
+					onActivated = function()
+						request("sell", watchId, 1)
+					end,
+				},
+				{
+					text = "Vender todos",
+					onActivated = function()
+						request("sell", watchId, math.min(owned, Config.MAX_SELL_AMOUNT))
+					end,
+				},
+			})
+		end
+	end
+	if not any then
+		addRow("No tienes relojes para vender. Fabrícalos en el Taller.")
+	end
+
+	addHeader("Mejoras")
+	for _, upgradeId in GameData.UpgradeOrder do
+		local upgrade = GameData.Upgrades[upgradeId]
+		local level = state.upgrades[upgradeId] or 0
+		local cost = state.upgradeCosts[upgradeId]
+		local buttonText = "Máximo"
+		local enabled = false
+		if cost then
+			buttonText = "Comprar " .. formatNumber(cost)
+			enabled = state.coins >= cost
+		end
+		addRow(string.format("<b>%s</b>  (nivel %d/%d)\n%s", upgrade.name, level, upgrade.maxLevel, upgrade.desc), {
+			{
+				text = buttonText,
+				enabled = enabled,
+				onActivated = function()
+					if cost then
+						request("buyUpgrade", upgradeId)
+					end
+				end,
+			},
+		})
+	end
+end
+
+local function renderMuseum()
+	addHeader(
+		string.format(
+			"Vitrinas %d/%d · Ingreso +%d cada %d s",
+			state.museumCount,
+			state.museumSlots,
+			state.museumIncome,
+			Config.MUSEUM_TICK_SECONDS
+		)
+	)
+	local anyDisplayed = false
+	for _, watchId in GameData.WatchOrder do
+		local displayed = state.museum[watchId] or 0
+		if displayed > 0 then
+			anyDisplayed = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d exhibido  ·  +%d c/u", watch.name, displayed, watch.income), {
+				{
+					text = "Retirar",
+					onActivated = function()
+						request("withdraw", watchId)
+					end,
+				},
+			})
+		end
+	end
+	if not anyDisplayed then
+		addRow("Todavía no exhibes relojes. Cada reloj exhibido da monedas mientras juegas.")
+	end
+
+	addHeader("En tu inventario")
+	local anyOwned = false
+	local hasSpace = state.museumCount < state.museumSlots
+	for _, watchId in GameData.WatchOrder do
+		local owned = state.watches[watchId] or 0
+		if owned > 0 then
+			anyOwned = true
+			local watch = GameData.Watches[watchId]
+			addRow(string.format("<b>%s</b> × %d  ·  +%d por ciclo", watch.name, owned, watch.income), {
+				{
+					text = "Exhibir",
+					enabled = hasSpace,
+					onActivated = function()
+						request("display", watchId)
+					end,
+				},
+			})
+		end
+	end
+	if not anyOwned then
+		addRow("No tienes relojes en el inventario.")
+	end
+end
+
+local function renderBackpack()
+	addHeader(string.format("Piezas %d/%d", state.partCount, state.capacity))
+	for _, partId in GameData.PartOrder do
+		local part = GameData.Parts[partId]
+		addRow(
+			string.format(
+				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>",
+				part.name,
+				state.parts[partId] or 0,
+				part.rarity
+			)
+		)
+	end
+	addHeader("Relojes")
+	for _, watchId in GameData.WatchOrder do
+		local watch = GameData.Watches[watchId]
+		addRow(
+			string.format(
+				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%d en el museo)</font>",
+				watch.name,
+				state.watches[watchId] or 0,
+				state.museum[watchId] or 0
+			)
+		)
+	end
+	addRow("Consejo: recoge cajas en la zona de arena y fabrica relojes en el Taller.")
+end
+
+local RENDERERS = {
+	workshop = renderWorkshop,
+	shop = renderShop,
+	museum = renderMuseum,
+	backpack = renderBackpack,
+}
+
+-- ---------------------------------------------------------------------------
+-- Abrir, cerrar y refrescar menús
+-- ---------------------------------------------------------------------------
+
+local function selectFirstButton()
+	if not UserInputService.GamepadEnabled then
+		return
+	end
+	local first = nil
+	local bestOrder = math.huge
+	for _, descendant in panelList:GetDescendants() do
+		if descendant:IsA("TextButton") then
+			local row = descendant.Parent.Parent
+			if row.LayoutOrder < bestOrder then
+				bestOrder = row.LayoutOrder
+				first = descendant
+			end
+		end
+	end
+	GuiService.SelectedObject = first or panel:FindFirstChild("Cerrar", true)
+end
+
+local function render(keepSelection)
+	for _, child in panelList:GetChildren() do
+		if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
+			child:Destroy()
+		end
+	end
+	rowOrder = 0
+	if not openPanelId or not state then
+		return
+	end
+	panelTitle.Text = PANEL_TITLES[openPanelId] or ""
+	RENDERERS[openPanelId]()
+	if not keepSelection then
+		selectFirstButton()
+	elseif UserInputService.GamepadEnabled and not GuiService.SelectedObject then
+		selectFirstButton()
+	end
+end
+
+function Ui.closePanel()
+	openPanelId = nil
+	panel.Visible = false
+	GuiService.SelectedObject = nil
+	ContextActionService:UnbindAction("CerrarMenu")
+end
+
+function Ui.openPanel(panelId)
+	if not RENDERERS[panelId] or not state then
+		return
+	end
+	openPanelId = panelId
+	panel.Visible = true
+	render(false)
+	ContextActionService:BindAction("CerrarMenu", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			Ui.closePanel()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.KeyCode.ButtonB)
+end
+
+local function toggleBackpack()
+	if openPanelId == "backpack" then
+		Ui.closePanel()
+	else
+		Ui.openPanel("backpack")
+	end
+end
+
+-- ---------------------------------------------------------------------------
+-- HUD
+-- ---------------------------------------------------------------------------
+
+local function updateHud()
+	if not state then
+		return
+	end
+	hud.coins.Text = string.format("<b>%s</b> monedas", formatNumber(state.coins))
+	hud.level.Text = string.format("Nivel <b>%d</b>", state.level)
+	local fraction = 1
+	if state.levelNeed > 0 then
+		fraction = math.clamp(state.levelXp / state.levelNeed, 0, 1)
+		hud.xpText.Text = string.format("%d / %d XP", state.levelXp, state.levelNeed)
+	else
+		hud.xpText.Text = "Nivel máximo"
+	end
+	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
+	hud.backpack.Text = string.format("Mochila: %d/%d piezas", state.partCount, state.capacity)
+	hud.museum.Text = string.format("Museo: +%d cada %d s", state.museumIncome, Config.MUSEUM_TICK_SECONDS)
+end
+
+local function buildHud()
+	gui = new("ScreenGui", {
+		Name = "BuildAWatchUI",
+		ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	})
+
+	local stats = new("Frame", {
+		Name = "Estadisticas",
+		Position = UDim2.fromOffset(12, 12),
+		Size = UDim2.fromOffset(230, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS.panel,
+		BackgroundTransparency = 0.15,
+	}, {
+		corner(10),
+		padding(10),
+		new("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	hud.coins = label("", 20, COLORS.accent, { LayoutOrder = 1 })
+	hud.level = label("", 16, COLORS.text, { LayoutOrder = 2 })
+	local xpBar = new("Frame", {
+		Size = UDim2.new(1, 0, 0, 16),
+		BackgroundColor3 = COLORS.row,
+		LayoutOrder = 3,
+	}, { corner(6) })
+	hud.xpFill = new("Frame", {
+		Size = UDim2.fromScale(0, 1),
+		BackgroundColor3 = COLORS.ok,
+	}, { corner(6) })
+	hud.xpFill.Parent = xpBar
+	hud.xpText = new("TextLabel", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamMedium,
+		TextSize = 12,
+		TextColor3 = COLORS.text,
+		Text = "",
+		ZIndex = 2,
+	})
+	hud.xpText.Parent = xpBar
+	hud.backpack = label("", 15, COLORS.muted, { LayoutOrder = 4 })
+	hud.museum = label("", 15, COLORS.muted, { LayoutOrder = 5 })
+	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.museum } do
+		item.Parent = stats
+	end
+	stats.Parent = gui
+
+	-- Botón de mochila (necesario en pantallas táctiles)
+	local backpackButton = button("Mochila", true, toggleBackpack)
+	backpackButton.Name = "BotonMochila"
+	backpackButton.AnchorPoint = Vector2.new(0, 0.5)
+	backpackButton.Position = UDim2.new(0, 12, 0.5, 0)
+	backpackButton.Size = UDim2.fromOffset(110, 44)
+	backpackButton.Parent = gui
+
+	-- Notificaciones
+	toastList = new("Frame", {
+		Name = "Notificaciones",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 12),
+		Size = UDim2.new(0.9, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, {
+		new("UISizeConstraint", { MaxSize = Vector2.new(420, 4000) }),
+		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	toastList.Parent = gui
+
+	-- Menú central
+	panel = new("Frame", {
+		Name = "Menu",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.52),
+		Size = UDim2.fromScale(0.92, 0.72),
+		BackgroundColor3 = COLORS.panel,
+		Visible = false,
+	}, {
+		corner(12),
+		new("UISizeConstraint", { MaxSize = Vector2.new(580, 480) }),
+	})
+	panelTitle = new("TextLabel", {
+		Position = UDim2.fromOffset(14, 8),
+		Size = UDim2.new(1, -72, 0, 36),
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		TextSize = 20,
+		TextColor3 = COLORS.text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		Text = "",
+	})
+	panelTitle.Parent = panel
+	local closeButton = new("TextButton", {
+		Name = "Cerrar",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -8, 0, 8),
+		Size = UDim2.fromOffset(40, 36),
+		BackgroundColor3 = COLORS.error,
+		Font = Enum.Font.GothamBold,
+		Text = "X",
+		TextSize = 18,
+		TextColor3 = COLORS.text,
+	}, { corner(8) })
+	closeButton.Activated:Connect(Ui.closePanel)
+	closeButton.Parent = panel
+	panelList = new("ScrollingFrame", {
+		Position = UDim2.fromOffset(0, 50),
+		Size = UDim2.new(1, 0, 1, -56),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		CanvasSize = UDim2.new(),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollBarThickness = 6,
+		ScrollingDirection = Enum.ScrollingDirection.Y,
+	}, {
+		padding(10),
+		new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	panelList.Parent = panel
+	panel.Parent = gui
+
+	gui.Parent = player:WaitForChild("PlayerGui")
+end
+
+-- Cierra el menú de estación si el jugador se aleja.
+local function findStation(stationId)
+	local map = Workspace:FindFirstChild("Mapa")
+	if not map then
+		return nil
+	end
+	for _, descendant in map:GetDescendants() do
+		if descendant:IsA("BasePart") and descendant:GetAttribute("StationId") == stationId then
+			return descendant
+		end
+	end
+	return nil
+end
+
+local function watchDistance()
+	task.spawn(function()
+		while true do
+			task.wait(0.5)
+			if openPanelId and openPanelId ~= "backpack" then
+				local station = findStation(openPanelId)
+				local character = player.Character
+				local root = character and character:FindFirstChild("HumanoidRootPart")
+				if station and root and (root.Position - station.Position).Magnitude > Config.STATION_DISTANCE + 4 then
+					Ui.closePanel()
+				end
+			end
+		end
+	end)
+end
+
+-- ---------------------------------------------------------------------------
+-- API
+-- ---------------------------------------------------------------------------
+
+function Ui.init(remote)
+	actionRemote = remote
+	buildHud()
+	ContextActionService:BindAction("AbrirMochila", function(_, inputState)
+		if inputState == Enum.UserInputState.Begin then
+			toggleBackpack()
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, Enum.KeyCode.B, Enum.KeyCode.ButtonY)
+	watchDistance()
+end
+
+function Ui.setState(newState)
+	state = newState
+	updateHud()
+	if openPanelId then
+		render(true)
+	end
+end
+
+return Ui

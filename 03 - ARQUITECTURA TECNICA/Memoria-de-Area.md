@@ -22,5 +22,6 @@
 ## Memoria reciente
 
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
+- 2026-11-20 · DEV-001 (Jhonn, en revisión): código en `juego/` con estructura Rojo; place generada con `python juego/build.py`; DataStore `BuildAWatch_PlayerData_v1` con bloqueo de sesión. Propuesta DEC-001. Ver [[Arquitectura-General]] §13 y [[Changelog]].
 
 **Inicio:** 2026-11-19. **Actualización:** al cerrar una tarea del área.

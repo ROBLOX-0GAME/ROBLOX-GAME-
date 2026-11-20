@@ -1,1 +1,7 @@
 .obsidian/
+
+# Roblox / juego
+juego/build/
+*.rbxl.lock
+*.rbxlx.lock
+__pycache__/

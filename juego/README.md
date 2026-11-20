@@ -1,0 +1,64 @@
+# BUILD A WATCH! — código del juego
+
+Código fuente Luau del juego (tarea DEV-001). Todo vive en texto para poder versionarlo con Git.
+
+## Abrir el juego en Roblox Studio
+
+### Opción A — Place compilada (no requiere instalar nada más que Python)
+
+1. En una terminal, desde la raíz del repositorio:
+   ```
+   python juego/build.py
+   ```
+2. Abre `juego/build/BuildAWatch.rbxlx` en Roblox Studio (File → Open from File).
+3. Pulsa **Play**. En la ventana **Output** deben aparecer:
+   - `[BUILD A WATCH!] Servidor iniciado.`
+   - `[Pruebas] N correctas, 0 fallidas`
+
+`juego/build/` está en `.gitignore`: es un archivo generado; se vuelve a crear con el comando.
+Si cambias algo dentro de Studio, **cópialo a `juego/src/`**; si no, se pierde al recompilar.
+
+### Opción B — Rojo (sincronización en vivo, recomendado a futuro)
+
+Con Rojo 7 y su plugin de Studio instalados: `rojo serve juego/default.project.json` y conecta desde el plugin.
+Así puedes usar `Proyecto Roblox Studio.rbxl` como place base.
+
+### Guardado de datos en Studio
+
+Para probar el guardado real: Game Settings → Security → **Enable Studio Access to API Services**.
+Sin esa opción el juego funciona con datos temporales y avisa “Modo de prueba: tu progreso no se guardará”.
+
+## Estructura
+
+```
+juego/
+  default.project.json   mapa de carpetas → servicios de Roblox (formato Rojo)
+  build.py               revisión estática + compilación a .rbxlx
+  src/shared/            ReplicatedStorage.Shared (cliente y servidor)
+    Config.luau          números técnicos y de balance (PROPUESTA)
+    GameData.luau        piezas, relojes y mejoras (PROPUESTA)
+    PlayerLogic.luau     reglas puras del juego (probadas)
+  src/server/            ServerScriptService.Server
+    Main.server.luau     arranque de servicios
+    Services/            Datos, mundo, cajas, acciones, museo, personaje, remotos
+    Tests/               pruebas que corren al pulsar Play en Studio
+  src/client/            StarterPlayerScripts.Client
+    Main.client.luau     conecta remotos con la interfaz
+    Ui.luau              HUD, notificaciones y menús
+```
+
+## Bucle de juego (propuesta)
+
+1. Recoger **cajas de piezas** en la zona de arena (la pieza depende de la suerte).
+2. Fabricar **relojes** en el **Taller** (dan XP; los relojes mejores piden más nivel).
+3. **Vender** relojes en la **Tienda** o **exhibirlos** en el **Museo** (ingreso cada 10 s).
+4. Comprar **mejoras** en la Tienda: mochila, velocidad, salto, suerte y vitrinas.
+
+Controles: E / botón X / tocar para estaciones y cajas · B / botón Y / botón “Mochila” para la mochila · botón B del mando o “X” para cerrar menús.
+
+## Reglas para editar
+
+- El servidor decide todo: el cliente solo pide acciones por `Remotes.Action`.
+- Las reglas nuevas van en `PlayerLogic.luau` con su prueba en `Tests/`.
+- Antes de subir cambios: `python juego/build.py --check`.
+- Registra cada paso en `09 - TAREAS Y DESARROLLO/Changelog.md`.

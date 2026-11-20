@@ -89,3 +89,7 @@ Consulta la memoria compacta de cada carpeta:
 - [[10 - DECISIONES DEL EQUIPO/Memoria-de-Area|10 - DECISIONES DEL EQUIPO]]
 - [[11 - TESTING Y BUGS/Memoria-de-Area|11 - TESTING Y BUGS]]
 - [[12 - RECURSOS Y REFERENCIAS/Memoria-de-Area|12 - RECURSOS Y REFERENCIAS]]
+
+## Desarrollo activo
+
+- [[Changelog|Changelog de desarrollo]] — DEV-001: base técnica y bucle MVP (en revisión). Código en `juego/`.

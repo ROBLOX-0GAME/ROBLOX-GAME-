@@ -80,6 +80,50 @@ Ambas cuentas pueden colaborar en otras áreas cuando la tarea lo requiera. Regi
 - [ ] Establecer procedimientos de integración.
 - [ ] Preparar documentación técnica.
 
+## 5.1 Tareas registradas
+
+### DEV-001 — Base técnica y bucle principal jugable (MVP) de BUILD A WATCH!
+
+- **ID:** DEV-001
+- **Responsable:** Jhonn (Cuenta A)
+- **Cuenta Claude:** Claude 1 — Cuenta A
+- **Revisor:** Zadiel (Cuenta A); Cuenta B revisa lo visible para el jugador (mapa, HUD y textos).
+- **Área:** Arquitectura técnica, sistemas, economía y progresión.
+- **Prioridad:** Alta.
+- **Estado:** En revisión (falta la prueba en Studio).
+- **Rama:** `task/DEV-001-base-mvp`
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:**
+
+Crear el código fuente del juego (Luau, estructura compatible con Rojo) dentro de `juego/` e implementar el bucle principal propuesto: recoger cajas de piezas → fabricar relojes → vender o exhibir en el museo → comprar mejoras. Todas las cifras de balance son propuestas.
+
+**Rutas:**
+
+- `juego/` (código, proyecto Rojo y script de compilación).
+- `09 - TAREAS Y DESARROLLO/Backlog.md`, `09 - TAREAS Y DESARROLLO/Changelog.md`, `09 - TAREAS Y DESARROLLO/Memoria-de-Area.md`.
+- `03 - ARQUITECTURA TECNICA/Arquitectura-General.md`, `03 - ARQUITECTURA TECNICA/Memoria-de-Area.md`.
+- `07 - ECONOMIA Y PROGRESION/Memoria-de-Area.md`, `11 - TESTING Y BUGS/Plan-de-Pruebas.md`, `10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md`, `00 - CENTRO DE CONTROL/Dashboard.md`, `.gitignore`.
+
+**Criterios de aceptación:**
+
+- [x] El código vive en texto dentro de Git, separado en cliente, servidor y módulos compartidos.
+- [x] El servidor valida todas las acciones (distancia, inventario, nivel, monedas y límite de solicitudes). *Implementado; falta comprobarlo en Studio.*
+- [x] Los datos se guardan con DataStore: reintentos, bloqueo de sesión, autoguardado y guardado al cerrar el servidor. *Implementado; falta comprobarlo en Studio.*
+- [x] Todas las acciones se completan con teclado, mando y pantalla táctil (ProximityPrompt y botones). *Implementado; falta comprobarlo con mando y en móvil.*
+- [x] Hay pruebas automáticas de la lógica que se ejecutan en Studio (13 pruebas; aún no ejecutadas).
+- [x] Cada paso del proceso queda registrado en [[Changelog]].
+- [ ] Jhonn abre la place compilada en Studio, ejecuta Play y confirma que las pruebas pasan y que el bucle funciona.
+- [ ] El equipo aprueba o corrige las cifras de balance.
+
+**Dependencias:**
+
+Roblox Studio instalado en la PC Windows de desarrollo. Python 3 para compilar la place, o Rojo (opcional) para sincronizar en vivo.
+
+**Documentos relacionados:**
+
+[[Changelog]], [[Arquitectura-General]], [[Economia-y-Progresion]], [[Plan-de-Pruebas]], [[Registro-de-Decisiones]].
+
 ## 6. Plantilla para nuevas tareas
 
 ### Nombre de la tarea
