@@ -40,4 +40,5 @@ El control de solapamientos compara también reservas introducidas por otros Pul
 
 ## Navegación en Obsidian
 
-[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[09 - TAREAS Y DESARROLLO/Backlog|Backlog]] · [[OWNERS|Propiedad de áreas]] · [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA|Protocolo]]
+[[[[00 - CENTRO DE CONTROL/Dashboard|Dashboard]] · [[09 - TAREAS Y DESARROLLO/Backlog|Backlog]] · [[OWNERS|Propiedad de áreas]] · [[00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA|Protocolo]]
+]]
