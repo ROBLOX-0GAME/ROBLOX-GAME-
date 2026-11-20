@@ -256,3 +256,37 @@ El plot y la caminadora se **mejoran** con monedas: el plot añade vitrinas y la
 **Dependencias:** DEV-007 (Completada). Para no solaparse con INFRA-002 (en desarrollo), esta tarea no toca `game/README.md` ni el Registro de Decisiones; su decisión se registrará cuando INFRA-002 termine.
 
 **Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
+### DEV-009 — Mascotas en cápsulas: compra, recompensas diarias y por tiempo, y Robux
+
+- **ID:** DEV-009.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. Michael y Einell revisan la interfaz.
+- **Área:** Sistemas, economía, progresión y monetización.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+Las mascotas salen de **cápsulas** (sustituyen a los «huevos»), que se consiguen de tres formas:
+
+1. **Comprándolas** con monedas: Latón, Plata y Oro.
+2. **Recompensas diarias**, con una racha de 7 días, y **recompensas por tiempo jugado** cada día.
+3. **Robux**: la Cápsula Cósmica, solo con Robux, trae mascotas exclusivas más poderosas, con las probabilidades visibles.
+
+Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren cuando el jugador quiera. Solo mecánicas; el arte de las cápsulas y las mascotas se hará después.
+
+**Criterios de aceptación:**
+
+- [ ] Cápsulas con monedas, inventario de cápsulas y apertura validada en el servidor.
+- [ ] Recompensa diaria una vez por día (UTC), con racha de 7 días que se reinicia si se salta un día.
+- [ ] Recompensas por tiempo jugado: niveles por día que se reclaman una sola vez.
+- [ ] Cápsula Cósmica (Robux) con mascotas exclusivas más fuertes y probabilidades visibles; se entrega una sola vez por compra.
+- [ ] Pruebas automáticas nuevas y revisión estática sin errores.
+- [ ] La fila DEV-009 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** DEV-005, DEV-006 y DEV-008 (Completadas).
+
+**Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
