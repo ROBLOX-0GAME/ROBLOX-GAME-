@@ -161,3 +161,37 @@ Pendiente.
 ---
 
 **Estado:** Borrador inicial
+### DEV-007 — Integrar el juego (DEV-001 a DEV-006) en game/
+
+- **ID:** DEV-007.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. Michael y Einell revisan `game/src/StarterPlayer/StarterPlayerScripts/` (interfaz, ruta de Cuenta B según OWNERS.md).
+- **Área:** Arquitectura técnica, sistemas, economía y progresión.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo (Pull Request de reserva).
+- **Rama:** `task/DEV-007-integracion-juego`.
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:**
+
+Las ramas `task/DEV-001-base-mvp` a `task/DEV-006-velocidad-robux` se hicieron antes de que INFRA-001 llegara a `main` y guardan el código en `juego/`. Esta tarea las integra respetando DEC-001 (código en `game/`) y DEC-002 (ramas, reservas y revisión):
+
+1. Mover el código Luau a `game/src/ReplicatedStorage/Shared`, `game/src/ServerScriptService/Server` y `game/src/StarterPlayer/StarterPlayerScripts/Client`, y retirar los archivos Bootstrap y Placeholder.
+2. Mantener la compilación con Rojo 7.7.1 (control `rojo-build`) y adaptar `build.py` para la revisión estática local.
+3. Llevar a la bóveda el diseño (GDD §15), Changelog, Plan de Pruebas y memorias, y renumerar las decisiones propuestas para que no choquen con DEC-001 y DEC-002 aprobadas.
+4. Al terminar, cerrar las ramas DEV-001 a DEV-006 sin fusionarlas: su contenido llega a `main` por esta tarea.
+
+Contenido que se integra (todo como propuesta, salvo lo aprobado): bucle de robo por 5 zonas con dueños que persiguen y puertas de velocidad; fabricación, venta y museo; tutorial de 5 objetivos; jefe cooperativo Cronómetro Maestro; mascotas con multiplicador de velocidad; caminadoras de entrenamiento; 6 pases y 5 productos con Robux con IDs pendientes. Por indicación de Jhonn, solo se programan mecánicas; el arte y el sonido se harán con Krita, Blender, Audacity y Material Maker.
+
+**Criterios de aceptación:**
+
+- [ ] El código vive en `game/src` y `rojo build game/default.project.json` compila (control `rojo-build`).
+- [ ] La revisión estática local no tiene errores y las pruebas automáticas se ejecutan al pulsar Play en Studio.
+- [ ] El diseño y el historial quedan en la bóveda; las decisiones nuevas están renumeradas y siguen como propuestas.
+- [ ] Michael o Einell revisan la interfaz; Zadiel revisa el resto.
+- [ ] En el Pull Request final, la fila DEV-007 de ACTIVE_TASKS.md queda Completada.
+
+**Dependencias:** INFRA-001 (Completada).
+
+**Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Registro-de-Decisiones]], [[Arquitectura-General]].
