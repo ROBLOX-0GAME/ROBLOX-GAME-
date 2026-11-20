@@ -67,9 +67,37 @@ def seguir(*partes):
     return salida
 
 
-def guardar(nombre, muestras):
+# Pulido (ART-010): lo que antes había que hacer a mano en Audacity
+BUCLES = {"sfx_entrenar"}  # se repiten: sin recorte ni fundidos, conservan su duración exacta
+UMBRAL_SILENCIO = 10 ** (-50 / 20)  # -50 dBFS, relativo al pico
+COLA = 0.02  # s de silencio que se dejan tras el último sonido
+FUNDIDO_ENTRADA = 0.003  # s, evita el chasquido de empezar fuera de cero
+FUNDIDO_SALIDA = 0.010
+RMS_MAXIMO = 10 ** (-10 / 20)  # ningún efecto por encima de -10 dB RMS (la alarma estaba en -1,4 dB)
+
+
+def pulir(nombre, muestras):
+    """Recorta el silencio final, aplica fundidos y nivela: pico a -1 dBFS y RMS máximo de -10 dB."""
     pico = max(1e-9, max(abs(m) for m in muestras))
-    escala = 0.89 / pico  # normaliza a ~ -1 dBFS
+    muestras = [m / pico for m in muestras]
+    if nombre not in BUCLES:
+        ultimo = max(i for i, m in enumerate(muestras) if abs(m) > UMBRAL_SILENCIO)
+        muestras = muestras[:min(len(muestras), ultimo + 1 + int(TASA * COLA))]
+        n_in, n_out = int(TASA * FUNDIDO_ENTRADA), int(TASA * FUNDIDO_SALIDA)
+        for i in range(min(n_in, len(muestras))):
+            muestras[i] *= i / n_in
+        for i in range(min(n_out, len(muestras))):
+            muestras[-1 - i] *= i / n_out
+    escala = 0.89  # pico a ~ -1 dBFS
+    rms = math.sqrt(sum(m * m for m in muestras) / len(muestras)) * escala
+    if rms > RMS_MAXIMO:
+        escala *= RMS_MAXIMO / rms
+    return [m * escala for m in muestras]
+
+
+def guardar(nombre, muestras):
+    muestras = pulir(nombre, muestras)
+    escala = 1.0
     os.makedirs(CARPETA, exist_ok=True)
     with wave.open(os.path.join(CARPETA, nombre + ".wav"), "wb") as archivo:
         archivo.setnchannels(1)

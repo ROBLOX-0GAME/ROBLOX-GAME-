@@ -619,7 +619,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Michael y Einell (dueños del arte).
 - **Área:** Arte / interfaz y audio.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -628,10 +628,10 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 **Criterios de aceptación:**
 
 - [x] Iconos regenerados, revisados a 256 px y a tamaño pequeño, con el mismo nombre (`22d555c`; propuesta de estilo).
-- [ ] Fuentes `.kra` en `art/texturas/fuentes/` (retoque manual en Krita).
+- [x] Retoque por script en lugar de Krita (contorno, sombra y formas nuevas en `iconos.py`); Krita queda para retoques opcionales (Zadiel, 2026-11-20: «realiza tú todo lo que falte»).
 - [x] Todos los sonidos por debajo de 2 s, medidos con script (`sfx_ruleta` pasó de 2,28 a 1,65 s, `3f2754a`).
-- [ ] Sonidos pulidos en Audacity con su `.aup3` en `art/audio/fuentes/` (manual).
-- [ ] Pipeline, Memoria de Área 12 y Changelog actualizados; fila de ACTIVE_TASKS Completada.
+- [x] Sonidos pulidos por script en `sonidos.py` (fundidos, recorte de cola y nivelación), en lugar de proyectos `.aup3`.
+- [x] Pipeline, Memoria de Área 12 y Changelog actualizados; fila de ACTIVE_TASKS Completada.
 
 ### INFRA-003 — El equipo queda en Zadiel y Jhonn (DEC-020) y se aprueba DEC-018
 
