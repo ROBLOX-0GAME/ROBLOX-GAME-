@@ -716,3 +716,26 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Nota creada con lo hecho, lo verificado, lo pendiente y las decisiones por aprobar.
 - [x] Sin secretos: se confirma que no hay ninguna API key en el repositorio.
 - [x] La fila INFRA-004 de ACTIVE_TASKS queda Completada.
+
+### DEV-015 — Errores que impiden jugar y prueba fallida de AssetLibrary
+
+- **ID:** DEV-015.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Código / pruebas.
+- **Prioridad:** Crítica.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Zadiel pide probar el juego y todo lo hecho. La foto de INFRA-004 indica que el cliente no carga (`Ui.luau:766: Malformed string`) y que falla 1 de 47 pruebas («place apoya la base en el suelo»). Se corrigen ambos, `build.py` pasa a detectar cadenas sin cerrar y se prueba en Studio.
+
+**Criterios de aceptación:**
+
+- [ ] `Ui.luau`: la cadena de la pieza del legado usa `
+` en vez de un salto de línea real.
+- [ ] `AssetLibrary.place` sin `parent` devuelve una copia válida (no destruida con el ancla).
+- [ ] `build.py` falla ante cadenas sin cerrar; la revisión pasa en `main`.
+- [ ] Prueba en Studio: 47/47 pruebas y cliente con HUD (si el MCP de Studio está disponible), anotada en el Plan de Pruebas.
+
