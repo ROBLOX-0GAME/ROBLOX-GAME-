@@ -455,3 +455,24 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] La fila ART-002 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-001 (Completada).
+### ART-003 — Modelos low-poly de prioridad 2 (cápsulas, relojes, legado y mascotas)
+
+- **ID:** ART-003.
+- **Cuenta Claude:** Claude 1 — Cuenta A (temporal; área de Cuenta B).
+- **Responsable:** Jhonn.
+- **Revisor:** Michael y Einell; Zadiel revisa la parte técnica.
+- **Área:** Assets.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** generar con los scripts de Blender los modelos base de prioridad 2 de [[Pipeline-de-Arte]] §7: cápsulas de Plata, Oro y Cósmica; los 6 relojes; las 3 piezas del legado; y las 9 mascotas. Mismo estilo low-poly y la paleta común.
+
+**Criterios de aceptación:**
+
+- [ ] 21 modelos exportados (FBX + .blend + vista previa) con su conteo de triángulos.
+- [ ] Hoja de contactos revisada y lista de assets del Pipeline actualizada.
+- [ ] La fila ART-003 de ACTIVE_TASKS queda Completada.
+
+**Dependencias:** ART-002 (Completada).
