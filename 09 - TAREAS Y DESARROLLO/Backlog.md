@@ -223,3 +223,36 @@ Por decisión de Zadiel para todo el equipo, se deja de usar ramas por tarea y P
 **Dependencias:** INFRA-001 y DEV-007 (Completadas).
 
 **Documentos relacionados:** [[ACTIVE_TASKS]], [[OWNERS]], [[Registro-de-Decisiones]], [[Protocolo-de-Trabajo-IA]].
+### DEV-008 — Plot personal con mesa, vitrinas y caminadora mejorables
+
+- **ID:** DEV-008.
+- **Cuenta Claude:** Claude 1 — Cuenta A.
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel. Michael y Einell revisan `game/src/StarterPlayer/StarterPlayerScripts/` (interfaz).
+- **Área:** Sistemas, economía y progresión.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo (Pull Request de reserva).
+- **Rama:** `task/DEV-008-plot-personal`.
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción (dirección de Jhonn, 2026-11-20):**
+
+Cada jugador recibe su propio **plot** en la base al entrar (10 plots, uno por jugador del servidor). En su plot tiene:
+
+1. **Mesa de elaboración** personal: fabrica relojes ahí (reemplaza al Taller compartido).
+2. **Vitrinas** donde coloca sus relojes fabricados; los relojes exhibidos dan ingreso pasivo (reemplaza al Museo compartido).
+3. **Caminadora** personal enfrente del plot para entrenar velocidad (reemplaza a las 3 caminadoras compartidas).
+
+El plot y la caminadora se **mejoran** con monedas: el plot añade vitrinas y la caminadora sube su multiplicador. Solo el dueño usa su plot. El pase «Caminadora Turbo» pasa a multiplicar el entrenamiento de la caminadora personal. Solo mecánicas: los modelos y las skins de los dueños de las casas se harán después (Krita, Blender, Material Maker).
+
+**Criterios de aceptación:**
+
+- [ ] Se asigna un plot libre al entrar y se libera al salir; se muestra el nombre del dueño.
+- [ ] Fabricar, exhibir y entrenar solo funcionan en el plot propio (validado en el servidor).
+- [ ] Mejoras de plot y de caminadora con precios crecientes; los datos anteriores se adaptan sin pérdidas.
+- [ ] Pruebas automáticas nuevas y revisión estática y `rojo-build` sin errores.
+- [ ] Al terminar, la fila DEV-008 queda Completada en el Pull Request final.
+
+**Dependencias:** DEV-007 (Completada). Para no solaparse con INFRA-002 (en desarrollo), esta tarea no toca `game/README.md` ni el Registro de Decisiones; su decisión se registrará cuando INFRA-002 termine.
+
+**Documentos relacionados:** [[GDD]] §15, [[Changelog]], [[ACTIVE_TASKS]].
