@@ -594,12 +594,12 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 ### ART-008 — Importar los relojes PBR en Roblox Studio
 
 - **ID:** ART-008.
-- **Cuenta Claude:** Claude — Cuenta A (PC Windows).
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel, con Roblox Studio).
 - **Responsable:** Zadiel.
 - **Revisor:** Michael y Einell (dueños del arte); Jhonn (técnica).
 - **Área:** Arte / Studio.
 - **Prioridad:** Alta.
-- **Estado:** Bloqueada (no hay place oficial publicada; `servePlaceIds` vacío).
+- **Estado:** En desarrollo (desbloqueada el 2026-11-20: place oficial «Reloj creation oficial 1», Place ID `84500108687089`, Universe ID `10778093657`, dueño Lubu465 (Jhonn), zadiel799 colaborador en Team Create; IDs comprobados por Jhonn con la API pública). `servePlaceIds` sigue vacío: hace falta una tarea de código aparte.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -607,7 +607,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Existe la place oficial publicada (requisito; la crea una persona).
+- [x] Existe la place oficial publicada (la creó Jhonn).
 - [ ] 6 relojes en `ReplicatedStorage/Assets` y 31 `SurfaceAppearance` montados sin avisos.
 - [ ] Prueba en Play realizada y anotada en el Changelog.
 
