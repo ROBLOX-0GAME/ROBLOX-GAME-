@@ -79,7 +79,7 @@ ACTIVE_TASKS.md registra las rutas reservadas; el control de GitHub Actions bloq
 
 ### Plantilla de decisión
 
-#### DEC-001 — Título de la decisión
+#### Plantilla — Título de la decisión
 
 - **Fecha:** Pendiente.
 - **Estado:** Propuesta.

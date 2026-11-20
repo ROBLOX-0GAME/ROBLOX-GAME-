@@ -32,7 +32,7 @@
 - [[Recursos-y-Referencias|Recursos y Referencias]]
 - [[OWNERS|Propiedad de áreas y archivos]]
 - [[ACTIVE_TASKS|Tareas activas y reservas]]
-- [[game/README|Proyecto de código Roblox con Rojo]]
+- [[game/README|Código Roblox con Rojo]]
 
 ## 👥 05. ORGANIZACIÓN DEL ESTUDIO
 
@@ -55,7 +55,7 @@
 | Economía y progresión | Sistemas descritos; cifras y balance por aprobar |
 | Multijugador | Propuestas de robo voluntario y jefe de taller listas para revisión |
 | Desarrollo | INFRA-001 en revisión; reservas de rutas y controles de Pull Request preparados |
-| Testing | GitHub Actions construye el scaffold Rojo y comprueba reservas; pruebas de juego aún no ejecutadas |
+| Testing | Pruebas de reservas y construcción Rojo pasan en GitHub Actions; pruebas de juego aún no ejecutadas |
 | Documentación de IA | Reglas raíz, 13 reglas de carpeta y 13 memorias en propuesta de revisión |
 
 ---
@@ -73,7 +73,7 @@
 
 **Documento principal:** Dashboard  
 **Proyecto:** Roblox Game Studio  
-**Estado:** Coordinación y scaffold Rojo preparados; la protección de main debe activarse en GitHub Settings y el place aún está pendiente.
+**Estado:** Coordinación y scaffold Rojo en revisión; protección efectiva de main pendiente de activar
 
 ## Memoria por área
 

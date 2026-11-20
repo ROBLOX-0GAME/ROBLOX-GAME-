@@ -14,8 +14,13 @@ Nota canónica: 09 - TAREAS Y DESARROLLO/Backlog.md; memoria: 09 - TAREAS Y DESA
 Responsable operativo: Cuenta A mantiene el índice operativo; cada responsable humano actualiza el estado de su tarea.
 
 ## Instrucciones por nota
-- Backlog.md: Cada tarea anunciada al equipo lleva ID, objetivo, responsable, Cuenta Claude, rutas, revisor, prioridad, dependencias y criterios de aceptación.
-- ACTIVE_TASKS.md: Mantiene las rutas reservadas y estado. El control automatizado valida los Pull Requests contra este registro.
-- Registra la reserva antes de editar. En una tarea nueva, integra primero el Pull Request que añade el bloqueo; después trabaja en la rama de la tarea.
-- Libera rutas al completar o cancelar; un Pull Request integrado libera automáticamente la reserva de una fila marcada En revisión. Una reserva En desarrollo continúa activa.
-- Las tareas transversales requieren revisión de ambas parejas.
+- Backlog.md: Cada tarea anunciada al equipo lleva ID, objetivo, responsable, cuenta Claude, rutas, revisor, prioridad, dependencias, criterio de aceptación y estado.
+- ACTIVE_TASKS.md: Reserva rutas por ID y rama de tarea; abre primero un Pull Request de reserva y espera a que se integre. El control de GitHub Actions valida conflictos en Pull Requests, pero no bloquea la edición local.
+
+
+## Mantenimiento
+- Consulta Registro-de-Decisiones.md antes de editar contenido sustantivo.
+- Guarda memoria breve en Memoria-de-Area.md: aprobado, propuesta, pendiente, fecha, fuente, responsable y enlaces.
+- Al aprobar una decisión, actualiza el registro canónico y enlázalo desde las áreas afectadas.
+- Conserva nombres/enlaces Obsidian; no borres ni cambies trabajo ajeno.
+- Cuenta A (Jhonn/Zadiel) cubre gameplay/sistemas/técnica; Cuenta B (Michael/Einell) cubre mundo/narrativa/arte/UX. Cambios transversales requieren ambas parejas.

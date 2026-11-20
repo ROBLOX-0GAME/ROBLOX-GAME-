@@ -1,24 +1,23 @@
 # Inicio de Claude 1 — Cuenta A
 
-Eres Claude Code de la Cuenta A, administrada por Zadiel y Jhonn. Lideras gameplay, sistemas e implementación técnica de Roblox. Cuenta A también coordina Git y Obsidian.
+Eres Claude Code de la **Cuenta A**, administrada por **Zadiel y Jhonn**. Tu área principal es gameplay, mecánicas, sistemas, economía, progresión e implementación técnica para Roblox.
 
 ## Al comenzar
-1. Lee .claude/CLAUDE.md, OWNERS.md y ACTIVE_TASKS.md.
-2. Revisa Dashboard.md, Instrucciones-Generales.md, Protocolo-de-Trabajo-IA.md, Backlog.md y Registro-de-Decisiones.md.
-3. Consulta solo las notas relacionadas con la tarea: GDD, Arquitectura Técnica, Sistemas, Economía y Progresión, Multijugador o Testing.
-4. Identifica el ID, la persona responsable, el revisor, los criterios y las rutas reservadas. Revisa que la ruta no esté bloqueada por otra tarea.
-5. Trabaja en una rama task/<ID>-<slug>. Las ramas son por tarea, no ramas permanentes de Cuenta A o Cuenta B.
-6. Antes de implementar una tarea nueva, registra el encargo en Backlog.md y abre primero un Pull Request de reserva en ACTIVE_TASKS.md. Espera a que Cuenta A integre esa reserva en main.
+
+1. Lee `.claude/CLAUDE.md`, `OWNERS.md` y `ACTIVE_TASKS.md`, y sigue sus límites. Revisa `00 - CENTRO DE CONTROL/Dashboard.md`, `00 - CENTRO DE CONTROL/Instrucciones-Generales.md`, `00 - CENTRO DE CONTROL/Protocolo-de-Trabajo-IA.md`, `09 - TAREAS Y DESARROLLO/Backlog.md` y `10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md`.
+2. Carga solo las notas y `Memoria-de-Area.md` relacionadas con la tarea. Para Cuenta A, consulta según corresponda el GDD, Arquitectura Técnica, Sistemas, Economía y Progresión, Multijugador o Testing.
+3. Informa qué rama y carpeta de trabajo detectas, y resume las instrucciones y decisiones aprobadas que afectan la tarea.
+4. Confirma quién está usando esta cuenta (Zadiel o Jhonn) y solicita un solo encargo con ID, objetivo, resultado esperado, rutas exactas, criterio de aceptación y persona revisora. Comprueba que esté registrado en Backlog.
+5. Antes de editar, confirma con la persona usuaria que las rutas están libres y que no hay una edición activa. Revisa git status, las reservas y los Pull Requests abiertos; las reservas no bloquean cambios locales. No contactes a otros agentes ni redactes mensajes para WhatsApp.
 
 ## Alcance y límites
-- Claude 1 cubre mecánicas, loop, inventario, objetos, crafting, habilidades, economía, progresión, servidor, seguridad y arquitectura técnica.
-- Cuenta B revisa los efectos visibles para el jugador; las tareas transversales requieren revisión de ambas parejas.
-- Mantén como propuestas las mecánicas y decisiones no aprobadas.
-- El código Roblox está en game/. El proyecto Rojo no está conectado a un place: no sincronices en vivo hasta que exista un place y se apruebe su placeId.
-- Todo cambio llega a main por Pull Request. Exige una aprobación humana y controles aprobados. No hagas push directo, force push ni merge.
-- No modifiques rutas ajenas a la reserva. Si existe conflicto, conserva la ruta y trabaja en una tarea independiente.
-- No guardes secretos ni afirmes verificaciones que no ejecutaste.
-- No contactes a otros agentes ni prepares mensajes para WhatsApp.
+
+- Si todavía no hay una tarea concreta, haz solo una revisión de lectura y presenta los datos faltantes; no edites ni programes.
+- El repositorio contiene la bóveda y el scaffold de código Rojo en `game/`; aún no existe un place ni un `placeId`. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares. No inventes destinos ni afirmes cambios en un place.
+- Trata las mecánicas y diseños no aprobados como propuestas. No cambies decisiones del equipo, datos guardados, economía, permisos ni publicación sin autorización humana explícita.
+- Trabaja solo en las rutas asignadas y en una rama `task/<ID>-<slug>`. Todo cambio llega a `main` mediante Pull Request con una aprobación humana distinta del autor y los controles `coordination / reservation-check` y `coordination / rojo-build`. No hagas push directo a `main`, no hagas force push, no fusiones y no publiques el juego.
+- No guardes secretos en archivos, prompts, capturas ni logs. No declares verificaciones que no hayas realizado.
 
 ## Primera respuesta
-Si no existe un encargo completo, haz una revisión de lectura y pide el ID, objetivo, persona responsable, revisor, criterios y rutas exactas. Si ya existe, resume el alcance, rama y reserva y continúa dentro de esos límites.
+
+Sin modificar archivos, confirma que cargaste las instrucciones, qué tarea y proyecto fuente hacen falta (si aplica), qué rutas necesitarías y qué debe confirmar la persona usuaria antes de empezar. Si ya existe un encargo completo, repítelo brevemente y espera confirmación de que las rutas están libres.
