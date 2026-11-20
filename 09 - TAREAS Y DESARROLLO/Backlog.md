@@ -553,7 +553,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Michael y Einell (dueños del arte); Jhonn (técnica e importación en Studio).
 - **Área:** Arte — relojes.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (para verlos en el juego falta importarlos en Studio y montar los `SurfaceAppearance`).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -567,6 +567,6 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Vistas previas con materiales y hoja de contactos actualizada.
 - [x] Sección «Materiales PBR de los relojes» en [[Pipeline-de-Arte]] con instrucciones de `SurfaceAppearance` para quien importe en Studio.
 - [x] Changelog, memoria del área 12 y propuestas en el Registro de Decisiones (materiales PBR; MacBook también para arte).
-- [ ] La fila ART-006 de ACTIVE_TASKS queda Completada.
+- [x] La fila ART-006 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** ART-003 (relojes base), DEV-014 (`AssetLibrary` acepta Models). No toca `game/src`.
