@@ -353,3 +353,33 @@ Las mascotas de la Cápsula Cósmica son exclusivas de Robux y más fuertes que 
 **Ingreso pasivo:** un reloj exhibido da el **30% de su valor de venta cada 30 segundos** (DEV-012), pagado en fracciones cada 10 s y sin perder decimales. Por ejemplo, un Reloj del millonario (5.000) da 3.000 monedas por minuto. **Vender** da el 100% al momento (lo activo); **exhibir** paga poco a poco pero sin parar (lo pasivo). El porcentaje y el periodo están en `Config` (`PLOT_INCOME_PERCENT` y `PLOT_INCOME_PERIOD_SECONDS`).
 
 > **Actualización DEV-012 (2026-11-20, Jhonn):** el ingreso pasivo pasa a **cada 30 segundos**. Un reloj exhibido da el 30% de su valor cada 30 s (60% por minuto) y recupera su valor de venta en unos 100 s. Por ejemplo, el Reloj del millonario da unas 3.000 monedas por minuto. Ajustable en `Config.PLOT_INCOME_PERIOD_SECONDS`. Propuesta DEC-014.
+
+### 15.10 HUD multiplataforma, ruleta diaria, ajustes y capacidad de carga (DEV-013)
+
+> Dirección de Jhonn (2026-11-20). Propuesta DEC-015. El HUD es funcional; el diseño visual final se hará con las herramientas de arte, y lo revisa la Cuenta B.
+
+**Distribución del HUD**
+
+- **Arriba a la izquierda:** dinero (grande), nivel y barra de XP. Debajo, el estado: velocidad (con multiplicador), zona máxima, **carga por viaje**, mochila, entrenamiento, botín encima e ingreso del plot.
+- **Arriba al centro:** objetivo del tutorial y, debajo, las notificaciones.
+- **Derecha, a media altura:** barra de botones **Mochila · Premios · Ruleta · Robux · Ajustes**. Muestran un aviso «!» cuando hay premio o giro disponible. Está a media altura para no tapar el joystick ni el botón de salto en pantallas táctiles.
+- **Escala automática** según el tamaño de pantalla (móvil, tablet, PC), más grande en consola o TV. Además hay un ajuste de tamaño: Pequeño, Normal o Grande.
+- **Atajos:**
+  - PC: B Mochila · P Premios · R Ruleta · M Robux · O Ajustes.
+  - Mando: Y Mochila · cruceta ↑ Premios, → Ruleta, ↓ Robux, ← Ajustes · B cerrar. Con un menú abierto, la cruceta navega dentro del menú.
+
+**Ruleta diaria:** un giro gratis al día (UTC) y giros extra con Robux (producto `extraSpin`). Las probabilidades se muestran en la ruleta.
+
+| Premio | Probabilidad |
+|---|---|
+| 200 monedas | 30% |
+| 500 monedas | 25% |
+| Cápsula de Latón | 20% |
+| 1.500 monedas | 12% |
+| Cápsula de Plata | 8% |
+| +1 de velocidad entrenada | 4% |
+| Cápsula de Oro | 1% |
+
+**Ajustes** (se guardan por jugador): guía del tutorial, notificaciones (los errores siempre se muestran), tamaño de la interfaz y «Ver historia» para repetir la cinemática. También muestra los controles de PC, mando y táctil.
+
+**Capacidad de carga:** se empieza llevando **1 objeto robado por viaje**. En el **Puesto de Carga**, pegado al muro frontal, se compran **3 mejoras** (500, 1.500 y 4.500 monedas) hasta un **máximo de 4**. El servidor limita el botín por viaje, y la suerte de robar 2 piezas también respeta ese límite.

@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-013: acciones `buyCarryUpgrade`, `spinWheel` y `setSetting`; `PlayerLogic.carryCapacity` limita el robo por viaje; las respuestas de acción llevan `extra`.
 - 2026-11-20 · DEV-011: módulo de cliente `Intro` (cinemática y pieza local), acción `claimLegacy` y `PlotService.shouldMoveToPlot` según `introDone`.
 - 2026-11-20 · DEV-010: `PlotService` con plots en arco (`CFrame.lookAt` hacia `WorldService.PlazaCenter`); `WorldService.WallSlots` coloca las estaciones en el muro frontal.
 - 2026-11-20 · DEV-009: `RewardService` (tiempo jugado y avisos), inventario de cápsulas y acciones `openCapsule`, `claimDaily` y `claimPlaytime`.

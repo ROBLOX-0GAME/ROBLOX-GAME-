@@ -189,6 +189,11 @@ end
 
 -- API ------------------------------------------------------------------------
 
+-- Ajustes → «Ver historia»: repite la cinemática (sin volver a dar la pieza).
+function Intro.replay()
+	task.spawn(playStory)
+end
+
 function Intro.init(request)
 	requestAction = request
 end

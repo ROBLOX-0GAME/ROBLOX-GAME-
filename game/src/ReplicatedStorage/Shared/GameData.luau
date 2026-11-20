@@ -177,7 +177,20 @@ GameData.Products = {
 		egg = "cosmic",
 	},
 }
-GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg", "cosmicCapsule" }
+GameData.Products.extraSpin = {
+	id = "extraSpin",
+	name = "Giro extra de ruleta",
+	desc = "Un giro más de la ruleta diaria (probabilidades en la ruleta)",
+	spins = 1,
+}
+GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTraining", "goldEgg", "cosmicCapsule", "extraSpin" }
+
+-- Ajustes del jugador (DEV-013). kind = "toggle" (0/1) o "choice" (índice en options).
+GameData.Settings = {
+	{ id = "guide", name = "Guía del tutorial", kind = "toggle", default = 1 },
+	{ id = "toasts", name = "Notificaciones", kind = "toggle", default = 1 },
+	{ id = "scale", name = "Tamaño de la interfaz", kind = "choice", options = { "Pequeño", "Normal", "Grande" }, default = 2 },
+}
 
 -- Cápsulas de mascota (DEV-009; antes «huevos»; los ids se conservan).
 -- cost: monedas en el Criadero (nil = no se vende por monedas)
@@ -357,8 +370,33 @@ GameData.Upgrades = {
 }
 -- Mejoras que se compran en la Tienda
 GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck" }
+-- Capacidad de carga (DEV-013): objetos robados por viaje. Se compra en el Puesto de Carga.
+GameData.Upgrades.carry = {
+	id = "carry",
+	name = "Capacidad de carga",
+	desc = "+1 objeto robado por viaje (máximo 4)",
+	maxLevel = 3,
+	baseCost = 500,
+	growth = 3,
+	step = 1,
+}
+
 -- Mejoras que se compran en el propio plot
 GameData.PlotUpgradeOrder = { "museum", "treadmill" }
+-- Mejoras que se compran en el Puesto de Carga
+GameData.CarryUpgradeOrder = { "carry" }
+
+-- Ruleta diaria (DEV-013, PROPUESTA): un giro gratis al día (UTC) y giros extra
+-- comprados con Robux. weight: probabilidad relativa (se muestra en la ruleta).
+GameData.SpinPrizes = {
+	{ label = "200 monedas", weight = 30, reward = { coins = 200 } },
+	{ label = "500 monedas", weight = 25, reward = { coins = 500 } },
+	{ label = "Cápsula de Latón", weight = 20, reward = { capsule = "brass", amount = 1 } },
+	{ label = "1.500 monedas", weight = 12, reward = { coins = 1500 } },
+	{ label = "Cápsula de Plata", weight = 8, reward = { capsule = "silver", amount = 1 } },
+	{ label = "+1 de velocidad entrenada", weight = 4, reward = { trained = 1 } },
+	{ label = "Cápsula de Oro", weight = 1, reward = { capsule = "gold", amount = 1 } },
+}
 
 -- Zonas de robo (DEV-003, PROPUESTA). Se recorren en línea recta desde la base.
 -- minSpeed: velocidad necesaria para cruzar la puerta de la zona y robar en ella

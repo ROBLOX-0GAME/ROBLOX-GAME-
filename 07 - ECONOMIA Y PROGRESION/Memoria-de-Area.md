@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-013: mejora de carga de 500 / 1.500 / 4.500 (de 1 a 4 objetos); ruleta diaria (200 monedas al 30% … Cápsula de Oro al 1%); giro extra con Robux. Propuesta DEC-015.
 - 2026-11-20 · DEV-012 (Jhonn): ingreso pasivo del 30% cada 30 s (60% del valor por minuto). Propuesta DEC-014.
 - 2026-11-20 · DEV-011: ingreso pasivo = `PLOT_INCOME_PERCENT` (0,30) del valor cada `PLOT_INCOME_PERIOD_SECONDS` (600), con fracciones acumuladas. Reloj del Legado vendido por 3.000. Propuesta DEC-013.
 - 2026-11-20 · DEV-009: racha diaria de 250 monedas a Cápsula de Oro; premios por tiempo de 5 a 120 min; Cápsula Cósmica solo Robux (+80/+100/+150%). Propuesta DEC-011.

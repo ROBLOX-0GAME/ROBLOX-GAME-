@@ -19,6 +19,7 @@ local Config = {
 	-- Jugador (bases antes de mejoras)
 	START_COINS = 0,
 	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
+	BASE_CARRY = 1, -- objetos robados que puedes llevar por viaje (DEV-013; hasta 4 con 3 mejoras)
 	BASE_WALKSPEED = 16,
 	MAX_WALKSPEED = 80, -- tope de seguridad para la física
 	BASE_JUMPHEIGHT = 7.2,
@@ -59,6 +60,7 @@ local Config = {
 	MAX_PETS = 50,
 	MAX_CAPSULES = 99, -- por tipo, en la Mochila
 	PLAYTIME_TICK_SECONDS = 30, -- cada cuánto se suma el tiempo jugado
+	MAX_EXTRA_SPINS = 50, -- giros extra de ruleta guardados (DEV-013)
 	MAX_EQUIPPED_PETS = 3,
 
 	-- Plot personal (DEV-008)
@@ -90,6 +92,7 @@ local Config = {
 		instantTraining = 0,
 		goldEgg = 0,
 		cosmicCapsule = 0,
+		extraSpin = 0,
 	},
 	-- Solo para probar en Studio: da todos los pases durante la sesión (no se guardan).
 	STUDIO_GRANT_ALL_PASSES = false,

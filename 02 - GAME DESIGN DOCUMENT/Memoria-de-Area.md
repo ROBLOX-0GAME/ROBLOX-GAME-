@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-013 (Jhonn): HUD multiplataforma, ruleta diaria, ajustes y Puesto de Carga (1 a 4 objetos por viaje). [[GDD]] §15.10, DEC-015.
 - 2026-11-20 · DEV-011 (Jhonn): cinemática del abandono a los 18 años, pieza del legado (nombres ficticios) y tutorial de 6 pasos; exhibir da el 30% del valor cada 10 min. [[GDD]] §15.9, DEC-013.
 - 2026-11-20 · DEV-010 (Jhonn): 6 jugadores y 6 plots en media luna; muro frontal con estaciones y salida a correr. [[GDD]] §15.8, DEC-012.
 - 2026-11-20 · DEV-009 (Jhonn): las mascotas salen de cápsulas (monedas, diario, tiempo jugado y Robux). La Cápsula Cósmica es solo Robux y más fuerte. [[GDD]] §15.7, DEC-011.

@@ -381,7 +381,7 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 - **Revisor:** Zadiel. **Michael y Einell revisan el HUD**, que está en la ruta de Cuenta B (`game/src/StarterPlayer/StarterPlayerScripts`).
 - **Área:** Interfaz (funcional), sistemas y economía.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de prueba en Studio).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -394,12 +394,12 @@ Las cápsulas ganadas o compradas con Robux se guardan en la Mochila y se abren 
 
 **Criterios de aceptación:**
 
-- [ ] HUD con tarjetas de dinero, nivel, velocidad y botín, y una barra de botones (Mochila, Premios, Ruleta, Robux, Ajustes) con avisos «!» cuando hay algo por reclamar.
-- [ ] Escala según la pantalla; los botones no tapan el joystick ni el botón de salto; atajos de teclado y mando.
-- [ ] Ruleta diaria validada en el servidor (una vez al día UTC, más giros extra comprados).
-- [ ] Ajustes guardados por jugador.
-- [ ] Capacidad de carga 1 → 4 (3 mejoras) en un puesto propio; el servidor limita el botín por viaje.
-- [ ] Pruebas nuevas y revisión estática sin errores.
-- [ ] La fila DEV-013 de ACTIVE_TASKS queda Completada.
+- [x] HUD con tarjetas de dinero, nivel, velocidad y botín, y una barra de botones (Mochila, Premios, Ruleta, Robux, Ajustes) con avisos «!» cuando hay algo por reclamar.
+- [x] Escala según la pantalla; los botones no tapan el joystick ni el botón de salto; atajos de teclado y mando.
+- [x] Ruleta diaria validada en el servidor (una vez al día UTC, más giros extra comprados).
+- [x] Ajustes guardados por jugador.
+- [x] Capacidad de carga 1 → 4 (3 mejoras) en un puesto propio; el servidor limita el botín por viaje.
+- [x] Pruebas nuevas y revisión estática sin errores.
+- [x] La fila DEV-013 de ACTIVE_TASKS queda Completada.
 
 **Dependencias:** DEV-012 (Completada).

@@ -49,10 +49,13 @@ local PANEL_TITLES = {
 	boss = "Cronómetro Maestro — Reparación",
 	pets = "Criadero — Cápsulas y mascotas",
 	rewards = "Premios — Diario y por tiempo",
+	spin = "Ruleta diaria",
+	settings = "Ajustes",
+	carry = "Puesto de Carga — Capacidad por viaje",
 	robux = "Tienda Robux — Pases y productos",
 }
 
-local HUD_PANELS = { backpack = true, robux = true, rewards = true }
+local HUD_PANELS = { backpack = true, robux = true, rewards = true, spin = true, settings = true }
 local state = nil
 local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
 local lastBossKey = ""
@@ -151,6 +154,9 @@ function Ui.toast(text, kind)
 	if not toastList or type(text) ~= "string" or text == "" then
 		return
 	end
+	if state and state.settings and state.settings.toasts == 0 and kind ~= "error" then
+		return
+	end
 	local item = new("TextLabel", {
 		Size = UDim2.new(1, 0, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
@@ -199,6 +205,7 @@ local function request(action, id, amount)
 		kind = "ok"
 	end
 	Ui.toast(result.message, kind)
+	return result
 end
 
 -- ---------------------------------------------------------------------------
@@ -914,6 +921,161 @@ local function renderRobux()
 	addRow("Las compras las procesa Roblox. Las cápsulas muestran sus probabilidades en el Criadero.")
 end
 
+-- Ruleta diaria (DEV-013)
+local spinLabel = nil
+local spinning = false
+local lastSpinText = nil -- se conserva aunque el menú se redibuje
+
+local function renderSpin()
+	local spin = state.spin
+	local status = "¡Giro gratis disponible!"
+	if not spin.canFree then
+		status = "Próximo giro gratis en " .. formatTime(spin.untilTomorrow)
+	end
+	addHeader(string.format("%s · giros extra: %d", status, spin.extra))
+	rowOrder += 1
+	spinLabel = label(lastSpinText or "<b>¿Qué te tocará?</b>", 26, COLORS.accent, {
+		LayoutOrder = rowOrder,
+		TextXAlignment = Enum.TextXAlignment.Center,
+	})
+	spinLabel.Parent = panelList
+	local canSpin = spin.canFree or spin.extra > 0
+	local productAvailable = (Config.PRODUCT_IDS.extraSpin or 0) ~= 0
+	local extraText = "Giro extra (próximamente)"
+	if productAvailable then
+		extraText = "Giro extra (Robux)"
+	end
+	addRow("Gira una vez al día gratis. Los giros extra se compran con Robux.", {
+		{
+			text = "Girar",
+			enabled = canSpin and not spinning,
+			onActivated = function()
+				if spinning or not canSpin then
+					return
+				end
+				spinning = true
+				-- Animación: recorre los premios y se detiene en el que decide el servidor.
+				local finished = false
+				task.spawn(function()
+					local index = 1
+					while not finished do
+						index = index % #GameData.SpinPrizes + 1
+						if spinLabel and spinLabel.Parent then
+							spinLabel.Text = "<b>" .. GameData.SpinPrizes[index].label .. "</b>"
+						end
+						task.wait(0.08)
+					end
+				end)
+				task.wait(1.2)
+				local result = request("spinWheel", "spin")
+				finished = true
+				spinning = false
+				if result and result.ok and result.extra and GameData.SpinPrizes[result.extra] then
+					lastSpinText = "<b>🎉 " .. GameData.SpinPrizes[result.extra].label .. "</b>"
+				else
+					lastSpinText = nil
+				end
+				if spinLabel and spinLabel.Parent then
+					spinLabel.Text = lastSpinText or "<b>¿Qué te tocará?</b>"
+				end
+			end,
+		},
+		{
+			text = extraText,
+			enabled = productAvailable,
+			onActivated = function()
+				request("buyProduct", "extraSpin")
+			end,
+		},
+	})
+	addHeader("Premios y probabilidades")
+	local total = 0
+	for _, prize in GameData.SpinPrizes do
+		total += prize.weight
+	end
+	for _, prize in GameData.SpinPrizes do
+		addRow(string.format("%s — <b>%.0f%%</b>", prize.label, prize.weight / total * 100))
+	end
+end
+
+-- Ajustes (DEV-013)
+local replayIntroHandler = nil
+
+local function renderSettings()
+	for _, setting in GameData.Settings do
+		local value = state.settings[setting.id]
+		if setting.kind == "toggle" then
+			local onText = "Activado"
+			if value == 0 then
+				onText = "Desactivado"
+			end
+			addRow(string.format("<b>%s</b>: %s", setting.name, onText), {
+				{
+					text = "Cambiar",
+					onActivated = function()
+						request("setSetting", setting.id, 1 - value)
+					end,
+				},
+			})
+		else
+			local buttons = {}
+			for index, option in setting.options do
+				table.insert(buttons, {
+					text = option,
+					enabled = index ~= value,
+					onActivated = function()
+						request("setSetting", setting.id, index)
+					end,
+				})
+			end
+			addRow(string.format("<b>%s</b>: %s", setting.name, setting.options[value] or "?"), buttons)
+		end
+	end
+	addRow("<b>Introducción</b>: vuelve a ver la historia del inicio.", {
+		{
+			text = "Ver historia",
+			onActivated = function()
+				Ui.closePanel()
+				if replayIntroHandler then
+					replayIntroHandler()
+				end
+			end,
+		},
+	})
+	addHeader("Controles")
+	addRow("<b>PC:</b> E interactuar · B Mochila · P Premios · R Ruleta · M Robux · O Ajustes")
+	addRow("<b>Mando:</b> X interactuar · Y Mochila · Cruceta: ↑ Premios, → Ruleta, ↓ Robux, ← Ajustes · B cerrar")
+	addRow("<b>Táctil:</b> botones a la derecha de la pantalla; toca los avisos de las estaciones para usarlas.")
+end
+
+-- Puesto de Carga (DEV-013)
+local function renderCarry()
+	addHeader(string.format("Llevas hasta %d objeto(s) robado(s) por viaje", state.carryCapacity))
+	addRow("Cada viaje a una casa puedes cargar este número de objetos antes de volver a la base.")
+	for _, upgradeId in GameData.CarryUpgradeOrder do
+		local upgrade = GameData.Upgrades[upgradeId]
+		local level = state.upgrades[upgradeId] or 0
+		local cost = state.upgradeCosts[upgradeId]
+		local buttonText = "Máximo"
+		local enabled = false
+		if cost then
+			buttonText = "Comprar " .. formatNumber(cost)
+			enabled = state.coins >= cost
+		end
+		addRow(string.format("<b>%s</b>  (nivel %d/%d)\n%s", upgrade.name, level, upgrade.maxLevel, upgrade.desc), {
+			{
+				text = buttonText,
+				enabled = enabled,
+				onActivated = function()
+					if cost then
+						request("buyCarryUpgrade", upgradeId)
+					end
+				end,
+			},
+		})
+	end
+end
+
 local function bossKey()
 	local info = bossInfo()
 	if not info then
@@ -934,6 +1096,9 @@ local RENDERERS = {
 	pets = renderPets,
 	robux = renderRobux,
 	rewards = renderRewards,
+	spin = renderSpin,
+	settings = renderSettings,
+	carry = renderCarry,
 }
 
 -- ---------------------------------------------------------------------------
@@ -999,23 +1164,64 @@ function Ui.openPanel(panelId)
 	end, false, Enum.KeyCode.ButtonB)
 end
 
-local function toggleBackpack()
-	if openPanelId == "backpack" then
+local function togglePanel(panelId)
+	if openPanelId == panelId then
 		Ui.closePanel()
 	else
-		Ui.openPanel("backpack")
+		Ui.openPanel(panelId)
 	end
 end
 
+local function toggleBackpack()
+	togglePanel("backpack")
+end
+
 -- ---------------------------------------------------------------------------
--- HUD
+-- HUD (DEV-013): tarjetas a la izquierda, objetivo arriba al centro y barra
+-- de botones a la derecha. Se escala según la pantalla y el ajuste «Tamaño».
 -- ---------------------------------------------------------------------------
+
+local SCALE_SETTING = { 0.85, 1, 1.18 }
+
+local function updateScale()
+	if not hud.scale then
+		return
+	end
+	local camera = Workspace.CurrentCamera
+	local viewport = (camera and camera.ViewportSize) or Vector2.new(1280, 720)
+	local base = math.clamp(math.min(viewport.X, viewport.Y) / 720, 0.65, 1.25)
+	-- En consola (TV, sin táctil ni teclado) se agranda para leerse a distancia.
+	if UserInputService.GamepadEnabled and not UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+		base *= 1.15
+	end
+	local choice = 2
+	if state and state.settings then
+		choice = state.settings.scale or 2
+	end
+	hud.scale.Scale = base * (SCALE_SETTING[choice] or 1)
+end
+
+local function rewardsPending()
+	if not state then
+		return false
+	end
+	if state.daily.canClaim then
+		return true
+	end
+	for index, tier in GameData.PlaytimeRewards do
+		if state.playtime.seconds >= tier.minutes * 60 and not state.playtime.claimed[tostring(index)] then
+			return true
+		end
+	end
+	return false
+end
 
 local function updateHud()
 	if not state then
 		return
 	end
-	hud.coins.Text = string.format("<b>%s</b> monedas", formatNumber(state.coins))
+	updateScale()
+	hud.coins.Text = string.format("<b>%s</b>", formatNumber(state.coins))
 	hud.level.Text = string.format("Nivel <b>%d</b>", state.level)
 	local fraction = 1
 	if state.levelNeed > 0 then
@@ -1025,17 +1231,14 @@ local function updateHud()
 		hud.xpText.Text = "Nivel máximo"
 	end
 	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
-	hud.backpack.Text = string.format(
-		"Mochila: %d/%d piezas",
+	hud.speed.Text = string.format("<b>Velocidad %.1f</b>  (×%.2f)", state.walkSpeed, state.speedMultiplier)
+	hud.zone.Text = "Zona máx.: " .. GameData.Zones[state.highestZone].name
+	hud.carry.Text = string.format(
+		"Carga %d/%d · Mochila %d/%d",
+		state.carriedCount,
+		state.carryCapacity,
 		state.partCount + state.carriedCount,
 		state.capacity
-	)
-	hud.speed.Text = string.format(
-		"Velocidad: %.1f (base %.1f × %.2f) · Zona máx.: %s",
-		state.walkSpeed,
-		state.baseSpeed,
-		state.speedMultiplier,
-		GameData.Zones[state.highestZone].name
 	)
 	if state.carriedCount > 0 then
 		hud.loot.Visible = true
@@ -1044,16 +1247,16 @@ local function updateHud()
 		hud.loot.Visible = false
 	end
 	hud.museum.Text = string.format(
-		"Plot: +%.1f monedas/min · suerte +%.1f%%",
+		"Plot +%.1f/min · suerte +%.1f%%",
 		state.museumIncomePerMinute,
 		state.plotLuck * 100
 	)
 
 	local tutorial = state.tutorial
 	if tutorial then
-		hud.objective.Visible = true
+		hud.objectiveCard.Visible = true
 		hud.objective.Text = string.format(
-			"<b>Objetivo %d/%d</b>\n%s (%d/%d)\n<font color=\"#aaaab9\">Premio: %d monedas</font>",
+			"<b>Objetivo %d/%d</b> · %s (%d/%d) · <font color=\"#aaaab9\">premio %d</font>",
 			tutorial.index,
 			tutorial.total,
 			tutorial.text,
@@ -1062,8 +1265,11 @@ local function updateHud()
 			tutorial.reward
 		)
 	else
-		hud.objective.Visible = false
+		hud.objectiveCard.Visible = false
 	end
+
+	hud.badges.rewards.Visible = rewardsPending()
+	hud.badges.spin.Visible = state.spin.canFree or state.spin.extra > 0
 end
 
 -- ---------------------------------------------------------------------------
@@ -1123,6 +1329,9 @@ end
 
 local function updateGuide()
 	local tutorial = state and state.tutorial
+	if state and state.settings and state.settings.guide == 0 then
+		tutorial = nil -- guía desactivada en Ajustes
+	end
 	local character = player.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart")
 	local target = tutorial and findGuideTarget(tutorial.guide)
@@ -1157,105 +1366,160 @@ local function updateGuide()
 	guide.beam.Enabled = horizontal.Magnitude > 18
 end
 
+local function card(name, props)
+	local frame = new("Frame", {
+		Name = name,
+		Size = UDim2.fromOffset(240, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = COLORS.panel,
+		BackgroundTransparency = 0.15,
+	}, {
+		corner(10),
+		padding(8),
+		new("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	for key, value in props or {} do
+		frame[key] = value
+	end
+	return frame
+end
+
+local RAIL_BUTTONS = {
+	{ id = "backpack", text = "Mochila", key = "B" },
+	{ id = "rewards", text = "Premios", key = "P" },
+	{ id = "spin", text = "Ruleta", key = "R" },
+	{ id = "robux", text = "Robux", key = "M" },
+	{ id = "settings", text = "Ajustes", key = "O" },
+}
+
 local function buildHud()
 	gui = new("ScreenGui", {
 		Name = "BuildAWatchUI",
 		ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	})
+	hud.scale = new("UIScale", { Scale = 1 })
+	hud.scale.Parent = gui
 
-	local stats = new("Frame", {
-		Name = "Estadisticas",
-		Position = UDim2.fromOffset(12, 12),
-		Size = UDim2.fromOffset(230, 0),
+	-- Columna izquierda: dinero y nivel; velocidad, carga y plot
+	local left = new("Frame", {
+		Name = "Izquierda",
+		Position = UDim2.fromOffset(10, 10),
+		Size = UDim2.fromOffset(240, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = COLORS.panel,
-		BackgroundTransparency = 0.15,
+		BackgroundTransparency = 1,
 	}, {
-		corner(10),
-		padding(10),
-		new("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }),
+		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
-	hud.coins = label("", 20, COLORS.accent, { LayoutOrder = 1 })
-	hud.level = label("", 16, COLORS.text, { LayoutOrder = 2 })
+
+	local money = card("Dinero", { LayoutOrder = 1 })
+	hud.coins = label("", 24, COLORS.accent, { LayoutOrder = 1 })
+	hud.level = label("", 15, COLORS.text, { LayoutOrder = 2 })
 	local xpBar = new("Frame", {
-		Size = UDim2.new(1, 0, 0, 16),
+		Size = UDim2.new(1, 0, 0, 14),
 		BackgroundColor3 = COLORS.row,
 		LayoutOrder = 3,
 	}, { corner(6) })
-	hud.xpFill = new("Frame", {
-		Size = UDim2.fromScale(0, 1),
-		BackgroundColor3 = COLORS.ok,
-	}, { corner(6) })
+	hud.xpFill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = COLORS.ok }, { corner(6) })
 	hud.xpFill.Parent = xpBar
 	hud.xpText = new("TextLabel", {
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		Font = Enum.Font.GothamMedium,
-		TextSize = 12,
+		TextSize = 11,
 		TextColor3 = COLORS.text,
 		Text = "",
 		ZIndex = 2,
 	})
 	hud.xpText.Parent = xpBar
-	hud.backpack = label("", 15, COLORS.muted, { LayoutOrder = 4 })
-	hud.museum = label("", 15, COLORS.muted, { LayoutOrder = 5 })
-	hud.speed = label("", 15, COLORS.muted, { LayoutOrder = 4 })
-	hud.loot = label("", 15, COLORS.error, { LayoutOrder = 4, Visible = false })
-	hud.objective = label("", 15, COLORS.accent, { LayoutOrder = 6, Visible = false })
-	hud.training = label("", 15, COLORS.ok, { LayoutOrder = 4, Visible = false })
-	for _, item in { hud.coins, hud.level, xpBar, hud.backpack, hud.speed, hud.training, hud.loot, hud.museum, hud.objective } do
-		item.Parent = stats
+	for _, item in { hud.coins, hud.level, xpBar } do
+		item.Parent = money
 	end
-	stats.Parent = gui
+	money.Parent = left
 
-	-- Botón de mochila (necesario en pantallas táctiles)
-	local backpackButton = button("Mochila", true, toggleBackpack)
-	backpackButton.Name = "BotonMochila"
-	backpackButton.AnchorPoint = Vector2.new(0, 0.5)
-	backpackButton.Position = UDim2.new(0, 12, 0.5, 0)
-	backpackButton.Size = UDim2.fromOffset(110, 44)
-	backpackButton.Parent = gui
+	local info = card("Estado", { LayoutOrder = 2 })
+	hud.speed = label("", 16, COLORS.text, { LayoutOrder = 1 })
+	hud.zone = label("", 13, COLORS.muted, { LayoutOrder = 2 })
+	hud.carry = label("", 13, COLORS.muted, { LayoutOrder = 3 })
+	hud.training = label("", 13, COLORS.ok, { LayoutOrder = 4, Visible = false })
+	hud.loot = label("", 13, COLORS.error, { LayoutOrder = 5, Visible = false })
+	hud.museum = label("", 13, COLORS.muted, { LayoutOrder = 6 })
+	for _, item in { hud.speed, hud.zone, hud.carry, hud.training, hud.loot, hud.museum } do
+		item.Parent = info
+	end
+	info.Parent = left
+	left.Parent = gui
 
-	local robuxButton = button("Robux", true, function()
-		if openPanelId == "robux" then
-			Ui.closePanel()
-		else
-			Ui.openPanel("robux")
-		end
-	end)
-	robuxButton.Name = "BotonRobux"
-	robuxButton.AnchorPoint = Vector2.new(0, 0.5)
-	robuxButton.Position = UDim2.new(0, 12, 0.5, 52)
-	robuxButton.Size = UDim2.fromOffset(110, 44)
-	robuxButton.Parent = gui
-
-	local rewardsButton = button("Premios", true, function()
-		if openPanelId == "rewards" then
-			Ui.closePanel()
-		else
-			Ui.openPanel("rewards")
-		end
-	end)
-	rewardsButton.Name = "BotonPremios"
-	rewardsButton.AnchorPoint = Vector2.new(0, 0.5)
-	rewardsButton.Position = UDim2.new(0, 12, 0.5, 104)
-	rewardsButton.Size = UDim2.fromOffset(110, 44)
-	rewardsButton.Parent = gui
-
-	-- Notificaciones
-	toastList = new("Frame", {
-		Name = "Notificaciones",
+	-- Arriba al centro: objetivo del tutorial y notificaciones debajo
+	local top = new("Frame", {
+		Name = "Centro",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 12),
-		Size = UDim2.new(0.9, 0, 0, 0),
+		Position = UDim2.new(0.5, 0, 0, 10),
+		Size = UDim2.new(0.5, 0, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundTransparency = 1,
 	}, {
-		new("UISizeConstraint", { MaxSize = Vector2.new(420, 4000) }),
+		new("UISizeConstraint", { MinSize = Vector2.new(260, 0), MaxSize = Vector2.new(460, 4000) }),
 		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
-	toastList.Parent = gui
+	hud.objectiveCard = card("Objetivo", { LayoutOrder = 1, Size = UDim2.new(1, 0, 0, 0), Visible = false })
+	hud.objective = label("", 14, COLORS.accent, { LayoutOrder = 1 })
+	hud.objective.Parent = hud.objectiveCard
+	hud.objectiveCard.Parent = top
+	toastList = new("Frame", {
+		Name = "Notificaciones",
+		LayoutOrder = 2,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, {
+		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	toastList.Parent = top
+	top.Parent = gui
+
+	-- Derecha: barra de botones (a media altura: no tapa el salto táctil)
+	local rail = new("Frame", {
+		Name = "Botones",
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -10, 0.42, 0),
+		Size = UDim2.fromOffset(120, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+	}, {
+		new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	local showKeys = UserInputService.KeyboardEnabled and not UserInputService.TouchEnabled
+	hud.badges = {}
+	for index, info in RAIL_BUTTONS do
+		local text = info.text
+		if showKeys then
+			text ..= " [" .. info.key .. "]"
+		end
+		local item = button(text, true, function()
+			togglePanel(info.id)
+		end)
+		item.Name = "Boton" .. info.text
+		item.LayoutOrder = index
+		item.Size = UDim2.fromOffset(120, 44)
+		local badge = new("TextLabel", {
+			Name = "Aviso",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.new(1, -4, 0, 4),
+			Size = UDim2.fromOffset(20, 20),
+			BackgroundColor3 = COLORS.error,
+			Font = Enum.Font.GothamBold,
+			Text = "!",
+			TextSize = 14,
+			TextColor3 = COLORS.text,
+			Visible = false,
+			ZIndex = 3,
+		}, { corner(10) })
+		badge.Parent = item
+		hud.badges[info.id] = badge
+		item.Parent = rail
+	end
+	rail.Parent = gui
 
 	-- Menú central
 	panel = new("Frame", {
@@ -1265,6 +1529,7 @@ local function buildHud()
 		Size = UDim2.fromScale(0.92, 0.72),
 		BackgroundColor3 = COLORS.panel,
 		Visible = false,
+		ZIndex = 5,
 	}, {
 		corner(12),
 		new("UISizeConstraint", { MaxSize = Vector2.new(580, 480) }),
@@ -1311,6 +1576,11 @@ local function buildHud()
 	panel.Parent = gui
 
 	gui.Parent = player:WaitForChild("PlayerGui")
+	local camera = Workspace.CurrentCamera
+	if camera then
+		camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+	end
+	updateScale()
 end
 
 -- Cada medio segundo: guía, puertas (por si aparecieron con streaming) y
@@ -1361,6 +1631,11 @@ end
 -- API
 -- ---------------------------------------------------------------------------
 
+-- Ajustes → «Ver historia» llama a esta función (la pone Main con Intro).
+function Ui.onReplayIntro(handler)
+	replayIntroHandler = handler
+end
+
 -- Otros módulos del cliente (Intro) piden acciones por aquí.
 function Ui.request(action, id, amount)
 	request(action, id, amount)
@@ -1375,6 +1650,32 @@ function Ui.init(remote)
 		end
 		return Enum.ContextActionResult.Sink
 	end, false, Enum.KeyCode.B, Enum.KeyCode.ButtonY)
+	-- Atajos del HUD (DEV-013). Con un menú abierto, la cruceta se deja para
+	-- navegar dentro del menú con el mando.
+	local shortcuts = {
+		[Enum.KeyCode.P] = "rewards",
+		[Enum.KeyCode.R] = "spin",
+		[Enum.KeyCode.M] = "robux",
+		[Enum.KeyCode.O] = "settings",
+		[Enum.KeyCode.DPadUp] = "rewards",
+		[Enum.KeyCode.DPadRight] = "spin",
+		[Enum.KeyCode.DPadDown] = "robux",
+		[Enum.KeyCode.DPadLeft] = "settings",
+	}
+	local keys = {}
+	for keyCode in shortcuts do
+		table.insert(keys, keyCode)
+	end
+	ContextActionService:BindAction("AtajosHud", function(_, inputState, input)
+		local isDPad = input.KeyCode.Name:sub(1, 4) == "DPad"
+		if isDPad and openPanelId then
+			return Enum.ContextActionResult.Pass
+		end
+		if inputState == Enum.UserInputState.Begin then
+			togglePanel(shortcuts[input.KeyCode])
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, table.unpack(keys))
 	watchDistance()
 end
 

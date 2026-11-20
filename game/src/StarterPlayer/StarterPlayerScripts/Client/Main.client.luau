@@ -17,6 +17,7 @@ local actionRemote = remotes:WaitForChild(Config.REMOTES.Action)
 
 Ui.init(actionRemote)
 Intro.init(Ui.request)
+Ui.onReplayIntro(Intro.replay)
 
 stateRemote.OnClientEvent:Connect(function(state)
 	Ui.setState(state)

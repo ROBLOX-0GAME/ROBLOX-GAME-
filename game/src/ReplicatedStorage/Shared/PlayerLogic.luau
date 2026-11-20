@@ -39,6 +39,8 @@ function PlayerLogic.newData()
 		introDone = false, -- vio la introducción y recogió la pieza del legado (DEV-011)
 		legacyVariant = nil, -- id de GameData.LegacyPieces que le tocó
 		incomeRemainder = 0, -- fracción de moneda pendiente del ingreso pasivo
+		spin = { lastDay = -1, extra = 0 }, -- ruleta diaria (DEV-013)
+		settings = {}, -- [settingId] = valor (DEV-013)
 		daily = { streak = 0, lastDay = -1 }, -- racha de recompensa diaria
 		playtime = { day = -1, seconds = 0, claimed = {} }, -- tiempo jugado hoy
 	}
@@ -167,6 +169,26 @@ function PlayerLogic.reconcile(data)
 	end
 	data.incomeRemainder = remainder
 
+	-- Ruleta y ajustes (DEV-013)
+	local spin = data.spin
+	if type(spin) ~= "table" then
+		spin = {}
+	end
+	data.spin = {
+		lastDay = (type(spin.lastDay) == "number" and math.floor(spin.lastDay)) or -1,
+		extra = math.min(nonNegativeInt(spin.extra), Config.MAX_EXTRA_SPINS),
+	}
+	local settings = {}
+	if type(data.settings) == "table" then
+		for _, setting in GameData.Settings do
+			local value = data.settings[setting.id]
+			if PlayerLogic.validSetting(setting, value) then
+				settings[setting.id] = value
+			end
+		end
+	end
+	data.settings = settings
+
 	-- Cápsulas y recompensas (DEV-009)
 	data.capsules = cleanCounts(data.capsules, GameData.Eggs)
 	for capsuleId, amount in data.capsules do
@@ -244,6 +266,11 @@ end
 
 function PlayerLogic.carriedCount(data)
 	return sumCounts(data.carried)
+end
+
+-- Objetos robados que se pueden llevar por viaje (DEV-013).
+function PlayerLogic.carryCapacity(data)
+	return Config.BASE_CARRY + PlayerLogic.upgradeLevel(data, "carry") * GameData.Upgrades.carry.step
 end
 
 -- Espacio libre en la mochila: capacidad - piezas guardadas - botín encima.
@@ -525,6 +552,11 @@ function PlayerLogic.buildView(data, now)
 		}
 	end
 	local canClaimDaily, dailyStreak, untilTomorrow = PlayerLogic.dailyStatus(data, now)
+	local canFreeSpin, extraSpins, spinUntil = PlayerLogic.spinStatus(data, now)
+	local settingsView = {}
+	for _, setting in GameData.Settings do
+		settingsView[setting.id] = PlayerLogic.getSetting(data, setting.id)
+	end
 	local today = PlayerLogic.dayNumber(now)
 	local playtimeSeconds, playtimeClaimed = 0, {}
 	if data.playtime.day == today then
@@ -573,6 +605,9 @@ function PlayerLogic.buildView(data, now)
 		museumIncome = PlayerLogic.museumIncome(data),
 		museumIncomePerMinute = PlayerLogic.museumIncomePerMinute(data),
 		introDone = data.introDone,
+		carryCapacity = PlayerLogic.carryCapacity(data),
+		spin = { canFree = canFreeSpin, extra = extraSpins, untilTomorrow = spinUntil },
+		settings = settingsView,
 		legacyVariant = data.legacyVariant or false,
 	}
 end
@@ -620,8 +655,15 @@ function PlayerLogic.stealPart(data, partId, bonusRoll)
 	if not part then
 		return false, "Pieza desconocida.", 0
 	end
-	local free = PlayerLogic.freeSpace(data)
-	if free < 1 then
+	local carryRoom = PlayerLogic.carryCapacity(data) - PlayerLogic.carriedCount(data)
+	if carryRoom < 1 then
+		return false, string.format(
+			"Ya llevas %d objeto(s), tu límite por viaje. Vuelve a la base o mejora tu carga en el Puesto de Carga.",
+			PlayerLogic.carriedCount(data)
+		), 0
+	end
+	local free = math.min(PlayerLogic.freeSpace(data), carryRoom)
+	if PlayerLogic.freeSpace(data) < 1 then
 		return false, "Mochila llena: vuelve a la base, fabrica relojes o vende piezas.", 0
 	end
 	local amount = 1
@@ -1052,6 +1094,10 @@ function PlayerLogic.grantProduct(data, productId, roll)
 		data.trained = math.min(Config.MAX_TRAINED, data.trained + product.trained)
 		return true, string.format("Compra recibida: velocidad entrenada %.1f/%d.", data.trained, Config.MAX_TRAINED)
 	end
+	if product.spins then
+		data.spin.extra = math.min(Config.MAX_EXTRA_SPINS, data.spin.extra + product.spins)
+		return true, string.format("Compra recibida: +%d giro(s) de ruleta.", product.spins)
+	end
 	if product.egg then
 		-- La cápsula comprada va a la Mochila: nunca se pierde aunque no quepan mascotas.
 		local _, message = PlayerLogic.giveReward(data, { capsule = product.egg, amount = 1 })
@@ -1075,6 +1121,10 @@ function PlayerLogic.giveReward(data, reward)
 		data.coins += reward.coins
 		return true, string.format("+%d monedas", reward.coins)
 	end
+	if reward.trained then
+		data.trained = math.min(Config.MAX_TRAINED, data.trained + reward.trained)
+		return true, string.format("+%d de velocidad entrenada", reward.trained)
+	end
 	local capsule = GameData.Eggs[reward.capsule]
 	if capsule then
 		local amount = reward.amount or 1
@@ -1088,6 +1138,9 @@ end
 function PlayerLogic.rewardText(reward)
 	if reward.coins then
 		return string.format("%d monedas", reward.coins)
+	end
+	if reward.trained then
+		return string.format("+%d de velocidad", reward.trained)
 	end
 	local capsule = GameData.Eggs[reward.capsule]
 	return string.format("%d× %s", reward.amount or 1, capsule and capsule.name or "?")
@@ -1192,6 +1245,85 @@ function PlayerLogic.claimLegacy(data, roll)
 	data.parts.legacy = (data.parts.legacy or 0) + 1
 	data.introDone = true
 	return true, string.format("Encontraste: %s. %s Guárdala o úsala en el Reloj del Legado.", piece.name, piece.desc)
+end
+
+-- ---------------------------------------------------------------------------
+-- Ruleta diaria y ajustes (DEV-013)
+-- ---------------------------------------------------------------------------
+
+-- Estado de la ruleta: giroGratisDisponible, girosExtra, segundosHastaMañana.
+function PlayerLogic.spinStatus(data, now)
+	local today = PlayerLogic.dayNumber(now)
+	return data.spin.lastDay ~= today, data.spin.extra, (today + 1) * 86400 - now
+end
+
+-- Premio de la ruleta según roll en [0, 1). Devuelve el índice.
+function PlayerLogic.rollSpin(roll)
+	local total = 0
+	for _, prize in GameData.SpinPrizes do
+		total += prize.weight
+	end
+	local target = roll * total
+	for index, prize in GameData.SpinPrizes do
+		target -= prize.weight
+		if target < 0 then
+			return index
+		end
+	end
+	return #GameData.SpinPrizes
+end
+
+-- Gira la ruleta: usa el giro gratis del día o, si ya se usó, un giro extra.
+-- Devuelve ok, mensaje, índiceDelPremio.
+function PlayerLogic.spinWheel(data, now, roll)
+	local free, extra = PlayerLogic.spinStatus(data, now)
+	if free then
+		data.spin.lastDay = PlayerLogic.dayNumber(now)
+	elseif extra > 0 then
+		data.spin.extra -= 1
+	else
+		return false, "Ya giraste hoy. Vuelve mañana o consigue un giro extra.", nil
+	end
+	local index = PlayerLogic.rollSpin(roll)
+	local prize = GameData.SpinPrizes[index]
+	local _, message = PlayerLogic.giveReward(data, prize.reward)
+	return true, "Ruleta: " .. message, index
+end
+
+function PlayerLogic.validSetting(setting, value)
+	if type(value) ~= "number" or value % 1 ~= 0 then
+		return false
+	end
+	if setting.kind == "toggle" then
+		return value == 0 or value == 1
+	end
+	return value >= 1 and value <= #setting.options
+end
+
+function PlayerLogic.getSetting(data, settingId)
+	for _, setting in GameData.Settings do
+		if setting.id == settingId then
+			local value = data.settings[settingId]
+			if value == nil then
+				return setting.default
+			end
+			return value
+		end
+	end
+	return nil
+end
+
+function PlayerLogic.setSetting(data, settingId, value)
+	for _, setting in GameData.Settings do
+		if setting.id == settingId then
+			if not PlayerLogic.validSetting(setting, value) then
+				return false, "Valor no válido."
+			end
+			data.settings[settingId] = value
+			return true, "Ajuste guardado."
+		end
+	end
+	return false, "Ese ajuste no existe."
 end
 
 -- Suma el ingreso pasivo del museo. Devuelve las monedas ganadas.

@@ -52,6 +52,7 @@ WorldService.WallSlots = {
 	robux = Vector3.new(-40, 0, STATION_Z),
 	pets = Vector3.new(40, 0, STATION_Z),
 	boss = Vector3.new(80, 0, STATION_Z),
+	carry = Vector3.new(115, 0, STATION_Z), -- Puesto de Carga (DEV-013)
 }
 -- Centro de la plaza: el arco de plots mira hacia aquí (PlotService)
 WorldService.PlazaCenter = Vector3.new(0, 0, -70)
@@ -72,6 +73,13 @@ local STATIONS = {
 		action = "Pases y productos",
 		position = WorldService.WallSlots.robux,
 		color = Color3.fromRGB(0, 170, 90),
+	},
+	{
+		id = "carry",
+		title = "Puesto de Carga",
+		action = "Más espacio por viaje",
+		position = WorldService.WallSlots.carry,
+		color = Color3.fromRGB(200, 160, 60),
 	},
 }
 

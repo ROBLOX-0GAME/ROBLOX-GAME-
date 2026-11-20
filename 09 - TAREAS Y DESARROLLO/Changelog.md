@@ -232,3 +232,28 @@ Reglas:
 - **2026-11-20 · DEV-012 · Paso 1 — Dirección y reserva.** Jhonn pide que el 30% se pague cada 30 s en lugar de cada 10 min. Se le avisa del efecto: el reloj recupera su valor en unos 100 s. Reserva subida en `f0409e9`. · Verificación: ejecutada.
 - **2026-11-20 · DEV-012 · Paso 2 — Cambio.** `Config.PLOT_INCOME_PERIOD_SECONDS` = 30. Se ajustan los textos del tutorial (paso 5) y del panel del plot, que ahora muestra segundos. · Verificación: revisión estática sin errores. Las pruebas usan los valores de `Config`, así que no cambian (40 bloques, pendientes en Studio).
 - **2026-11-20 · DEV-012 · Paso 3 — Cierre.** GDD §15.9 (nota de actualización), propuesta DEC-014 y memoria de Economía. La fila DEV-012 pasa a Completada. · Verificación: revisión de archivos.
+
+---
+
+## 14. DEV-013 — HUD multiplataforma, ruleta diaria, ajustes y capacidad de carga
+
+- **Responsable:** Jhonn · **Revisor:** Zadiel; Michael y Einell revisan el HUD (ruta de Cuenta B) · **Flujo:** directo en `main` (DEC-009)
+
+### Registro de pasos
+
+- **2026-11-20 · DEV-013 · Paso 1 — Dirección y reserva.** Jhonn pide ordenar el HUD para móvil, PC, consola y tablet, con dinero, velocidad, premios, ruleta diaria, Robux y ajustes, y un puesto de capacidad de carga (máximo 4 con 3 mejoras). Reserva subida en `4295a93`. · Verificación: ejecutada.
+- **2026-11-20 · DEV-013 · Paso 2 — Reglas.**
+  - `Config`: `BASE_CARRY` = 1, producto `extraSpin` y `MAX_EXTRA_SPINS`.
+  - `GameData`: mejora `carry` (3 niveles), `SpinPrizes`, `Settings` y producto de giro extra.
+  - `PlayerLogic`: `carryCapacity` (limita `stealPart`), `spinStatus` / `rollSpin` / `spinWheel`, `getSetting` / `setSetting` / `validSetting`, recompensa `trained` y datos `spin` y `settings` con reparación.
+  - · Verificación: revisión estática.
+- **2026-11-20 · DEV-013 · Paso 3 — Servidor.** Puesto de Carga en el muro (`WallSlots.carry`). `ActionService`: acciones `buyCarryUpgrade`, `spinWheel` y `setSetting`; las respuestas pueden incluir un dato extra (el premio de la ruleta). · Verificación: revisión estática.
+- **2026-11-20 · DEV-013 · Paso 4 — Interfaz.**
+  - HUD rehecho: tarjetas a la izquierda, objetivo y avisos arriba al centro, y barra de 5 botones con «!» a la derecha.
+  - `UIScale` según la pantalla, la consola y el ajuste de tamaño.
+  - Atajos de teclado y mando; la cruceta se reserva a la navegación cuando hay un menú abierto.
+  - Menús nuevos: Ruleta (con animación y resultado que se conserva al redibujar), Ajustes y Puesto de Carga.
+  - La guía y las notificaciones respetan los ajustes; «Ver historia» repite la cinemática.
+  - · Verificación: revisión estática sin errores.
+- **2026-11-20 · DEV-013 · Paso 5 — Pruebas.** 3 pruebas nuevas: carga, ruleta y ajustes. Se adaptaron las de robo de DEV-003 a la carga por viaje. Total: 43 bloques. · Verificación: pendiente en Studio.
+- **2026-11-20 · DEV-013 · Paso 6 — Cierre.** GDD §15.10, Plan de Pruebas §20, propuesta DEC-015 y memorias. La fila DEV-013 pasa a Completada. · Verificación: revisión de archivos.

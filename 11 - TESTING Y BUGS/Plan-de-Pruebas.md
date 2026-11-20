@@ -293,3 +293,15 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 |---|---|---|
 | Revisión estática | Automática | **Ejecutada 2026-11-20: 0 errores** |
 | Exhibir un Reloj de bolsillo (60): el HUD muestra +36 monedas/min y las monedas suben cada 10 s | Manual | Pendiente |
+
+## 20. Pruebas de DEV-013 (HUD, ruleta, ajustes y carga)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Revisión estática (`python game/tools/build.py`) | Automática | **Ejecutada 2026-11-20: 0 errores** |
+| 43 bloques de prueba de `PlayerLogic` | Automática | Pendiente (Play en Studio) |
+| HUD en el emulador de Studio (Test → Device: teléfono, tablet, PC): nada se superpone y los botones no tapan el salto | Manual | Pendiente |
+| Atajos B / P / R / M / O en PC y cruceta en mando | Manual | Pendiente |
+| Ruleta: «!» al entrar; girar anima y muestra el premio; segundo giro bloqueado | Manual | Pendiente |
+| Ajustes: desactivar la guía la oculta; Tamaño Grande agranda el HUD; «Ver historia» repite la cinemática | Manual | Pendiente |
+| Puesto de Carga: con carga 1 no se puede robar una segunda pieza en el mismo viaje; tras mejorar, sí | Manual | Pendiente |

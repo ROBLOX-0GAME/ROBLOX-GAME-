@@ -255,6 +255,7 @@ return function(t)
 		t.eq(PlayerLogic.depositLoot(data), 1, "guarda 1 pieza")
 		t.eq(data.parts.ruby, 1, "ahora está en la mochila")
 		t.eq(data.stats.collected, 1, "cuenta para el tutorial")
+		data.upgrades.carry = GameData.Upgrades.carry.maxLevel -- DEV-013: puede cargar varios
 		PlayerLogic.stealPart(data, "gear", 0.99)
 		PlayerLogic.stealPart(data, "gear", 0.99)
 		t.eq(PlayerLogic.loseLoot(data), 2, "atrapado: pierde 2")
@@ -265,9 +266,8 @@ return function(t)
 
 	t.test("DEV-003: la mochila limita el robo y la suerte da piezas extra", function()
 		local data = PlayerLogic.newData()
-		for _ = 1, Config.BASE_BACKPACK - 1 do
-			PlayerLogic.stealPart(data, "gear", 0.99)
-		end
+		data.parts.gear = Config.BASE_BACKPACK - 1 -- mochila casi llena (guardado)
+		data.upgrades.carry = GameData.Upgrades.carry.maxLevel
 		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
 		local _, _, amount = PlayerLogic.stealPart(data, "gear", 0)
 		t.eq(amount, 1, "con 1 espacio libre roba solo 1 aunque tenga suerte")
@@ -275,6 +275,7 @@ return function(t)
 
 		local lucky = PlayerLogic.newData()
 		lucky.upgrades.luck = 2
+		lucky.upgrades.carry = GameData.Upgrades.carry.maxLevel
 		local _, _, double = PlayerLogic.stealPart(lucky, "gear", 0)
 		t.eq(double, 2, "tirada baja con suerte = 2 piezas")
 		local _, _, single = PlayerLogic.stealPart(lucky, "gear", 0.99)
@@ -664,6 +665,70 @@ return function(t)
 		PlayerLogic.setPasses(data, { vip = true })
 		t.ok(PlayerLogic.museumIncomePerMinute(data) > before, "el VIP aumenta el ingreso pasivo")
 		t.eq(PlayerLogic.reconcile({ incomeRemainder = 5 }).incomeRemainder, 0, "repara fracciones inválidas")
+	end)
+
+	t.test("DEV-013: capacidad de carga 1 → 4 con 3 mejoras", function()
+		local data = PlayerLogic.newData()
+		t.eq(PlayerLogic.carryCapacity(data), 1, "empieza llevando 1 objeto")
+		t.ok(PlayerLogic.stealPart(data, "gear", 0.99), "roba 1")
+		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "no puede llevar 2 sin mejora")
+		data.coins = 10 ^ 7
+		local previous = 0
+		for _ = 1, GameData.Upgrades.carry.maxLevel do
+			local cost = PlayerLogic.upgradeCost(data, "carry")
+			t.ok(cost > previous, "cada mejora cuesta más")
+			previous = cost
+			t.ok(PlayerLogic.buyUpgrade(data, "carry"), "compra una mejora de carga")
+		end
+		t.eq(PlayerLogic.carryCapacity(data), 4, "máximo 4 objetos")
+		t.ok(not PlayerLogic.buyUpgrade(data, "carry"), "no pasa de 3 mejoras")
+		for _ = 1, 3 do
+			t.ok(PlayerLogic.stealPart(data, "gear", 0.99), "roba hasta llenar la carga")
+		end
+		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "carga llena")
+		t.ok(not table.find(GameData.UpgradeOrder, "carry"), "no se vende en la Tienda")
+		local lucky = PlayerLogic.newData()
+		lucky.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		local _, _, amount = PlayerLogic.stealPart(lucky, "gear", 0)
+		t.eq(amount, 1, "la suerte no supera la carga por viaje")
+	end)
+
+	t.test("DEV-013: ruleta diaria gratis y giros extra", function()
+		local data = PlayerLogic.newData()
+		local day = 20000 * 86400
+		local free, extra = PlayerLogic.spinStatus(data, day)
+		t.ok(free and extra == 0, "un giro gratis al día")
+		local ok, _, index = PlayerLogic.spinWheel(data, day, 0)
+		t.ok(ok and index == 1, "roll 0 = primer premio")
+		t.eq(data.coins, GameData.SpinPrizes[1].reward.coins, "entrega el premio")
+		t.ok(not PlayerLogic.spinWheel(data, day + 60, 0), "no gira dos veces gratis el mismo día")
+		t.ok(PlayerLogic.grantProduct(data, "extraSpin", 0), "compra un giro extra")
+		t.ok(PlayerLogic.spinWheel(data, day + 120, 0.999999), "usa el giro extra")
+		t.eq(data.spin.extra, 0, "se gasta el giro extra")
+		t.ok(PlayerLogic.spinWheel(data, day + 86400, 0.5), "al día siguiente vuelve el giro gratis")
+		t.eq(PlayerLogic.rollSpin(0.999999), #GameData.SpinPrizes, "roll alto = último premio")
+		for _, prize in GameData.SpinPrizes do
+			t.ok(prize.weight > 0 and prize.reward ~= nil, prize.label .. " es válido")
+		end
+		local trainedData = PlayerLogic.newData()
+		PlayerLogic.giveReward(trainedData, { trained = 1 })
+		t.eq(trainedData.trained, 1, "premio de velocidad entrenada")
+		t.eq(PlayerLogic.reconcile({ spin = { extra = 10 ^ 6 } }).spin.extra, Config.MAX_EXTRA_SPINS, "tope de giros extra")
+	end)
+
+	t.test("DEV-013: ajustes con valores por defecto y validados", function()
+		local data = PlayerLogic.newData()
+		t.eq(PlayerLogic.getSetting(data, "guide"), 1, "guía activada por defecto")
+		t.eq(PlayerLogic.getSetting(data, "scale"), 2, "tamaño normal por defecto")
+		t.ok(PlayerLogic.setSetting(data, "guide", 0), "desactiva la guía")
+		t.eq(PlayerLogic.buildView(data).settings.guide, 0, "la vista lo refleja")
+		t.ok(not PlayerLogic.setSetting(data, "guide", 5), "rechaza valores fuera de rango")
+		t.ok(not PlayerLogic.setSetting(data, "scale", 4), "rechaza opciones inexistentes")
+		t.ok(not PlayerLogic.setSetting(data, "falso", 1), "rechaza ajustes desconocidos")
+		local saved = PlayerLogic.reconcile({ settings = { guide = 0, scale = 9, falso = 1 } })
+		t.eq(saved.settings.guide, 0, "conserva ajustes válidos")
+		t.eq(saved.settings.scale, nil, "descarta valores inválidos")
+		t.eq(saved.settings.falso, nil, "descarta ajustes desconocidos")
 	end)
 
 	t.test("buildView es coherente", function()

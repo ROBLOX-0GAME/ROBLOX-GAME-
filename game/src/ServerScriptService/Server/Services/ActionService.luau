@@ -115,6 +115,27 @@ local ACTIONS = {
 			return ok, message
 		end,
 	},
+	-- Capacidad de carga (DEV-013): solo en el Puesto de Carga
+	buyCarryUpgrade = {
+		station = "carry",
+		run = function(data, id)
+			if not table.find(GameData.CarryUpgradeOrder, id) then
+				return false, "Esa mejora no se vende aquí."
+			end
+			return PlayerLogic.buyUpgrade(data, id)
+		end,
+	},
+	-- Ruleta diaria y ajustes (DEV-013): en cualquier lugar
+	spinWheel = {
+		run = function(data)
+			return PlayerLogic.spinWheel(data, os.time(), random:NextNumber())
+		end,
+	},
+	setSetting = {
+		run = function(data, id, value)
+			return PlayerLogic.setSetting(data, id, value)
+		end,
+	},
 	-- Pieza del legado de la introducción (DEV-011): una vez, cerca de la plaza
 	claimLegacy = {
 		affectsCharacter = true,
@@ -185,8 +206,8 @@ local function allowRequest(player)
 	return entry.count <= Config.REQUESTS_PER_SECOND
 end
 
-local function reply(ok, message)
-	return { ok = ok, message = message }
+local function reply(ok, message, extra)
+	return { ok = ok, message = message, extra = extra }
 end
 
 local function handle(player, actionName, id, amount)
@@ -214,7 +235,7 @@ local function handle(player, actionName, id, amount)
 		return reply(false, "Acércate a tu plot para hacer eso.")
 	end
 
-	local ok, message = action.run(data, id, amount or 1, player)
+	local ok, message, extra = action.run(data, id, amount or 1, player)
 	if ok then
 		DataService.replicate(player)
 		if actionName == "buyUpgrade" or action.affectsCharacter then
@@ -227,7 +248,7 @@ local function handle(player, actionName, id, amount)
 			PlotService.refresh(player)
 		end
 	end
-	return reply(ok, message)
+	return reply(ok, message, extra)
 end
 
 function ActionService.init()
