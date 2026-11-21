@@ -21,6 +21,8 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-020/DEV-021 (Jhonn): código en la place (versión 25) y probado: 50/50 pruebas; base 50, casa 40 y zona según la curva; el dueño despierta a los 15 s. La mejora de mochila pasó al puesto «Mochila y Carga». Dudas en [[Recomendaciones-Claude]].
+
 - 2026-11-20 · DEV-018 (Jhonn): IDs de los 8 iconos y los 10 sonidos de ART-013 en `Config.ICON_IDS` y `Config.SOUND_IDS`, cargados en la place (versión 17, sin publicar). Los iconos se ven en el HUD. Los sonidos no suenan por permisos (BUG-004): los audios de otra cuenta necesitan acceso concedido a la experiencia 10778093657. Lo aprendido: las imágenes de un colaborador cargan, pero los audios no sin ese permiso.
 
 - 2026-11-20 · DEV-017 (Jhonn): en Play, el servidor rechaza robar en zonas sin la velocidad mínima aunque se salte la puerta. El Cronómetro suma puntos por rareza, protege la pieza del legado, devuelve las piezas si falla y paga 12 monedas por punto más una cápsula de latón con 20 puntos o más. Sin bugs nuevos. Detalle en [[Plan-de-Pruebas]] §23.

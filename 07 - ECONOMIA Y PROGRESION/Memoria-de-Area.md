@@ -21,6 +21,8 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-021 (Jhonn): DEC-026. Todas las mejoras empiezan en 100 monedas y suben ×1,5 por nivel; máximo 8 (carga 3, de 1 a 4 objetos). Vitrinas +1 y salto +1 por nivel. **Riesgo:** con 8 niveles de caminadora no se llega a las zonas 7-12 sin el Renacer ([[Recomendaciones-Claude]] R-001).
+
 - 2026-11-20 · DEV-019 (Jhonn): DEC-023. 15 pases (6 de ventajas y 9 de entrenamiento ×2–×512, que multiplican la velocidad ganada en la caminadora, el más alto, combinado con la caminadora) y 7 productos creados en Roblox con Open Cloud; IDs en `Config` y place guardada (versión 18). Pendiente: `MAX_TRAINED` = 30 limita los pases altos (con ×512 se llega al tope en ~6 s); subirlo junto con zonas nuevas. El creador de la experiencia posee todos sus pases en Studio.
 
 - 2026-11-20 · DEV-013: mejora de carga de 500 / 1.500 / 4.500 (de 1 a 4 objetos); ruleta diaria (200 monedas al 30% … Cápsula de Oro al 1%); giro extra con Robux. Propuesta DEC-015.

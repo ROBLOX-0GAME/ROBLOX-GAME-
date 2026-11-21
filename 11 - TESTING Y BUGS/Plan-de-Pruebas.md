@@ -398,3 +398,19 @@ Play en la place oficial el 2026-11-20, después de cargar los 8 scripts de `mai
 | Brillo por rareza | Cliente | **Ejecutada:** 60 piezas con etiqueta (42 Comunes, 13 Poco comunes y 5 Raras). Junto a un rubí Raro: 1 `Highlight` sobre su modelo |
 | Rendimiento (`SceneAnalysisService`, cámara fija) | Cliente | **Ejecutada:** plaza 27.446 triángulos y 21 *draw calls*; salida 30.922 y 36; zona 5 3.962 y 12 |
 | Consola | Studio | Sin errores de scripts. Siguen `rbxassetid://203785492` y **BUG-004** (3 sonidos sin permiso), que ya existían |
+
+## 27. Pruebas de DEV-020 y DEV-021 (12 zonas, velocidad, dueño dormido, mejoras)
+
+Play en la place oficial el 2026-11-21 con el MCP de Studio, con el código de `main` cargado (los 10 scripts cambiados, comprobados con hash). Place guardada como versión 25, sin publicar.
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Pruebas automáticas (incluidas las nuevas de DEC-024 y DEC-026) | Automática (Studio) | **Ejecutada: 50 correctas, 0 fallidas** |
+| Mapa: 12 zonas, 48 casas, 12 puertas de velocidad | Manual (Studio) | **Ejecutada: correcto** |
+| Ninguna pieza supera el límite de 2.048 studs (suelo, camino y muros en tramos) | Manual (Studio) | **Ejecutada: la más grande mide 2.044** · 2.938 piezas en total |
+| Velocidad física: base 50 (barra en 50), casa 40, zona 52,5 | Manual (Studio) | **Ejecutada: correcto** |
+| Dueño dormido: despierta a los 15 s dentro de la casa y persigue | Manual (Studio) | **Ejecutada: despertó a los ~15,7 s; atrapó al jugador y perdió el botín** |
+| El botín trae monedas de la zona (zona 1: 10 por pieza) | Manual (Studio) | **Ejecutada: «Robaste 1 Resorte (Común) y 10 monedas»** |
+| Puesto «Mochila y Carga» y botón «Velocidad» en el HUD | Manual (Studio) | **Ejecutada: existen** |
+| Cinemática antes del tutorial con un jugador nuevo | Manual (Studio) | **Pendiente:** verificada por código (el tutorial espera a `introDone`); falta verla con una cuenta nueva. Ver [[Recomendaciones-Claude]] R-005 |
+| Barra deslizante con ratón, táctil y mando | Manual | Pendiente (necesita una persona) |

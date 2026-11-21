@@ -1075,7 +1075,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Economía / gameplay / pruebas.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1087,11 +1087,14 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Puesto «Mochila y Carga» con las mejoras de mochila y de carga.
-- [ ] Mejoras: 100 monedas, ×1,5 por nivel, máximo 8 (carga 3). DEC-026 en el Registro.
-- [ ] Código de DEV-020 y DEV-021 en la place (hash igual a `main`).
-- [ ] Play: pruebas automáticas en verde y recorrido real anotado en el Plan de Pruebas.
-- [ ] Place guardada (sin publicar).
+- [x] Puesto «Mochila y Carga» con las mejoras de mochila y de carga.
+- [x] Mejoras: 100 monedas, ×1,5 por nivel, máximo 8 (carga 3). DEC-026 en el Registro.
+- [x] Código de DEV-020 y DEV-021 en la place (hash igual a `main`).
+- [x] Play: pruebas automáticas en verde y recorrido real anotado en el Plan de Pruebas.
+- [x] Place guardada (sin publicar).
+
+**Resultado (2026-11-21):** código en `main` y en la place (versión 25, sin publicar). 50/50 pruebas y recorrido en [[Plan-de-Pruebas]] §27. La cinemática con un jugador nuevo queda para Jhonn (R-005). Dudas y riesgos en [[Recomendaciones-Claude]] (R-001 a R-006).
+
 
 ### ART-017 — Documento para Zadiel: piezas de reloj robables, mesa de armado y animaciones por rareza
 
