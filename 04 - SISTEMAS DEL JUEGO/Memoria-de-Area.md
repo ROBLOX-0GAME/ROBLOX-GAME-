@@ -21,6 +21,8 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-023 (Jhonn): DEC-029. `RaceService` cierra la zona cada 5 min (30 s de aviso, vuelta a la plaza, piezas renovadas con `HouseService.resetAll`, reapertura a los 10 s). Las piezas ya no reaparecen solas. `GameData.Rarities` con 12 rarezas; aviso global (`Net.announce`, remoto `Announce`) desde Mítico. Place versión 28.
+
 - 2026-11-21 · DEV-020/DEV-021 (Jhonn): código en la place (versión 25) y probado: 50/50 pruebas; base 50, casa 40 y zona según la curva; el dueño despierta a los 15 s. La mejora de mochila pasó al puesto «Mochila y Carga». Dudas en [[Recomendaciones-Claude]].
 
 - 2026-11-20 · DEV-018 (Jhonn): IDs de los 8 iconos y los 10 sonidos de ART-013 en `Config.ICON_IDS` y `Config.SOUND_IDS`, cargados en la place (versión 17, sin publicar). Los iconos se ven en el HUD. Los sonidos no suenan por permisos (BUG-004): los audios de otra cuenta necesitan acceso concedido a la experiencia 10778093657. Lo aprendido: las imágenes de un colaborador cargan, pero los audios no sin ese permiso.

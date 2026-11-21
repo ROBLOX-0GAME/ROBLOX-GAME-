@@ -1156,7 +1156,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Gameplay / interfaz.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1168,6 +1168,8 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Reinicio cada 5 min con cuenta atrás, vuelta a la base, botín guardado, piezas renovadas y reapertura.
-- [ ] 12 rarezas en `GameData` y aviso para Mítica o superior.
-- [ ] Pruebas automáticas y prueba en Play.
+- [x] Reinicio cada 5 min con cuenta atrás, vuelta a la base, botín guardado, piezas renovadas y reapertura.
+- [x] 12 rarezas en `GameData` y aviso para Mítica o superior.
+- [x] Pruebas automáticas y prueba en Play.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 28). 51/51 pruebas y ciclo completo probado ([[Plan-de-Pruebas]] §29). El aviso de piezas Míticas se probará con las piezas nuevas (DEV-025).

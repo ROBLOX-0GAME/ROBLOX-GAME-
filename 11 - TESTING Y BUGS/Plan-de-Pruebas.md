@@ -425,3 +425,17 @@ Play en la place oficial el 2026-11-21 (versión 27, sin publicar). Antes se bor
 | Jugador nuevo: la cinemática muestra los 4 textos de la historia | Manual (Studio) | **Ejecutada: correcta** (R-005 cerrada) |
 | El tutorial no aparece hasta recoger la pieza del legado y entonces empieza en el paso 1 | Manual (Studio) | **Ejecutada: `tutorial=false` durante la introducción; tras recoger la pieza, paso 1/6** |
 | Plot con 4 vitrinas y mochila de 60 (+20 del pase de creador = 80) | Manual (Studio) | **Ejecutada: correcto** |
+
+## 29. Pruebas de DEV-023 (reinicio de la zona cada 5 min, rarezas y avisos)
+
+Play en la place oficial el 2026-11-21 (versión 28, sin publicar).
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Pruebas automáticas (incluida la de las 12 rarezas) | Automática (Studio) | **Ejecutada: 51 correctas, 0 fallidas** |
+| 144 piezas en las 48 casas al empezar | Manual (Studio) | **Ejecutada: correcto** |
+| Aviso y cuenta atrás 30 s antes del cierre | Manual (Studio) | **Ejecutada: aviso a los 266 s y cuenta atrás «La zona se cierra en 29 s»** |
+| Al cerrar: el jugador que estaba en la zona vuelve a la plaza y las puertas quedan sólidas | Manual (Studio) | **Ejecutada: de z = 300 a z = −32; puerta sólida** |
+| Reapertura a los 10 s con piezas nuevas | Manual (Studio) | **Ejecutada: cerrada a los 297 s, reabierta a los 307 s, 144 piezas** |
+| Aviso de pieza Mítica o superior | Manual | **Pendiente:** con las piezas actuales (hasta Legendario) no salta; se probará con las piezas nuevas (DEV-025) |
+| El botín se guarda al volver por el cierre | Manual | Pendiente de probar con botín encima (por código: al llegar a la base se guarda, como siempre) |
