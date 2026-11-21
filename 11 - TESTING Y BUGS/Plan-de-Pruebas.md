@@ -362,12 +362,13 @@ Play en la place oficial (versión 17) el 2026-11-20 con los IDs de ART-013 en `
 |---|---|---|
 | `Config` de la place igual a `main` | Automática (hash) | **Ejecutada: idéntico** |
 | Iconos del HUD cargan | Manual (Studio) | **Ejecutada: 6 imágenes del HUD con `IsLoaded = true`**; captura con Mochila, Premios, Ruleta, Robux y Ajustes visibles |
-| Sonidos suenan | Manual (Studio) | **Falla: BUG-004.** Los 10 dan «User is not authorized to access Asset» / «La experiencia no tiene permiso de acceso» |
+| Sonidos suenan | Manual (Studio) | ~~**Falla: BUG-004.**~~ **Resuelto en ART-016**; 10/10 *Success* (DOC-001, 2026-11-21) |
 
 ### BUG-004 — Los sonidos no tienen permiso en la experiencia
 
 - **Gravedad:** media (el juego funciona, pero sin sonido). **Detectado:** DEV-018.
 - **Causa:** los 10 audios los subió la cuenta zadiel799 y la experiencia (universo 10778093657) es de Lubu465. Los audios necesitan permiso explícito para usarse en una experiencia de otro dueño (las imágenes no).
+- **Estado: RESUELTO.** Zadiel dio permiso de uso a los 10 audios con Open Cloud en ART-016 (10/10). Comprobado de nuevo el 2026-11-21 (DOC-001): 10/10 *Success* en Play. Para audios nuevos, ver [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §11.2.
 - **Arreglo (Zadiel, dueño de los audios):** Creator Dashboard → cada audio → *Permissions* → dar acceso a la experiencia 10778093657, o hacer clic en «compartir el acceso» en el Output de Studio con su cuenta. Otra opción: que Jhonn vuelva a subirlos con su cuenta y se cambien los IDs. Después, comprobar en Play.
 
 ## 25. Pruebas de DEV-019 (pases y productos de Robux)
@@ -508,4 +509,4 @@ Play en la place oficial el 2026-11-21 (versión 35, sin publicar), con el jugad
 | Etiqueta [VIP] en el chat | **Correcto (mensaje):** el prefijo llega como «[VIP]» dorado delante del nombre. La ventana del chat no sale en las capturas: falta verlo en pantalla |
 | Ganancia offline | **Correcto:** reloj exhibido (45/min × 3,2 de multiplicador), ~1,9 min fuera → «Mientras no estabas, tu plot ganó 136 monedas (0 h 1 min)», el 50 % esperado |
 | Reinicio de los datos de Jhonn | **Hecho:** clave `player_2311077683` borrada; al entrar, 0 monedas, nivel 1, sin piezas y la cinemática pendiente. Se volvió a borrar tras la prueba |
-| BUG-004 (sonidos) | **Sigue abierto:** solo lo puede arreglar Zadiel, dueño de los audios (decisión de Jhonn) |
+| BUG-004 (sonidos) | **Resuelto** (lo hizo Zadiel en ART-016). Comprobado en DOC-001: 10/10 sonidos *Success* con `PreloadAsync` en Play |

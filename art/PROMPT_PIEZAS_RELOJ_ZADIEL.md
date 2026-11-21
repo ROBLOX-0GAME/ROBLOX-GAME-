@@ -1,12 +1,14 @@
 # Prompt — Piezas de reloj robables, mesa de armado y animaciones por rareza (Zadiel)
 
+> **Actualizado en DOC-001 (2026-11-21):** §11 con **la lista completa de tareas de Zadiel**, en orden, incluidos los permisos de sonido automáticos para su Claude. Ver §11 antes que nada.
+>
 > **Actualizado en DEV-026 (2026-11-21):** 12 relojes de lujo, uno por zona, con el material de cada zona (DEC-031, §4.1).
 >
 > **Actualizado en DEV-025 (2026-11-21)** con las respuestas de Jhonn (DEC-028): 12 rarezas, 16 relojes, calibre solo visual, visuales parecidas a los originales con nombres inventados, y el código ya programado (§8).
 >
-> Creado en **ART-017** (2026-11-21) por Claude en la PC de Jhonn, a partir de lo que pidió Jhonn. **Es un documento para revisar antes de ejecutarlo:** Jhonn puede cambiar cualquier cosa. Las dudas abiertas están en [[Recomendaciones-Claude]] (R-007 a R-010). Lo marcado como **Propuesta** necesita el visto bueno de Zadiel y Jhonn (DEC-020).
+> Creado en **ART-017** (2026-11-21) por Claude en la PC de Jhonn, a partir de lo que pidió Jhonn. **Es un documento para revisar antes de ejecutarlo:** Jhonn puede cambiar cualquier cosa. Las dudas R-007 a R-010 de [[Recomendaciones-Claude]] ya están respondidas por Jhonn y aplicadas (DEC-028 y DEC-031). Lo marcado como **Propuesta** necesita el visto bueno de Zadiel y Jhonn (DEC-020).
 >
-> **Para usarlo:** copia este archivo completo en Claude Code (en la raíz del repositorio) y pídele que siga la sección 9.
+> **Para usarlo:** abre Claude Code en la raíz del repositorio y pídele: «Lee `art/PROMPT_PIEZAS_RELOJ_ZADIEL.md` y haz las tareas de la §11 en orden». La §11 remite a las demás secciones cuando hace falta.
 
 ---
 
@@ -27,14 +29,14 @@
 
 ## 1. Antes de empezar (reglas del equipo)
 
-1. Haz `git pull` y lee: `.claude/CLAUDE.md`, `AGENTS.md`, `ACTIVE_TASKS.md`, [[Backlog]], [[Registro-de-Decisiones]] (DEC-016, 018, 024, 025 y 026), [[Pipeline-de-Arte]] (§1 a §5), [[UI-UX]] §12 y [[Recomendaciones-Claude]].
+1. Haz `git pull` y lee: `.claude/CLAUDE.md`, `AGENTS.md`, `ACTIVE_TASKS.md`, [[Backlog]], [[Registro-de-Decisiones]] (DEC-016, 018, 024, 025, 026 y **028 a 031**), [[Pipeline-de-Arte]] (§1 a §5), [[UI-UX]] §12 y [[Recomendaciones-Claude]].
 2. Flujo DEC-009:
    - Registra tu tarea (por ejemplo **ART-018**) en el Backlog y reserva solo tus rutas en `ACTIVE_TASKS.md`.
    - Haz commit y push de la reserva antes de editar.
    - Haz `git pull` antes de cada push. Nunca uses force push.
-3. **No cambies reglas del juego en `game/src`**: valores, piezas, recetas, guardado o servidor. Eso será una tarea DEV de Jhonn (ver §8). Tú entregas modelos, texturas, efectos y la especificación visual. Los efectos que solo se ven en el cliente (`Client/Vfx.luau`, que hiciste en ART-015) sí puedes prepararlos, reservando esa ruta.
-4. Lo nuevo de estilo va como **Propuesta** al Registro (siguiente número libre, por ejemplo DEC-027).
-5. **Permisos de audio (lección de BUG-004):** los sonidos subidos con tu cuenta necesitan permiso de uso para la experiencia **10778093657** (Open Cloud `asset-permissions`). Las imágenes y los modelos no lo necesitan.
+3. **No cambies reglas del juego en `game/src`**: valores, piezas, recetas, guardado o servidor. Eso será una tarea DEV de Jhonn (ver §8). Tú entregas modelos, texturas, efectos y la especificación visual. Lo que solo se ve en el cliente sí puedes tocarlo, reservando esas rutas: `Client/Vfx.luau` (ART-015) y la interfaz de [[UI-UX]] §12 (ART-016, §11.3).
+4. Lo nuevo de estilo va como **Propuesta** al Registro (siguiente número libre: **DEC-032**; mira antes el Registro por si alguien lo usó).
+5. **Permisos de audio (lección de BUG-004):** los sonidos subidos con tu cuenta necesitan permiso de uso para la experiencia **10778093657**. Las imágenes y los modelos no lo necesitan. Tu Claude lo hace solo, con el procedimiento de §11.2.
 
 ---
 
@@ -228,7 +230,7 @@ Con **piezas de otro reloj**, la animación usa el nivel de la rareza **final** 
 - Monta los efectos como **plantillas** dentro de `ReplicatedStorage/Assets/Vfx`:
   - `vfx_armar_<rareza>`: un `Model` con `Attachment` + `ParticleEmitter` (flipbooks de Krita, `FlipbookLayout` 4×4 u 8×8), `Beam` y `PointLight`, todos con `Enabled = false`. El código los clona y los dispara con `:Emit()`.
   - `vfx_reloj_perfecto`: confeti y destello final.
-- Sonidos (Audacity): `sfx_encajar` (clic, < 0,3 s), `sfx_armar_<rareza>` (7, de 1 a 3 s, que suban de intensidad) y `sfx_reloj_perfecto`. Recuerda el permiso de audio (§1.5).
+- Sonidos (Audacity): `sfx_encajar` (clic, < 0,3 s), `sfx_armar_<rareza>` (**12**, uno por rareza, de 1 a 3 s, que suban de intensidad) y `sfx_reloj_perfecto`. Tu Claude les da el permiso de audio al subirlos (§11.2).
 
 ### 7.3 Contrato con el código (para que Jhonn lo programe sin adivinar)
 
@@ -237,21 +239,22 @@ Cada asset en `ReplicatedStorage/Assets` con estos **nombres y atributos**:
 | Asset | Nombre | Atributos | Hijos obligatorios |
 |---|---|---|---|
 | Pieza suelta | `pz_<reloj>_<clase>` (ej.: `pz_chrono_dial`) | `Clase` = Caja/Calibre/Esfera/Manecillas · `Reloj` = id · `Rareza` | `PrimaryPart` en el centro |
-| Calibre | `pz_<reloj>_calibre` | además `TipoCalibre` = Cuarzo/Mecanico/Automatico | `Rotor` y `Engranaje*` si gira |
-| Reloj armado | `rlj_<reloj>_armado` | `Reloj`, `Rareza` | Mallas `Caja`, `Calibre`, `Esfera`, `Manecillas` · `Attachment` `Exp_Caja`, `Exp_Calibre`, `Exp_Esfera`, `Exp_Manecillas` (posición explosionada) |
+| Calibre | `pz_<reloj>_movement` (ej.: `pz_astronomia_movement`) | además `TipoCalibre` = Cuarzo/Mecanico/Automatico | `Rotor` y `Engranaje*` si gira |
+| Reloj armado | El nombre de `AssetLibrary.WATCH_ASSETS` (ej.: `mdl_reloj_bolsillo`, `mdl_reloj_astronomia`) | `Reloj`, `Rareza` | Mallas `Caja`, `Calibre`, `Esfera`, `Manecillas` · `Attachment` `Exp_Caja`, `Exp_Calibre`, `Exp_Esfera`, `Exp_Manecillas` (posición explosionada) |
 | Efecto | `vfx_armar_<rareza>` · `vfx_reloj_perfecto` | — | Emisores desactivados |
 
 Los ids de reloj son los de la tabla de §4 (`GameData.Watches`). La clase va en inglés en el nombre, como en el código: `case`, `movement`, `dial` y `hands` (ej.: `pz_chrono_dial`). El código ya busca `pz_<reloj>_<clase>` con `AssetLibrary.dress`. Mientras no exista, la pieza se ve con una forma provisional (cilindro o barra) del color de su rareza. Los relojes armados usan los nombres `mdl_reloj_*` de `AssetLibrary.WATCH_ASSETS`.
 
 ---
 
-## 8. Lo que ya está programado (DEV-025, 2026-11-21)
+## 8. Lo que ya está programado (DEV-025 a DEV-027, 2026-11-21)
 
-**Esto no lo haces tú. Ya está en la place (v34) y en `game/src`:**
+**Esto no lo haces tú. Ya está en la place (v35) y en `game/src`, con 53/53 pruebas:**
 - Piezas `reloj.clase.rareza` en el inventario y en el botín de las casas; la tirada depende de la zona, con el reloj de lujo exclusivo de cada zona (DEC-031).
 - Panel de la mesa con los 4 marcos en orden, la bandeja con los 3 modos de orden y la vista previa (§6). Es un panel de texto provisional: tu diseño y tus iconos lo sustituirán.
 - Penalización por pieza ajena, valor, ingreso pasivo y suerte.
 - Avisos desde Mítico.
+- La mesa ya no se cierra sola (DEV-026) y el aviso de robo muestra las monedas que se cobrarán (DEV-027).
 - Falta en código (cuando entregues el arte): disparar las animaciones de §7 con las plantillas de §7.3, solo en el cliente.
 
 ---
@@ -263,19 +266,120 @@ Los ids de reloj son los de la tabla de §4 (`GameData.Watches`). La clase va en
 3. **Modelos (Blender):** primero los 6 generales y luego los 12 de lujo, de la zona 1 a la 12 (4 piezas cada uno, más el modelo armado). Respeta §5.
 4. **Iconos (Krita):** los de §6.3.
 5. **Efectos (Krita + Studio):** flipbooks y Beams; plantillas `vfx_*` en `ReplicatedStorage/Assets/Vfx`.
-6. **Sonidos (Audacity):** los de §7.2, con su permiso de audio.
+6. **Sonidos (Audacity):** los de §7.2. Al subirlos, tu Claude les da permiso y lo comprueba (§11.2).
 7. **Subir y montar con el MCP** (ART-008/013): IDs en `art/texturas/ids_roblox.md`.
 8. **Revisar el renderizado:** `rbx-scene-analysis` (triángulos y memoria) y una partida en el simulador de móvil (`rbx-device-simulator-lua`).
 9. **Capturas** a `art/export/vistas/` y nota en [[Pipeline-de-Arte]].
-10. **Registro:** DEC-027 (Propuesta) con el estilo de las piezas y los niveles de épica.
+10. **Registro:** DEC-032 (Propuesta) con el estilo de las piezas y los niveles de épica.
 11. **Cierre:** Backlog, Memoria del área 12, fila Completada y crear la tarea DEV para Jhonn con el contrato de §7.3.
 
 ## 10. Criterios de aceptación
 
 - [ ] Las 4 clases se distinguen a 20 studs y en móvil; los 3 tipos de calibre se reconocen.
 - [ ] 12 rarezas con los colores y materiales de §3; relojes parecidos a sus originales, sin logos ni nombres de marca.
-- [ ] 6 relojes actuales con sus 4 piezas y su modelo armado dentro del presupuesto de §5.
+- [ ] Los 18 relojes (6 generales y 12 de lujo) con sus 4 piezas y su modelo armado dentro del presupuesto de §5.
 - [ ] Plantillas de efectos por rareza y de «Reloj perfecto», más épicas a mayor rareza.
-- [ ] Iconos de §6.3 y sonidos de §7.2 subidos, con permisos.
+- [ ] Iconos de §6.3 y sonidos de §7.2 subidos; los sonidos con permiso para 10778093657 y 100 % *Success* en la comprobación de §11.2.
 - [ ] Contrato de nombres y atributos de §7.3 cumplido.
 - [ ] Revisión de renderizado hecha y anotada.
+
+---
+
+## 11. Lista completa de tareas de Zadiel (en orden)
+
+> Añadida en DOC-001 (2026-11-21) a pedido de Jhonn. Es **todo** lo que queda de tu parte. Haz cada bloque como una tarea propia (ID en el Backlog, reserva de rutas, commit y push), con el flujo de §1. Si algo no está claro, pregunta a Jhonn antes de decidir por tu cuenta.
+
+### 11.1 Revisar lo que Jhonn decidió e hizo en tu ausencia (primero)
+
+Eres el revisor de estas tareas. Lee cada una, prueba en Play lo que te toque y deja tu visto bueno o tus cambios en el Backlog y el Registro:
+
+| Qué | Dónde | Qué mirar |
+|---|---|---|
+| DEC-028 · Piezas, 12 rarezas y pieza ajena | Registro | ¿Te encaja para el arte? |
+| DEC-029 · Piezas compartidas, reinicio cada 5 min y avisos | Registro | El aviso arriba de la pantalla (colores por rareza, §3) |
+| DEC-030 · VIP, Dinero ×2 y ganancia offline | Registro | Etiqueta [VIP] dorada en el chat |
+| DEC-031 · 12 relojes de lujo, uno por zona, con su material | Registro y §4.1 | Que la lista y los materiales se puedan modelar con el presupuesto de §5 |
+| DEV-025, DEV-026, DEV-027 y DOC-001 | Backlog y [[Plan-de-Pruebas]] §31–§33 | La mesa de armado provisional (tu diseño la sustituirá) |
+
+**Cómo aprobar:** en el Registro, cambia «Decidida por Jhonn» por «Aprobada por Jhonn y Zadiel (fecha)». Si no estás de acuerdo, no cambies nada del juego: escríbelo en el Backlog y avisa a Jhonn.
+
+### 11.2 Sonidos: permisos automáticos para tu Claude (BUG-004)
+
+**Estado:** BUG-004 ya está **resuelto**: lo hiciste en ART-016 (10/10 permisos con Open Cloud). Jhonn lo volvió a comprobar el 2026-11-21: **10/10 sonidos cargan** (`PreloadAsync` *Success*). **No hay que repetirlo** con esos 10.
+
+**Lo que queda:** cada sonido **nuevo** que subas (los de §7.2: `sfx_encajar`, 12 `sfx_armar_<rareza>` y `sfx_reloj_perfecto`) necesita su permiso. **Claude, hazlo tú solo** al subir cada lote, sin esperar a que Zadiel lo pida:
+
+1. **Comprueba el permiso del MCP** con una llamada inofensiva:
+   `open_cloud_invoke(method: "GET", endpoint: "/cloud/v2/universes/10778093657", scopes: ["asset-permissions:write"])`.
+   Si dice que el permiso no está activado, pide a Zadiel que lo active: *Assistant Settings → MCP Permissions → `asset-permissions:write`*.
+2. **Da el permiso** a todos los audios nuevos en una sola llamada:
+   ```
+   open_cloud_invoke(
+     method: "PATCH",
+     endpoint: "/asset-permissions-api/v1/assets/permissions",
+     scopes: ["asset-permissions:write"],
+     body: {
+       "subjectType": "Universe",
+       "subjectId": "10778093657",
+       "action": "Use",
+       "requests": [ { "assetId": <ID1> }, { "assetId": <ID2> } ]
+     }
+   )
+   ```
+   La respuesta trae `successAssetIds` y `errors`. Cada ID debe estar en `successAssetIds`. `CannotManageAsset` significa que el audio no es de la cuenta con la que está abierto Studio.
+3. **Comprueba en Play** (cliente) que cargan:
+   ```lua
+   local CP = game:GetService("ContentProvider")
+   local ids = { <ID1>, <ID2> } -- los audios nuevos
+   local sounds, ok = {}, 0
+   for _, id in ids do
+   	local s = Instance.new("Sound")
+   	s.SoundId = "rbxassetid://" .. id
+   	s.Parent = workspace
+   	table.insert(sounds, s)
+   end
+   CP:PreloadAsync(sounds, function(_, status)
+   	if status == Enum.AssetFetchStatus.Success then ok += 1 end
+   end)
+   for _, s in sounds do s:Destroy() end
+   return ok .. "/" .. #ids .. " Success"
+   ```
+   Debe dar el 100 %. Anota el resultado en el [[Plan-de-Pruebas]] y los IDs en `art/texturas/ids_roblox.md`.
+4. **Plan B** (solo si la llamada da 403 aunque la comprobación del paso 1 pase): el endpoint no aceptó el token del MCP. Zadiel lo hace a mano en 2 min: *Creator Dashboard → Development Items → Audio → cada audio → Permissions → añadir la experiencia 10778093657*. Después, el paso 3.
+
+**Nunca** pongas claves de API ni cookies en archivos ni en el chat.
+
+### 11.3 Terminar ART-016: lo que falta de [[UI-UX]] §12
+
+`game/src` ya está libre (DEV-020 a DEV-027 cerradas). Reserva **solo** los archivos que toques (lo normal: `game/src/StarterPlayer/StarterPlayerScripts/Client/Ui.luau` y `Vfx.luau`; si hace falta, `PlotService.luau` para los carteles). Son cosas del cliente, sin cambiar reglas del juego:
+
+1. Carteles de vitrina y de mascota: que cada jugador vea solo los suyos.
+2. Rótulo de la puerta de zona: solo si al jugador le falta velocidad.
+3. Aro de rareza en las vitrinas, con el color de §3.
+4. Ajuste «Efectos sí/no» en Ajustes [O]. Con efectos desactivados, solo se ve el destello final (§5).
+5. Panel de velocidad plegable.
+
+Después: Play con las pruebas automáticas en verde (**53/53** como mínimo), capturas y la fila de ART-016 como Completada. El criterio «marcar BUG-004 en el Plan de Pruebas» ya está hecho (DOC-001).
+
+### 11.4 ART-018: arte de las piezas y de los 18 relojes (la tarea grande)
+
+Sigue §2 a §7 y los pasos de §9, con los criterios de §10:
+
+1. Bocetos de los 18 relojes (§4.1 y §4.2). **Enséñaselos a Jhonn antes de modelar.**
+2. Modelos: 18 relojes × 4 piezas, más el modelo armado de cada uno. Empieza por el **Omigo Lunamaster** (zona 1) y un general, para validar el estilo antes de hacer el resto.
+3. Iconos de §6.3, efectos `vfx_armar_<rareza>` (12) y `vfx_reloj_perfecto`, y sonidos de §7.2 (con §11.2).
+4. Nombres y atributos exactos de §7.3. El código ya busca `pz_<reloj>_<clase>` con las clases en inglés (`case`, `movement`, `dial` y `hands`) y viste las vitrinas con `AssetLibrary.WATCH_ASSETS`.
+5. Renderizado (§5): `rbx-scene-analysis` y el simulador de móvil. Anota triángulos y memoria.
+6. Al cerrar, crea la tarea **DEV** para Jhonn: disparar las animaciones de §7 con tus plantillas, solo en el cliente.
+
+### 11.5 Propuestas de UX que puedes llevar (decide Jhonn)
+
+- **Avisos de piezas raras:** al renovar la zona pueden llegar 4 o 5 a la vez ([[Plan-de-Pruebas]] §33). Propón cómo mostrarlos: en cola, solo el de mayor rareza o agrupados. Va como Propuesta al Registro y Jhonn decide.
+- **Mesa de armado:** el panel actual es de texto. Tu diseño de §6 (marcos con icono, bandeja visual y vista previa) lo sustituye. Coordina con Jhonn qué parte programa cada uno.
+
+### 11.6 Lo que NO te toca
+
+- Las pruebas manuales de jugabilidad de la lista de Jhonn (las hace él).
+- Publicar el juego (lo decide Jhonn).
+- El Renacer (aparcado por Jhonn).
+- Cambiar valores, rarezas, zonas o economía en `game/src` (tarea DEV de Jhonn).

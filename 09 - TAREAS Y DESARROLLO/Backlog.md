@@ -1283,7 +1283,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 **Criterios de aceptación:**
 
 - [x] Textos del botín correctos y en verde.
-- [x] BUG-004: lo arregla Zadiel, dueño de los audios (decisión de Jhonn); los pasos están en [[Plan-de-Pruebas]].
+- [x] BUG-004: ya estaba resuelto por Zadiel en ART-016 (corregido en DOC-001: 10/10 *Success*).
 - [x] Recomendaciones al día.
 - [x] Resultados reales en el Plan de Pruebas.
 - [x] Datos de Jhonn reiniciados.
@@ -1298,7 +1298,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Documentación / arte / audio.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de revisión de Zadiel).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1306,6 +1306,8 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Lista de tareas de Zadiel completa y ordenada en el prompt.
-- [ ] Permisos de audios nuevos automatizados para su Claude, con plan B.
-- [ ] BUG-004 marcado como resuelto en el Plan de Pruebas.
+- [x] Lista de tareas de Zadiel completa y ordenada en el prompt.
+- [x] Permisos de audios nuevos automatizados para su Claude, con plan B.
+- [x] BUG-004 marcado como resuelto en el Plan de Pruebas.
+
+**Resultado (2026-11-21):** [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §11 con la lista completa de Zadiel: revisión de DEC-028 a DEC-031, permisos automáticos de audios nuevos para su Claude (Open Cloud `asset-permissions` + comprobación con `PreloadAsync` y plan B), lo que falta de ART-016, ART-018 y propuestas de UX. Se corrigieron en el prompt los nombres de §7.3 (`pz_<reloj>_movement`, `mdl_reloj_*`), los 12 sonidos por rareza, DEC-032 como siguiente número libre y los 18 relojes de §10. BUG-004 marcado como resuelto en el [[Plan-de-Pruebas]] (10/10 *Success*). **Corrección:** en DEV-027 se dijo por error que BUG-004 seguía abierto.
