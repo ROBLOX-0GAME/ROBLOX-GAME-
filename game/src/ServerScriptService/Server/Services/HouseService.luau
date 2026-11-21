@@ -418,7 +418,7 @@ local function chase(house, player)
 	if result == "caught" and data then
 		local lost = PlayerLogic.loseLoot(data)
 		if lost > 0 then
-			Net.notify(player, string.format("¡%s te atrapó! Perdiste %d piezas robadas.", house.ownerName, lost), "error")
+			Net.notify(player, string.format("¡%s te atrapó! Perdiste %s del botín.", house.ownerName, PlayerLogic.piecesText(lost)), "error")
 		else
 			Net.notify(player, string.format("¡%s te atrapó y te echó de su casa!", house.ownerName), "error")
 		end
@@ -487,11 +487,11 @@ local function tick()
 				if coins > 0 then
 					Net.notify(
 						player,
-						string.format("Botín guardado: +%d piezas y +%s monedas.", saved, PlayerLogic.formatBig(coins)),
+						string.format("Botín guardado: +%s y +%s monedas.", PlayerLogic.piecesText(saved), PlayerLogic.formatBig(coins)),
 						"ok"
 					)
 				else
-					Net.notify(player, string.format("Botín guardado: +%d piezas en tu mochila.", saved), "ok")
+					Net.notify(player, string.format("Botín guardado: +%s en tu mochila.", PlayerLogic.piecesText(saved)), "ok")
 				end
 				Net.sound(player, "guardar_botin")
 				DataService.replicate(player)
@@ -511,7 +511,7 @@ local function watchDeaths(player)
 			local data = DataService.get(player)
 			if data and PlayerLogic.carriedCount(data) > 0 then
 				local lost = PlayerLogic.loseLoot(data)
-				Net.notify(player, string.format("Perdiste %d piezas robadas al caer.", lost), "error")
+				Net.notify(player, string.format("Perdiste %s del botín al caer.", PlayerLogic.piecesText(lost)), "error")
 				DataService.replicate(player)
 			end
 		end)

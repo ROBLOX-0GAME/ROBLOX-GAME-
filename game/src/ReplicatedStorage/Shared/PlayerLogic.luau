@@ -1065,7 +1065,7 @@ function PlayerLogic.stealPart(data, partId, bonusRoll, lootCoins)
 			amount,
 			part.name,
 			part.rarity,
-			PlayerLogic.formatBig(coins)
+			PlayerLogic.formatBig(math.floor(coins * PlayerLogic.coinMultiplier(data))) -- DEV-027: lo que se cobrará al guardar
 		)
 	end
 	return true, message, amount
@@ -1102,10 +1102,18 @@ function PlayerLogic.stealPiece(data, key, bonusRoll, lootCoins)
 			amount,
 			info.name,
 			info.rarityName,
-			PlayerLogic.formatBig(coins)
+			PlayerLogic.formatBig(math.floor(coins * PlayerLogic.coinMultiplier(data))) -- DEV-027: lo que se cobrará al guardar
 		)
 	end
 	return true, message, amount
+end
+
+-- «1 pieza» / «N piezas» para los avisos (DEV-027).
+function PlayerLogic.piecesText(amount)
+	if amount == 1 then
+		return "1 pieza"
+	end
+	return string.format("%d piezas", amount)
 end
 
 -- Guarda el botín al llegar a la base. Devuelve las piezas guardadas y las

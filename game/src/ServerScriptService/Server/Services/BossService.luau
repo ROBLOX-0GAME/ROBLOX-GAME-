@@ -117,7 +117,7 @@ local function finish(success)
 				end
 			else
 				local refunded = PlayerLogic.refundParts(data, entry.parts)
-				Net.notify(player, string.format("No se logró repararlo. Te devolvimos %d piezas.", refunded), "error")
+				Net.notify(player, string.format("No se logró repararlo. Te devolvimos %s.", PlayerLogic.piecesText(refunded)), "error")
 			end
 			DataService.replicate(player)
 		end

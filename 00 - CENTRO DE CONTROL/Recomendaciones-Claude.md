@@ -27,7 +27,7 @@ Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como
 | **Rarezas** | **12**: Común (gris), Poco común (verde), Raro (azul), Épico (morado), Legendario (naranja/oro), Mítico (rojo), Divino (amarillo, contorno blanco), Celestial (cian, contorno blanco), Cósmico (morado-rosa), Eterno (blanco, contorno dorado), Ancestral (verde jade, contorno negro), Atemporal (arcoíris animado). |
 | **R-008** Pieza ajena | **−1 rareza y −25 %** de valor, ingreso y suerte por cada pieza de otro reloj. |
 | **R-009** Calibres | **Solo visuales** (cuarzo, mecánico y automático no cambian el valor). |
-| **R-010** Relojes | Cualquier pieza puede salir en cualquier zona por suerte (las zonas lejanas tienen más probabilidad de rarezas altas). **Desde la zona 3**, cada zona tiene además su **reloj famoso exclusivo** (sus piezas solo salen ahí). |
+| **R-010** Relojes | Cualquier pieza puede salir en cualquier zona por suerte (las zonas lejanas tienen más probabilidad de rarezas altas). **Actualizado en DEV-026 (DEC-031):** cada una de las 12 zonas tiene su **reloj de lujo exclusivo** de la lista de Jhonn, con el material de la zona; los 6 generales salen al azar. |
 | **Marcas reales** | Nombres **interpretados** (inspirados, sin marca real) pero con un aspecto **parecido a los originales** para que sea épico. Claude: parecido en forma y estilo, sin copiar logos, coronas ni nombres (es lo que más riesgo tiene). |
 | **Mascotas** | Dan monedas extra: **¼ de su bonus de velocidad**. Claude añadió que también den suerte (1/10 del bonus), porque la suerte solo viene de mascotas y relojes; se cambia si no te gusta. |
 | **VIP** | Premios por tiempo en un 30 % menos de tiempo, etiqueta [VIP] en el chat y ganancia offline hasta **8 h con VIP y 4 h sin VIP** (al 50 % del ingreso del plot). Dinero ×2 a 249 R$. |
@@ -38,7 +38,7 @@ Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como
 
 ### R-001 — Con 8 niveles de caminadora no se llega a las zonas altas (importante)
 
-- **Estado:** Abierta. **Prioridad:** Alta.
+- **Estado:** **Respondida y aplicada** (DEV-022, 30 niveles de caminadora, DEC-027). **Prioridad:** Alta.
 - **Situación:** pediste las 12 zonas hasta 99,9T (DEC-024) y, después, máximo 8 niveles de caminadora (DEC-026). Con 8 niveles la caminadora entrena ×256.
 - **Cálculo (sin pagar):** 0,5 × 256 = 128 de velocidad por segundo. Con 3 mascotas legendarias (×2,8) y la mejora de velocidad al máximo (×3), la velocidad final es unas 8,4 veces lo entrenado.
   - Zona 5 (1M): unos **15 minutos** entrenando. ✅
@@ -53,7 +53,7 @@ Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como
 
 ### R-002 — Las mejoras son muy baratas frente a las monedas de las zonas altas
 
-- **Estado:** Abierta. **Prioridad:** Media.
+- **Estado:** **Respondida y aplicada** (DEV-022, DEC-027). **Prioridad:** Media.
 - **Situación:** con 100 monedas y ×1,5, el nivel 8 cuesta unas 1.700 monedas y todas las mejoras al máximo suman unas 30.000. Pero una sola pieza robada en la zona 5 ya trae 40.960 monedas (DEC-024), así que al llegar a la zona 3 o 4 se puede comprar todo de golpe.
 - **Propuesta:** está bien para el arranque (el jugador siente progreso rápido). Cuando exista el Renacer, cada renacimiento podría reiniciar las mejoras y subir el precio base (×10 por renacimiento).
 - **Supuesto aplicado:** precios exactamente como pediste (100 y ×1,5).
@@ -61,7 +61,7 @@ Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como
 
 ### R-003 — ¿«Todas las mejoras» o solo plot, caminadora y carga?
 
-- **Estado:** Abierta. **Prioridad:** Baja.
+- **Estado:** **Respondida y aplicada** (DEV-022, DEC-027). **Prioridad:** Baja.
 - **Duda:** dijiste «cada mejora empezará en 100 monedas… límite de 8 mejoras (tanto plot como caminadora; llevar más objetos solo 3)».
 - **Supuesto aplicado:** lo apliqué a **todas**: mochila, velocidad, salto, suerte, vitrinas y caminadora, con 8 niveles; la carga, 3. Para que 8 niveles no rompan nada:
   - **Vitrinas:** +1 por nivel (antes +2). Con 8 niveles = 11 vitrinas; el plot solo tiene sitio para 15.
@@ -70,21 +70,21 @@ Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como
 
 ### R-004 — El puesto «Mochila y Carga»
 
-- **Estado:** Hecho (revisar). **Prioridad:** Baja.
+- **Estado:** **Respondida y aplicada** (DEV-022, DEC-027). **Prioridad:** Baja.
 - **Supuesto aplicado:** en lugar de crear un puesto nuevo, el **Puesto de Carga** pasó a llamarse **«Mochila y Carga»** y ahora vende las dos mejoras: más espacio en la mochila (+10 por nivel) y más objetos por viaje (de 1 a 4). La mochila ya no está en la Tienda. Así no se añade otro edificio al mapa (mejor para el renderizado).
 - **Pendiente menor:** el título del menú todavía dice «Puesto de Carga — Capacidad por viaje». Está en `Ui.luau`, que dejé libre para que Zadiel termine ART-016; se cambia en la próxima tarea que toque la interfaz.
 - **Respuesta de Jhonn:**
 
 ### R-005 — Cinemática antes del tutorial
 
-- **Estado:** Verificada por código; falta verla con un jugador nuevo.
+- **Estado:** **Respondida y aplicada** (probada el 2026-11-21).
 - **Situación:** la cinemática (abandono a los 18 años, cámara a la plaza y pieza del legado) existe desde DEV-011. El servidor no muestra el tutorial hasta que el jugador termina la introducción (`introDone`). Tu cuenta ya la vio, y desde las herramientas no puedo crear un jugador nuevo.
 - **Cómo comprobarla (1 minuto):** en Studio → pestaña **Test** → **Clients and Servers** con 1 jugador (usa una cuenta de prueba nueva), o en el juego: Ajustes → «Ver historia».
 - **Respuesta de Jhonn:**
 
 ### R-006 — Datos de tu cuenta de desarrollo
 
-- **Estado:** Informativa.
+- **Estado:** **Respondida y aplicada** (datos borrados el 2026-11-21).
 - **Situación:** Studio tiene acceso a DataStore, así que las pruebas guardan progreso real en tu cuenta. Además, como creador de la experiencia tienes **todos los pases**, incluido Entrenamiento ×512, y por eso tu velocidad y tu entrenamiento son muy altos.
 - **Propuesta:** si quieres jugar «como un jugador normal», hay que probar con otra cuenta. Si quieres que reinicie tus datos, dímelo.
 - **Respuesta de Jhonn:**
@@ -97,7 +97,7 @@ Detalle completo en [[PROMPT_PIEZAS_RELOJ_ZADIEL]]. Son cambios grandes del sist
 
 ### R-007 — Reemplazar las piezas actuales por Caja, Calibre, Esfera y Manecillas
 
-- **Estado:** Abierta. **Prioridad:** Alta.
+- **Estado:** **Respondida y aplicada** (DEV-025, DEC-028). **Prioridad:** Alta.
 - **Situación:** hoy se roban 7 piezas genéricas (engranaje, resorte, tornillo, cristal, correa, rubí, diamante) y los relojes piden cantidades de ellas.
 - **Propuesta:** cada pieza robada pasa a ser una de **4 clases** (Caja, Calibre, Esfera, Manecillas) **de un reloj concreto** y con **rareza** (Común → Divino). Un reloj se arma con 1 de cada clase. Las 7 piezas antiguas se convierten en monedas al cargar los datos (no se pierde valor).
 - **Pregunta:** ¿conservo las piezas antiguas como «materiales» para otra cosa, o se eliminan?
@@ -105,13 +105,13 @@ Detalle completo en [[PROMPT_PIEZAS_RELOJ_ZADIEL]]. Son cambios grandes del sist
 
 ### R-008 — Fórmula de penalización si una pieza no es de ese reloj
 
-- **Estado:** Abierta. **Prioridad:** Alta.
+- **Estado:** **Respondida y aplicada** (DEV-025, DEC-028). **Prioridad:** Alta.
 - **Propuesta:** cada pieza «ajena» baja **un nivel de rareza** el reloj resultante y resta un **25 %** a su valor, al ingreso pasivo y a la suerte (2 ajenas: −50 %; 3: −75 %; 4: el reloj queda «Genérico», con −90 %). Una pieza de **mayor** rareza que el reloj no penaliza el valor, pero tampoco lo sube.
 - **Respuesta de Jhonn:**
 
 ### R-009 — Tipos de calibre (cuarzo, mecánico y automático)
 
-- **Estado:** Abierta. **Prioridad:** Media.
+- **Estado:** **Respondida y aplicada** (DEV-025, DEC-028). **Prioridad:** Media.
 - **Propuesta:** el tipo de calibre cambia un detalle de juego, no solo el aspecto:
   - **Cuarzo:** fácil de encontrar.
   - **Mecánico:** +10 % de valor.
@@ -120,7 +120,7 @@ Detalle completo en [[PROMPT_PIEZAS_RELOJ_ZADIEL]]. Son cambios grandes del sist
 
 ### R-010 — ¿Cuántos relojes distintos y de qué rarezas?
 
-- **Estado:** Abierta. **Prioridad:** Media.
+- **Estado:** **Respondida y aplicada** (DEV-025, DEC-028; cambiada por DEC-031 en DEV-026: 12 relojes de lujo, uno por zona). **Prioridad:** Media.
 - **Propuesta:** empezar con los **6 relojes actuales** (bolsillo, pulsera, cronógrafo, real, millonario y legado) más **6 nuevos** para las zonas 6 a 12, uno por rareza. Cada zona da sobre todo piezas de 1 o 2 relojes.
 - **Respuesta de Jhonn:**
 
