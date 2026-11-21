@@ -1289,3 +1289,23 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Datos de Jhonn reiniciados.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 35). 53/53. Textos del botín corregidos y probados; carga, cierre con botín, avisos de piezas raras, prefijo [VIP] y ganancia offline comprobados en Play ([[Plan-de-Pruebas]] §33). R-001 a R-010 marcadas como respondidas. Datos de Jhonn reiniciados.
+
+### DOC-001 — Lista completa de tareas de Zadiel en su prompt y BUG-004 al día
+
+- **ID:** DOC-001.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Documentación / arte / audio.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** pedido de Jhonn (2026-11-21): añadir a [[PROMPT_PIEZAS_RELOJ_ZADIEL]] todo lo que tiene que hacer Zadiel, con los permisos de sonido para que su Claude los haga solo. Al revisar se vio que BUG-004 ya lo resolvió Zadiel en ART-016 (10/10 permisos con Open Cloud); hoy, 10/10 sonidos cargan en Play. Se corrige el [[Plan-de-Pruebas]].
+
+**Criterios de aceptación:**
+
+- [ ] Lista de tareas de Zadiel completa y ordenada en el prompt.
+- [ ] Permisos de audios nuevos automatizados para su Claude, con plan B.
+- [ ] BUG-004 marcado como resuelto en el Plan de Pruebas.
