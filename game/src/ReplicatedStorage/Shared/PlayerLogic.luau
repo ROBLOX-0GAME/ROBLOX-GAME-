@@ -334,12 +334,20 @@ function PlayerLogic.walkSpeed(data)
 	return math.min(Config.MAX_WALKSPEED, math.floor(speed * 10 + 0.5) / 10)
 end
 
--- Multiplicador de monedas por ventas y museo (pase VIP).
+-- Multiplicador de monedas por ventas y museo: pase VIP × el multiplicador
+-- ×2…×1024 más alto que tenga (no se suman entre sí; DEC-023).
 function PlayerLogic.coinMultiplier(data)
+	local multiplier = 1
 	if PlayerLogic.hasPass(data, "vip") then
-		return GameData.GamePasses.vip.coinMultiplier
+		multiplier = GameData.GamePasses.vip.coinMultiplier
 	end
-	return 1
+	local best = 1
+	for _, tier in GameData.COIN_MULTIPLIER_PASSES do
+		if tier.factor > best and PlayerLogic.hasPass(data, "coinsX" .. tier.factor) then
+			best = tier.factor
+		end
+	end
+	return multiplier * best
 end
 
 -- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?

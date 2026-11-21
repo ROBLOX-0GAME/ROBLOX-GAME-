@@ -485,6 +485,32 @@ return function(t)
 		t.eq(next(PlayerLogic.reconcile(data).passes), nil, "los pases no se guardan: se consultan al entrar")
 	end)
 
+	t.test("DEC-023: multiplicadores de monedas (el más alto, combinado con VIP)", function()
+		local data = PlayerLogic.newData()
+		t.eq(PlayerLogic.coinMultiplier(data), 1, "sin pases ×1")
+		PlayerLogic.setPasses(data, { coinsX2 = true, coinsX64 = true })
+		t.eq(PlayerLogic.coinMultiplier(data), 64, "se usa el más alto, no se suman")
+		PlayerLogic.setPasses(data, { coinsX1024 = true, vip = true })
+		t.eq(PlayerLogic.coinMultiplier(data), 1024 * GameData.GamePasses.vip.coinMultiplier, "se combina con VIP")
+		data.watches.pocket = 1
+		data.coins = 0
+		PlayerLogic.setPasses(data, { coinsX4 = true })
+		PlayerLogic.sell(data, "pocket", 1)
+		t.eq(data.coins, GameData.Watches.pocket.sell * 4, "×4 al vender")
+		for _, tier in GameData.COIN_MULTIPLIER_PASSES do
+			local id = "coinsX" .. tier.factor
+			t.ok(GameData.GamePasses[id] ~= nil and Config.GAMEPASS_IDS[id] ~= nil, id .. " en GameData y Config")
+		end
+		local priced = true
+		for _, key in GameData.GamePassOrder do
+			priced = priced and type(GameData.GamePasses[key].robux) == "number"
+		end
+		for _, key in GameData.ProductOrder do
+			priced = priced and type(GameData.Products[key].robux) == "number"
+		end
+		t.ok(priced, "todos los pases y productos tienen precio")
+	end)
+
 	t.test("DEV-006: Mascota Suprema es 20% mejor que tu mejor mascota", function()
 		local data = PlayerLogic.newData()
 		PlayerLogic.setPasses(data, { supremePet = true })

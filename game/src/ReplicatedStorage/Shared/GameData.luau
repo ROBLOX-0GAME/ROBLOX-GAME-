@@ -118,60 +118,95 @@ GameData.TURBO_TREADMILL_FACTOR = 2
 GameData.GamePasses = {
 	supremePet = {
 		id = "supremePet",
+		robux = 459,
 		name = "Mascota Suprema",
 		desc = "Mascota exclusiva 20% mejor que tu mejor mascota (mejora sola cuando consigues mejores)",
 	},
 	turboTreadmill = {
 		id = "turboTreadmill",
+		robux = 229,
 		name = "Caminadora Turbo",
 		desc = "Tu caminadora del plot entrena ×2 más rápido",
 	},
 	runner = {
 		id = "runner",
+		robux = 289,
 		name = "Corredor VIP",
 		desc = "+25% de velocidad permanente",
 		speedMultiplier = 1.25,
 	},
 	vip = {
 		id = "vip",
+		robux = 349,
 		name = "VIP",
 		desc = "+20% de monedas al vender y en el museo",
 		coinMultiplier = 1.2,
 	},
 	bigBackpack = {
 		id = "bigBackpack",
+		robux = 119,
 		name = "Mochila Gigante",
 		desc = "+20 espacios para piezas",
 		backpack = 20,
 	},
 	petSlot = {
 		id = "petSlot",
+		robux = 179,
 		name = "Ranura de Mascota",
 		desc = "+1 mascota equipada",
 		petSlots = 1,
 	},
 }
+-- Multiplicadores de monedas (DEC-023, Jhonn 2026-11-20): ×2 … ×1024. Se usa el más
+-- alto que tengas (no se suman entre sí) y se combina con el VIP. Afectan a las
+-- ventas y al ingreso del plot, como el VIP.
+GameData.COIN_MULTIPLIER_PASSES = {
+	{ factor = 2, robux = 3 },
+	{ factor = 4, robux = 5 },
+	{ factor = 8, robux = 15 },
+	{ factor = 16, robux = 35 },
+	{ factor = 32, robux = 75 },
+	{ factor = 64, robux = 149 },
+	{ factor = 128, robux = 299 },
+	{ factor = 256, robux = 599 },
+	{ factor = 512, robux = 1199 },
+	{ factor = 1024, robux = 2499 },
+}
 GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "bigBackpack", "petSlot" }
+for _, tier in GameData.COIN_MULTIPLIER_PASSES do
+	local id = "coinsX" .. tier.factor
+	GameData.GamePasses[id] = {
+		id = id,
+		name = string.format("Monedas ×%d", tier.factor),
+		desc = string.format("Monedas ×%d al vender y en tu plot, para siempre (se usa el multiplicador más alto que tengas)", tier.factor),
+		robux = tier.robux,
+		coinFactor = tier.factor,
+	}
+	table.insert(GameData.GamePassOrder, id)
+end
 
 -- Productos (compra repetible con Robux). DEV-006, PROPUESTA.
 GameData.Products = {
-	coinsSmall = { id = "coinsSmall", name = "Bolsa de monedas", desc = "+2.500 monedas", coins = 2500 },
-	coinsMedium = { id = "coinsMedium", name = "Cofre de monedas", desc = "+15.000 monedas", coins = 15000 },
-	coinsLarge = { id = "coinsLarge", name = "Bóveda de monedas", desc = "+75.000 monedas", coins = 75000 },
+	coinsSmall = { id = "coinsSmall", robux = 25, name = "Bolsa de monedas", desc = "+2.500 monedas", coins = 2500 },
+	coinsMedium = { id = "coinsMedium", robux = 99, name = "Cofre de monedas", desc = "+15.000 monedas", coins = 15000 },
+	coinsLarge = { id = "coinsLarge", robux = 399, name = "Bóveda de monedas", desc = "+75.000 monedas", coins = 75000 },
 	instantTraining = {
 		id = "instantTraining",
+		robux = 49,
 		name = "Entrenamiento instantáneo",
 		desc = "+5 de velocidad entrenada",
 		trained = 5,
 	},
 	goldEgg = {
 		id = "goldEgg",
+		robux = 49,
 		name = "Cápsula de Oro",
 		desc = "Una Cápsula de Oro para tu Mochila (probabilidades en el Criadero)",
 		egg = "gold",
 	},
 	cosmicCapsule = {
 		id = "cosmicCapsule",
+		robux = 149,
 		name = "Cápsula Cósmica",
 		desc = "Mascotas exclusivas: Fénix Cronal +80%, Titán de Cuarzo +100%, Señor del Tiempo +150%",
 		egg = "cosmic",
@@ -179,6 +214,7 @@ GameData.Products = {
 }
 GameData.Products.extraSpin = {
 	id = "extraSpin",
+	robux = 19,
 	name = "Giro extra de ruleta",
 	desc = "Un giro más de la ruleta diaria (probabilidades en la ruleta)",
 	spins = 1,

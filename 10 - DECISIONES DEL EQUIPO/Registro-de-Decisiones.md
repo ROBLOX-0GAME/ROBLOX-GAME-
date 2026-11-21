@@ -288,3 +288,11 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
   - `ColorCorrection`: saturación +0,15, contraste +0,08, brillo +0,02 y tinte 255/250/242.
   - `Bloom` suave: intensidad 0,4, tamaño 24 y umbral 1,6.
 - **Motivo:** los reflejos y el bloom hacen lucir los relojes y las piezas PBR, y la saturación y la luz cálida mantienen el estilo low-poly colorido. Para volver atrás: los valores anteriores eran `Brightness` 1, `ClockTime` 14, sin sombras, `Ambient` y `OutdoorAmbient` 128/128/128, escalas de entorno en 0 y sin efectos.
+
+#### DEC-023 — Precios en Robux y multiplicadores de monedas ×2–×1024
+
+- **Fecha:** 2026-11-20. **Estado:** **Decidida por Jhonn** el 2026-11-20 (DEV-019). Zadiel la revisa (DEC-020). **Área:** Economía / monetización.
+- **Pases (compra única):** Mascota Suprema 459 · VIP 349 · Corredor VIP 289 · Caminadora Turbo 229 · Ranura de Mascota 179 · Mochila Gigante 119 R$ (un 15–20 % más que la propuesta inicial, a pedido de Jhonn).
+- **Multiplicadores de monedas (pases nuevos):** ×2 3 · ×4 5 · ×8 15 · ×16 35 · ×32 75 · ×64 149 · ×128 299 · ×256 599 · ×512 1.199 · ×1024 2.499 R$. Multiplican las monedas al vender y el ingreso del plot, como el VIP. Se usa el más alto que tengas (no se suman entre sí) y se combina con el VIP.
+- **Productos (repetibles):** Bolsa 25 · Cofre 99 · Bóveda 399 · Entrenamiento instantáneo 49 · Cápsula de Oro 49 · Cápsula Cósmica 149 · Giro extra 19 R$.
+- **Pendiente de revisar (Claude, sin decidir):** un ×1024 permanente vuelve casi gratis las mejoras y las cifras de balance (DEC-003 a DEC-015). Conviene revisar los costes de la parte alta cuando haya datos de juego.

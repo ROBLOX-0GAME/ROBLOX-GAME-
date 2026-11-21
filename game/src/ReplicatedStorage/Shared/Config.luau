@@ -84,6 +84,17 @@ local Config = {
 		vip = 0,
 		bigBackpack = 0,
 		petSlot = 0,
+		-- Multiplicadores de monedas (DEC-023)
+		coinsX2 = 0,
+		coinsX4 = 0,
+		coinsX8 = 0,
+		coinsX16 = 0,
+		coinsX32 = 0,
+		coinsX64 = 0,
+		coinsX128 = 0,
+		coinsX256 = 0,
+		coinsX512 = 0,
+		coinsX1024 = 0,
 	},
 	PRODUCT_IDS = {
 		coinsSmall = 0,

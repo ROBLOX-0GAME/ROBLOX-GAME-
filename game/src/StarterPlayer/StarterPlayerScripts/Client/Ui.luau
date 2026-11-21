@@ -936,7 +936,7 @@ local function renderRobux()
 		elseif not available then
 			text = "Próximamente"
 		end
-		addRow(string.format("<b>%s</b>\n%s", pass.name, pass.desc), {
+		addRow(string.format("<b>%s</b> · %s R$\n%s", pass.name, tostring(pass.robux or "?"), pass.desc), {
 			{
 				text = text,
 				enabled = available and not owned,
@@ -954,7 +954,7 @@ local function renderRobux()
 		if not available then
 			text = "Próximamente"
 		end
-		addRow(string.format("<b>%s</b>\n%s", product.name, product.desc), {
+		addRow(string.format("<b>%s</b> · %s R$\n%s", product.name, tostring(product.robux or "?"), product.desc), {
 			{
 				text = text,
 				enabled = available,
