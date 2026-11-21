@@ -870,7 +870,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Arquitectura / equipo.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -878,4 +878,4 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] DEC-021 actualizada con el alcance completo y DEC-019 marcada como reemplazada.
+- [x] DEC-021 actualizada con el alcance completo y DEC-019 marcada como reemplazada.

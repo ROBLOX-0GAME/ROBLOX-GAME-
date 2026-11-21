@@ -265,7 +265,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-019 — La MacBook también se usa para arte (sin Roblox Studio)
 
-- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-006, Zadiel). **Área:** Arquitectura / equipo.
+- **Fecha:** 2026-11-20. **Estado:** Reemplazada por DEC-021 (INFRA-005): la MacBook ya se usa también con Roblox Studio y Rojo. **Área:** Arquitectura / equipo.
 - **Propuesta:** la MacBook de Zadiel, además de Obsidian y tareas escolares, se usa para el arte (Blender, Material Maker, Krita y Audacity, con los scripts de `art/`). Sigue sin Roblox Studio ni Rojo: la importación de assets se hace en las PC Windows. Cambia lo dicho en [[Arquitectura-General]] («Entorno de trabajo por dispositivo»).
 
 #### DEC-020 — El equipo queda en Zadiel y Jhonn
@@ -273,11 +273,12 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** **Aprobada** por Zadiel (INFRA-003). **Área:** Equipo / coordinación.
 - **Decisión:** Michael y Einell dejan de participar. Zadiel y Jhonn toman todas las decisiones y revisan todo, también el área que era de la Cuenta B (mundo, narrativa, personajes, dirección visual, arte, contenido y UX). Las propuestas que esperaban a Michael y Einell (por ejemplo DEC-016, DEC-018 y DEC-019) las deciden ahora Zadiel y Jhonn. Donde reglas o notas antiguas digan «Cuenta B» o «Michael y Einell», se entiende Zadiel y Jhonn. Actualizados [[OWNERS]], AGENTS.md y `.claude/CLAUDE.md`.
 
-#### DEC-021 — Roblox Studio también en la MacBook de Zadiel
+#### DEC-021 — La MacBook de Zadiel sirve para todo el desarrollo
 
-- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-008). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
-- **Propuesta:** la MacBook de Zadiel usa Roblox Studio, con su MCP y Open Cloud, para trabajar en la place oficial por Team Create: importar assets, montar `SurfaceAppearance` y hacer pruebas en Play. Así se hizo ART-008. Amplía DEC-019 («sin Roblox Studio») y contradice la línea de `.claude/CLAUDE.md` y [[Arquitectura-General]] («la MacBook queda para Obsidian…»), que no se editan hasta que se apruebe.
-- **Límites:** no se conecta Rojo a la place oficial desde la Mac (`servePlaceIds` sigue vacío), no se publica sin el OK de Jhonn y el código sigue entrando solo por `game/src`.
+- **Fecha:** 2026-11-20 (Propuesta en ART-008; ampliada en INFRA-005). **Estado:** **Aprobada** por Zadiel el 2026-11-20 (INFRA-005); falta la revisión de Jhonn (DEC-020). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Decisión:** la MacBook de Zadiel se puede usar para **todo** el trabajo del proyecto, igual que las PC Windows: Obsidian y Git, arte (Blender, Material Maker, Krita y Audacity), Roblox Studio con su MCP y Open Cloud en la place oficial por Team Create, código en `game/src` con Rojo y pruebas en Play. Ya se usó así en ART-008 y ART-013. Reemplaza a DEC-019 («sin Roblox Studio ni Rojo»).
+- **Se mantiene:** el código entra solo por `game/src` (el repositorio es la fuente de verdad), no se publica sin el OK de Zadiel y Jhonn, y no se guarda la place a la vez desde dos equipos en Team Create.
+- **Pendiente de alinear:** `.claude/CLAUDE.md`, `AGENTS.md` y [[Arquitectura-General]] todavía dicen «la MacBook queda para Obsidian y tareas escolares». Se actualizan en una tarea con esas rutas reservadas.
 
 #### DEC-022 — Iluminación de la place para los PBR y el low-poly colorido
 
