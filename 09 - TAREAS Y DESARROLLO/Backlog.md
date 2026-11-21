@@ -739,3 +739,42 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [ ] `build.py` falla ante cadenas sin cerrar; la revisión pasa en `main`.
 - [ ] Prueba en Studio: 47/47 pruebas y cliente con HUD (si el MCP de Studio está disponible), anotada en el Plan de Pruebas.
 
+### ART-012 — Prompt de integración visual para Zadiel
+
+- **ID:** ART-012.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Arte / integración visual.
+- **Prioridad:** Alta.
+- **Estado:** Completada.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Jhonn pide un prompt para que Zadiel lleve el diseño y la integración visual en la place oficial (84500108687089) con las herramientas acordadas (Blender, Material Maker, Krita, Audacity y Roblox Studio con su MCP). Guardado en [[PROMPT_INTEGRACION_VISUAL_ZADIEL]]. La integración en sí es **ART-013** (la abre Zadiel). Jhonn sigue con el gameplay (DEV-016).
+
+**Criterios de aceptación:**
+
+- [x] Prompt guardado con reglas, herramientas, reparto de zonas en Team Create, tarea ART-013 (36 modelos de paleta, iconos, sonidos, iluminación como propuesta) y cierre.
+
+### DEV-016 — Cargar el código de main en la place y prueba completa en Play
+
+- **ID:** DEV-016.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Código / gameplay.
+- **Prioridad:** Crítica.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** la place oficial aún tiene el código anterior a DEV-015 (`Ui.luau:766` sigue roto en Studio; comprobado con el MCP el 2026-11-20). Se copia `game/src` de `main` a la place con el MCP de Studio, se pone `84500108687089` en `servePlaceIds` y se prueba en Play el bucle establecido (tutorial, robo, persecución, taller, venta, vitrinas, caminadora, mascotas, jefe y ruleta). Los errores de gameplay se corrigen en `game/src` (sin tocar las rutas de DEV-015) y se cargan de nuevo. No se publica.
+
+**Criterios de aceptación:**
+
+- [ ] Los 25 scripts de la place iguales a `game/src` de `main`.
+- [ ] `servePlaceIds` con la place oficial.
+- [ ] Play: servidor sin errores, pruebas automáticas y cliente con HUD.
+- [ ] Recorrido del bucle principal anotado con resultado real.
+- [ ] Errores encontrados corregidos o anotados como bug.
