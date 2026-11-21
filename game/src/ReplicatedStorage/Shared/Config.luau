@@ -64,6 +64,21 @@ local Config = {
 	OFFLINE_RATE = 0.5, -- se paga el 50 % del ingreso del plot
 	OFFLINE_MIN_SECONDS = 60, -- menos de esto fuera no cuenta
 
+	-- Piezas de reloj y rarezas (DEC-028)
+	RARITY_VALUE_GROWTH = 6, -- cada rareza multiplica el valor del reloj (Común ×1 … Atemporal ×6^11)
+	RARITY_LUCK_STEP = 0.25, -- cada rareza suma un 25 % a la suerte base del reloj exhibido
+	RARITY_UP_BASE = 0.2, -- probabilidad de subir un escalón de rareza en la zona 1
+	RARITY_UP_PER_ZONE = 0.04, -- … y cuánto sube por cada zona más lejos (zona 12: 0,64)
+	RARITY_UP_LUCK = 0.5, -- la suerte (mascotas y relojes exhibidos) suma esto × suerte
+	RARITY_UP_MAX = 0.85, -- tope de la probabilidad de subir
+	EXCLUSIVE_PIECE_CHANCE = 0.3, -- desde la zona 3: probabilidad de que la pieza sea del reloj exclusivo
+	FOREIGN_PIECE_PENALTY = 0.25, -- cada pieza de otro reloj resta un 25 % (y 1 rareza)
+	FOREIGN_GENERIC_FACTOR = 0.1, -- con las 4 piezas ajenas el reloj queda «Genérico» al 10 %
+	PIECE_SELL_FACTOR = 0.05, -- una pieza suelta se vende por el 5 % del reloj con su rareza
+	PIECE_HOLD_BASE = 0.3, -- segundos para robar una pieza Común
+	PIECE_HOLD_STEP = 0.1, -- … y cuánto más por cada rareza
+	BOSS_PARTS_PER_HOUSE = 1, -- piezas antiguas extra por casa mientras el Cronómetro está averiado
+
 	-- Reinicio de la zona de carreras (DEC-029)
 	RACE_RESET_SECONDS = 300, -- cada cuánto se cierra la zona y se renuevan las piezas
 	RACE_WARNING_SECONDS = 30, -- cuenta atrás antes del cierre

@@ -64,27 +64,129 @@ return function(t)
 		t.ok(not PlayerLogic.addPart(PlayerLogic.newData(), "inventada"), "rechaza piezas desconocidas")
 	end)
 
-	t.test("craft consume piezas y da XP", function()
+	-- DEC-028: un juego de 4 piezas del mismo reloj con la misma rareza
+	local function pieceSet(watchId, rarity)
+		local keys = {}
+		for classIndex in GameData.PieceClasses do
+			table.insert(keys, PlayerLogic.pieceKey(watchId, classIndex, rarity))
+		end
+		return keys
+	end
+	local function givePieces(data, keys)
+		for _, key in keys do
+			data.pieces[key] = (data.pieces[key] or 0) + 1
+		end
+	end
+	local function craftRequest(watchId, keys)
+		return tostring(GameData.WatchIndex[watchId]) .. ":" .. table.concat(keys, ",")
+	end
+
+	t.test("DEC-028: armar un reloj con 4 piezas consume las piezas y da XP", function()
 		local data = PlayerLogic.newData()
-		local watch = GameData.Watches.pocket
-		t.ok(not PlayerLogic.craft(data, "pocket"), "sin piezas no fabrica")
-		giveParts(data, watch.cost)
-		local ok = PlayerLogic.craft(data, "pocket")
-		t.ok(ok, "fabrica con piezas suficientes")
-		t.eq(data.watches.pocket, 1, "suma el reloj")
-		t.eq(PlayerLogic.partCount(data), 0, "consume todas las piezas")
-		t.eq(data.xp, watch.xp, "da XP")
-		t.eq(data.parts.gear, nil, "limpia contadores en cero")
+		local keys = pieceSet("pocket", 1)
+		t.ok(not PlayerLogic.craft(data, craftRequest("pocket", keys)), "sin piezas no arma")
+		givePieces(data, keys)
+		local ok, message = PlayerLogic.craft(data, craftRequest("pocket", keys))
+		t.ok(ok, "arma con las 4 piezas")
+		t.ok(string.find(message, "perfecto") ~= nil, "4 piezas del mismo reloj: reloj perfecto")
+		local key = PlayerLogic.watchKey("pocket", 1, 0)
+		t.eq(data.watches[key], 1, "suma el reloj con su rareza")
+		t.eq(PlayerLogic.partCount(data), 0, "consume las piezas")
+		t.ok(data.xp > 0, "da XP")
+		t.ok(not PlayerLogic.craft(data, craftRequest("pocket", { keys[2], keys[1], keys[3], keys[4] })), "el orden de los marcos importa")
 	end)
 
-	t.test("craft exige nivel", function()
-		local data = PlayerLogic.newData()
-		giveParts(data, GameData.Watches.royal.cost)
-		local ok, reason = PlayerLogic.craft(data, "royal")
-		t.ok(not ok, "nivel 1 no fabrica el reloj real")
-		t.ok(string.find(reason, "nivel") ~= nil, "explica que falta nivel")
+	t.test("DEC-028: pieza de otro reloj: −1 rareza y −25 % por pieza; 4 ajenas = Genérico", function()
+		local perfect = PlayerLogic.assemblePreview("chrono", pieceSet("chrono", 5))
+		t.eq(perfect.rarity, 5, "la media de rarezas sin penalizar")
+		t.ok(perfect.perfect, "reloj perfecto")
+		local mixed = pieceSet("chrono", 5)
+		mixed[3] = PlayerLogic.pieceKey("wrist", 3, 5)
+		local one = PlayerLogic.assemblePreview("chrono", mixed)
+		t.eq(one.rarity, 4, "1 ajena: −1 rareza")
+		t.eq(one.foreign, 1, "cuenta la pieza ajena")
+		t.ok(
+			math.abs(one.sell - GameData.Watches.chrono.base * Config.RARITY_VALUE_GROWTH ^ 3 * 0.75) < 1,
+			"1 ajena: 75 % del valor de su rareza"
+		)
+		t.ok(one.luck < perfect.luck, "pierde suerte")
+		local generic = PlayerLogic.assemblePreview("chrono", pieceSet("wrist", 5))
+		t.eq(generic.foreign, 4, "4 ajenas")
+		t.ok(string.find(generic.name, "Genérico") ~= nil, "se llama Reloj Genérico")
 	end)
 
+	t.test("DEC-028: valores, mejor reloj y relojes antiguos", function()
+		t.eq(#GameData.WatchOrder, 16, "16 relojes (6 generales y 10 exclusivos)")
+		local exclusive = 0
+		for _, watchId in GameData.WatchOrder do
+			local watch = GameData.Watches[watchId]
+			t.ok(watch.base > 0 and watch.caliber ~= nil, watch.name .. " tiene valor y calibre")
+			if watch.zone then
+				exclusive += 1
+				t.ok(watch.zone >= 3 and watch.zone <= 12, watch.name .. ": exclusivo de las zonas 3 a 12")
+			end
+		end
+		t.eq(exclusive, 10, "un reloj exclusivo por zona desde la 3")
+		local best = PlayerLogic.watchInfo(PlayerLogic.watchKey("tourbillon", 12, 0))
+		t.ok(best.sell >= 1.5e12 and best.sell <= 1.95e12, "el mejor reloj vale entre 1.500T y 1.950T")
+		local old = PlayerLogic.watchInfo("pocket")
+		t.ok(old ~= nil and old.rarity == 1 and old.foreign == 0, "un reloj guardado antes es Común y sin ajenas")
+		local data = PlayerLogic.reconcile({ watches = { pocket = 2, ["chrono|3|1"] = 1, ["malo|1|0"] = 4 } })
+		t.eq(data.watches.pocket, 2, "conserva relojes antiguos")
+		t.eq(data.watches["chrono|3|1"], 1, "conserva relojes con rareza")
+		t.eq(data.watches["malo|1|0"], nil, "descarta claves inválidas")
+	end)
+
+	t.test("DEC-028: tirada de piezas por zona y exclusivos", function()
+		local rng = Random.new(7)
+		local function nextNumber()
+			return rng:NextNumber()
+		end
+		local function averageRarity(zoneIndex)
+			local sum = 0
+			for _ = 1, 2000 do
+				local _, _, rarity = PlayerLogic.parsePieceKey(PlayerLogic.rollPiece(zoneIndex, 0, nextNumber))
+				sum += rarity
+			end
+			return sum / 2000
+		end
+		t.ok(averageRarity(12) > averageRarity(1) + 0.5, "las zonas lejanas dan rarezas más altas")
+		local exclusiveSeen, foreignExclusive = false, false
+		for _ = 1, 500 do
+			local watchId = PlayerLogic.parsePieceKey(PlayerLogic.rollPiece(10, 0, nextNumber))
+			if watchId == "nautil" then
+				exclusiveSeen = true
+			elseif GameData.Watches[watchId].zone then
+				foreignExclusive = true
+			end
+		end
+		t.ok(exclusiveSeen, "en la zona 10 sale su reloj exclusivo")
+		t.ok(not foreignExclusive, "los exclusivos de otras zonas no salen")
+		t.ok(PlayerLogic.parsePieceKey("99.1.1") == nil and PlayerLogic.parsePieceKey("1.9.1") == nil, "claves inválidas")
+	end)
+
+	t.test("DEC-028: robar piezas de reloj, guardarlas, venderlas y el Reloj del Legado", function()
+		local data = PlayerLogic.newData()
+		local key = PlayerLogic.pieceKey("royal", 2, 4)
+		t.ok(PlayerLogic.stealPiece(data, key, 0.99, 50), "roba la pieza")
+		t.eq(PlayerLogic.carriedCount(data), 1, "va al botín")
+		local saved, coins = PlayerLogic.depositLoot(data)
+		t.eq(saved, 1, "se guarda en la base")
+		t.eq(coins, 50, "con sus monedas")
+		t.eq(data.pieces[key], 1, "queda en la mochila")
+		local value = PlayerLogic.pieceSellValue(key)
+		t.ok(PlayerLogic.sellPiece(data, key, 1), "se vende suelta")
+		t.eq(data.coins, 50 + value, "paga su valor")
+		-- Legado
+		local legacy = PlayerLogic.newData()
+		PlayerLogic.claimLegacy(legacy, 0)
+		local keys = pieceSet("legacy", 2)
+		givePieces(legacy, keys)
+		t.ok(PlayerLogic.craft(legacy, craftRequest("legacy", keys)), "arma el Reloj del Legado")
+		t.eq(legacy.parts.legacy, nil, "usa la pieza del legado")
+		givePieces(legacy, keys)
+		t.ok(not PlayerLogic.craft(legacy, craftRequest("legacy", keys)), "sin la pieza del legado no arma otro")
+	end)
 	t.test("sell valida cantidad y paga", function()
 		local data = PlayerLogic.newData()
 		data.watches.pocket = 3
@@ -112,17 +214,6 @@ return function(t)
 		t.eq(PlayerLogic.partCount(data), Config.BASE_BACKPACK - 10, "libera 10 espacios")
 		t.ok(PlayerLogic.addPart(data, "gear"), "ya cabe otra pieza")
 		t.ok(not PlayerLogic.discardPart(data, "ruby", 1), "no tira lo que no tiene")
-	end)
-
-	t.test("vender piezas siempre rinde menos que fabricar", function()
-		for _, watchId in GameData.WatchOrder do
-			local watch = GameData.Watches[watchId]
-			local partsValue = 0
-			for partId, amount in watch.cost do
-				partsValue += GameData.Parts[partId].sell * amount
-			end
-			t.ok(watch.sell > partsValue, watch.name .. " vale más que sus piezas")
-		end
 	end)
 
 	t.test("buyUpgrade cobra y respeta el máximo", function()
@@ -271,16 +362,6 @@ return function(t)
 			end
 		end
 		t.ok(rareLucky > rareNormal, "más suerte = más piezas no comunes")
-	end)
-
-	t.test("las recetas solo usan piezas existentes", function()
-		for _, watchId in GameData.WatchOrder do
-			local watch = GameData.Watches[watchId]
-			t.ok(watch ~= nil, "reloj en el orden existe: " .. watchId)
-			for partId in watch.cost do
-				t.ok(GameData.Parts[partId] ~= nil, watchId .. " usa pieza válida " .. partId)
-			end
-		end
 	end)
 
 	t.test("DEV-002/011: el tutorial empieza tras la introducción, va en orden y paga una vez", function()
@@ -784,21 +865,6 @@ return function(t)
 		for _, zone in GameData.Zones do
 			t.eq(zone.weights.legacy, nil, zone.name .. " no da piezas del legado")
 		end
-	end)
-
-	t.test("DEV-011: usar la pieza en el Reloj del Legado", function()
-		local data = PlayerLogic.newData()
-		PlayerLogic.claimLegacy(data, 0)
-		data.xp = 10 ^ 6
-		for partId, amount in GameData.Watches.legacy.cost do
-			if partId ~= "legacy" then
-				data.parts[partId] = amount
-			end
-		end
-		t.ok(PlayerLogic.craft(data, "legacy"), "fabrica el Reloj del Legado")
-		t.eq(data.parts.legacy, nil, "la pieza se usa")
-		t.eq(data.watches.legacy, 1, "obtiene el reloj")
-		t.ok(not PlayerLogic.craft(data, "legacy"), "sin pieza no fabrica otro")
 	end)
 
 	t.test("DEV-011: vender rinde más al momento; exhibir da el 30% por periodo", function()

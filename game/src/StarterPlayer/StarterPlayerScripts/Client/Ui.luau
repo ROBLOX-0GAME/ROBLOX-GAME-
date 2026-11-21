@@ -343,59 +343,256 @@ local function formatTime(seconds)
 	return string.format("%d:%02d", seconds // 60, seconds % 60)
 end
 
-local function costText(cost)
-	local pieces = {}
-	for _, partId in GameData.PartOrder do
-		local needed = cost[partId]
-		if needed then
-			local have = state.parts[partId] or 0
-			local color = "#7fd38f"
-			if have < needed then
-				color = "#e57373"
-			end
-			table.insert(
-				pieces,
-				string.format('<font color="%s">%d/%d</font> %s', color, have, needed, GameData.Parts[partId].name)
-			)
+-- ---------------------------------------------------------------------------
+-- Piezas de reloj y relojes con rareza (DEC-028): ayudas para los menús
+-- ---------------------------------------------------------------------------
+
+local function rarityHex(rarityName)
+	local color = GameData.RarityColors[rarityName] or Color3.new(1, 1, 1)
+	return string.format("#%02X%02X%02X", color.R * 255, color.G * 255, color.B * 255)
+end
+
+local function rarityTag(rarityName)
+	return string.format('<font color="%s">%s</font>', rarityHex(rarityName), rarityName)
+end
+
+-- Claves de un mapa ordenadas con su info (watchInfo o pieceInfo), de más valioso a menos.
+local function sortedWatches(map)
+	local list = {}
+	for key, amount in map do
+		local info = PlayerLogic.watchInfo(key)
+		if info and amount > 0 then
+			table.insert(list, { key = key, amount = amount, info = info })
 		end
 	end
-	return table.concat(pieces, " · ")
+	table.sort(list, function(a, b)
+		return a.info.sell > b.info.sell
+	end)
+	return list
 end
 
 -- ---------------------------------------------------------------------------
 -- Contenido de cada menú
 -- ---------------------------------------------------------------------------
 
-local function canCraftLocal(watch)
-	if state.level < watch.level then
-		return false
-	end
-	for partId, needed in watch.cost do
-		if (state.parts[partId] or 0) < needed then
-			return false
+-- Mesa de armado (DEC-028): 4 marcos verdes en orden caja → calibre → esfera →
+-- manecillas. La pieza de otro reloj se puede poner, pero resta rareza y valor.
+local render -- se define más abajo (redibuja el menú abierto)
+local bench = { target = nil, slots = {}, sort = "watch" }
+
+local SORT_MODES = {
+	{ id = "watch", text = "Por reloj" },
+	{ id = "up", text = "Rareza ↑" },
+	{ id = "down", text = "Rareza ↓" },
+}
+
+-- Piezas libres: las de la mochila menos las que ya están en los marcos.
+local function freePieces()
+	local free = table.clone(state.pieces or {})
+	for _, key in bench.slots do
+		if free[key] then
+			free[key] -= 1
 		end
 	end
-	return true
+	return free
+end
+
+-- Reloj elegido por defecto: del que tengas más piezas.
+local function defaultTarget()
+	local counts = {}
+	for key, amount in state.pieces or {} do
+		local info = PlayerLogic.pieceInfo(key)
+		if info then
+			counts[info.watchId] = (counts[info.watchId] or 0) + amount
+		end
+	end
+	local best, bestCount = 1, -1
+	for index, watchId in GameData.WatchOrder do
+		if (counts[watchId] or 0) > bestCount then
+			best, bestCount = index, counts[watchId] or 0
+		end
+	end
+	return best
 end
 
 local function renderWorkshop()
-	addHeader(string.format("Nivel %d · Piezas %d/%d", state.level, state.partCount, state.capacity))
-	for _, watchId in GameData.WatchOrder do
-		local watch = GameData.Watches[watchId]
-		local title = string.format(
-			"<b>%s</b>  <font color=\"#aaaab9\">(nivel %d · +%d XP · vende %d)</font>\n%s",
-			watch.name,
-			watch.level,
-			watch.xp,
-			watch.sell,
-			costText(watch.cost)
-		)
-		addRow(title, {
+	bench.target = bench.target or defaultTarget()
+	local targetId = GameData.WatchOrder[bench.target]
+	local target = GameData.Watches[targetId]
+	-- Si una pieza de un marco ya no está en la mochila, se vacían los marcos
+	local check = table.clone(state.pieces or {})
+	for _, key in bench.slots do
+		if not check[key] or check[key] < 1 then
+			bench.slots = {}
+			break
+		end
+		check[key] -= 1
+	end
+
+	addHeader(string.format("Mesa de armado · piezas en la mochila %d/%d", state.partCount, state.capacity))
+	addRow(string.format(
+		"Reloj elegido: <b>%s</b>  <font color=\"#aaaab9\">(%s · calibre %s)</font>",
+		target.name,
+		target.zone and ("exclusivo de la zona " .. target.zone) or "general",
+		target.caliber
+	), {
+		{
+			text = "◀ Anterior",
+			onActivated = function()
+				bench.target = (bench.target - 2) % #GameData.WatchOrder + 1
+				bench.slots = {}
+				render(true)
+			end,
+		},
+		{
+			text = "Siguiente ▶",
+			onActivated = function()
+				bench.target = bench.target % #GameData.WatchOrder + 1
+				bench.slots = {}
+				render(true)
+			end,
+		},
+	})
+
+	-- Los 4 marcos verdes, en orden
+	local nextSlot = #bench.slots + 1
+	for slot, class in GameData.PieceClasses do
+		local key = bench.slots[slot]
+		local text
+		if key then
+			local info = PlayerLogic.pieceInfo(key)
+			local foreign = info.watchId ~= targetId
+			text = string.format(
+				"<b>%d · %s</b>: %s (%s)%s",
+				slot,
+				class.name,
+				info.name,
+				rarityTag(info.rarityName),
+				foreign and '  <font color="#F2C14E">⚠ de otro reloj: −1 rareza y −25%</font>' or "  ✔"
+			)
+		elseif slot == nextSlot then
+			text = string.format("<b>%d · %s</b>: elige abajo una pieza ▼", slot, class.name)
+		else
+			text = string.format('<font color="#aaaab9">%d · %s: vacío</font>', slot, class.name)
+		end
+		local buttons = nil
+		if key and slot == #bench.slots then
+			buttons = {
+				{
+					text = "Quitar",
+					onActivated = function()
+						bench.slots[slot] = nil
+						render(true)
+					end,
+				},
+			}
+		end
+		local row = addRow(text, buttons)
+		local frameColor = Color3.fromRGB(76, 175, 106) -- verde
+		if key and PlayerLogic.pieceInfo(key).watchId ~= targetId then
+			frameColor = Color3.fromRGB(242, 193, 78) -- amarillo: pieza ajena
+		end
+		new("UIStroke", {
+			Color = frameColor,
+			Thickness = (slot == nextSlot) and 4 or 2,
+			Transparency = (key or slot == nextSlot) and 0 or 0.6,
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		}).Parent = row
+	end
+
+	-- Vista previa y botón de armar
+	if #bench.slots == #GameData.PieceClasses then
+		local info = PlayerLogic.assemblePreview(targetId, bench.slots)
+		if info then
+			addRow(string.format(
+				"Resultado: <b>%s</b> · %s · vende %s · exhibido +%s/min · suerte +%.2f%%%s",
+				info.name,
+				rarityTag(info.rarityName),
+				formatNumber(info.sell),
+				PlayerLogic.formatBig(PlayerLogic.watchIncomePerMinute(info.key)),
+				info.luck * 100,
+				info.perfect and "  <b>✦ ¡Reloj perfecto!</b>" or ""
+			), {
+				{
+					text = "ARMAR RELOJ",
+					enabled = not target.needsLegacy or (state.parts.legacy or 0) > 0,
+					onActivated = function()
+						local result = request("craft", tostring(bench.target) .. ":" .. table.concat(bench.slots, ","))
+						if result and result.ok then
+							bench.slots = {}
+						end
+					end,
+				},
+				{
+					text = "Vaciar",
+					onActivated = function()
+						bench.slots = {}
+						render(true)
+					end,
+				},
+			})
+			if target.needsLegacy then
+				addRow("El Reloj del Legado usa además tu pieza del legado.")
+			end
+		end
+		return
+	end
+
+	-- Bandeja: piezas de la clase del siguiente marco
+	local class = GameData.PieceClasses[nextSlot]
+	local sortButtons = {}
+	for _, mode in SORT_MODES do
+		table.insert(sortButtons, {
+			text = mode.text,
+			enabled = bench.sort ~= mode.id,
+			onActivated = function()
+				bench.sort = mode.id
+				render(true)
+			end,
+		})
+	end
+	addHeader(string.format("Tus piezas: %s", class.name))
+	addRow("Ordenar:", sortButtons)
+	local list = {}
+	for key, amount in freePieces() do
+		local info = PlayerLogic.pieceInfo(key)
+		if info and amount > 0 and info.classIndex == nextSlot then
+			table.insert(list, { key = key, amount = amount, info = info })
+		end
+	end
+	table.sort(list, function(a, b)
+		if bench.sort == "up" then
+			return a.info.rarity < b.info.rarity
+		elseif bench.sort == "down" then
+			return a.info.rarity > b.info.rarity
+		end
+		-- Por reloj: primero las del reloj elegido, luego agrupadas por reloj
+		local aMine, bMine = a.info.watchId == targetId, b.info.watchId == targetId
+		if aMine ~= bMine then
+			return aMine
+		end
+		if a.info.watchId ~= b.info.watchId then
+			return (GameData.WatchIndex[a.info.watchId] or 0) < (GameData.WatchIndex[b.info.watchId] or 0)
+		end
+		return a.info.rarity > b.info.rarity
+	end)
+	if #list == 0 then
+		addRow(string.format("No tienes %s libres. Roba más piezas en las casas.", string.lower(class.name)))
+	end
+	for _, entry in list do
+		local mine = entry.info.watchId == targetId
+		addRow(string.format(
+			"%s %s × %d  %s",
+			mine and "✔" or "⚠",
+			entry.info.name,
+			entry.amount,
+			rarityTag(entry.info.rarityName)
+		), {
 			{
-				text = "Fabricar",
-				enabled = canCraftLocal(watch),
+				text = mine and "Poner" or "Poner (ajena)",
 				onActivated = function()
-					request("craft", watchId)
+					table.insert(bench.slots, entry.key)
+					render(true)
 				end,
 			},
 		})
@@ -405,32 +602,66 @@ end
 local function renderShop()
 	addHeader("Vender relojes")
 	local any = false
-	for _, watchId in GameData.WatchOrder do
-		local owned = state.watches[watchId] or 0
-		if owned > 0 then
-			any = true
-			local watch = GameData.Watches[watchId]
-			addRow(string.format("<b>%s</b> × %d  ·  %d monedas c/u", watch.name, owned, watch.sell), {
-				{
-					text = "Vender 1",
-					onActivated = function()
-						request("sell", watchId, 1)
-					end,
-				},
-				{
-					text = "Vender todos",
-					onActivated = function()
-						request("sell", watchId, math.min(owned, Config.MAX_SELL_AMOUNT))
-					end,
-				},
-			})
-		end
+	for _, entry in sortedWatches(state.watches) do
+		any = true
+		local key, owned = entry.key, entry.amount
+		addRow(string.format("<b>%s</b> × %d  ·  %s monedas c/u", entry.info.name, owned, formatNumber(entry.info.sell)), {
+			{
+				text = "Vender 1",
+				onActivated = function()
+					request("sell", key, 1)
+				end,
+			},
+			{
+				text = "Vender todos",
+				onActivated = function()
+					request("sell", key, math.min(owned, Config.MAX_SELL_AMOUNT))
+				end,
+			},
+		})
 	end
 	if not any then
-		addRow("No tienes relojes para vender. Fabrícalos en el Taller.")
+		addRow("No tienes relojes. Ármalos en la mesa de tu plot.")
+	end
+	addHeader("Vender piezas de reloj sueltas")
+	local pieceList = {}
+	for key, amount in state.pieces or {} do
+		local info = PlayerLogic.pieceInfo(key)
+		if info and amount > 0 then
+			table.insert(pieceList, { key = key, amount = amount, info = info })
+		end
+	end
+	table.sort(pieceList, function(a, b)
+		return a.info.rarity > b.info.rarity
+	end)
+	for _, entry in pieceList do
+		local key, owned = entry.key, entry.amount
+		addRow(string.format(
+			"%s × %d  %s · %s c/u",
+			entry.info.name,
+			owned,
+			rarityTag(entry.info.rarityName),
+			formatNumber(PlayerLogic.pieceSellValue(key))
+		), {
+			{
+				text = "Vender 1",
+				onActivated = function()
+					request("sellPiece", key, 1)
+				end,
+			},
+			{
+				text = "Vender todas",
+				onActivated = function()
+					request("sellPiece", key, math.min(owned, Config.MAX_SELL_AMOUNT))
+				end,
+			},
+		})
+	end
+	if #pieceList == 0 then
+		addRow("No tienes piezas de reloj sueltas.")
 	end
 
-	addHeader("Vender piezas sueltas")
+	addHeader("Vender piezas antiguas (del Cronómetro)")
 	local anyPart = false
 	for _, partId in GameData.PartOrder do
 		local owned = state.parts[partId] or 0
@@ -535,20 +766,17 @@ local function renderMuseum()
 		)
 	)
 	local anyDisplayed = false
-	for _, watchId in GameData.WatchOrder do
-		local displayed = state.museum[watchId] or 0
-		if displayed > 0 then
-			anyDisplayed = true
-			local watch = GameData.Watches[watchId]
-			addRow(string.format("<b>%s</b> × %d exhibido  ·  +%.1f/min c/u", watch.name, displayed, PlayerLogic.watchIncomePerMinute(watchId)), {
-				{
-					text = "Retirar",
-					onActivated = function()
-						request("withdraw", watchId)
-					end,
-				},
-			})
-		end
+	for _, entry in sortedWatches(state.museum) do -- DEC-028: relojes con rareza
+		anyDisplayed = true
+		local key = entry.key
+		addRow(string.format("<b>%s</b> × %d exhibido  ·  +%s/min c/u", entry.info.name, entry.amount, PlayerLogic.formatBig(PlayerLogic.watchIncomePerMinute(key))), {
+			{
+				text = "Retirar",
+				onActivated = function()
+					request("withdraw", key)
+				end,
+			},
+		})
 	end
 	if not anyDisplayed then
 		addRow("Todavía no exhibes relojes. Cada reloj exhibido da monedas mientras juegas.")
@@ -557,21 +785,18 @@ local function renderMuseum()
 	addHeader("En tu inventario")
 	local anyOwned = false
 	local hasSpace = state.museumCount < state.museumSlots
-	for _, watchId in GameData.WatchOrder do
-		local owned = state.watches[watchId] or 0
-		if owned > 0 then
-			anyOwned = true
-			local watch = GameData.Watches[watchId]
-			addRow(string.format("<b>%s</b> × %d  ·  vende %d o exhibe por +%.1f/min", watch.name, owned, watch.sell, PlayerLogic.watchIncomePerMinute(watchId)), {
-				{
-					text = "Exhibir",
-					enabled = hasSpace,
-					onActivated = function()
-						request("display", watchId)
-					end,
-				},
-			})
-		end
+	for _, entry in sortedWatches(state.watches) do
+		anyOwned = true
+		local key = entry.key
+		addRow(string.format("<b>%s</b> × %d  ·  vende %s o exhibe por +%s/min", entry.info.name, entry.amount, formatNumber(entry.info.sell), PlayerLogic.formatBig(PlayerLogic.watchIncomePerMinute(key))), {
+			{
+				text = "Exhibir",
+				enabled = hasSpace,
+				onActivated = function()
+					request("display", key)
+				end,
+			},
+		})
 	end
 	if not anyOwned then
 		addRow("No tienes relojes en el inventario.")
@@ -803,17 +1028,35 @@ local function renderBackpack()
 			addRow(string.format("<b>%s</b> × %d  <font color=\"#aaaab9\">(%s)</font>", part.name, owned, part.rarity), buttons)
 		end
 	end
+	-- DEC-028: piezas de reloj guardadas (se arman en la mesa del plot)
+	addHeader("Piezas de reloj")
+	local pieceList = {}
+	for key, amount in state.pieces or {} do
+		local info = PlayerLogic.pieceInfo(key)
+		if info and amount > 0 then
+			table.insert(pieceList, { amount = amount, info = info })
+		end
+	end
+	table.sort(pieceList, function(a, b)
+		if a.info.watchId ~= b.info.watchId then
+			return (GameData.WatchIndex[a.info.watchId] or 0) < (GameData.WatchIndex[b.info.watchId] or 0)
+		end
+		return a.info.classIndex < b.info.classIndex
+	end)
+	for _, entry in pieceList do
+		addRow(string.format("%s × %d  %s", entry.info.name, entry.amount, rarityTag(entry.info.rarityName)))
+	end
+	if #pieceList == 0 then
+		addRow("Aún no tienes piezas de reloj. Róbalas en las casas.")
+	end
 	addHeader("Relojes")
-	for _, watchId in GameData.WatchOrder do
-		local watch = GameData.Watches[watchId]
-		addRow(
-			string.format(
-				"<b>%s</b> × %d  <font color=\"#aaaab9\">(%d en tu plot)</font>",
-				watch.name,
-				state.watches[watchId] or 0,
-				state.museum[watchId] or 0
-			)
-		)
+	local anyWatch = false
+	for _, entry in sortedWatches(state.watches) do
+		anyWatch = true
+		addRow(string.format("<b>%s</b> × %d", entry.info.name, entry.amount))
+	end
+	if not anyWatch then
+		addRow("No tienes relojes armados.")
 	end
 	if state.carriedCount > 0 then
 		addHeader("Botín encima (aún no es tuyo)")
@@ -827,6 +1070,12 @@ local function renderBackpack()
 						amount
 					)
 				)
+			end
+		end
+		for key, amount in state.carriedPieces or {} do
+			local info = PlayerLogic.pieceInfo(key)
+			if info then
+				addRow(string.format("%s × %d  %s — llévalo a la base", info.name, amount, rarityTag(info.rarityName)))
 			end
 		end
 	end
@@ -1356,7 +1605,7 @@ local function selectFirstButton()
 	GuiService.SelectedObject = first or panel:FindFirstChild("Cerrar", true)
 end
 
-local function render(keepSelection)
+function render(keepSelection)
 	for _, child in panelList:GetChildren() do
 		if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
 			child:Destroy()

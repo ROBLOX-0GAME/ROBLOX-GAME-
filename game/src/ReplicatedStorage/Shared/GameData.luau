@@ -306,67 +306,210 @@ GameData.PlaytimeRewards = {
 	{ minutes = 120, reward = { capsule = "gold", amount = 1 } },
 }
 
--- Relojes que se fabrican en el taller.
--- level: nivel mínimo · xp: experiencia al fabricar · sell: monedas al vender
--- cost: piezas necesarias · luck: suerte mientras está exhibido
--- Ingreso pasivo exhibido: Config.PLOT_INCOME_PERCENT del valor cada periodo (DEV-011)
+-- Relojes (DEC-028, Jhonn 2026-11-21). Se arman con 4 piezas en la mesa del plot:
+-- Caja → Calibre → Esfera → Manecillas. La rareza del reloj sale de sus piezas.
+-- base: valor de venta con rareza Común; cada rareza multiplica por
+--   Config.RARITY_VALUE_GROWTH (el mejor: Ricardo Mil Tourbillon con 4 piezas
+--   Atemporales ≈ 1,8T, dentro de lo pedido: 1.500T–1.950T).
+-- xp: experiencia al armarlo · luck: suerte exhibido en el plot (con rareza Común)
+-- caliber: Cuarzo, Mecánico o Automático (solo visual, R-009)
+-- zone: zona donde salen sus piezas en exclusiva (nil = reloj general, sale en cualquier zona)
+-- weight: probabilidad relativa entre los relojes generales
+-- Nombres interpretados (sin marcas reales); el arte se parece al original sin logos.
+-- sell = base (compatibilidad con código anterior)
 GameData.Watches = {
 	pocket = {
 		id = "pocket",
-		luck = 0.005, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj de bolsillo",
-		level = 1,
-		xp = 10,
+		inspired = "clásico de bolsillo con tapa",
+		base = 60,
 		sell = 60,
-		cost = { gear = 3, spring = 2, screw = 2 },
+		xp = 10,
+		luck = 0.005,
+		caliber = "Mecánico",
+		weight = 30,
 	},
 	wrist = {
 		id = "wrist",
-		luck = 0.01, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj de pulsera",
-		level = 2,
-		xp = 25,
+		inspired = "pulsera sencilla de diario",
+		base = 150,
 		sell = 150,
-		cost = { gear = 4, spring = 2, crystal = 2, strap = 1 },
+		xp = 20,
+		luck = 0.01,
+		caliber = "Cuarzo",
+		weight = 25,
 	},
 	chrono = {
 		id = "chrono",
-		luck = 0.02, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Cronógrafo",
-		level = 4,
-		xp = 60,
+		inspired = "cronógrafo deportivo de 3 subesferas",
+		base = 400,
 		sell = 400,
-		cost = { gear = 6, spring = 4, screw = 4, crystal = 3, strap = 2 },
+		xp = 40,
+		luck = 0.015,
+		caliber = "Mecánico",
+		weight = 18,
+	},
+	legacy = {
+		id = "legacy",
+		name = "Reloj del Legado",
+		inspired = "reloj único con la pieza del legado",
+		base = 1000,
+		sell = 1000,
+		xp = 80,
+		luck = 0.03,
+		caliber = "Automático",
+		weight = 7,
+		needsLegacy = true, -- además de sus 4 piezas, usa la pieza del legado
 	},
 	royal = {
 		id = "royal",
-		luck = 0.03, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj real de rubí",
-		level = 6,
-		xp = 150,
+		inspired = "reloj de gala con rubíes",
+		base = 1200,
 		sell = 1200,
-		cost = { gear = 8, spring = 4, crystal = 4, strap = 2, ruby = 2 },
+		xp = 100,
+		luck = 0.025,
+		caliber = "Automático",
+		weight = 12,
 	},
 	millionaire = {
 		id = "millionaire",
-		luck = 0.05, -- suerte extra mientras está exhibido en el plot (DEV-008)
 		name = "Reloj del millonario",
-		level = 8,
-		xp = 400,
+		inspired = "bisel de diamantes y esfera dorada",
+		base = 3000,
+		sell = 3000,
+		xp = 200,
+		luck = 0.04,
+		caliber = "Automático",
+		weight = 8,
+	},
+	fechador = {
+		id = "fechador",
+		name = "Rolando Fechamaster",
+		inspired = "inspirado en Rolex Datejust",
+		base = 500,
+		sell = 500,
+		xp = 50,
+		luck = 0.015,
+		caliber = "Automático",
+		zone = 3,
+	},
+	lunamaster = {
+		id = "lunamaster",
+		name = "Omigo Lunamaster",
+		inspired = "inspirado en Omega Speedmaster",
+		base = 800,
+		sell = 800,
+		xp = 70,
+		luck = 0.02,
+		caliber = "Mecánico",
+		zone = 4,
+	},
+	tanque = {
+		id = "tanque",
+		name = "Cartero Tanque",
+		inspired = "inspirado en Cartier Tank",
+		base = 1200,
+		sell = 1200,
+		xp = 90,
+		luck = 0.02,
+		caliber = "Cuarzo",
+		zone = 5,
+	},
+	submar = {
+		id = "submar",
+		name = "Rolando Submar",
+		inspired = "inspirado en Rolex Submariner",
+		base = 1600,
+		sell = 1600,
+		xp = 120,
+		luck = 0.025,
+		caliber = "Automático",
+		zone = 6,
+	},
+	roblereal = {
+		id = "roblereal",
+		name = "Audemar Roble Real",
+		inspired = "inspirado en Audemars Piguet Royal Oak",
+		base = 2000,
+		sell = 2000,
+		xp = 150,
+		luck = 0.03,
+		caliber = "Automático",
+		zone = 7,
+	},
+	luminosa = {
+		id = "luminosa",
+		name = "Panerei Luminosa",
+		inspired = "inspirado en Panerai Luminor",
+		base = 2500,
+		sell = 2500,
+		xp = 180,
+		luck = 0.03,
+		caliber = "Mecánico",
+		zone = 8,
+	},
+	fusion = {
+		id = "fusion",
+		name = "Hublón Fusión de Cristal",
+		inspired = "inspirado en Hublot Big Bang de zafiro",
+		base = 3000,
+		sell = 3000,
+		xp = 220,
+		luck = 0.035,
+		caliber = "Automático",
+		zone = 9,
+	},
+	nautil = {
+		id = "nautil",
+		name = "Philippon Nautil",
+		inspired = "inspirado en Patek Philippe Nautilus",
+		base = 3500,
+		sell = 3500,
+		xp = 260,
+		luck = 0.04,
+		caliber = "Automático",
+		zone = 10,
+	},
+	patrimonio = {
+		id = "patrimonio",
+		name = "Vacherón Patrimonio",
+		inspired = "inspirado en Vacheron Constantin Patrimony",
+		base = 4200,
+		sell = 4200,
+		xp = 300,
+		luck = 0.045,
+		caliber = "Mecánico",
+		zone = 11,
+	},
+	tourbillon = {
+		id = "tourbillon",
+		name = "Ricardo Mil Tourbillon",
+		inspired = "inspirado en Richard Mille (tourbillon)",
+		base = 5000,
 		sell = 5000,
-		cost = { gear = 10, spring = 6, crystal = 6, strap = 4, ruby = 4, diamond = 2 },
+		xp = 400,
+		luck = 0.05,
+		caliber = "Mecánico",
+		zone = 12,
 	},
 }
-GameData.Watches.legacy = {
-	id = "legacy",
-	name = "Reloj del Legado",
-	luck = 0.04,
-	level = 3,
-	xp = 200,
-	sell = 3000,
-	cost = { legacy = 1, gear = 6, spring = 4, crystal = 2, strap = 1 },
+GameData.WatchOrder = { "pocket", "wrist", "chrono", "legacy", "royal", "millionaire", "fechador", "lunamaster", "tanque", "submar", "roblereal", "luminosa", "fusion", "nautil", "patrimonio", "tourbillon" }
+-- Índice numérico de cada reloj (para las claves cortas de las piezas)
+GameData.WatchIndex = {}
+for index, watchId in GameData.WatchOrder do
+	GameData.WatchIndex[watchId] = index
+end
+
+-- Clases de pieza, en el orden de los marcos verdes de la mesa (DEC-028)
+GameData.PieceClasses = {
+	{ id = "case", name = "Caja" },
+	{ id = "movement", name = "Calibre" },
+	{ id = "dial", name = "Esfera" },
+	{ id = "hands", name = "Manecillas" },
 }
-GameData.WatchOrder = { "pocket", "wrist", "chrono", "legacy", "royal", "millionaire" }
 
 -- Mejoras (DEC-027, Jhonn 2026-11-21): solo hay tres. El precio sube por nivel y
 -- nunca depende de la zona. Precio del siguiente nivel: floor(baseCost × growth ^ nivel).
@@ -572,7 +715,7 @@ GameData.Tutorial = {
 	},
 	{
 		id = "collect",
-		text = "Sal por la abertura del muro, roba 5 piezas en una casa y vuelve a la base",
+		text = "Sal por la abertura del muro, roba 5 piezas de reloj en las casas y vuelve a la base",
 		stat = "collected",
 		target = 5,
 		reward = 30,
@@ -580,7 +723,7 @@ GameData.Tutorial = {
 	},
 	{
 		id = "craft",
-		text = "Fabrica un reloj de bolsillo en el taller al fondo de tu plot",
+		text = "Arma un reloj en la mesa de tu plot: caja, calibre, esfera y manecillas",
 		stat = "crafted",
 		target = 1,
 		reward = 30,
@@ -596,7 +739,7 @@ GameData.Tutorial = {
 	},
 	{
 		id = "display",
-		text = "Fabrica otro y exhíbelo en tu plot: da el 30% de su valor cada 30 s",
+		text = "Arma otro y exhíbelo en tu plot: da el 30% de su valor cada 30 s",
 		stat = "museum",
 		target = 1,
 		reward = 40,

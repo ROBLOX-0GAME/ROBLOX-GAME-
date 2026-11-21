@@ -26,6 +26,8 @@ function PlayerLogic.newData()
 		parts = {}, -- [partId] = cantidad guardada (segura)
 		carried = {}, -- [partId] = botín robado que llevas encima; se pierde si te atrapan
 		carriedCoins = 0, -- monedas que trae el botín (DEC-024); se cobran en la base
+		pieces = {}, -- [clave de pieza] = cantidad guardada (DEC-028: Caja, Calibre, Esfera, Manecillas)
+		carriedPieces = {}, -- [clave de pieza] = piezas de reloj robadas que llevas encima
 		watches = {}, -- [watchId] = cantidad en inventario
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
@@ -105,8 +107,36 @@ function PlayerLogic.reconcile(data)
 		end
 	end
 	data.equipped = equipped
-	data.watches = cleanCounts(data.watches, GameData.Watches)
-	data.museum = cleanCounts(data.museum, GameData.Watches)
+	-- DEC-028: los relojes se guardan con clave «reloj|rareza|ajenas» (o solo el id, de antes)
+	local function cleanWatches(map)
+		local clean = {}
+		if type(map) == "table" then
+			for key, amount in map do
+				if type(key) == "string" and PlayerLogic.parseWatchKey(key) then
+					local count = nonNegativeInt(amount)
+					if count > 0 then
+						clean[key] = count
+					end
+				end
+			end
+		end
+		return clean
+	end
+	data.watches = cleanWatches(data.watches)
+	data.museum = cleanWatches(data.museum)
+	local pieces = {}
+	if type(data.pieces) == "table" then
+		for key, amount in data.pieces do
+			if type(key) == "string" and PlayerLogic.parsePieceKey(key) then
+				local count = nonNegativeInt(amount)
+				if count > 0 then
+					pieces[key] = count
+				end
+			end
+		end
+	end
+	data.pieces = pieces
+	data.carriedPieces = {} -- el botín no guardado se pierde al salir
 
 	local upgrades = {}
 	if type(data.upgrades) == "table" then
@@ -260,7 +290,7 @@ function PlayerLogic.backpackCapacity(data)
 end
 
 function PlayerLogic.partCount(data)
-	local total = sumCounts(data.parts)
+	local total = sumCounts(data.parts) + sumCounts(data.pieces or {}) -- DEC-028: piezas de reloj
 	for partId, amount in data.parts do
 		if GameData.Parts[partId].protected then
 			total -= amount -- las piezas protegidas (herencia) no ocupan espacio
@@ -270,7 +300,7 @@ function PlayerLogic.partCount(data)
 end
 
 function PlayerLogic.carriedCount(data)
-	return sumCounts(data.carried)
+	return sumCounts(data.carried) + sumCounts(data.carriedPieces or {})
 end
 
 -- Objetos robados que se pueden llevar por viaje (DEV-013).
@@ -470,8 +500,9 @@ end
 -- Suerte que dan los relojes exhibidos en el plot (DEV-008), con tope.
 function PlayerLogic.plotLuck(data)
 	local luck = 0
-	for watchId, amount in data.museum do
-		luck += (GameData.Watches[watchId].luck or 0) * amount
+	for key, amount in data.museum do
+		local info = PlayerLogic.watchInfo(key)
+		luck += (info and info.luck or 0) * amount
 	end
 	return math.min(Config.MAX_PLOT_LUCK, luck)
 end
@@ -510,15 +541,18 @@ function PlayerLogic.museumCount(data)
 end
 
 -- Monedas por minuto que da un reloj exhibido (DEV-011: 30% de su valor por periodo).
-function PlayerLogic.watchIncomePerMinute(watchId)
-	return GameData.Watches[watchId].sell * Config.PLOT_INCOME_PERCENT * 60 / Config.PLOT_INCOME_PERIOD_SECONDS
+-- key: clave del reloj (DEC-028; también sirve el id de antes)
+function PlayerLogic.watchIncomePerMinute(key)
+	local info = PlayerLogic.watchInfo(key)
+	return (info and info.sell or 0) * Config.PLOT_INCOME_PERCENT * 60 / Config.PLOT_INCOME_PERIOD_SECONDS
 end
 
 -- Monedas (con decimales) que da el plot en un ciclo de Config.MUSEUM_TICK_SECONDS.
 function PlayerLogic.museumIncome(data)
 	local total = 0
-	for watchId, amount in data.museum do
-		total += GameData.Watches[watchId].sell * amount
+	for key, amount in data.museum do
+		local info = PlayerLogic.watchInfo(key)
+		total += (info and info.sell or 0) * amount
 	end
 	return total * Config.PLOT_INCOME_PERCENT * Config.MUSEUM_TICK_SECONDS / Config.PLOT_INCOME_PERIOD_SECONDS
 end
@@ -560,27 +594,257 @@ function PlayerLogic.upgradeCost(data, upgradeId)
 	return math.floor(upgrade.baseCost * upgrade.growth ^ current)
 end
 
--- Comprueba si se puede fabricar un reloj. Devuelve ok y el motivo si no se puede.
-function PlayerLogic.canCraft(data, watchId)
-	local watch = GameData.Watches[watchId]
-	if not watch then
-		return false, "Ese reloj no existe."
-	end
-	if PlayerLogic.level(data) < watch.level then
-		return false, string.format("Necesitas nivel %d para fabricar %s.", watch.level, watch.name)
-	end
-	if (data.watches[watchId] or 0) >= Config.MAX_WATCHES_PER_TYPE then
-		return false, "Ya tienes el máximo de ese reloj."
-	end
-	for partId, needed in watch.cost do
-		local have = data.parts[partId] or 0
-		if have < needed then
-			return false, string.format("Te faltan %d %s.", needed - have, GameData.Parts[partId].name)
-		end
-	end
-	return true, ""
+-- ---------------------------------------------------------------------------
+-- Piezas de reloj y relojes con rareza (DEC-028)
+-- ---------------------------------------------------------------------------
+
+local function rarityName(index)
+	local rarity = GameData.Rarities[index]
+	return rarity and rarity.name or "?"
 end
 
+-- Clave corta de una pieza: «reloj.clase.rareza» con números (ej.: «3.2.7»).
+function PlayerLogic.pieceKey(watchId, classIndex, rarity)
+	return string.format("%d.%d.%d", GameData.WatchIndex[watchId] or 0, classIndex, rarity)
+end
+
+-- Devuelve watchId, classIndex, rarity o nil si la clave no es válida.
+function PlayerLogic.parsePieceKey(key)
+	if type(key) ~= "string" then
+		return nil
+	end
+	local w, c, r = key:match("^(%d+)%.(%d+)%.(%d+)$")
+	w, c, r = tonumber(w), tonumber(c), tonumber(r)
+	local watchId = w and GameData.WatchOrder[w]
+	if not watchId or not GameData.PieceClasses[c] or not GameData.Rarities[r] then
+		return nil
+	end
+	return watchId, c, r
+end
+
+-- Datos de una pieza para mostrar: nombre, clase, reloj y rareza.
+function PlayerLogic.pieceInfo(key)
+	local watchId, classIndex, rarity = PlayerLogic.parsePieceKey(key)
+	if not watchId then
+		return nil
+	end
+	local watch = GameData.Watches[watchId]
+	local class = GameData.PieceClasses[classIndex]
+	return {
+		key = key,
+		watchId = watchId,
+		watch = watch,
+		classIndex = classIndex,
+		className = class.name,
+		classId = class.id,
+		rarity = rarity,
+		rarityName = rarityName(rarity),
+		name = string.format("%s de %s", class.name, watch.name),
+		holdTime = Config.PIECE_HOLD_BASE + Config.PIECE_HOLD_STEP * (rarity - 1),
+	}
+end
+
+-- Factor de valor por piezas de otro reloj: −25 % cada una; con las 4, «Genérico» al 10 %.
+local function foreignFactor(foreign)
+	if foreign >= #GameData.PieceClasses then
+		return Config.FOREIGN_GENERIC_FACTOR
+	end
+	return 1 - Config.FOREIGN_PIECE_PENALTY * foreign
+end
+
+-- Valor de un reloj según su base, rareza y piezas ajenas.
+local function watchValue(watch, rarity, foreign)
+	return math.floor(watch.base * Config.RARITY_VALUE_GROWTH ^ (rarity - 1) * foreignFactor(foreign))
+end
+
+-- Monedas que da vender una pieza suelta (DEC-028).
+function PlayerLogic.pieceSellValue(key)
+	local info = PlayerLogic.pieceInfo(key)
+	if not info then
+		return 0
+	end
+	return math.max(1, math.floor(watchValue(info.watch, info.rarity, 0) * Config.PIECE_SELL_FACTOR))
+end
+
+-- Probabilidad de subir un escalón de rareza en una zona (DEC-028).
+function PlayerLogic.rarityUpChance(zoneIndex, luck)
+	local chance = Config.RARITY_UP_BASE + Config.RARITY_UP_PER_ZONE * (math.max(1, zoneIndex) - 1)
+	chance += (luck or 0) * Config.RARITY_UP_LUCK
+	return math.min(Config.RARITY_UP_MAX, chance)
+end
+
+-- Tira una pieza para una casa. rng() devuelve números en [0, 1).
+-- Desde la zona 3 puede salir el reloj exclusivo de la zona; si no, uno general.
+function PlayerLogic.rollPiece(zoneIndex, luck, rng)
+	local exclusive = nil
+	for _, watchId in GameData.WatchOrder do
+		if GameData.Watches[watchId].zone == zoneIndex then
+			exclusive = watchId
+		end
+	end
+	local watchId
+	if exclusive and rng() < Config.EXCLUSIVE_PIECE_CHANCE then
+		watchId = exclusive
+	else
+		local total = 0
+		for _, id in GameData.WatchOrder do
+			total += GameData.Watches[id].weight or 0
+		end
+		local roll = rng() * total
+		for _, id in GameData.WatchOrder do
+			roll -= GameData.Watches[id].weight or 0
+			if roll < 0 then
+				watchId = id
+				break
+			end
+		end
+		watchId = watchId or "pocket"
+	end
+	local classIndex = math.clamp(math.floor(rng() * #GameData.PieceClasses) + 1, 1, #GameData.PieceClasses)
+	local rarity = 1
+	local up = PlayerLogic.rarityUpChance(zoneIndex, luck)
+	while rarity < #GameData.Rarities and rng() < up do
+		rarity += 1
+	end
+	return PlayerLogic.pieceKey(watchId, classIndex, rarity)
+end
+
+-- Clave de un reloj armado: «reloj|rareza|piezasAjenas».
+function PlayerLogic.watchKey(watchId, rarity, foreign)
+	return string.format("%s|%d|%d", watchId, rarity, foreign)
+end
+
+-- Devuelve watchId, rarity, foreign. Acepta el id solo (relojes de antes de DEC-028:
+-- rareza Común y sin piezas ajenas).
+function PlayerLogic.parseWatchKey(key)
+	if type(key) ~= "string" then
+		return nil
+	end
+	if GameData.Watches[key] then
+		return key, 1, 0
+	end
+	local id, r, f = key:match("^(%a+)|(%d+)|(%d+)$")
+	r, f = tonumber(r), tonumber(f)
+	if not id or not GameData.Watches[id] or not r or not GameData.Rarities[r] or not f or f > #GameData.PieceClasses then
+		return nil
+	end
+	return id, r, f
+end
+
+-- Datos de un reloj: nombre con rareza, valor, suerte e ingreso.
+function PlayerLogic.watchInfo(key)
+	local watchId, rarity, foreign = PlayerLogic.parseWatchKey(key)
+	if not watchId then
+		return nil
+	end
+	local watch = GameData.Watches[watchId]
+	local name = string.format("%s (%s)", watch.name, rarityName(rarity))
+	if foreign >= #GameData.PieceClasses then
+		name = string.format("Reloj Genérico (%s)", rarityName(rarity))
+	elseif foreign > 0 then
+		name ..= string.format(" · %d pieza(s) ajena(s)", foreign)
+	end
+	return {
+		key = key,
+		id = watchId,
+		watch = watch,
+		rarity = rarity,
+		rarityName = rarityName(rarity),
+		foreign = foreign,
+		perfect = foreign == 0,
+		name = name,
+		sell = watchValue(watch, rarity, foreign),
+		luck = (watch.luck or 0) * (1 + Config.RARITY_LUCK_STEP * (rarity - 1)) * foreignFactor(foreign),
+		xp = math.floor((watch.xp or 0) * (1 + 0.5 * (rarity - 1))),
+	}
+end
+
+-- Resultado de armar un reloj con 4 piezas (en orden caja, calibre, esfera, manecillas)
+-- para el reloj elegido. Devuelve la info del reloj o nil y el motivo.
+-- Rareza: la media de las piezas (hacia abajo), −1 por cada pieza de otro reloj.
+function PlayerLogic.assemblePreview(targetId, keys)
+	local watch = GameData.Watches[targetId]
+	if not watch then
+		return nil, "Elige un reloj."
+	end
+	if type(keys) ~= "table" or #keys ~= #GameData.PieceClasses then
+		return nil, "Pon las 4 piezas en los marcos verdes."
+	end
+	local sum, foreign = 0, 0
+	for slot, key in keys do
+		local watchId, classIndex, rarity = PlayerLogic.parsePieceKey(key)
+		if not watchId then
+			return nil, "Pieza no válida."
+		end
+		if classIndex ~= slot then
+			return nil, string.format("El marco %d es para %s.", slot, GameData.PieceClasses[slot].name)
+		end
+		if watchId ~= targetId then
+			foreign += 1
+		end
+		sum += rarity
+	end
+	local rarity = math.max(1, math.floor(sum / #keys) - foreign)
+	return PlayerLogic.watchInfo(PlayerLogic.watchKey(targetId, rarity, foreign))
+end
+
+-- Arma un reloj (DEC-028). request: «indiceReloj:clave1,clave2,clave3,clave4».
+-- Devuelve ok, mensaje, subióDeNivel.
+function PlayerLogic.craft(data, request)
+	if type(request) ~= "string" then
+		return false, "Solicitud no válida.", false
+	end
+	local watchIndex, list = request:match("^(%d+):(.+)$")
+	local targetId = GameData.WatchOrder[tonumber(watchIndex or "") or 0]
+	if not targetId then
+		return false, "Elige un reloj.", false
+	end
+	local keys = string.split(list, ",")
+	local info, reason = PlayerLogic.assemblePreview(targetId, keys)
+	if not info then
+		return false, reason, false
+	end
+	local needed = {}
+	for _, key in keys do
+		needed[key] = (needed[key] or 0) + 1
+	end
+	for key, amount in needed do
+		if (data.pieces[key] or 0) < amount then
+			return false, "No tienes esas piezas en tu mochila.", false
+		end
+	end
+	if info.watch.needsLegacy and (data.parts.legacy or 0) < 1 then
+		return false, "El Reloj del Legado necesita tu pieza del legado.", false
+	end
+	if (data.watches[info.key] or 0) >= Config.MAX_WATCHES_PER_TYPE then
+		return false, "Ya tienes el máximo de ese reloj.", false
+	end
+	local levelBefore = PlayerLogic.level(data)
+	for key, amount in needed do
+		data.pieces[key] -= amount
+		if data.pieces[key] <= 0 then
+			data.pieces[key] = nil
+		end
+	end
+	if info.watch.needsLegacy then
+		data.parts.legacy -= 1
+		if data.parts.legacy <= 0 then
+			data.parts.legacy = nil
+		end
+	end
+	data.watches[info.key] = (data.watches[info.key] or 0) + 1
+	data.xp += info.xp
+	data.stats.crafted += 1
+	local levelAfter = PlayerLogic.level(data)
+	local message = string.format("Armaste: %s (+%d XP)", info.name, info.xp)
+	if info.perfect then
+		message = string.format("¡Reloj perfecto! %s (+%d XP)", info.name, info.xp)
+	end
+	if levelAfter > levelBefore then
+		message ..= string.format(" · ¡Subiste a nivel %d!", levelAfter)
+	end
+	return true, message, levelAfter > levelBefore
+end
 -- Elige una pieza al azar. roll es un número en [0, 1).
 -- zoneWeights (opcional): tabla [partId] = peso de una zona; si falta, usa el peso base.
 -- luckMultiplier multiplica el peso de las piezas que no son comunes.
@@ -688,6 +952,8 @@ function PlayerLogic.buildView(data, now)
 		levelNeed = levelNeed,
 		parts = table.clone(data.parts),
 		carried = table.clone(data.carried),
+		pieces = table.clone(data.pieces), -- DEC-028
+		carriedPieces = table.clone(data.carriedPieces),
 		carriedCount = PlayerLogic.carriedCount(data),
 		carriedCoins = data.carriedCoins,
 		freeSpace = PlayerLogic.freeSpace(data),
@@ -804,6 +1070,43 @@ function PlayerLogic.stealPart(data, partId, bonusRoll, lootCoins)
 	return true, message, amount
 end
 
+-- Roba una pieza de reloj en una casa (DEC-028): va al botín con sus monedas.
+-- Devuelve ok, mensaje, cantidad.
+function PlayerLogic.stealPiece(data, key, bonusRoll, lootCoins)
+	local info = PlayerLogic.pieceInfo(key)
+	if not info then
+		return false, "Pieza desconocida.", 0
+	end
+	local carryRoom = PlayerLogic.carryCapacity(data) - PlayerLogic.carriedCount(data)
+	if carryRoom < 1 then
+		return false, string.format(
+			"Ya llevas %d objeto(s), tu límite por viaje. Vuelve a la base o mejora tu carga en Mochila y Carga.",
+			PlayerLogic.carriedCount(data)
+		), 0
+	end
+	if PlayerLogic.freeSpace(data) < 1 then
+		return false, "Mochila llena: vuelve a la base, arma relojes o vende piezas.", 0
+	end
+	local amount = 1
+	if math.min(PlayerLogic.freeSpace(data), carryRoom) >= 2 and bonusRoll < PlayerLogic.extraPartChance(data) then
+		amount = 2
+	end
+	data.carriedPieces[key] = (data.carriedPieces[key] or 0) + amount
+	local coins = math.max(0, math.floor(lootCoins or 0)) * amount
+	data.carriedCoins = (data.carriedCoins or 0) + coins
+	local message = string.format("Robaste %d × %s (%s). ¡Llévalo a la base!", amount, info.name, info.rarityName)
+	if coins > 0 then
+		message = string.format(
+			"Robaste %d × %s (%s) y %s monedas. ¡Llévalo a la base!",
+			amount,
+			info.name,
+			info.rarityName,
+			PlayerLogic.formatBig(coins)
+		)
+	end
+	return true, message, amount
+end
+
 -- Guarda el botín al llegar a la base. Devuelve las piezas guardadas y las
 -- monedas cobradas (con el multiplicador de monedas; DEC-024).
 function PlayerLogic.depositLoot(data)
@@ -813,6 +1116,11 @@ function PlayerLogic.depositLoot(data)
 		total += amount
 	end
 	data.carried = {}
+	for key, amount in data.carriedPieces or {} do -- DEC-028
+		data.pieces[key] = (data.pieces[key] or 0) + amount
+		total += amount
+	end
+	data.carriedPieces = {}
 	data.stats.collected += total
 	local coins = math.floor((data.carriedCoins or 0) * PlayerLogic.coinMultiplier(data))
 	data.carriedCoins = 0
@@ -827,50 +1135,49 @@ end
 function PlayerLogic.loseLoot(data)
 	local total = PlayerLogic.carriedCount(data)
 	data.carried = {}
+	data.carriedPieces = {}
 	data.carriedCoins = 0
 	return total
 end
 
--- Devuelve ok, mensaje, subióDeNivel
-function PlayerLogic.craft(data, watchId)
-	local ok, reason = PlayerLogic.canCraft(data, watchId)
-	if not ok then
-		return false, reason, false
-	end
-	local watch = GameData.Watches[watchId]
-	local levelBefore = PlayerLogic.level(data)
-	for partId, needed in watch.cost do
-		removeCount(data.parts, partId, needed)
-	end
-	data.watches[watchId] = (data.watches[watchId] or 0) + 1
-	data.xp += watch.xp
-	data.stats.crafted += 1
-	local levelAfter = PlayerLogic.level(data)
-	local message = string.format("Fabricaste: %s (+%d XP)", watch.name, watch.xp)
-	if levelAfter > levelBefore then
-		message ..= string.format(" · ¡Subiste a nivel %d!", levelAfter)
-	end
-	return true, message, levelAfter > levelBefore
-end
-
-function PlayerLogic.sell(data, watchId, amount)
-	local watch = GameData.Watches[watchId]
-	if not watch then
+-- Vende relojes (DEC-028: key es la clave del reloj con su rareza).
+function PlayerLogic.sell(data, key, amount)
+	local info = PlayerLogic.watchInfo(key)
+	if not info then
 		return false, "Ese reloj no existe."
 	end
 	if not validAmount(amount) then
 		return false, "Cantidad no válida."
 	end
-	local owned = data.watches[watchId] or 0
+	local owned = data.watches[key] or 0
 	if owned < amount then
 		return false, "No tienes suficientes relojes de ese tipo."
 	end
-	local earned = math.floor(watch.sell * amount * PlayerLogic.coinMultiplier(data))
-	removeCount(data.watches, watchId, amount)
+	local earned = math.floor(info.sell * amount * PlayerLogic.coinMultiplier(data))
+	removeCount(data.watches, key, amount)
 	data.coins += earned
 	data.stats.sold += amount
 	data.stats.earned += earned
-	return true, string.format("Vendiste %d × %s por %d monedas.", amount, watch.name, earned)
+	return true, string.format("Vendiste %d × %s por %s monedas.", amount, info.name, PlayerLogic.formatBig(earned))
+end
+
+-- Vende piezas de reloj sueltas (DEC-028): el 5 % del reloj con su rareza.
+function PlayerLogic.sellPiece(data, key, amount)
+	local info = PlayerLogic.pieceInfo(key)
+	if not info then
+		return false, "Pieza desconocida."
+	end
+	if not validAmount(amount) then
+		return false, "Cantidad no válida."
+	end
+	if (data.pieces[key] or 0) < amount then
+		return false, "No tienes esas piezas."
+	end
+	local earned = math.floor(PlayerLogic.pieceSellValue(key) * amount * PlayerLogic.coinMultiplier(data))
+	removeCount(data.pieces, key, amount)
+	data.coins += earned
+	data.stats.earned += earned
+	return true, string.format("Vendiste %d × %s (%s) por %s monedas.", amount, info.name, info.rarityName, PlayerLogic.formatBig(earned))
 end
 
 -- Vende piezas sueltas en la Tienda (BUG-001).
@@ -932,36 +1239,36 @@ function PlayerLogic.buyUpgrade(data, upgradeId)
 	return true, string.format("%s mejorada a nivel %d.", upgrade.name, newLevel)
 end
 
-function PlayerLogic.display(data, watchId)
-	local watch = GameData.Watches[watchId]
-	if not watch then
+function PlayerLogic.display(data, key)
+	local info = PlayerLogic.watchInfo(key)
+	if not info then
 		return false, "Ese reloj no existe."
 	end
-	if (data.watches[watchId] or 0) < 1 then
+	if (data.watches[key] or 0) < 1 then
 		return false, "No tienes ese reloj en tu inventario."
 	end
 	if PlayerLogic.museumCount(data) >= PlayerLogic.museumSlots(data) then
 		return false, "No quedan vitrinas libres. Mejora tu plot o retira un reloj."
 	end
-	removeCount(data.watches, watchId, 1)
-	data.museum[watchId] = (data.museum[watchId] or 0) + 1
-	return true, string.format("%s exhibido en tu plot.", watch.name)
+	removeCount(data.watches, key, 1)
+	data.museum[key] = (data.museum[key] or 0) + 1
+	return true, string.format("%s exhibido en tu plot.", info.name)
 end
 
-function PlayerLogic.withdraw(data, watchId)
-	local watch = GameData.Watches[watchId]
-	if not watch then
+function PlayerLogic.withdraw(data, key)
+	local info = PlayerLogic.watchInfo(key)
+	if not info then
 		return false, "Ese reloj no existe."
 	end
-	if (data.museum[watchId] or 0) < 1 then
+	if (data.museum[key] or 0) < 1 then
 		return false, "Ese reloj no está exhibido."
 	end
-	if (data.watches[watchId] or 0) >= Config.MAX_WATCHES_PER_TYPE then
+	if (data.watches[key] or 0) >= Config.MAX_WATCHES_PER_TYPE then
 		return false, "Tu inventario de ese reloj está lleno."
 	end
-	removeCount(data.museum, watchId, 1)
-	data.watches[watchId] = (data.watches[watchId] or 0) + 1
-	return true, string.format("%s retirado de tu plot.", watch.name)
+	removeCount(data.museum, key, 1)
+	data.watches[key] = (data.watches[key] or 0) + 1
+	return true, string.format("%s retirado de tu plot.", info.name)
 end
 
 -- Completa todos los pasos del tutorial ya cumplidos y entrega sus premios.

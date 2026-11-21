@@ -58,6 +58,13 @@ local ACTIONS = {
 			return PlayerLogic.sell(data, id, amount)
 		end,
 	},
+	-- DEC-028: vender piezas de reloj sueltas
+	sellPiece = {
+		station = "shop",
+		run = function(data, id, amount)
+			return PlayerLogic.sellPiece(data, id, amount)
+		end,
+	},
 	sellPart = {
 		station = "shop",
 		run = function(data, id, amount)
@@ -229,7 +236,8 @@ local function handle(player, actionName, id, amount)
 	if not allowRequest(player) then
 		return reply(false, "Vas demasiado rápido. Espera un momento.")
 	end
-	if type(actionName) ~= "string" or type(id) ~= "string" or #id > 32 then
+	-- DEC-028: armar un reloj manda «reloj:4 claves» (hasta 40 caracteres)
+	if type(actionName) ~= "string" or type(id) ~= "string" or #id > 40 then
 		return reply(false, "Solicitud no válida.")
 	end
 	local action = ACTIONS[actionName]

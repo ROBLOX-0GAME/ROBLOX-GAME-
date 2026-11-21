@@ -70,19 +70,49 @@ end
 -- Piezas dentro de la casa
 -- ---------------------------------------------------------------------------
 
+-- Forma provisional de cada clase de pieza (DEC-028) hasta que lleguen los
+-- modelos de Zadiel (pz_<reloj>_<clase>, ver art/PROMPT_PIEZAS_RELOJ_ZADIEL.md §7.3).
+local PIECE_SHAPES = {
+	case = { shape = Enum.PartType.Cylinder, size = Vector3.new(0.5, 1.6, 1.6) },
+	movement = { shape = Enum.PartType.Cylinder, size = Vector3.new(0.4, 1.2, 1.2) },
+	dial = { shape = Enum.PartType.Cylinder, size = Vector3.new(0.15, 1.5, 1.5) },
+	hands = { shape = Enum.PartType.Block, size = Vector3.new(0.15, 1.4, 0.25) },
+}
+
+-- Crea el objeto robable de un hueco. spot.kind = "piece" (pieza de reloj, por
+-- defecto) o "boss" (pieza antigua; solo mientras el Cronómetro está averiado).
 local function spawnSpot(house, spot)
-	local partId = PlayerLogic.rollPart(1, random:NextNumber(), house.zone.weights)
-	local info = GameData.Parts[partId]
+	local isPiece = spot.kind ~= "boss"
+	local key, partId, name, rarityName, holdTime
+	if isPiece then
+		key = PlayerLogic.rollPiece(house.zoneIndex, 0, function()
+			return random:NextNumber()
+		end)
+		local info = PlayerLogic.pieceInfo(key)
+		name, rarityName, holdTime = info.name, info.rarityName, info.holdTime
+	else
+		partId = PlayerLogic.rollPart(1, random:NextNumber(), house.zone.weights)
+		local info = GameData.Parts[partId]
+		name, rarityName, holdTime = info.name, info.rarity, info.holdTime
+	end
+	local rarityIndex = GameData.RarityIndex[rarityName] or 1
 
 	local item = Instance.new("Part")
-	item.Name = info.name
-	item.Shape = Enum.PartType.Ball
-	item.Size = Vector3.new(1.4, 1.4, 1.4)
+	item.Name = name
 	item.Anchored = true
 	item.CanCollide = false
-	item.Color = GameData.RarityColors[info.rarity]
+	item.Color = GameData.RarityColors[rarityName] or Color3.new(1, 1, 1)
 	item.Material = Enum.Material.SmoothPlastic
-	if not info.common then
+	if isPiece then
+		local shape = PIECE_SHAPES[PlayerLogic.pieceInfo(key).classId]
+		item.Shape = shape.shape
+		item.Size = shape.size
+	else
+		item.Shape = Enum.PartType.Ball
+		item.Size = Vector3.new(1.4, 1.4, 1.4)
+	end
+	-- Renderizado: solo las piezas Raras o mejores brillan y llevan luz
+	if rarityIndex >= 3 then
 		item.Material = Enum.Material.Neon
 		local light = Instance.new("PointLight")
 		light.Range = 8
@@ -91,13 +121,13 @@ local function spawnSpot(house, spot)
 	end
 	item.Position = spot.position
 	-- Presentación (ART-015): el cliente resalta las piezas Raras o mejores (Client/Vfx)
-	item:SetAttribute("Rarity", info.rarity)
+	item:SetAttribute("Rarity", rarityName)
 	CollectionService:AddTag(item, "PiezaRobable")
 
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = "Robar"
-	prompt.ObjectText = string.format("%s (%s)", info.name, info.rarity)
-	prompt.HoldDuration = info.holdTime
+	prompt.ObjectText = string.format("%s (%s)", name, rarityName)
+	prompt.HoldDuration = holdTime
 	prompt.MaxActivationDistance = 8
 	prompt.RequiresLineOfSight = false
 	prompt.Parent = item
@@ -121,7 +151,12 @@ local function spawnSpot(house, spot)
 			)
 			return
 		end
-		local ok, message = PlayerLogic.stealPart(data, partId, random:NextNumber(), house.zone.lootCoins)
+		local ok, message
+		if isPiece then
+			ok, message = PlayerLogic.stealPiece(data, key, random:NextNumber(), house.zone.lootCoins)
+		else
+			ok, message = PlayerLogic.stealPart(data, partId, random:NextNumber(), house.zone.lootCoins)
+		end
 		if not ok then
 			Net.notify(player, message, "error")
 			return
@@ -137,22 +172,41 @@ local function spawnSpot(house, spot)
 	end)
 
 	item.Parent = house.model
-	AssetLibrary.dress(item, AssetLibrary.PART_ASSETS[partId]) -- arte (DEV-014)
+	if isPiece then
+		local info = PlayerLogic.pieceInfo(key)
+		AssetLibrary.dress(item, string.format("pz_%s_%s", info.watchId, info.classId)) -- arte (ART-018)
+	else
+		AssetLibrary.dress(item, AssetLibrary.PART_ASSETS[partId]) -- arte (DEV-014)
+	end
 	spot.item = item
 
 	-- DEC-029: aviso a todo el servidor si la pieza es Mítica o superior
-	local rarityIndex = GameData.RarityIndex[info.rarity] or 0
 	if rarityIndex >= Config.ANNOUNCE_MIN_RARITY then
 		Net.announce({
 			kind = "rarePart",
-			rarity = info.rarity,
-			part = info.name,
+			rarity = rarityName,
+			part = name,
 			zone = house.zone.name,
 			zoneIndex = house.zoneIndex,
 		})
 	end
 end
 
+-- DEC-028: mientras el Cronómetro está averiado, cada casa tiene piezas antiguas
+-- extra (engranajes, resortes…) para repararlo. Al terminar, desaparecen.
+function HouseService.setBossParts(enabled)
+	for _, house in houses do
+		for _, spot in house.bossSpots do
+			if spot.item then
+				spot.item:Destroy()
+				spot.item = nil
+			end
+			if enabled then
+				spawnSpot(house, spot)
+			end
+		end
+	end
+end
 -- DEC-029: renueva las piezas de todas las casas (al reiniciar la zona de carreras).
 function HouseService.resetAll()
 	for _, house in houses do
@@ -247,6 +301,7 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		ownerSpawn = Vector3.new(centerX + side * 6, 0, centerZ),
 		doorOutside = Vector3.new(frontX - side * 4, 0, centerZ),
 		spots = {},
+		bossSpots = {}, -- DEC-028: piezas antiguas durante el Cronómetro
 		thieves = {}, -- [Player] = true si robó en esta visita
 		visitors = {}, -- [Player] = os.clock() al entrar (DEC-024: el dueño despierta a los 15 s)
 		chasing = nil,
@@ -269,6 +324,10 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		local spot = { position = position + Vector3.new(0, 2.9, 0), item = nil }
 		table.insert(house.spots, spot)
 		spawnSpot(house, spot)
+	end
+	-- Hueco para las piezas antiguas del Cronómetro, en el centro de la casa
+	for _ = 1, Config.BOSS_PARTS_PER_HOUSE do
+		table.insert(house.bossSpots, { kind = "boss", position = Vector3.new(centerX, 1.5, centerZ), item = nil })
 	end
 
 	model.Parent = parent

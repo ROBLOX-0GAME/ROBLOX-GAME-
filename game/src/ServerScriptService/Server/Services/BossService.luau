@@ -59,7 +59,16 @@ local function notifyAll(text, kind)
 	end
 end
 
+-- DEC-028: las piezas antiguas solo salen en las casas mientras el Cronómetro está averiado
+local function setBossParts(enabled)
+	local ok, HouseService = pcall(require, script.Parent.HouseService)
+	if ok and HouseService.setBossParts then
+		HouseService.setBossParts(enabled)
+	end
+end
+
 local function start()
+	setBossParts(true)
 	active = true
 	points = 0
 	goal = math.max(Config.BOSS_MIN_GOAL, Config.BOSS_POINTS_PER_PLAYER * #Players:GetPlayers())
@@ -84,6 +93,7 @@ local function finish(success)
 	if not active then
 		return -- ya terminó (p. ej. dos entregas alcanzaron la meta a la vez)
 	end
+	setBossParts(false)
 	active = false
 	nextAt = now() + Config.BOSS_INTERVAL_SECONDS
 	smoke.Enabled = false

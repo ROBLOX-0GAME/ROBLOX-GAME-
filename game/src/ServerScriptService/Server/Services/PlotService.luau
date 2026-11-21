@@ -192,12 +192,17 @@ function PlotService.refresh(player)
 		return
 	end
 	plot.displays:ClearAllChildren()
+	-- DEC-028: los relojes exhibidos tienen clave con rareza; los más valiosos primero
 	local watches = {}
-	for _, watchId in GameData.WatchOrder do
-		for _ = 1, data.museum[watchId] or 0 do
-			table.insert(watches, watchId)
+	for key, amount in data.museum do
+		for _ = 1, amount do
+			table.insert(watches, key)
 		end
 	end
+	table.sort(watches, function(a, b)
+		local infoA, infoB = PlayerLogic.watchInfo(a), PlayerLogic.watchInfo(b)
+		return (infoA and infoA.sell or 0) > (infoB and infoB.sell or 0)
+	end)
 	local slots = math.min(PlayerLogic.museumSlots(data), #DISPLAY_COLUMNS * #DISPLAY_ROWS)
 	for slot = 1, slots do
 		local row = DISPLAY_ROWS[(slot - 1) // #DISPLAY_COLUMNS + 1]
@@ -211,18 +216,19 @@ function PlotService.refresh(player)
 		}, CFrame.new(column, 1.65, row))
 		pedestal.Parent = plot.displays
 		AssetLibrary.dress(pedestal, "mdl_vitrina")
-		local watchId = watches[slot]
-		if watchId then
-			local watch = GameData.Watches[watchId]
+		local key = watches[slot]
+		local info = key and PlayerLogic.watchInfo(key)
+		if info then
+			local watchId = info.id
 			local marker = plotPart(plot, {
-				Name = watch.name,
+				Name = info.name,
 				Shape = Enum.PartType.Cylinder,
 				Size = Vector3.new(0.4, 1.4, 1.4),
-				Color = Color3.fromRGB(255, 210, 90),
+				Color = GameData.RarityColors[info.rarityName] or Color3.fromRGB(255, 210, 90),
 				Material = Enum.Material.Neon,
 				CanCollide = false,
 			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
-			WorldService.makeSign(marker, watch.name, string.format("+%.1f monedas/min", PlayerLogic.watchIncomePerMinute(watchId)), 1.5, 30) -- ART-015: antes 50
+			WorldService.makeSign(marker, info.name, "+" .. PlayerLogic.formatBig(PlayerLogic.watchIncomePerMinute(key)) .. " monedas/min", 1.5, 30) -- ART-015: antes 50
 			marker.Parent = plot.displays
 			AssetLibrary.dress(marker, AssetLibrary.WATCH_ASSETS[watchId], { facing = plot.cframe.LookVector })
 		end
