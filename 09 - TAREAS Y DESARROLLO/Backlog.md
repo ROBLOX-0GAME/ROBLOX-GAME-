@@ -839,7 +839,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Zadiel.
 - **Área:** Código / interfaz y sonido.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (sonidos bloqueados por BUG-004).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -859,8 +859,10 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] IDs en `Config.luau` y cargados en la place.
-- [ ] Play: los 8 iconos se ven en el HUD y los 10 sonidos suenan sin errores de carga en Output.
+- [x] IDs en `Config.luau` y cargados en la place.
+- [ ] Play: los 8 iconos se ven en el HUD (✅) y los 10 sonidos suenan sin errores de carga en Output (❌ BUG-004).
+
+**Resultado (2026-11-20):** IDs en `Config` y en la place (versión 17). Iconos visibles en el HUD. Sonidos bloqueados por permisos de audio (BUG-004 en [[Plan-de-Pruebas]] §24): Zadiel debe dar acceso a la experiencia 10778093657 desde su cuenta, o Jhonn resube los audios.
 
 ### INFRA-005 — La MacBook de Zadiel sirve para todo (DEC-021)
 
