@@ -1147,3 +1147,27 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Código en la place y probado en Play.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 27). 50/50 pruebas; cinemática y tutorial verificados con datos reiniciados ([[Plan-de-Pruebas]] §28).
+
+### DEV-023 — Reinicio de la zona de carreras cada 5 min, 12 rarezas y avisos de piezas muy raras
+
+- **ID:** DEV-023.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Gameplay / interfaz.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** DEC-029 y parte de DEC-028.
+- Las piezas de cada casa ya son únicas en el servidor (quien la roba primero se la lleva); se comprueba.
+- Cada 5 min se cierra la zona de carreras: 30 s de cuenta atrás arriba, todos vuelven a la base con el botín guardado, se renuevan las piezas de todas las casas y se abre a los 10 s.
+- Tabla de **12 rarezas** con su color y mensaje.
+- Aviso arriba para todo el servidor cuando aparece una pieza Mítica o superior, con la zona. Con las piezas actuales (hasta Legendario) no salta todavía; servirá con las piezas nuevas de DEV-025.
+
+**Criterios de aceptación:**
+
+- [ ] Reinicio cada 5 min con cuenta atrás, vuelta a la base, botín guardado, piezas renovadas y reapertura.
+- [ ] 12 rarezas en `GameData` y aviso para Mítica o superior.
+- [ ] Pruebas automáticas y prueba en Play.
