@@ -180,6 +180,28 @@ return function(t)
 		t.ok(PlayerLogic.extraPartChance(petData) > 0, "las mascotas dan suerte")
 	end)
 
+	t.test("DEC-028/029: 12 rarezas en orden, colores y avisos desde Mítico", function()
+		local names = {}
+		for _, rarity in GameData.Rarities do
+			table.insert(names, rarity.name)
+			t.ok(typeof(rarity.color) == "Color3", rarity.name .. " tiene color")
+		end
+		t.eq(
+			table.concat(names, ","),
+			"Común,Poco común,Raro,Épico,Legendario,Mítico,Divino,Celestial,Cósmico,Eterno,Ancestral,Atemporal",
+			"las 12 rarezas en orden"
+		)
+		t.eq(GameData.RarityIndex["Mítico"], Config.ANNOUNCE_MIN_RARITY, "el aviso empieza en Mítico")
+		for index = Config.ANNOUNCE_MIN_RARITY, #GameData.Rarities do
+			t.ok(type(GameData.Rarities[index].message) == "string", GameData.Rarities[index].name .. " tiene mensaje")
+		end
+		t.ok(GameData.Rarities[12].rainbow == true, "Atemporal es arcoíris")
+		for _, part in GameData.Parts do
+			t.ok(GameData.RarityColors[part.rarity] ~= nil, part.name .. " tiene color de rareza")
+		end
+		t.ok(Config.RACE_RESET_SECONDS == 300 and Config.RACE_WARNING_SECONDS == 30, "reinicio cada 5 min con 30 s de aviso")
+	end)
+
 	t.test("museo: exhibir, límite de vitrinas, retirar e ingreso", function()
 		local data = PlayerLogic.newData()
 		local slots = PlayerLogic.museumSlots(data)

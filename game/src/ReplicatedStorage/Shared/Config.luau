@@ -57,6 +57,13 @@ local Config = {
 	CHASE_LOSE_DISTANCE = 160, -- el dueño se rinde si te alejas tanto
 	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
 
+	-- Reinicio de la zona de carreras (DEC-029)
+	RACE_RESET_SECONDS = 300, -- cada cuánto se cierra la zona y se renuevan las piezas
+	RACE_WARNING_SECONDS = 30, -- cuenta atrás antes del cierre
+	RACE_CLOSED_SECONDS = 10, -- tiempo cerrada antes de volver a abrir
+	ANNOUNCE_MIN_RARITY = 6, -- aviso a todo el servidor desde esta rareza (6 = Mítico)
+	ANNOUNCE_SECONDS = 6, -- tiempo que se ve el aviso arriba
+
 	-- Zonas (DEC-024): cada una es un 35 % más larga que la anterior
 	ZONE_BASE_DEPTH = 130, -- largo de la zona 1
 	ZONE_DEPTH_GROWTH = 1.35,
@@ -145,6 +152,7 @@ local Config = {
 		OpenPanel = "OpenPanel", -- RemoteEvent servidor → cliente: abrir un menú de estación
 		Action = "Action", -- RemoteFunction cliente → servidor: pedir una acción
 		Sound = "Sound", -- RemoteEvent servidor → cliente: reproducir un efecto (DEV-014)
+		Announce = "Announce", -- RemoteEvent servidor → todos: aviso arriba de pieza muy rara (DEC-029)
 	},
 
 	-- Arte (DEV-014): IDs de Roblox de los sonidos (art/audio/export/sfx_*.ogg) y de los

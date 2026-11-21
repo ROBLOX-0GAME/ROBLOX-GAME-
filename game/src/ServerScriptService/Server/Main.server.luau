@@ -17,6 +17,7 @@ local PlotService = require(Services.PlotService)
 local TrainingService = require(Services.TrainingService)
 local MonetizationService = require(Services.MonetizationService)
 local RewardService = require(Services.RewardService)
+local RaceService = require(Services.RaceService) -- DEC-029: reinicio de la zona cada 5 min
 
 DataService.init()
 WorldService.init()
@@ -30,6 +31,7 @@ PlotService.init()
 TrainingService.init()
 MonetizationService.init()
 RewardService.init()
+RaceService.init()
 DataService.start() -- al final: los demás servicios ya escuchan onLoaded
 
 print("[BUILD A WATCH!] Servidor iniciado.")

@@ -73,16 +73,31 @@ GameData.RepairPoints = {
 	["Herencia"] = 0, -- protegida: no se entrega
 }
 
-GameData.RarityColors = {
-	["Común"] = Color3.fromRGB(170, 170, 180),
-	["Poco común"] = Color3.fromRGB(80, 150, 230),
-	["Raro"] = Color3.fromRGB(220, 60, 70),
-	["Épico"] = Color3.fromRGB(170, 90, 230),
-	["Legendario"] = Color3.fromRGB(255, 200, 40),
-	["Mítico"] = Color3.fromRGB(255, 90, 160),
-	["Divino"] = Color3.fromRGB(120, 255, 240),
-	["Herencia"] = Color3.fromRGB(255, 240, 150),
+-- Rarezas (DEC-028, Jhonn 2026-11-21): 12, de menor a mayor. color: color principal;
+-- stroke: contorno del texto del aviso (nil = sin contorno); rainbow: color animado;
+-- message: título del aviso que ven todos (desde Config.ANNOUNCE_MIN_RARITY).
+GameData.Rarities = {
+	{ name = "Común", color = Color3.fromRGB(176, 180, 188) },
+	{ name = "Poco común", color = Color3.fromRGB(76, 175, 106) },
+	{ name = "Raro", color = Color3.fromRGB(61, 139, 253) },
+	{ name = "Épico", color = Color3.fromRGB(155, 89, 230) },
+	{ name = "Legendario", color = Color3.fromRGB(242, 160, 50) },
+	{ name = "Mítico", color = Color3.fromRGB(224, 60, 60), message = "¡PIEZA MÍTICA!" },
+	{ name = "Divino", color = Color3.fromRGB(255, 221, 51), stroke = Color3.fromRGB(255, 255, 255), message = "✦ ¡PIEZA DIVINA! ✦" },
+	{ name = "Celestial", color = Color3.fromRGB(91, 213, 224), stroke = Color3.fromRGB(255, 255, 255), message = "☾ ¡PIEZA CELESTIAL! ☽" },
+	{ name = "Cósmico", color = Color3.fromRGB(214, 92, 230), stroke = Color3.fromRGB(40, 10, 60), message = "✧ ¡PIEZA CÓSMICA! ✧" },
+	{ name = "Eterno", color = Color3.fromRGB(255, 255, 255), stroke = Color3.fromRGB(242, 193, 78), message = "∞ ¡PIEZA ETERNA! ∞" },
+	{ name = "Ancestral", color = Color3.fromRGB(0, 168, 107), stroke = Color3.fromRGB(0, 0, 0), message = "⚜ ¡PIEZA ANCESTRAL! ⚜" },
+	{ name = "Atemporal", color = Color3.fromRGB(255, 255, 255), rainbow = true, message = "⌛ ¡¡PIEZA ATEMPORAL!! ⌛" },
 }
+-- Posición de cada rareza (1 = Común … 12 = Atemporal)
+GameData.RarityIndex = {}
+GameData.RarityColors = {}
+for index, rarity in GameData.Rarities do
+	GameData.RarityIndex[rarity.name] = index
+	GameData.RarityColors[rarity.name] = rarity.color
+end
+GameData.RarityColors["Herencia"] = Color3.fromRGB(255, 240, 150)
 
 -- Mascotas (DEV-005, PROPUESTA). bonus: velocidad extra (0.10 = +10%).
 -- El multiplicador total es 1 + suma de los bonus de las mascotas equipadas.

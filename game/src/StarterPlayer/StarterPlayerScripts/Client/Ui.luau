@@ -1552,8 +1552,9 @@ local function updateGates()
 	if not state then
 		return
 	end
+	local raceOpen = Workspace:GetAttribute("RaceOpen") ~= false -- DEC-029: cerrada durante el reinicio
 	for _, gate in CollectionService:GetTagged("SpeedGate") do
-		local open = state.speed >= (gate:GetAttribute("MinSpeed") or 0) -- DEC-024: estadística
+		local open = raceOpen and state.speed >= (gate:GetAttribute("MinSpeed") or 0) -- DEC-024: estadística
 		gate.CanCollide = not open
 		if open then
 			gate.Color = COLORS.ok
@@ -1927,9 +1928,143 @@ function Ui.request(action, id, amount)
 	request(action, id, amount)
 end
 
+-- ---------------------------------------------------------------------------
+-- Avisos arriba y reinicio de la zona de carreras (DEC-029)
+-- ---------------------------------------------------------------------------
+
+local banner = nil -- { frame, title, subtitle, token }
+
+local function showBanner(titleText, subtitleText, color, stroke, rainbow, seconds)
+	if not banner then
+		local frame = new("Frame", {
+			Name = "AvisoGlobal",
+			AnchorPoint = Vector2.new(0.5, 0),
+			Position = UDim2.new(0.5, 0, 0, 70),
+			Size = UDim2.fromOffset(460, 74),
+			BackgroundColor3 = COLORS.panel,
+			BackgroundTransparency = 0.1,
+			Visible = false,
+			ZIndex = 20,
+		}, { corner(12), new("UISizeConstraint", { MaxSize = Vector2.new(560, 90) }) })
+		local title = new("TextLabel", {
+			Size = UDim2.new(1, -16, 0, 40),
+			Position = UDim2.fromOffset(8, 4),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBlack,
+			TextScaled = true,
+			TextColor3 = COLORS.text,
+			ZIndex = 21,
+		})
+		local stroke = new("UIStroke", { Thickness = 2, Transparency = 1 })
+		stroke.Parent = title
+		title.Parent = frame
+		local subtitle = new("TextLabel", {
+			Size = UDim2.new(1, -16, 0, 24),
+			Position = UDim2.fromOffset(8, 44),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBold,
+			TextScaled = true,
+			TextColor3 = COLORS.text,
+			ZIndex = 21,
+		})
+		subtitle.Parent = frame
+		frame.Parent = gui
+		banner = { frame = frame, title = title, subtitle = subtitle, stroke = stroke, token = 0 }
+	end
+	banner.token += 1
+	local token = banner.token
+	banner.title.Text = titleText
+	banner.subtitle.Text = subtitleText or ""
+	banner.title.TextColor3 = color or COLORS.text
+	banner.stroke.Color = stroke or Color3.new(0, 0, 0)
+	banner.stroke.Transparency = stroke and 0 or 1
+	banner.frame.Visible = true
+	task.spawn(function()
+		local started = os.clock()
+		while banner.token == token and os.clock() - started < (seconds or Config.ANNOUNCE_SECONDS) do
+			if rainbow then -- Atemporal: arcoíris animado
+				banner.title.TextColor3 = Color3.fromHSV((os.clock() * 0.5) % 1, 0.8, 1)
+			end
+			task.wait(0.05)
+		end
+		if banner.token == token then
+			banner.frame.Visible = false
+		end
+	end)
+end
+
+local function onAnnounce(info)
+	if type(info) ~= "table" then
+		return
+	end
+	if info.kind == "rarePart" then
+		local rarity = GameData.Rarities[GameData.RarityIndex[info.rarity] or 0]
+		if not rarity then
+			return
+		end
+		showBanner(
+			rarity.message or ("¡PIEZA " .. string.upper(info.rarity) .. "!"),
+			string.format("%s · en %s (zona %d)", tostring(info.part), tostring(info.zone), info.zoneIndex or 0),
+			rarity.color,
+			rarity.stroke,
+			rarity.rainbow
+		)
+		Ui.playSound("subir_nivel")
+	elseif info.kind == "race" then
+		if info.phase == "warning" then
+			showBanner("⏱ La zona de carreras se cierra", string.format("en %d s · vuelve a la base con tu botín", info.seconds or 30), COLORS.accent)
+		elseif info.phase == "closed" then
+			showBanner("🔒 Zona cerrada", "Renovando las piezas de todas las casas…", COLORS.error, nil, false, info.seconds)
+		elseif info.phase == "open" then
+			showBanner("🏁 ¡Zona abierta!", "Piezas nuevas en todas las casas", COLORS.ok, nil, false, 4)
+		end
+	end
+end
+
+-- Cuenta atrás de los últimos segundos antes del cierre (atributos de Workspace)
+local function watchRace()
+	local label = new("TextLabel", {
+		Name = "CuentaAtras",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 150),
+		Size = UDim2.fromOffset(300, 28),
+		BackgroundColor3 = COLORS.panel,
+		BackgroundTransparency = 0.2,
+		Font = Enum.Font.GothamBold,
+		TextSize = 18,
+		TextColor3 = COLORS.text,
+		Visible = false,
+		ZIndex = 19,
+	}, { corner(8) })
+	label.Parent = gui
+	Workspace:GetAttributeChangedSignal("RaceOpen"):Connect(updateGates)
+	task.spawn(function()
+		while true do
+			task.wait(0.5)
+			local closeAt = Workspace:GetAttribute("RaceCloseAt")
+			local remaining = closeAt and (closeAt - Workspace:GetServerTimeNow()) or math.huge
+			if Workspace:GetAttribute("RaceOpen") == false then
+				label.Visible = true
+				label.Text = "🔒 Zona cerrada: piezas nuevas en un momento"
+			elseif remaining <= Config.RACE_WARNING_SECONDS and remaining > 0 then
+				label.Visible = true
+				label.Text = string.format("⏱ La zona se cierra en %d s", math.ceil(remaining))
+			else
+				label.Visible = false
+			end
+		end
+	end)
+end
+
 function Ui.init(remote)
 	actionRemote = remote
 	buildHud()
+	-- DEC-029: avisos de piezas muy raras y del reinicio de la zona
+	local announceRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild(Config.REMOTES.Announce, 10)
+	if announceRemote then
+		announceRemote.OnClientEvent:Connect(onAnnounce)
+	end
+	watchRace()
 	ContextActionService:BindAction("AbrirMochila", function(_, inputState)
 		if inputState == Enum.UserInputState.Begin then
 			toggleBackpack()

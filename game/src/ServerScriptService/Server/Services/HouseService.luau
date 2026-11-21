@@ -13,8 +13,9 @@
 	  4. El dueño se rinde si llegas a la base, si te alejas demasiado o tras
 	     Config.CHASE_MAX_SECONDS, y vuelve a dormir.
 
-	Cada zona tiene 4 casas con 3 piezas. Las piezas reaparecen tras
-	Config.HOUSE_SPOT_RESPAWN_SECONDS con una rareza nueva según la zona.
+	Cada zona tiene 4 casas con 3 piezas. Cada pieza es única en el servidor
+	(quien la roba primero se la lleva) y no reaparece sola: todas se renuevan
+	cuando se reinicia la zona de carreras cada 5 min (RaceService, DEC-029).
 	Cada dueño persigue a un ladrón a la vez; los demás esperan en cola.
 ]]
 
@@ -132,12 +133,38 @@ local function spawnSpot(house, spot)
 		Net.notify(player, message, "ok")
 		Net.sound(player, "robar")
 		DataService.replicate(player)
-		task.delay(Config.HOUSE_SPOT_RESPAWN_SECONDS, spawnSpot, house, spot)
+		-- DEC-029: la pieza no reaparece sola; todas se renuevan al reiniciar la zona
 	end)
 
 	item.Parent = house.model
 	AssetLibrary.dress(item, AssetLibrary.PART_ASSETS[partId]) -- arte (DEV-014)
 	spot.item = item
+
+	-- DEC-029: aviso a todo el servidor si la pieza es Mítica o superior
+	local rarityIndex = GameData.RarityIndex[info.rarity] or 0
+	if rarityIndex >= Config.ANNOUNCE_MIN_RARITY then
+		Net.announce({
+			kind = "rarePart",
+			rarity = info.rarity,
+			part = info.name,
+			zone = house.zone.name,
+			zoneIndex = house.zoneIndex,
+		})
+	end
+end
+
+-- DEC-029: renueva las piezas de todas las casas (al reiniciar la zona de carreras).
+function HouseService.resetAll()
+	for _, house in houses do
+		house.visitors = {}
+		for _, spot in house.spots do
+			if spot.item then
+				spot.item:Destroy()
+				spot.item = nil
+			end
+			spawnSpot(house, spot)
+		end
+	end
 end
 
 -- ---------------------------------------------------------------------------
