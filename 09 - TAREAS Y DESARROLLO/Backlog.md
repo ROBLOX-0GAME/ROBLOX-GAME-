@@ -1202,3 +1202,32 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Pruebas automáticas y prueba en Play.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 29). 52/52 pruebas ([[Plan-de-Pruebas]] §30). Falta ver la etiqueta en el chat y una ganancia offline real.
+
+### DEV-025 — Piezas de reloj (Caja, Calibre, Esfera, Manecillas), 12 rarezas y mesa de armado
+
+- **ID:** DEV-025.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Gameplay / economía / interfaz.
+- **Prioridad:** Crítica.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** DEC-028.
+- Las casas dan **piezas de reloj** (Caja, Calibre, Esfera y Manecillas) de un reloj concreto y con una de las 12 rarezas. Cualquier pieza puede salir en cualquier zona; las zonas lejanas dan rarezas más altas. Desde la zona 3, cada zona tiene un reloj famoso exclusivo (nombres interpretados).
+- **Mesa de armado:** 4 marcos verdes en orden (caja → calibre → esfera → manecillas) y piezas ordenadas por reloj o por rareza. Cada pieza de otro reloj resta 1 rareza y un 25 % de valor, ingreso y suerte.
+- **Valor:** el mejor reloj (exclusivo de la zona 12, 4 piezas Atemporales) se vende por unos 1,8T.
+- **Piezas antiguas:** solo salen durante la reparación del Cronómetro.
+- Aspecto provisional hasta que lleguen los modelos de Zadiel (ART-018), con el contrato de nombres `pz_<reloj>_<clase>`.
+
+**Criterios de aceptación:**
+
+- [ ] Catálogo de 16 relojes (6 generales y 10 exclusivos), 4 clases de pieza y tirada de rareza por zona.
+- [ ] Robo, botín y mochila con piezas nuevas; los avisos desde Mítico funcionan.
+- [ ] Mesa de armado con marcos, orden, vista previa y penalización por pieza ajena.
+- [ ] Vender y exhibir relojes con rareza; ingreso y suerte según el reloj.
+- [ ] Piezas antiguas solo durante el Cronómetro.
+- [ ] Datos antiguos compatibles; pruebas actualizadas y en verde; prueba en Play.
+- [ ] Documento de Zadiel actualizado con las respuestas de Jhonn.
