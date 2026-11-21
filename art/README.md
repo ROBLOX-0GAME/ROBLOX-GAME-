@@ -6,6 +6,8 @@ Traspaso a la PC Windows con Studio (ART-007): [[PROMPT_ARTE_WINDOWS_STUDIO|Prom
 
 Subida de assets con Open Cloud (ART-011): [[PROMPT_SUBIDA_JHONN|Prompt para que Jhonn cree la API key y suba los assets PBR]] · script `art/tools/subir_roblox.py`.
 
+Integración visual en la place oficial (ART-012 → ART-013, Zadiel): [[PROMPT_INTEGRACION_VISUAL_ZADIEL|Prompt de diseño e integración visual con el MCP de Studio]].
+
 Pipeline completo, estilo, formatos y lista de assets: [[Pipeline-de-Arte|Pipeline de Arte]] (`art/Pipeline-de-Arte.md`).
 
 | Carpeta | Contenido |
