@@ -1320,7 +1320,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Jhonn.
 - **Área:** Decisiones del equipo.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1328,5 +1328,5 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Las 6 decisiones pasan en el Registro a «Aprobada por Jhonn y Zadiel (2026-11-21)».
-- [ ] Recomendación de Claude sobre DEC-031 anotada (no cambia la decisión).
+- [x] Las 6 decisiones pasan en el Registro a «Aprobada por Jhonn y Zadiel (2026-11-21)».
+- [x] Recomendación de Claude sobre DEC-031 anotada (no cambia la decisión).

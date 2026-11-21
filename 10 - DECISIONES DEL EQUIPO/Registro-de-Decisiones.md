@@ -299,7 +299,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-024 — 12 zonas, velocidad como estadística y dueños dormidos
 
-- **Fecha:** 2026-11-20. **Estado:** **Decidida por Jhonn** el 2026-11-20 (DEV-020). Zadiel la revisa (DEC-020). **Área:** Gameplay / mundo / progresión. Reemplaza las velocidades de zona de DEC-005 y el entrenamiento con tope de DEC-008.
+- **Fecha:** 2026-11-20. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (DEV-020; revisión de Zadiel en DOC-002). **Área:** Gameplay / mundo / progresión. Reemplaza las velocidades de zona de DEC-005 y el entrenamiento con tope de DEC-008.
 - **Zonas (velocidad necesaria):** 1: 100 · 2: 1K · 3: 10K · 4: 100K · 5: 1M · 6: 14M · 7: 200M · 8: 2,8B · 9: 40B · 10: 560B · 11: 7,5T · 12: 99,9T. Con 100T se abrirá un mundo nuevo en una actualización futura. Los jugadores empiezan con 75.
 - **Velocidad real:** la «Velocidad» es una estadística. La velocidad física sigue una curva logarítmica por tramos: 75 → 30, 1M → 85, 99,9T → 150 (tope por la física de Roblox). En la base, como máximo 50 (el jugador elige su velocidad con una barra en el HUD); dentro de las casas, 40, para buscar piezas con comodidad.
 - **Zonas más largas:** cada zona mide un 35 % más que la anterior (130 → ~3.400 studs).
@@ -328,7 +328,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-027 — Solo tres mejoras con monedas, mochila fija y mascotas con dinero
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (respuestas a [[Recomendaciones-Claude]], DEV-022). Zadiel la revisa (DEC-020). **Área:** Economía. Reemplaza en parte DEC-026.
+- **Fecha:** 2026-11-21. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (respuestas a [[Recomendaciones-Claude]], DEV-022; revisión en DOC-002). **Área:** Economía. Reemplaza en parte DEC-026.
 - **Vitrinas del plot:** de 4 a 12, +1 por mejora (8 mejoras). Empiezan en 100 monedas y cada nivel cuesta ×10 (la última, 1B).
 - **Carga por viaje:** 3 mejoras (de 1 a 4 objetos). 100 y ×10.
 - **Caminadora:** 30 niveles, ×2 de entrenamiento cada uno. El precio sube por nivel y se calibra con el valor de los relojes: el mejor reloj (original con las 4 piezas Atemporales) vale 1.500T–1.950T.
@@ -339,7 +339,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-028 — Piezas de reloj con 12 rarezas, relojes por zona y penalización por pieza ajena
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-025, pendiente de implementar). **Área:** Gameplay / arte. Desarrolla [[PROMPT_PIEZAS_RELOJ_ZADIEL]].
+- **Fecha:** 2026-11-21. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (DEV-025; revisión en DOC-002). **Área:** Gameplay / arte. Desarrolla [[PROMPT_PIEZAS_RELOJ_ZADIEL]].
 - **Piezas:** Caja, Calibre, Esfera y Manecillas de un reloj concreto, con rareza. Las 7 piezas antiguas solo salen durante la reparación del Cronómetro.
 - **Rarezas (12):** Común, Poco común, Raro, Épico, Legendario, Mítico, Divino, Celestial, Cósmico, Eterno, Ancestral y Atemporal, cada una con su color.
 - **Reparto:** cualquier pieza puede salir en cualquier zona por suerte; las zonas lejanas dan rarezas más altas. Desde la zona 3, cada zona tiene un reloj famoso exclusivo. *(Cambiado por DEC-031: un reloj de lujo exclusivo en cada una de las 12 zonas.)*
@@ -349,22 +349,23 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-029 — Piezas compartidas, reinicio de zonas cada 5 min y avisos de piezas raras
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-023). **Área:** Gameplay.
+- **Fecha:** 2026-11-21. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (DEV-023; revisión en DOC-002). **Área:** Gameplay.
 - Las piezas de cada casa son únicas en el servidor: quien la roba primero se la lleva.
 - Cada 5 min se cierra la zona de carreras: 30 s de aviso, todos vuelven a la base con su botín guardado, se renuevan las piezas y se abre a los 10 s.
 - Aviso arriba para todo el servidor cuando aparece una pieza Mítica o superior, con la zona y el mensaje y color de su rareza.
 
 #### DEC-030 — Ventajas VIP, Dinero ×2 y ganancia offline
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-024). **Área:** Monetización.
+- **Fecha:** 2026-11-21. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (DEV-024; revisión en DOC-002). **Área:** Monetización.
 - **Dinero ×2:** pase de 249 R$ (monedas ×2 al vender y en el plot; se combina con el VIP).
 - **VIP:** premios por tiempo en un 30 % menos de tiempo, etiqueta [VIP] en el chat y ganancia offline hasta 8 h.
 - **Ganancia offline:** sin VIP, hasta 4 h; al 50 % del ingreso del plot.
 
 #### DEC-031 — 12 relojes de lujo, uno exclusivo por zona, con el material de su zona
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-026). **Área:** Gameplay / arte. Cambia el reparto de DEC-028.
+- **Fecha:** 2026-11-21. **Estado:** **Aprobada por Jhonn y Zadiel (2026-11-21)** (DEV-026; revisión en DOC-002). **Área:** Gameplay / arte. Cambia el reparto de DEC-028.
 - Cada una de las 12 zonas tiene un reloj de lujo exclusivo (antes, 10 exclusivos desde la zona 3). Los 6 relojes generales (bolsillo, pulsera, cronógrafo, Legado, real de rubí y millonario) siguen saliendo al azar en cualquier zona.
 - Lista de Jhonn y zona: Speedmaster (1), Santos (2), Reverso (3), Daytona (4), Overseas (5), Nautilus (6), Royal Oak (7), Big Bang (8), RM 11 (9), Breguet Classique Tourbillon (10), Grandmaster Chime (11) y Jacob & Co. Astronomia (12, el mejor).
 - Nombres interpretados sin marcas, con un aspecto parecido al original; cada reloj usa el material de su zona. Detalle en [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §4.
 - Valores base de 200 (zona 1) a 5.000 (zona 12); el mejor reloj sigue rondando los 1.800T.
+- **Recomendación de Claude (DOC-002, no cambia la decisión):** algunos nombres interpretados («Rolando Daytuna», «Audemar Roble Real», «Hublón», «Ricardo Mil», «Jacobo y Cía.», «Philippon»…) y algunos diseños muy reconocibles (bisel octogonal con 8 tornillos, caja con «orejas») pueden chocar con las normas de propiedad intelectual de Roblox. Si llega un aviso, la salida es cambiar los nombres por otros originales y basar el diseño en el tipo de reloj, sin calcar el modelo. En los modelos nunca van textos, logos ni coronas de marcas.
