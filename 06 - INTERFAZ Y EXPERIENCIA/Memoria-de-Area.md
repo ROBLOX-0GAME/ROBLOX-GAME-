@@ -15,3 +15,5 @@
   - Se conservan DEC-016, DEC-018 y DEC-022.
   - Detalle en [[UI-UX]] §12.
 - **Pendiente:** ART-015 (aplicar [[UI-UX]] §12 en `game/src` y subir a Studio los modelos e iconos de ART-014).
+
+- 2026-11-20 · ART-015 (Zadiel): [[UI-UX]] §12 aplicado en `game/src` (`0b92ac5`) como propuesta DEC-024, con `Client/Vfx.luau` nuevo. Pasa `build.py` y `rojo build`. Falta cargarlo completo en la place, probarlo en Play y guardar.

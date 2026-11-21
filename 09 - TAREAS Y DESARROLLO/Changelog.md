@@ -499,3 +499,26 @@ Reglas:
   - `iconos.py` ya se puede importar y la hoja de contactos solo junta modelos.
   - Verificación ejecutada: exportación sin errores, vistas previas revisadas, iconos revisados sobre fondo oscuro y `tex_paleta.png` sin cambios. Commit `0559a51`.
 - **2026-11-20 · ART-014 · Paso 3 — Diseño del Bloque A.** [[UI-UX]] §12: carteles por contexto, módulo `Vfx.luau` solo en el cliente, brillo por rareza, HUD con la paleta de taller y reparto de los modelos por zona. Propuesta DEC-024 en la memoria del área 06, pendiente de pasar al Registro.
+
+## 30. ART-015 — Aplicar la presentación visual (código y Studio)
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · ART-015 · Paso 1 — Reserva y DEC-024.** Reserva `d79b344`. DEC-024 en el Registro como Propuesta (`1ea6229`).
+- **2026-11-20 · ART-015 · Paso 2 — Assets en Studio.** 18 subidas a zadiel799, **18/18 Approved**: 13 modelos de ART-014 y 5 iconos de estación. Los 13 modelos están insertados en `ReplicatedStorage/Assets`, anclados, con `tex_paleta` y a su medida real (error ≤ 0,005; la torre necesitó escala 0,01296). IDs en `art/texturas/ids_roblox.md`. **Sin guardar todavía en Roblox.**
+- **2026-11-20 · ART-015 · Paso 3 — Código** (commit `0b92ac5`; Obsidian Git ya había subido una parte en `00c485c`).
+  - `WorldService`:
+    - Carteles en marfil y oro sobre contorno carbón, con `LightInfluence = 0` e icono opcional.
+    - Estaciones con icono, a 70 studs (antes 140).
+    - Sin rótulo en la zona 1, que se superponía con el de la salida. El resto de zonas y las puertas, a 120 studs (antes 220).
+    - BASE SEGURA a un lado y a 80 studs. SALIDA por encima del arco y a 120.
+    - Decoración propia de cada zona, con respaldo al modelo genérico.
+    - Torre de reloj sólida en el centro de la plaza.
+  - **Otros carteles:** casas a 60 studs, plots a 90, vitrinas a 30 y mascotas a 30.
+  - `HouseService`: atributo `Rarity` y etiqueta `PiezaRobable` en las piezas robables, solo para la presentación.
+  - **Nuevo `Client/Vfx.luau`:** efectos breves solo en el cliente al fabricar, vender, abrir cápsula, cobrar premios, mejorar, subir de nivel, robar, guardar el botín y ser atrapado. Estela mientras se lleva botín y brillo en las piezas Raras o mejores a menos de 40 studs (como mucho 6). Máximo 3 efectos a la vez y la mitad de partículas en táctil.
+  - `Ui.luau`: paleta de taller, bordes de latón en las tarjetas y en los botones laterales, como mucho 3 notificaciones y `Ui.onAction` para los efectos.
+  - `Config.STATION_ICON_IDS`.
+  - Ningún cambio en economía, red, guardado ni posiciones funcionales.
+- **2026-11-20 · ART-015 · Verificación (ejecutada):** `build.py --check` sin errores (101 `require` verificados), `rojo build` correcto (7.7.1), stylua y selene en `Vfx.luau` sin errores ni avisos, y selene igual que en `main` en los archivos modificados (`Ui.luau` ya tenía 1 error y 9 avisos).
+- **2026-11-20 · ART-015 · Carga en la place (a medias).** Con comprobación de base y suma de control se cargaron `Config`, `HouseService` y `PlotService`. El modo automático de Claude Code **bloqueó** cargar `PetService`, y faltan también `WorldService`, `Ui`, `Main` y el nuevo `Vfx`. **Sin prueba en Play ni guardado.**
