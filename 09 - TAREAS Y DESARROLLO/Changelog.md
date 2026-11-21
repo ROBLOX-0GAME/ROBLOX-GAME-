@@ -498,13 +498,13 @@ Reglas:
   - Se rehicieron las hojas de la palmera (la primera versión salía con las hojas sueltas).
   - `iconos.py` ya se puede importar y la hoja de contactos solo junta modelos.
   - Verificación ejecutada: exportación sin errores, vistas previas revisadas, iconos revisados sobre fondo oscuro y `tex_paleta.png` sin cambios. Commit `0559a51`.
-- **2026-11-20 · ART-014 · Paso 3 — Diseño del Bloque A.** [[UI-UX]] §12: carteles por contexto, módulo `Vfx.luau` solo en el cliente, brillo por rareza, HUD con la paleta de taller y reparto de los modelos por zona. Propuesta DEC-024 en la memoria del área 06, pendiente de pasar al Registro.
+- **2026-11-20 · ART-014 · Paso 3 — Diseño del Bloque A.** [[UI-UX]] §12: carteles por contexto, módulo `Vfx.luau` solo en el cliente, brillo por rareza, HUD con la paleta de taller y reparto de los modelos por zona. Propuesta DEC-025 en la memoria del área 06, pendiente de pasar al Registro.
 
 ## 30. ART-015 — Aplicar la presentación visual (código y Studio)
 
 - **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
 
-- **2026-11-20 · ART-015 · Paso 1 — Reserva y DEC-024.** Reserva `d79b344`. DEC-024 en el Registro como Propuesta (`1ea6229`).
+- **2026-11-20 · ART-015 · Paso 1 — Reserva y DEC-025.** Reserva `d79b344`. DEC-025 en el Registro como Propuesta (`1ea6229`).
 - **2026-11-20 · ART-015 · Paso 2 — Assets en Studio.** 18 subidas a zadiel799, **18/18 Approved**: 13 modelos de ART-014 y 5 iconos de estación. Los 13 modelos están insertados en `ReplicatedStorage/Assets`, anclados, con `tex_paleta` y a su medida real (error ≤ 0,005; la torre necesitó escala 0,01296). IDs en `art/texturas/ids_roblox.md`. **Sin guardar todavía en Roblox.**
 - **2026-11-20 · ART-015 · Paso 3 — Código** (commit `0b92ac5`; Obsidian Git ya había subido una parte en `00c485c`).
   - `WorldService`:
@@ -524,7 +524,7 @@ Reglas:
 - **2026-11-20 · ART-015 · Carga en la place (a medias).** Con comprobación de base y suma de control se cargaron `Config`, `HouseService` y `PlotService`. El modo automático de Claude Code **bloqueó** cargar `PetService`, y faltan también `WorldService`, `Ui`, `Main` y el nuevo `Vfx`. **Sin prueba en Play ni guardado.**
 
 - **2026-11-20 · ART-015 · Paso 4 — Carga completa y prueba en Play.** Con la autorización de Zadiel se cargaron los 5 scripts que faltaban (`PetService`, `WorldService`, `Ui`, `Main` y el nuevo `Vfx`), con la misma comprobación de base y suma de control. Play: 48/48 pruebas, `PreloadAsync` 31/31 y sin errores de scripts. Detalle en el Plan de Pruebas §26. Capturas `art/export/vistas/studio_art015_{plaza,salida,zona4,rareza}.png`. Sigue BUG-004 (permisos de los sonidos).
-- **2026-11-20 · ART-015 · Paso 5 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 21**. No se publicó. DEC-024 sigue como Propuesta hasta que Zadiel y Jhonn la aprueben.
+- **2026-11-20 · ART-015 · Paso 5 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 21**. No se publicó. DEC-025 sigue como Propuesta hasta que Zadiel y Jhonn la aprueben.
 
 ## 31. ART-016 — Pendientes de ART-015
 
@@ -533,3 +533,4 @@ Reglas:
 - **2026-11-20 · ART-016 · Paso 1 — BUG-004 resuelto.** Con Open Cloud (`PATCH /asset-permissions-api/v1/assets/permissions`, permiso `Use` para el universo 10778093657) los 10 audios de zadiel799 quedan autorizados en la experiencia de Jhonn: 10/10 correctos, 0 errores. Verificación en Play: `PreloadAsync` de los 10 sonidos, 10/10 *Success* (`sfx_entrenar` cargado, 1,01 s), y en la consola ya no hay «User is not authorized». No hizo falta guardar la place: el permiso es del asset.
 - **2026-11-20 · ART-016 · Paso 2 — `rbxassetid://203785492` identificado.** Es «Pop Close Sound», un audio de 2015 de otro usuario (userId 44821938). Lo busqué en todas las propiedades de contenido, atributos y scripts de la place, en edición (392 instancias) y en Play (3.210 en el cliente y 2.964 en el servidor): no aparece. Lo pide la interfaz interna de Roblox o de Studio como otro tipo de asset. No viene del juego ni lo afecta; no se corrige.
 - **Pendiente:** el resto de [[UI-UX]] §12 en `game/src`, cuando DEV-020 libere la ruta. También avisar a Jhonn de que el Registro tiene **dos DEC-024** (la visual de ART-014, `1ea6229`, y la de 12 zonas de DEV-020, `8647920`) y hay que renumerar una. Y de que `ZONE_STYLE` de `WorldService` define 5 estilos: con 12 zonas, de la 6 a la 12 usarán el de la zona 1 hasta ampliarlo.
+- **2026-11-20 · ART-016 · Paso 3 — Renumeración.** Por decisión de Zadiel, la propuesta visual pasa de DEC-024 a **DEC-025** (la DEC-024 queda para las 12 zonas de DEV-020). Cambiada en `UI-UX.md`, en las memorias de las áreas 05 y 06, en `Pipeline-de-Arte.md`, en `identidad_visual.py` y en las líneas de ART-014/015 del Changelog y el Backlog. **Falta**, por estar reservado por DEV-020: el título en `Registro-de-Decisiones.md`, el Plan de Pruebas §26 y 6 comentarios en `game/src` (`Config`, `Ui`, `Vfx` y 3 en `WorldService`).

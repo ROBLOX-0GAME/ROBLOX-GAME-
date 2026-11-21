@@ -23,7 +23,7 @@
 ## Memoria reciente
 
 - 2026-11-20 · ART-015 (Zadiel): los 13 modelos de ART-014 están en `ReplicatedStorage/Assets` (18/18 *Approved*, IDs en `ids_roblox.md`). `WorldService` coloca la torre en la plaza y la decoración propia de cada zona, con respaldo al genérico. Sin probar en Play ni guardar.
-- 2026-11-20 · ART-014 (Zadiel): propuesta de identidad por zona (DEC-024, propuesta). Nombres, puertas, límites y requisitos no cambian.
+- 2026-11-20 · ART-014 (Zadiel): propuesta de identidad por zona (DEC-025, propuesta). Nombres, puertas, límites y requisitos no cambian.
   - Z1: tendedero.
   - Z2: álamo y barriles.
   - Z3: árbol redondo, seto y buzón.

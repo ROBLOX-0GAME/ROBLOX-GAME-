@@ -1,5 +1,5 @@
 """
-identidad_visual.py — ART-014: identidad «taller de relojería fantástico» (PROPUESTA DEC-024).
+identidad_visual.py — ART-014: identidad «taller de relojería fantástico» (PROPUESTA DEC-025).
 
 Genera, con la misma paleta de 16 colores (tex_paleta.png) y el mismo estilo low-poly:
 - Un punto focal para la plaza: la torre de reloj (mdl_torre_reloj).

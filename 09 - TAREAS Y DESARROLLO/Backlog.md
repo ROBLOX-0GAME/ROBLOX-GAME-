@@ -977,12 +977,12 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [x] Auditoría y propuesta DEC-024 redactadas (Memoria del área 06; al Registro cuando DEV-019 lo libere).
+- [x] Auditoría y propuesta DEC-025 redactadas (Memoria del área 06; al Registro cuando DEV-019 lo libere).
 - [x] Modelos nuevos exportados en `art/export/modelos/` con vistas previas.
 - [x] Iconos de estaciones en `art/texturas/export/`.
 - [x] Diseño del Bloque A listo para aplicar en `game/src`.
 
-**Resultado (2026-11-20):** 13 modelos y 5 iconos originales exportados (commit `0559a51`). Diseño del Bloque A en [[UI-UX]] §12. Propuesta DEC-024 en la memoria del área 06, pendiente de pasar al Registro cuando DEV-019 lo libere. Sigue en ART-015.
+**Resultado (2026-11-20):** 13 modelos y 5 iconos originales exportados (commit `0559a51`). Diseño del Bloque A en [[UI-UX]] §12. Propuesta DEC-025 en la memoria del área 06, pendiente de pasar al Registro cuando DEV-019 lo libere. Sigue en ART-015.
 
 ### ART-015 — Aplicar la presentación visual de ART-014 (código y Studio)
 
@@ -996,16 +996,16 @@ ICON_IDS = {
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
-**Descripción:** aplicar [[UI-UX]] §12 en `game/src`: carteles por contexto, `Client/Vfx.luau`, brillo por rareza, HUD con la paleta de taller y decoración por zona en `WorldService` con respaldo genérico. Pasar DEC-024 al Registro como Propuesta. Con el OK de Zadiel y Jhonn: subir a Studio los 13 modelos y 5 iconos de ART-014 (método de ART-013), comprobar en Play y guardar sin publicar.
+**Descripción:** aplicar [[UI-UX]] §12 en `game/src`: carteles por contexto, `Client/Vfx.luau`, brillo por rareza, HUD con la paleta de taller y decoración por zona en `WorldService` con respaldo genérico. Pasar DEC-025 al Registro como Propuesta. Con el OK de Zadiel y Jhonn: subir a Studio los 13 modelos y 5 iconos de ART-014 (método de ART-013), comprobar en Play y guardar sin publicar.
 
 **Criterios de aceptación:**
 
-- [x] DEC-024 en el Registro (Propuesta). Falta que Zadiel y Jhonn la aprueben o la rechacen.
+- [x] DEC-025 en el Registro (Propuesta). Falta que Zadiel y Jhonn la aprueben o la rechacen.
 - [x] Código de §12 aplicado sin tocar lógica, etiquetas, atributos ni red; `build.py --check`, `rojo build` y 48/48 pruebas.
 - [x] Assets de ART-014 subidos e insertados, con sus IDs en `ids_roblox.md`.
 - [x] Prueba en Play: carteles sin superponerse, efectos breves y rendimiento medido (triángulos y *draw calls*).
 
-**Resultado (2026-11-20):** place guardada en la **versión 21**, sin publicar. 18/18 assets *Approved*, 48/48 pruebas, `PreloadAsync` 31/31 y, como mucho, 30.922 triángulos y 36 *draw calls*. Detalle en el Plan de Pruebas §26 y el [[Changelog]] §30. Pendiente: aprobar DEC-024, BUG-004 (permisos de los sonidos) y lo no aplicado de [[UI-UX]] §12.
+**Resultado (2026-11-20):** place guardada en la **versión 21**, sin publicar. 18/18 assets *Approved*, 48/48 pruebas, `PreloadAsync` 31/31 y, como mucho, 30.922 triángulos y 36 *draw calls*. Detalle en el Plan de Pruebas §26 y el [[Changelog]] §30. Pendiente: aprobar DEC-025, BUG-004 (permisos de los sonidos) y lo no aplicado de [[UI-UX]] §12.
 
 ### DEV-020 — 12 zonas, velocidad como estadística, casas con dueño dormido y botón de velocidad
 
@@ -1062,3 +1062,5 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] `203785492` investigado: es «Pop Close Sound» (audio de 2015 de otro usuario). No está en la place (0 coincidencias en edición, en el cliente ni en el servidor), así que lo pide la interfaz interna de Roblox. No afecta al juego.
 - [ ] UI-UX §12 restante en `game/src` (esperando a DEV-020).
 - [ ] Plan de Pruebas: marcar BUG-004 como resuelto (la ruta es de DEV-020).
+- [x] Propuesta visual renumerada a DEC-025 en las notas libres.
+- [ ] DEC-025 en el título del Registro, en el Plan de Pruebas §26 y en 6 comentarios de `game/src` (rutas de DEV-020).

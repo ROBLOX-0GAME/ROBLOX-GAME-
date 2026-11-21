@@ -192,7 +192,7 @@ Lo aprendido:
 - Una imagen recién aprobada puede tardar unos minutos en servirse («content representation is being generated»).
 - El texto del arco provisional de la salida se mezcla con `mdl_cartel_salida` (anotado para Jhonn).
 
-### Identidad «taller de relojería fantástico» (ART-014, propuesta DEC-024)
+### Identidad «taller de relojería fantástico» (ART-014, propuesta DEC-025)
 
 `art/blender/scripts/identidad_visual.py` (mismo comando que los demás; con `-- <nombres>` genera solo esos) crea modelos de paleta y los iconos de estaciones:
 
