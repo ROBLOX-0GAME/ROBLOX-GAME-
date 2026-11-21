@@ -861,3 +861,21 @@ ICON_IDS = {
 
 - [ ] IDs en `Config.luau` y cargados en la place.
 - [ ] Play: los 8 iconos se ven en el HUD y los 10 sonidos suenan sin errores de carga en Output.
+
+### INFRA-005 — La MacBook de Zadiel sirve para todo (DEC-021)
+
+- **ID:** INFRA-005.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arquitectura / equipo.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Zadiel indica que la MacBook se puede usar para todo. Se actualiza DEC-021 (antes solo Studio, MCP y Open Cloud) y DEC-019 queda reemplazada.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-021 actualizada con el alcance completo y DEC-019 marcada como reemplazada.
