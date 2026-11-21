@@ -765,7 +765,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Zadiel.
 - **Área:** Código / gameplay.
 - **Prioridad:** Crítica.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -773,8 +773,10 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Los 25 scripts de la place iguales a `game/src` de `main`.
-- [ ] `servePlaceIds` con la place oficial.
-- [ ] Play: servidor sin errores, pruebas automáticas y cliente con HUD.
-- [ ] Recorrido del bucle principal anotado con resultado real.
-- [ ] Errores encontrados corregidos o anotados como bug.
+- [x] Los 25 scripts de la place iguales a `game/src` de `main`.
+- [x] `servePlaceIds` con la place oficial.
+- [x] Play: servidor sin errores, pruebas automáticas y cliente con HUD.
+- [x] Recorrido del bucle principal anotado con resultado real.
+- [x] Errores encontrados corregidos o anotados como bug.
+
+**Resultado (2026-11-20):** place guardada en Roblox, versión 13, sin publicar. 47/47 pruebas, HUD cargado y consola sin errores. Bucle principal recorrido en Play sin bugs nuevos (detalle en la memoria del área 04). Pendiente: jefe con aportes, zonas 2–5, pases y productos de Robux (IDs en 0).

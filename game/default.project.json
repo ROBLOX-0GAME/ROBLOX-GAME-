@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/rojo-rbx/rojo/master/schemas/project.schema.json",
   "name": "ROBLOX-GAME",
-  "servePlaceIds": [],
+  "servePlaceIds": [84500108687089],
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
