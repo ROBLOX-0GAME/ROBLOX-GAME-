@@ -1332,3 +1332,26 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 - [x] Las 6 decisiones pasan en el Registro a «Aprobada por Jhonn y Zadiel (2026-11-21)».
 - [x] Recomendación de Claude sobre DEC-031 anotada (no cambia la decisión).
+
+### ART-018 — Arte de las piezas de reloj y de los 18 relojes
+
+- **ID:** ART-018.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arte / efectos / sonido.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §11.4. Piezas (caja, calibre, esfera y manecillas) y modelo armado de los 18 relojes (6 generales y 12 de lujo, DEC-028 y DEC-031), iconos de la mesa (§6.3), efectos por rareza (§7) y sonidos (§7.2, con permiso de audio §11.2). Presupuesto de §5. Primero bocetos del Omigo Lunamaster (zona 1) y del reloj de bolsillo, para que Jhonn valide el estilo **antes** de modelar el resto.
+
+**Criterios de aceptación:** los de §10 del prompt.
+
+- [ ] Bocetos del Lunamaster y del bolsillo en `art/referencias/`, revisados por Jhonn.
+- [ ] 18 relojes × 4 piezas y su modelo armado, dentro de §5.
+- [ ] Iconos de §6.3.
+- [ ] Efectos `vfx_armar_<rareza>` (12) y `vfx_reloj_perfecto`.
+- [ ] Sonidos de §7.2 con permiso y 100 % *Success*.
+- [ ] Contrato de §7.3, revisión de renderizado y tarea DEV para Jhonn.

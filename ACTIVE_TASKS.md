@@ -65,6 +65,7 @@ Este control local cubre las herramientas Edit/Write de Claude Code; Bash, edito
 | DEV-027 | Cuenta A | Jhonn | Zadiel | game/src/**<br>00 - CENTRO DE CONTROL/Recomendaciones-Claude.md<br>11 - TESTING Y BUGS/Plan-de-Pruebas.md<br>04 - SISTEMAS DEL JUEGO/Memoria-de-Area.md<br>07 - ECONOMIA Y PROGRESION/Memoria-de-Area.md | Completada |
 | DOC-001 | Cuenta A | Jhonn | Zadiel | art/PROMPT_PIEZAS_RELOJ_ZADIEL.md<br>11 - TESTING Y BUGS/Plan-de-Pruebas.md | Completada |
 | DOC-002 | Cuenta A | Zadiel | Jhonn | 10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
+| ART-018 | Cuenta A | Zadiel | Jhonn | art/blender/**<br>art/referencias/**<br>art/texturas/fuentes/**<br>art/texturas/export/ico_pz_*.png<br>art/texturas/export/ico_calibre_*.png<br>art/texturas/export/vfx_*.png<br>art/export/modelos/pz_*<br>art/export/modelos/rlj_*<br>art/export/vistas/pz_*<br>art/export/vistas/rlj_*<br>art/audio/**<br>art/Pipeline-de-Arte.md<br>art/texturas/ids_roblox.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | En desarrollo |
 ## main sin protección (DEC-009)
 Por DEC-009, `main` no tiene protección de rama: se sube directamente, sin Pull Request ni aprobación. Nunca uses force push. Si alguien abre un Pull Request de forma opcional, GitHub Actions sigue ejecutando `reservation-check` y `rojo-build`.
 
