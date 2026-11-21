@@ -297,6 +297,15 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Productos (repetibles):** Bolsa 25 · Cofre 99 · Bóveda 399 · Entrenamiento instantáneo 49 · Cápsula de Oro 49 · Cápsula Cósmica 149 · Giro extra 19 R$.
 - **Pendiente de revisar (Claude, sin decidir):** el entrenamiento tiene tope `Config.MAX_TRAINED` = 30 de velocidad. Con ×512 (0,01 × 512 = 5,12 por segundo) se llega al tope en unos 6 s, así que los pases altos solo rinden si se sube ese tope y se añaden zonas más lejanas.
 
+#### DEC-024 — 12 zonas, velocidad como estadística y dueños dormidos
+
+- **Fecha:** 2026-11-20. **Estado:** **Decidida por Jhonn** el 2026-11-20 (DEV-020). Zadiel la revisa (DEC-020). **Área:** Gameplay / mundo / progresión. Reemplaza las velocidades de zona de DEC-005 y el entrenamiento con tope de DEC-008.
+- **Zonas (velocidad necesaria):** 1: 100 · 2: 1K · 3: 10K · 4: 100K · 5: 1M · 6: 14M · 7: 200M · 8: 2,8B · 9: 40B · 10: 560B · 11: 7,5T · 12: 99,9T. Con 100T se abrirá un mundo nuevo en una actualización futura. Los jugadores empiezan con 75.
+- **Velocidad real:** la «Velocidad» es una estadística. La velocidad física sigue una curva logarítmica por tramos: 75 → 30, 1M → 85, 99,9T → 150 (tope por la física de Roblox). En la base, como máximo 50 (el jugador elige su velocidad con una barra en el HUD); dentro de las casas, 40, para buscar piezas con comodidad.
+- **Zonas más largas:** cada zona mide un 35 % más que la anterior (130 → ~3.400 studs).
+- **Dueños:** duermen. Si pasas más de 15 s dentro de su casa se despiertan y te persiguen; dentro de la casa son lentos y fuera corren casi como la velocidad que exige su zona. Si te atrapan pierdes el botín.
+- **Propuesta de Claude (cifras ajustables en `Config`/`GameData`):** entrenamiento base 0,5/s; la mejora de la caminadora duplica el entrenamiento por nivel (hasta 40 niveles); la mejora de velocidad de la Tienda da +25 % por nivel; cada pieza robada trae monedas que crecen ×8 por zona.
+
 #### DEC-024 — Dirección visual «taller de relojería fantástico»
 
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-014; se aplica en ART-015 para poder probarla). **Área:** Arte / mundo / interfaz. **Deciden:** Zadiel y Jhonn (DEC-020).
