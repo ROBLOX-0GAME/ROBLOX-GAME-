@@ -198,5 +198,6 @@ def render_icono(nombre, constructor):
     print("icono ->", nombre)
 
 
-for nombre, constructor in ICONOS.items():
-    render_icono(nombre, constructor)
+if __name__ == "__main__":  # ART-014: identidad_visual.py importa render_icono sin rehacer estos iconos
+    for nombre, constructor in ICONOS.items():
+        render_icono(nombre, constructor)

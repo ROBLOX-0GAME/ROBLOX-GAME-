@@ -82,7 +82,8 @@ def hoja_de_contactos(columnas=6, tam=256):
     """Une todas las vistas en una sola imagen (art/export/vistas/_hoja_contactos.png)."""
     import numpy as np
 
-    archivos = sorted(f for f in os.listdir(VISTAS) if f.endswith(".png") and not f.startswith("_"))
+    # Solo las vistas de modelos (mdl_*): las capturas de Studio (studio_*) no van en la hoja
+    archivos = sorted(f for f in os.listdir(VISTAS) if f.endswith(".png") and f.startswith("mdl_"))
     filas = (len(archivos) + columnas - 1) // columnas
     hoja = np.ones((filas * tam, columnas * tam, 4), dtype=np.float32)
     for indice, archivo in enumerate(archivos):
