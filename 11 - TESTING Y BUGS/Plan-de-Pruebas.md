@@ -340,3 +340,16 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 - **Gravedad:** baja (solo la prueba; el juego siempre pasa `parent`). **Corregido:** DEV-015 (`dda2573`).
 - **Causa:** sin `parent`, `AssetLibrary.dress` dejaba la copia dentro del ancla temporal y `place` la destruía con ella.
 
+## 23. Pruebas de DEV-017 (jefe y zonas 2 a 5)
+
+Play en la place oficial el 2026-11-20 con el MCP de Studio. Para ir rápido, el personaje se mueve por script (teletransporte); las reglas las valida el servidor.
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Zona 2 (velocidad mínima 18) con velocidad 19: robar | Manual (Studio) | **Ejecutada: correcta** (20 robos, persecución y guardado en la base) |
+| Zonas 3, 4 y 5 con velocidad 19, saltando la puerta: robar | Manual (Studio) | **Ejecutada: el servidor rechaza** («Necesitas velocidad 22/28/34…») y la pieza no se entrega |
+| Cronómetro: aportes suman puntos según la rareza (común 1, poco común 3) | Manual (Studio) | **Ejecutada: correcta** |
+| Cronómetro: la pieza del legado no se entrega | Manual (Studio) | **Ejecutada: rechazada** |
+| Cronómetro sin llegar a la meta (21/30): devolución de piezas | Manual (Studio) | **Ejecutada: devuelve las 19 piezas** |
+| Cronómetro reparado (30/30): premio de 12 monedas por punto y cápsula con 20 puntos o más | Manual (Studio) | **Ejecutada: +360 monedas y +1 Cápsula de Latón** |
+| Output durante la partida | Manual (Studio) | 47/47 pruebas; solo aparece «Asset content representation is being generated» para `tex_paleta` (129172292521580, subida en ART-013, aún en proceso en Roblox). Sin errores de código |

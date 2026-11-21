@@ -815,7 +815,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Zadiel.
 - **Área:** Código / pruebas.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -824,9 +824,12 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 **Criterios de aceptación:**
 
 - [x] Plan de Pruebas §22 corregido y actualizado.
-- [ ] Jefe con aportes probado (puntos, y premio o devolución).
-- [ ] Zonas 2 a 5: robo permitido o rechazado según la velocidad, con resultado real.
-- [ ] Bugs corregidos o anotados.
+- [x] Jefe con aportes probado (puntos, y premio o devolución).
+- [x] Zonas 2 a 5: robo permitido o rechazado según la velocidad, con resultado real.
+- [x] Bugs corregidos o anotados.
+
+**Resultado (2026-11-20):** todo correcto en Play, sin bugs nuevos (ver Plan de Pruebas §23). No se cambió código ni se guardó la place.
+
 
 ### DEV-018 — Conectar los iconos y sonidos de ART-013 (Config.ICON_IDS y Config.SOUND_IDS)
 

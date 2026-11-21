@@ -21,6 +21,8 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-017 (Jhonn): en Play, el servidor rechaza robar en zonas sin la velocidad mínima aunque se salte la puerta. El Cronómetro suma puntos por rareza, protege la pieza del legado, devuelve las piezas si falla y paga 12 monedas por punto más una cápsula de latón con 20 puntos o más. Sin bugs nuevos. Detalle en [[Plan-de-Pruebas]] §23.
+
 - 2026-11-20 · DEV-016 (Jhonn): la place oficial tenía el código anterior a DEV-015 (solo `Ui` y `AssetLibrary` eran distintos de `main`). Se cargaron con el MCP de Studio (`ScriptEditorService`), se puso `84500108687089` en `servePlaceIds` y la place se guardó en Roblox (**versión 13**, sin publicar). Play: 47/47 pruebas, cliente con `BuildAWatchUI` y consola sin errores. Bucle recorrido con resultado real: pieza del legado, recompensa diaria, ruleta, premio por tiempo, cápsula de latón y mascota, robo en la zona 1 (límite de 1 por viaje), persecución y guardado en la base, venta, mejora de velocidad, mejora de vitrinas, fabricación del reloj de bolsillo, exhibición e ingreso pasivo (+18 monedas en 30 s), caminadora (entrena y para) y avería del Cronómetro (expira sin aportes). **Studio ya tiene acceso a DataStore**: las pruebas guardan datos reales de la cuenta de prueba. No se probaron el jefe con aportes, las zonas 2 a 5, los pases ni los productos de Robux (sus IDs siguen en 0).
 
 - 2026-11-20 · DEV-014: `AssetLibrary` (find, dress y place) y el `RemoteEvent` `Sound` conectan modelos, decoración, sonidos e iconos con respaldo provisional. DEC-017.
