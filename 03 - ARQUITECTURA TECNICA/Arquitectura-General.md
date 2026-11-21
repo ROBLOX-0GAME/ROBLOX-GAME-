@@ -17,13 +17,12 @@ Definir la estructura técnica del proyecto Roblox Game Studio, sus componentes,
 
 ### Entorno de trabajo por dispositivo
 
-- Roblox Studio se instalará manualmente en las PC Windows destinadas al desarrollo.
-- La MacBook se usará para Obsidian y tareas escolares; no se planifica el desarrollo de Roblox Studio en ella.
-  - *Propuesta DEC-019 (ART-006, pendiente de aprobación):* la MacBook también se usa para arte (Blender, Material Maker, Krita y Audacity con los scripts de `art/`), sin Roblox Studio ni Rojo.
-- El repositorio GitHub contiene la bóveda de Obsidian y el código fuente inicial en game/; el place de Roblox todavía no existe.
+- Roblox Studio se usa en las PC Windows de desarrollo y en la MacBook de Zadiel.
+- La MacBook de Zadiel sirve para todo el trabajo del proyecto (DEC-021, reemplaza a DEC-019): Obsidian y Git, arte (Blender, Material Maker, Krita y Audacity con los scripts de `art/`), Roblox Studio con su MCP y Open Cloud, código con Rojo y pruebas en Play.
+- El repositorio GitHub contiene la bóveda de Obsidian y el código fuente en game/. La place oficial es **84500108687089** (universo 10778093657) y se trabaja en ella por Team Create.
 - El flujo acordado es parcialmente gestionado: Git contiene código y configuración, y Roblox Studio conserva el place, el mundo y los assets.
-- game/default.project.json deja servePlaceIds vacío para impedir la sincronización en vivo hasta que el equipo cree el place y apruebe su placeId.
-- Rojo sirve desde la PC Windows de desarrollo y su plugin local se conecta a ese servidor; GitHub no mantiene una conexión directa con Studio.
+- game/default.project.json tiene la place oficial en servePlaceIds desde DEV-016.
+- Rojo sirve desde el equipo de desarrollo que se esté usando (PC Windows o MacBook) y su plugin local se conecta a ese servidor; GitHub no mantiene una conexión directa con Studio. En Team Create no se guarda la place a la vez desde dos equipos.
 - Consulta [[game/README|Proyecto fuente de Roblox con Rojo]] para instalación, build y sincronización.
 
 ## 3. Arquitectura general

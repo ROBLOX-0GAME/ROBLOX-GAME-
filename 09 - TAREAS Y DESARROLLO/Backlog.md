@@ -908,7 +908,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Arquitectura / equipo.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -916,5 +916,5 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] Las 3 notas dicen que Studio y Rojo se usan en las PC Windows y en la MacBook de Zadiel (DEC-021).
-- [ ] Arquitectura-General sin la propuesta DEC-019 (reemplazada) y con la place y `servePlaceIds` al día.
+- [x] Las 3 notas dicen que Studio y Rojo se usan en las PC Windows y en la MacBook de Zadiel (DEC-021).
+- [x] Arquitectura-General sin la propuesta DEC-019 (reemplazada) y con la place y `servePlaceIds` al día.

@@ -39,7 +39,7 @@ Estas reglas rigen al abrir Claude Code desde la raíz de la bóveda. Las reglas
 - Si hay desacuerdo sustantivo, conserva la última decisión aprobada y consulta al responsable mientras avanzas tareas independientes.
 
 ## Límites y seguridad
-- El repositorio contiene la bóveda Obsidian y el scaffold de código fuente en game/. La place oficial es **84500108687089** («Reloj creation oficial 1», universo 10778093657, creada el 2026-11-20); no inventes otros placeId ni afirmes que modificaste o guardaste la place si no lo hiciste. Roblox Studio y Rojo se instalarán manualmente en las PC Windows destinadas al desarrollo; la MacBook queda para Obsidian y tareas escolares.
+- El repositorio contiene la bóveda Obsidian y el scaffold de código fuente en game/. La place oficial es **84500108687089** («Reloj creation oficial 1», universo 10778093657, creada el 2026-11-20); no inventes otros placeId ni afirmes que modificaste o guardaste la place si no lo hiciste. Roblox Studio y Rojo se usan en las PC Windows de desarrollo y en la MacBook de Zadiel, que sirve para todo el trabajo del proyecto (DEC-021).
 - No guardes contraseñas, tokens, cookies, claves privadas ni datos personales innecesarios.
 - Las respuestas directas del formulario son la base operativa. Las decisiones de juego diseñadas por Claude siguen siendo propuestas hasta que las personas responsables las aprueben.
 - No declares pruebas realizadas si no se ejecutaron.
