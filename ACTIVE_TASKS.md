@@ -50,7 +50,7 @@ Este control local cubre las herramientas Edit/Write de Claude Code; Bash, edito
 | INFRA-006 | Cuenta A | Zadiel | Jhonn | 10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
 | INFRA-007 | Cuenta A | Zadiel | Jhonn | .claude/CLAUDE.md<br>AGENTS.md<br>03 - ARQUITECTURA TECNICA/Arquitectura-General.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
 | INFRA-008 | Cuenta A | Zadiel | Jhonn | 10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
-| DEV-019 | Cuenta A | Jhonn | Zadiel | game/src/**<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>07 - ECONOMIA Y PROGRESION/Economia-y-Progresion.md<br>07 - ECONOMIA Y PROGRESION/Memoria-de-Area.md<br>11 - TESTING Y BUGS/Plan-de-Pruebas.md | En desarrollo |
+| DEV-019 | Cuenta A | Jhonn | Zadiel | game/src/**<br>10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md<br>07 - ECONOMIA Y PROGRESION/Economia-y-Progresion.md<br>07 - ECONOMIA Y PROGRESION/Memoria-de-Area.md<br>11 - TESTING Y BUGS/Plan-de-Pruebas.md | Completada |
 | ART-014 | Cuenta A | Zadiel | Jhonn | art/**<br>05 - MUNDO Y CONTENIDO/Memoria-de-Area.md<br>06 - INTERFAZ Y EXPERIENCIA/Memoria-de-Area.md<br>06 - INTERFAZ Y EXPERIENCIA/UI-UX.md<br>12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md<br>09 - TAREAS Y DESARROLLO/Changelog.md<br>09 - TAREAS Y DESARROLLO/Backlog.md | Completada |
 ## main sin protección (DEC-009)
 Por DEC-009, `main` no tiene protección de rama: se sube directamente, sin Pull Request ni aprobación. Nunca uses force push. Si alguien abre un Pull Request de forma opcional, GitHub Actions sigue ejecutando `reservation-check` y `rojo-build`.

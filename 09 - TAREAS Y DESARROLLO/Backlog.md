@@ -945,7 +945,7 @@ ICON_IDS = {
 - **Revisor:** Zadiel.
 - **Área:** Economía / monetización.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -953,10 +953,13 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] DEC-023 en el Registro.
-- [ ] Multiplicadores en `GameData`, `PlayerLogic.coinMultiplier`, prueba automática y tienda Robux.
-- [ ] 15 pases y 7 productos creados en Roblox con su precio; IDs en `Config`.
-- [ ] Código cargado en la place; Play: pruebas en verde y la tienda abre la compra.
+- [x] DEC-023 en el Registro.
+- [x] Multiplicadores en `GameData`, `PlayerLogic.coinMultiplier`, prueba automática y tienda Robux.
+- [x] 15 pases y 7 productos creados en Roblox con su precio; IDs en `Config`.
+- [x] Código cargado en la place; Play: pruebas en verde y la tienda abre la compra.
+
+**Resultado (2026-11-20):** 15 pases y 7 productos a la venta en Roblox; IDs en `Config`; place guardada (versión 18, sin publicar). 48/48 pruebas. Ver [[Plan-de-Pruebas]] §25. Pendiente: compra real con otra cuenta y subir `MAX_TRAINED` para que rindan los pases altos.
+
 
 ### ART-014 — Identidad visual «taller de relojería fantástico» (arte y diseño de presentación)
 

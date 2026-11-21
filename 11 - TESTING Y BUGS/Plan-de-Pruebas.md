@@ -369,3 +369,14 @@ Play en la place oficial (versión 17) el 2026-11-20 con los IDs de ART-013 en `
 - **Gravedad:** media (el juego funciona, pero sin sonido). **Detectado:** DEV-018.
 - **Causa:** los 10 audios los subió la cuenta zadiel799 y la experiencia (universo 10778093657) es de Lubu465. Los audios necesitan permiso explícito para usarse en una experiencia de otro dueño (las imágenes no).
 - **Arreglo (Zadiel, dueño de los audios):** Creator Dashboard → cada audio → *Permissions* → dar acceso a la experiencia 10778093657, o hacer clic en «compartir el acceso» en el Output de Studio con su cuenta. Otra opción: que Jhonn vuelva a subirlos con su cuenta y se cambien los IDs. Después, comprobar en Play.
+
+## 25. Pruebas de DEV-019 (pases y productos de Robux)
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| 15 pases y 7 productos creados en el universo 10778093657, a la venta y con su precio | Open Cloud (lista) | **Ejecutada 2026-11-20: los 15 pases aparecen con el precio de DEC-023**; los 7 productos se crearon con respuesta 200 |
+| Scripts de la place = `main` (Config, GameData, PlayerLogic, prueba y Ui) | Automática (hash) | **Ejecutada: idénticos** |
+| Pruebas automáticas, incluida la nueva de DEC-023 | Automática (Studio) | **Ejecutada: 48 correctas, 0 fallidas** |
+| `buyProduct` abre la compra (Bolsa y Giro extra) | Manual (Studio) | **Ejecutada: «Abriendo la compra…»**; no se compró nada |
+| `buyPass` con la cuenta dueña | Manual (Studio) | **Ejecutada: «Ya tienes el pase»**, porque el creador de la experiencia posee sus pases. Falta probar la compra con otra cuenta en un servidor real |
+| `GetProductInfo` de Entrenamiento ×512 y Bolsa | Manual (Studio) | **Ejecutada: 1.199 R$ en venta y 25 R$** |

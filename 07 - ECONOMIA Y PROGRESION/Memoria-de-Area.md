@@ -21,6 +21,8 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · DEV-019 (Jhonn): DEC-023. 15 pases (6 de ventajas y 9 de entrenamiento ×2–×512, que multiplican la velocidad ganada en la caminadora, el más alto, combinado con la caminadora) y 7 productos creados en Roblox con Open Cloud; IDs en `Config` y place guardada (versión 18). Pendiente: `MAX_TRAINED` = 30 limita los pases altos (con ×512 se llega al tope en ~6 s); subirlo junto con zonas nuevas. El creador de la experiencia posee todos sus pases en Studio.
+
 - 2026-11-20 · DEV-013: mejora de carga de 500 / 1.500 / 4.500 (de 1 a 4 objetos); ruleta diaria (200 monedas al 30% … Cápsula de Oro al 1%); giro extra con Robux. Propuesta DEC-015.
 - 2026-11-20 · DEV-012 (Jhonn): ingreso pasivo del 30% cada 30 s (60% del valor por minuto). Propuesta DEC-014.
 - 2026-11-20 · DEV-011: ingreso pasivo = `PLOT_INCOME_PERCENT` (0,30) del valor cada `PLOT_INCOME_PERIOD_SECONDS` (600), con fracciones acumuladas. Reloj del Legado vendido por 3.000. Propuesta DEC-013.
