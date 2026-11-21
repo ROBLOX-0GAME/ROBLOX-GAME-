@@ -725,7 +725,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn.
 - **Área:** Código / pruebas.
 - **Prioridad:** Crítica.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -735,9 +735,33 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 - [ ] `Ui.luau`: la cadena de la pieza del legado usa `
 ` en vez de un salto de línea real.
-- [ ] `AssetLibrary.place` sin `parent` devuelve una copia válida (no destruida con el ancla).
-- [ ] `build.py` falla ante cadenas sin cerrar; la revisión pasa en `main`.
-- [ ] Prueba en Studio: 47/47 pruebas y cliente con HUD (si el MCP de Studio está disponible), anotada en el Plan de Pruebas.
+- [x] `AssetLibrary.place` sin `parent` devuelve una copia válida (no destruida con el ancla).
+- [x] `build.py` falla ante cadenas sin cerrar; la revisión pasa en `main`.
+- [x] Prueba en Studio: 47/47 pruebas y cliente con HUD. Verificada en Play por DEV-016 (versión 13).
+
+**Cierre (2026-11-20, ART-013):** commits `dda2573` y `af644e6`; la prueba en Studio la hizo DEV-016. Queda pendiente, fuera de esta tarea, buscar en la place el origen de `rbxassetid://203785492` («Asset type does not match»).
+
+### ART-013 — Integrar en la place oficial el arte restante
+
+- **ID:** ART-013.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel, Roblox Studio con su MCP).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arte / integración visual.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** según [[PROMPT_INTEGRACION_VISUAL_ZADIEL]] (ART-012), y con el método de ART-008, se sube a la cuenta zadiel799 con Open Cloud la textura de paleta, los 36 modelos low-poly, los 8 iconos y los 10 sonidos. Los modelos se insertan en `ReplicatedStorage/Assets` de la place oficial (84500108687089) con escala ×0,01, piezas ancladas y `TextureID` = `tex_paleta`. La iluminación queda como propuesta DEC-022. No se toca `game/src` ni se publica.
+
+**Criterios de aceptación:**
+
+- [ ] `tex_paleta` y los 36 modelos subidos e insertados, con sus IDs en `art/texturas/ids_roblox.md`.
+- [ ] Medidas comparadas con el Pipeline §7 (diferencias anotadas, sin corregirlas en código).
+- [ ] 8 iconos y 10 sonidos subidos (o anotados como rechazados) y tarea DEV para Jhonn con los IDs.
+- [ ] Iluminación propuesta como DEC-022 (aplicada solo si Zadiel lo confirma).
+- [ ] Verificación real: Play, consola, `PreloadAsync`, `AssetLibrary.dress`, capturas `studio_art013_*.png` y triángulos/memoria.
 
 ### ART-012 — Prompt de integración visual para Zadiel
 
