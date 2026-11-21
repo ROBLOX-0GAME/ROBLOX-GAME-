@@ -29,14 +29,15 @@ return function(t)
 			coins = -50,
 			xp = "mucho",
 			parts = { gear = 3, inventada = 9, spring = -2 },
-			upgrades = { backpack = 99, falsa = 1 },
+			upgrades = { museum = 99, falsa = 1, backpack = 3 },
 		})
 		t.eq(data.coins, 0, "monedas negativas → 0")
 		t.eq(data.xp, 0, "xp inválida → 0")
 		t.eq(data.parts.gear, 3, "conserva piezas válidas")
 		t.eq(data.parts.inventada, nil, "descarta piezas desconocidas")
 		t.eq(data.parts.spring, nil, "descarta cantidades negativas")
-		t.eq(data.upgrades.backpack, GameData.Upgrades.backpack.maxLevel, "limita nivel de mejora")
+		t.eq(data.upgrades.museum, GameData.Upgrades.museum.maxLevel, "limita nivel de mejora")
+		t.eq(data.upgrades.backpack, nil, "DEC-027: descarta mejoras eliminadas")
 		t.eq(data.upgrades.falsa, nil, "descarta mejoras desconocidas")
 		t.eq(data.stats.crafted, 0, "crea estadísticas")
 		t.ok(type(PlayerLogic.reconcile(nil)) == "table", "nil → datos nuevos")
@@ -126,43 +127,57 @@ return function(t)
 
 	t.test("buyUpgrade cobra y respeta el máximo", function()
 		local data = PlayerLogic.newData()
-		local upgrade = GameData.Upgrades.jump
-		t.ok(not PlayerLogic.buyUpgrade(data, "jump"), "sin monedas no compra")
-		data.coins = 10 ^ 7
+		local upgrade = GameData.Upgrades.museum
+		t.ok(not PlayerLogic.buyUpgrade(data, "museum"), "sin monedas no compra")
+		data.coins = 10 ^ 12
 		for _ = 1, upgrade.maxLevel do
-			t.ok(PlayerLogic.buyUpgrade(data, "jump"), "compra un nivel")
+			t.ok(PlayerLogic.buyUpgrade(data, "museum"), "compra un nivel")
 		end
-		t.ok(not PlayerLogic.buyUpgrade(data, "jump"), "no pasa del máximo")
-		t.eq(PlayerLogic.upgradeCost(data, "jump"), nil, "sin precio al máximo")
-		t.eq(PlayerLogic.jumpHeight(data), Config.BASE_JUMPHEIGHT + upgrade.maxLevel * upgrade.step, "aplica el salto")
+		t.ok(not PlayerLogic.buyUpgrade(data, "museum"), "no pasa del máximo")
+		t.eq(PlayerLogic.upgradeCost(data, "museum"), nil, "sin precio al máximo")
+		t.eq(PlayerLogic.museumSlots(data), 12, "DEC-027: de 4 a 12 vitrinas")
+		t.eq(PlayerLogic.jumpHeight(data), Config.BASE_JUMPHEIGHT, "DEC-027: el salto no se mejora")
 	end)
 
 	t.test("upgradeCost crece por nivel", function()
 		local data = PlayerLogic.newData()
-		local upgrade = GameData.Upgrades.backpack
-		t.eq(PlayerLogic.upgradeCost(data, "backpack"), upgrade.baseCost, "precio inicial")
-		data.upgrades.backpack = 2
-		t.eq(PlayerLogic.upgradeCost(data, "backpack"), math.floor(upgrade.baseCost * upgrade.growth ^ 2), "precio nivel 2")
-		t.eq(PlayerLogic.backpackCapacity(data), Config.BASE_BACKPACK + 2 * upgrade.step, "capacidad mejorada")
+		local upgrade = GameData.Upgrades.museum
+		t.eq(PlayerLogic.upgradeCost(data, "museum"), upgrade.baseCost, "precio inicial")
+		data.upgrades.museum = 2
+		t.eq(PlayerLogic.upgradeCost(data, "museum"), math.floor(upgrade.baseCost * upgrade.growth ^ 2), "precio nivel 2")
+		t.eq(PlayerLogic.backpackCapacity(data), 60, "DEC-027: la mochila es fija en 60")
 	end)
 
-	t.test("DEC-026: mejoras desde 100 monedas, ×1,5 por nivel, máximo 8 (carga 3)", function()
-		for upgradeId, upgrade in GameData.Upgrades do
-			t.eq(upgrade.baseCost, 100, upgradeId .. " empieza en 100 monedas")
-			t.eq(upgrade.growth, 1.5, upgradeId .. " sube un 50% por nivel")
-			if upgradeId == "carry" then
-				t.eq(upgrade.maxLevel, 3, "la carga tiene 3 mejoras")
-			else
-				t.eq(upgrade.maxLevel, 8, upgradeId .. " tiene 8 mejoras")
-			end
+	t.test("DEC-027: solo vitrinas, caminadora y carga; precio por nivel", function()
+		local ids = {}
+		for upgradeId in GameData.Upgrades do
+			table.insert(ids, upgradeId)
 		end
+		table.sort(ids)
+		t.eq(table.concat(ids, ","), "carry,museum,treadmill", "solo tres mejoras")
+		t.eq(GameData.Upgrades.museum.maxLevel, 8, "8 vitrinas más")
+		t.eq(GameData.Upgrades.carry.maxLevel, 3, "3 mejoras de carga")
+		t.eq(GameData.Upgrades.treadmill.maxLevel, 30, "30 niveles de caminadora")
 		local data = PlayerLogic.newData()
+		t.eq(PlayerLogic.museumSlots(data), 4, "el plot empieza con 4 vitrinas")
+		t.eq(PlayerLogic.upgradeCost(data, "museum"), 100, "la primera vitrina cuesta 100")
+		data.upgrades.museum = 7
+		t.eq(PlayerLogic.upgradeCost(data, "museum"), 1e9, "la última vitrina cuesta 1B (×10)")
 		data.upgrades.carry = 3
 		t.eq(PlayerLogic.carryCapacity(data), 4, "carga máxima: 4 objetos por viaje")
-		data.upgrades.treadmill = 1
-		t.eq(PlayerLogic.upgradeCost(data, "treadmill"), 150, "el nivel 2 cuesta 150")
-		t.ok(table.find(GameData.CarryUpgradeOrder, "backpack") ~= nil, "la mochila se compra en Mochila y Carga")
-		t.ok(not table.find(GameData.UpgradeOrder, "backpack"), "la mochila ya no está en la Tienda")
+		data.upgrades.treadmill = 29
+		local last = PlayerLogic.upgradeCost(data, "treadmill")
+		t.ok(last > 1e12 and last < 2e12, "el nivel 30 de la caminadora cuesta ~1,6T")
+		t.eq(#GameData.UpgradeOrder, 0, "la Tienda no vende mejoras")
+		-- Mascotas: ¼ de su bonus en monedas
+		local petData = PlayerLogic.newData()
+		petData.pets.dragon = 1
+		petData.equipped.dragon = 1
+		t.ok(
+			math.abs(PlayerLogic.coinMultiplier(petData) - (1 + GameData.Pets.dragon.bonus * Config.PET_COIN_SHARE)) < 1e-9,
+			"el dragón da +15% de monedas"
+		)
+		t.ok(PlayerLogic.extraPartChance(petData) > 0, "las mascotas dan suerte")
 	end)
 
 	t.test("museo: exhibir, límite de vitrinas, retirar e ingreso", function()
@@ -254,7 +269,7 @@ return function(t)
 		data.stats.crafted = 9
 		data.stats.sold = 9
 		data.museum.pocket = 1
-		data.upgrades.speed = 1
+		data.upgrades.museum = 1
 		local messages = PlayerLogic.advanceTutorial(data)
 		t.eq(data.tutorial, #GameData.Tutorial + 1, "tutorial terminado")
 		t.eq(#messages, #GameData.Tutorial + 1, "un mensaje por paso y otro final")
@@ -287,13 +302,15 @@ return function(t)
 		local data = PlayerLogic.newData()
 		data.parts.gear = Config.BASE_BACKPACK - 1 -- mochila casi llena (guardado)
 		data.upgrades.carry = GameData.Upgrades.carry.maxLevel
-		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		data.pets.dragon = 3
+		data.equipped.dragon = 3 -- DEC-027: la suerte viene de las mascotas
 		local _, _, amount = PlayerLogic.stealPart(data, "gear", 0)
 		t.eq(amount, 1, "con 1 espacio libre roba solo 1 aunque tenga suerte")
 		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "mochila llena no roba")
 
 		local lucky = PlayerLogic.newData()
-		lucky.upgrades.luck = 2
+		lucky.pets.dragon = 3
+		lucky.equipped.dragon = 3
 		lucky.upgrades.carry = GameData.Upgrades.carry.maxLevel
 		local _, _, double = PlayerLogic.stealPart(lucky, "gear", 0)
 		t.eq(double, 2, "tirada baja con suerte = 2 piezas")
@@ -454,7 +471,7 @@ return function(t)
 		t.eq(data.pets.falsa, nil, "descarta mascotas desconocidas")
 		t.eq(PlayerLogic.equippedCount(data), Config.MAX_EQUIPPED_PETS, "no más equipadas que el límite")
 		t.eq(data.equipped.mouse, nil, "no equipa mascotas que no posee")
-		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
+		data.trained = 1e15
 		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "velocidad con tope")
 		local fresh = PlayerLogic.newData()
 		fresh.trained = 10 -- 85 de velocidad: no llega a la zona 1 (DEC-024)
@@ -504,7 +521,8 @@ return function(t)
 		t.ok(PlayerLogic.extraPartChance(data) > 0, "la suerte del plot ayuda a robar 2 piezas")
 		data.museum = { millionaire = 100 }
 		t.eq(PlayerLogic.plotLuck(data), Config.MAX_PLOT_LUCK, "tope de suerte del plot")
-		data.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		data.pets.dragon = 3
+		data.equipped.dragon = 3
 		t.ok(PlayerLogic.extraPartChance(data) <= Config.MAX_EXTRA_PART_CHANCE, "tope total de suerte")
 		for _, watchId in GameData.WatchOrder do
 			t.ok(type(GameData.Watches[watchId].luck) == "number", watchId .. " tiene suerte definida")
@@ -522,7 +540,7 @@ return function(t)
 		local base = PlayerLogic.museumSlots(data)
 		data.coins = 10 ^ 7
 		PlayerLogic.buyUpgrade(data, "museum")
-		t.eq(PlayerLogic.museumSlots(data), base + GameData.Upgrades.museum.step, "+2 vitrinas")
+		t.eq(PlayerLogic.museumSlots(data), base + GameData.Upgrades.museum.step, "+1 vitrina")
 		data.upgrades.museum = GameData.Upgrades.museum.maxLevel
 		t.ok(PlayerLogic.museumSlots(data) <= 15, "caben en las 3 filas de 5 vitrinas del plot")
 	end)
@@ -775,7 +793,8 @@ return function(t)
 		t.ok(not PlayerLogic.stealPart(data, "gear", 0.99), "carga llena")
 		t.ok(not table.find(GameData.UpgradeOrder, "carry"), "no se vende en la Tienda")
 		local lucky = PlayerLogic.newData()
-		lucky.upgrades.luck = GameData.Upgrades.luck.maxLevel
+		lucky.pets.dragon = 3
+		lucky.equipped.dragon = 3
 		local _, _, amount = PlayerLogic.stealPart(lucky, "gear", 0)
 		t.eq(amount, 1, "la suerte no supera la carga por viaje")
 	end)
@@ -826,7 +845,7 @@ return function(t)
 		local view = PlayerLogic.buildView(data)
 		t.eq(view.partCount, 4, "partCount")
 		t.eq(view.capacity, Config.BASE_BACKPACK, "capacity")
-		t.eq(view.upgradeCosts.backpack, GameData.Upgrades.backpack.baseCost, "costo de mejora")
+		t.eq(view.upgradeCosts.museum, GameData.Upgrades.museum.baseCost, "costo de mejora")
 		view.parts.gear = 99
 		t.eq(data.parts.gear, 4, "la vista es una copia")
 	end)

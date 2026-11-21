@@ -55,7 +55,7 @@ local PANEL_TITLES = {
 	rewards = "Premios — Diario y por tiempo",
 	spin = "Ruleta diaria",
 	settings = "Ajustes",
-	carry = "Puesto de Carga — Capacidad por viaje",
+	carry = "Mochila y Carga — Objetos por viaje",
 	robux = "Tienda Robux — Pases y productos",
 	speed = "Velocidad", -- DEC-024: barra para elegir la velocidad en la base
 }
@@ -458,8 +458,8 @@ local function renderShop()
 	end
 
 	addHeader("Mejoras")
-	addRow("Las vitrinas y la caminadora se mejoran en el panel de tu plot.")
-	for _, upgradeId in GameData.UpgradeOrder do
+	addRow("Las vitrinas y la caminadora se mejoran en el panel de tu plot; la carga por viaje, en el puesto Mochila y Carga.")
+	for _, upgradeId in GameData.UpgradeOrder do -- DEC-027: hoy vacío
 		local upgrade = GameData.Upgrades[upgradeId]
 		local level = state.upgrades[upgradeId] or 0
 		local cost = state.upgradeCosts[upgradeId]

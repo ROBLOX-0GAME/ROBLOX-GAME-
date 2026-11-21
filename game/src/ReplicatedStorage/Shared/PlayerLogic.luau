@@ -249,7 +249,8 @@ function PlayerLogic.hasPass(data, passId)
 end
 
 function PlayerLogic.backpackCapacity(data)
-	local capacity = Config.BASE_BACKPACK + PlayerLogic.upgradeLevel(data, "backpack") * GameData.Upgrades.backpack.step
+	-- DEC-027: la mochila es fija; solo el pase Mochila Gigante la amplía
+	local capacity = Config.BASE_BACKPACK
 	if PlayerLogic.hasPass(data, "bigBackpack") then
 		capacity += GameData.GamePasses.bigBackpack.backpack
 	end
@@ -314,13 +315,12 @@ function PlayerLogic.petMultiplier(data)
 	return 1 + bonus
 end
 
--- Multiplicador total: mascotas × pase Corredor VIP × mejora de Velocidad (DEC-024).
+-- Multiplicador total: mascotas × pase Corredor VIP (DEC-027: sin mejora de velocidad).
 function PlayerLogic.speedMultiplier(data)
 	local multiplier = PlayerLogic.petMultiplier(data)
 	if PlayerLogic.hasPass(data, "runner") then
 		multiplier *= GameData.GamePasses.runner.speedMultiplier
 	end
-	multiplier *= 1 + PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
 	return multiplier
 end
 
@@ -402,12 +402,14 @@ function PlayerLogic.formatBig(value)
 	return tostring(math.floor(value))
 end
 
--- Multiplicador de monedas por ventas y museo (pase VIP).
+-- Multiplicador de monedas por ventas, botín y plot: pase VIP × mascotas equipadas
+-- (DEC-027: ¼ de la suma de sus bonus de velocidad).
 function PlayerLogic.coinMultiplier(data)
+	local multiplier = 1 + (PlayerLogic.petMultiplier(data) - 1) * Config.PET_COIN_SHARE
 	if PlayerLogic.hasPass(data, "vip") then
-		return GameData.GamePasses.vip.coinMultiplier
+		multiplier *= GameData.GamePasses.vip.coinMultiplier
 	end
-	return 1
+	return multiplier
 end
 
 -- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?
@@ -431,7 +433,7 @@ function PlayerLogic.highestZone(data)
 end
 
 function PlayerLogic.jumpHeight(data)
-	return Config.BASE_JUMPHEIGHT + PlayerLogic.upgradeLevel(data, "jump") * GameData.Upgrades.jump.step
+	return Config.BASE_JUMPHEIGHT -- DEC-027: el salto no se mejora
 end
 
 -- Suerte que dan los relojes exhibidos en el plot (DEV-008), con tope.
@@ -443,9 +445,11 @@ function PlayerLogic.plotLuck(data)
 	return math.min(Config.MAX_PLOT_LUCK, luck)
 end
 
--- Probabilidad (0-1) de robar 2 piezas en vez de 1: mejora Suerte + plot.
+-- Probabilidad (0-1) de robar 2 piezas en vez de 1: mascotas + relojes del plot
+-- (DEC-027: la suerte ya no se compra).
 function PlayerLogic.extraPartChance(data)
-	local chance = PlayerLogic.upgradeLevel(data, "luck") * GameData.Upgrades.luck.step + PlayerLogic.plotLuck(data)
+	local petLuck = (PlayerLogic.petMultiplier(data) - 1) * Config.PET_LUCK_SHARE
+	local chance = petLuck + PlayerLogic.plotLuck(data)
 	return math.min(Config.MAX_EXTRA_PART_CHANCE, chance)
 end
 

@@ -18,7 +18,7 @@ local Config = {
 
 	-- Jugador (bases antes de mejoras)
 	START_COINS = 0,
-	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
+	BASE_BACKPACK = 60, -- DEC-027: piezas que caben (guardadas + botín); fija, solo crece con el pase
 	BASE_CARRY = 1, -- objetos robados que puedes llevar por viaje (DEV-013; hasta 4 con 3 mejoras)
 	BASE_WALKSPEED = 16,
 	-- Velocidad (DEC-024): la «Velocidad» es una estadística (75, 1M, 99,9T…). La
@@ -31,7 +31,7 @@ local Config = {
 	SPEED_CURVE = { { 75, 30 }, { 1e6, 85 }, { 9.99e13, 150 } },
 	SPEED_CONTEXT_SECONDS = 0.25, -- cada cuánto se ajusta la velocidad según dónde estás
 	BASE_JUMPHEIGHT = 7.2,
-	BASE_MUSEUM_SLOTS = 3, -- vitrinas iniciales del plot
+	BASE_MUSEUM_SLOTS = 4, -- DEC-027: vitrinas iniciales del plot (hasta 12 con 8 mejoras)
 	MAX_WATCHES_PER_TYPE = 999,
 
 	-- Progresión: subir del nivel n al n+1 cuesta XP_PER_LEVEL_STEP * n
@@ -78,6 +78,9 @@ local Config = {
 	PLAYTIME_TICK_SECONDS = 30, -- cada cuánto se suma el tiempo jugado
 	MAX_EXTRA_SPINS = 50, -- giros extra de ruleta guardados (DEV-013)
 	MAX_EQUIPPED_PETS = 3,
+	-- DEC-027: las mascotas equipadas también dan monedas y suerte
+	PET_COIN_SHARE = 0.25, -- +monedas = ¼ de la suma de sus bonus de velocidad
+	PET_LUCK_SHARE = 0.1, -- +probabilidad de robar 2 piezas = 1/10 de esa suma (propuesta de Claude)
 
 	-- Plot personal (DEV-008)
 	PLOT_COUNT = 6, -- uno por jugador: servidores de 6 (DEV-010; Max Players se fija en Game Settings)
