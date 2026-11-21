@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-025 (Jhonn): DEC-028. Valor de un reloj = base × 6^(rareza−1) × factor de ajenas (−25 % por pieza; 4 ajenas = Genérico al 10 %). Bases de 60 a 5.000; el mejor (Ricardo Mil Tourbillon Atemporal) ≈ 1.800T. Pieza suelta: se vende por el 5 % del valor del reloj con su misma rareza. Suerte +25 % por rareza. Probabilidad de subir rareza: 20 % + 4 % por zona (tope 85 %).
 - 2026-11-21 · DEV-024 (Jhonn): DEC-030. Pase Dinero ×2 (ID 2096725041, 249 R$). VIP: premios por tiempo ×1,43 más rápidos, etiqueta [VIP] en el chat (atributo `VIP` y `TextChatService.OnIncomingMessage`) y ganancia offline de 8 h; sin VIP, 4 h; al 50 % del ingreso (`PlayerLogic.offlineEarnings`, `MuseumService.grantOffline`). Place versión 29.
 
 - 2026-11-21 · DEV-022 (Jhonn): DEC-027. Solo vitrinas (4→12, 100 y ×10), carga (3 niveles, 100 y ×10) y caminadora (30 niveles, 100 y ×2,25: el nivel 30 cuesta ~1,6T). Mochila fija en 60. Sin velocidad, salto ni suerte. Las mascotas dan ¼ de su bonus en monedas y 1/10 en suerte (propuesta). Place versión 27.

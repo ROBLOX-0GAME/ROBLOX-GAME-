@@ -452,3 +452,17 @@ Play en la place oficial el 2026-11-21 (versión 29, sin publicar).
 | Multiplicador de monedas con mascota suprema + VIP + Dinero ×2 | Manual (Studio) | **Ejecutada: ×2,436 (1,015 × 1,2 × 2)** |
 | Etiqueta [VIP] visible en el chat | Manual | Pendiente (necesita escribir en el chat) |
 | Ganancia offline real al volver a entrar con relojes exhibidos | Manual | Pendiente (necesita una sesión con relojes exhibidos, salir y volver tras más de 1 min) |
+
+## 31. Pruebas de DEV-025 (piezas de reloj, 12 rarezas y mesa de armado)
+
+Play en la place oficial el 2026-11-21 (versión 32, sin publicar).
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Pruebas automáticas (5 nuevas de DEC-028: armar, pieza ajena, valores y mejor reloj, tirada por zona, robar/vender/Legado) | Automática (Studio) | **Ejecutada: 52 correctas, 0 fallidas** |
+| Piezas en las casas al iniciar | Manual (Studio, servidor) | **Ejecutada: 144 piezas de reloj (79 Común, 39 Poco común, 17 Raro, 3 Épico, 4 Legendario, 1 Mítico, 1 Celestial); luz solo en 26 (Raro o más); 0 piezas antiguas fuera del Cronómetro** |
+| Armar con 1 pieza ajena (Cronógrafo con piezas Raras y unas manecillas de pulsera) | Manual (Studio, servidor) | **Ejecutada: «Cronógrafo (Poco común) · 1 pieza(s) ajena(s)»** |
+| Mesa de armado en el cliente (marcos, orden, bandeja, vista previa, botón ARMAR) | Manual | Pendiente (abrir la mesa del plot con piezas en la mochila) |
+| Aviso arriba de la pantalla con piezas Míticas o mejores | Manual | Pendiente de verlo en pantalla (salieron una Mítica y una Celestial al iniciar) |
+| Piezas antiguas durante el Cronómetro y que desaparezcan al repararlo | Manual | Pendiente (necesita el evento) |
+| Relojes guardados antes de DEC-028 (Común, sin ajenas) | Automática | **Ejecutada en la prueba de valores** |

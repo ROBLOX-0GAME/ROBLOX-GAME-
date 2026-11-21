@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-025 (Jhonn): DEC-028. Las casas dan piezas de reloj `reloj.clase.rareza` (Caja, Calibre, Esfera, Manecillas) con 12 rarezas; desde la zona 3, un reloj exclusivo por zona (16 relojes). Mesa de armado en el plot: 4 marcos en orden, bandeja por reloj o rareza; cada pieza ajena: −1 rareza y −25 %. Relojes guardados con clave `id|rareza|ajenas` (los antiguos cuentan como Común). Piezas antiguas solo durante el Cronómetro (`HouseService.setBossParts`). Place v32, 52/52 ([[Plan-de-Pruebas]] §31). Arte: [[PROMPT_PIEZAS_RELOJ_ZADIEL]] (ART-018).
 - 2026-11-21 · DEV-023 (Jhonn): DEC-029. `RaceService` cierra la zona cada 5 min (30 s de aviso, vuelta a la plaza, piezas renovadas con `HouseService.resetAll`, reapertura a los 10 s). Las piezas ya no reaparecen solas. `GameData.Rarities` con 12 rarezas; aviso global (`Net.announce`, remoto `Announce`) desde Mítico. Place versión 28.
 
 - 2026-11-21 · DEV-020/DEV-021 (Jhonn): código en la place (versión 25) y probado: 50/50 pruebas; base 50, casa 40 y zona según la curva; el dueño despierta a los 15 s. La mejora de mochila pasó al puesto «Mochila y Carga». Dudas en [[Recomendaciones-Claude]].

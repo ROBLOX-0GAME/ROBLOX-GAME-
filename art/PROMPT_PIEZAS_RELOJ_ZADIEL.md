@@ -1,5 +1,7 @@
 # Prompt — Piezas de reloj robables, mesa de armado y animaciones por rareza (Zadiel)
 
+> **Actualizado en DEV-025 (2026-11-21)** con las respuestas de Jhonn (DEC-028): 12 rarezas, 16 relojes, calibre solo visual, visuales parecidas a los originales con nombres inventados, y el código ya programado (§8).
+>
 > Creado en **ART-017** (2026-11-21) por Claude en la PC de Jhonn, a partir de lo que pidió Jhonn. **Es un documento para revisar antes de ejecutarlo:** Jhonn puede cambiar cualquier cosa. Las dudas abiertas están en [[Recomendaciones-Claude]] (R-007 a R-010). Lo marcado como **Propuesta** necesita el visto bueno de Zadiel y Jhonn (DEC-020).
 >
 > **Para usarlo:** copia este archivo completo en Claude Code (en la raíz del repositorio) y pídele que siga la sección 9.
@@ -47,11 +49,13 @@ Todas se ven **low-poly colorido con PBR** (DEC-016, DEC-018 y DEC-025): formas 
 
 ### Los 3 tipos de calibre
 
-| Tipo | Cómo se ve | Idea de juego (propuesta R-009) |
-|---|---|---|
-| **Cuarzo** | Disco plano con una **pila** redonda y un circuito verde. Pocas piezas y limpio | El más común |
-| **Mecánico** | **Engranajes visibles**, volante con espiral y rubíes rojos (puntos) | +10 % de valor |
-| **Automático** | Como el mecánico, más un **rotor** en media luna que gira | +20 % de valor y +2 % de suerte exhibido |
+| Tipo | Cómo se ve |
+|---|---|
+| **Cuarzo** | Disco plano con una **pila** redonda y un circuito verde. Pocas piezas y limpio |
+| **Mecánico** | **Engranajes visibles**, volante con espiral y rubíes rojos (puntos) |
+| **Automático** | Como el mecánico, más un **rotor** en media luna que gira |
+
+**Decidido (DEC-028):** el tipo de calibre es **solo visual**; no cambia valor ni suerte. Cada reloj tiene su tipo fijo (§4).
 
 Animación del calibre en reposo: los engranajes giran despacio y el rotor oscila. **Solo en el cliente** y solo cuando la pieza está cerca (≤ 30 studs).
 
@@ -59,40 +63,53 @@ Animación del calibre en reposo: los engranajes giran despacio y el rotor oscil
 
 ## 3. Rarezas: cómo se ve cada una
 
-Siete rarezas. La rareza cambia **material, color y brillo**, no la forma. Reutiliza los materiales PBR que ya existen (`ids_roblox.md`) antes de crear otros nuevos.
+**Doce rarezas (DEC-028).** La rareza cambia **material, color y brillo**, no la forma. Reutiliza los materiales PBR que ya existen (`ids_roblox.md`) antes de crear otros nuevos. Los colores son los de `GameData.Rarities`, que el código ya usa en el mundo, en el panel y en los avisos.
 
-| Rareza | Color del marco y del brillo | Material principal | Brillo en el mundo |
-|---|---|---|---|
-| Común | Gris `#B0B4BC` | Acero (`metal_acero`) | Ninguno |
-| Poco común | Verde `#4CAF6A` | Latón (`metal_laton`) | Ninguno |
-| Raro | Azul `#3D8BFD` | Plata (`metal_plata`) + esmalte azul | Brillo suave (ya existe en `Vfx`) |
-| Épico | Morado `#9B59E6` | Oro cepillado + esmalte negro | Brillo y destello cada 4 s |
-| Legendario | Oro `#F2C14E` | Oro pulido + rubí | Brillo, destello y rayos suaves |
-| Mítico | Rojo `#E04848` | Oro pulido + diamante + esmalte cósmico | Aura con partículas lentas |
-| Divino | Cian `#5BD5E0` (degradado) | Cristal de zafiro + esmalte cósmico + diamante | Aura, partículas y un halo que gira |
+| # | Rareza | Color (contorno) | Material principal | Brillo en el mundo |
+|---|---|---|---|---|
+| 1 | Común | Gris `#B0B4BC` | Acero (`metal_acero`) | Ninguno |
+| 2 | Poco común | Verde `#4CAF6A` | Latón (`metal_laton`) | Ninguno |
+| 3 | Raro | Azul `#3D8BFD` | Plata (`metal_plata`) + esmalte azul | Brillo suave (ya existe en `Vfx`) |
+| 4 | Épico | Morado `#9B59E6` | Oro cepillado + esmalte negro | Brillo y destello cada 4 s |
+| 5 | Legendario | Naranja/oro `#F2A032` | Oro pulido + rubí | Brillo, destello y rayos suaves |
+| 6 | Mítico | Rojo `#E03C3C` | Oro pulido + diamante | Aura con partículas lentas |
+| 7 | Divino | Amarillo `#FFDD33` con contorno blanco | Oro blanco + diamantes | Aura, partículas y halo blanco |
+| 8 | Celestial | Cian `#5BD5E0` con contorno blanco | Cristal de zafiro + nácar | Halo que gira y estrellas pequeñas |
+| 9 | Cósmico | Morado-rosa `#D65CE6` con contorno oscuro | Esmalte de galaxia | Nebulosa suave alrededor |
+| 10 | Eterno | Blanco `#FFFFFF` con contorno dorado | Porcelana + oro | Rayos dorados lentos |
+| 11 | Ancestral | Verde jade `#00A86B` con contorno negro | Jade + bronce antiguo | Runas que giran (1 emisor) |
+| 12 | Atemporal | **Arcoíris** (degradado animado) | Cristal prismático | Aura arcoíris y destello; el más vistoso |
+
+Desde **Mítico**, sale un aviso arriba de la pantalla para todo el servidor (ya programado, DEC-029).
 
 ---
 
-## 4. Relojes (familias de piezas) — propuesta R-010
+## 4. Relojes (familias de piezas): decidido en DEC-028
 
-Cada reloj tiene **su** caja, **su** calibre, **su** esfera y **sus** manecillas. Las piezas del mismo reloj comparten **un motivo visual** (color de acento, forma de los índices…) para que el jugador vea que van juntas.
+Cada reloj tiene **su** caja, **su** calibre, **su** esfera y **sus** manecillas. Las piezas del mismo reloj comparten **un motivo visual** para que el jugador vea que van juntas. Las piezas de los relojes generales pueden salir en cualquier zona; desde la zona 3, cada zona tiene además **un reloj exclusivo**.
 
-| # | Reloj | Rareza | Calibre | Motivo visual |
-|---|---|---|---|---|
-| 1 | Reloj de bolsillo | Común | Mecánico | Tapa con bisagra y cadena corta; números romanos |
-| 2 | Reloj de pulsera | Poco común | Cuarzo | Caja redonda sencilla; índices de barra |
-| 3 | Cronógrafo | Raro | Mecánico | 3 subesferas y pulsadores a los lados |
-| 4 | Reloj real de rubí | Épico | Automático | Rubíes en los índices; bisel acanalado |
-| 5 | Reloj del millonario | Legendario | Automático | Bisel de diamantes; esfera dorada |
-| 6 | Reloj del Legado | Mítico | Automático | Usa la pieza del legado; esfera cósmica |
-| 7 | Reloj del Capitán (zona 6) | Raro | Automático | Bisel giratorio de buceo; acento azul mar |
-| 8 | Reloj del Banquero (zona 7) | Épico | Mecánico | Caja rectangular art déco |
-| 9 | Reloj de la Isla (zona 8) | Épico | Automático | Esfera verde turquesa con palmeras grabadas |
-| 10 | Reloj de Cristal (zona 9) | Legendario | Automático | Caja transparente (cristal de zafiro) con el calibre a la vista |
-| 11 | Reloj Imperial (zona 10-11) | Mítico | Automático | Corona y águila inventadas; oro y morado |
-| 12 | Reloj del Tiempo (zona 12) | Divino | Automático | Esfera de galaxia que gira; manecillas de luz |
+**Nombres y visuales (respuesta de Jhonn):** los nombres son **interpretados** (inventados, sin marcas), pero el **aspecto debe parecerse al reloj original** en el que se inspira: misma silueta, forma de caja, bisel, disposición de la esfera y colores típicos. **Nunca** pongas logos, coronas, textos ni nombres de marca reales en la esfera; usa el logo inventado del juego.
 
-Todos los nombres y diseños son **originales**: nada de marcas, logos ni modelos reales (Rolex, Patek, etc.).
+| # | Id | Nombre en el juego | Se parece a | Calibre | Dónde sale | Valor base (Común) |
+|---|---|---|---|---|---|---|
+| 1 | `pocket` | Reloj de bolsillo | Clásico de bolsillo con tapa | Mecánico | General | 60 |
+| 2 | `wrist` | Reloj de pulsera | Pulsera sencilla de diario | Cuarzo | General | 150 |
+| 3 | `chrono` | Cronógrafo | Cronógrafo deportivo de 3 subesferas | Mecánico | General | 400 |
+| 4 | `legacy` | Reloj del Legado | Reloj único con la pieza del legado | Automático | General (necesita la pieza del legado) | 1.000 |
+| 5 | `royal` | Reloj real de rubí | Reloj de gala con rubíes | Automático | General | 1.200 |
+| 6 | `millionaire` | Reloj del millonario | Bisel de diamantes y esfera dorada | Automático | General | 3.000 |
+| 7 | `fechador` | Rolando Fechamaster | Rolex Datejust (bisel estriado, lupa de fecha) | Automático | Zona 3 | 500 |
+| 8 | `lunamaster` | Omigo Lunamaster | Omega Speedmaster (cronógrafo negro, taquímetro) | Mecánico | Zona 4 | 800 |
+| 9 | `tanque` | Cartero Tanque | Cartier Tank (caja rectangular, números romanos) | Cuarzo | Zona 5 | 1.200 |
+| 10 | `submar` | Rolando Submar | Rolex Submariner (bisel giratorio de buceo) | Automático | Zona 6 | 1.600 |
+| 11 | `roblereal` | Audemar Roble Real | Audemars Piguet Royal Oak (bisel octogonal con tornillos, esfera de cuadros) | Automático | Zona 7 | 2.000 |
+| 12 | `luminosa` | Panerei Luminosa | Panerai Luminor (caja cojín, protector de corona) | Mecánico | Zona 8 | 2.500 |
+| 13 | `fusion` | Hublón Fusión de Cristal | Hublot Big Bang de zafiro (caja transparente) | Automático | Zona 9 | 3.000 |
+| 14 | `nautil` | Philippon Nautil | Patek Philippe Nautilus (caja con «orejas», esfera horizontal en relieve) | Automático | Zona 10 | 3.500 |
+| 15 | `patrimonio` | Vacherón Patrimonio | Vacheron Constantin Patrimony (de vestir, muy fino y limpio) | Mecánico | Zona 11 | 4.200 |
+| 16 | `tourbillon` | Ricardo Mil Tourbillon | Richard Mille (caja tonneau, tourbillon a la vista) | Mecánico | Zona 12 | 5.000 |
+
+El valor se multiplica por 6 en cada rareza. El mejor reloj del juego, el **Ricardo Mil Tourbillon Atemporal original** (sus 4 piezas propias y Atemporales), vale unos **1.800T** (rango acordado: 1.500T–1.950T). Su modelo armado debe ser el más espectacular.
 
 ---
 
@@ -139,7 +156,7 @@ Es la mesa que ya existe al fondo del plot (`mdl_taller`). Al usarla se abre un 
 - **Marcos verdes** (`#4CAF6A`, borde de 3 px) con el icono de la clase en gris claro y su número (1 a 4).
 - **Orden obligatorio:** solo se ilumina el siguiente marco libre. El jugador no puede poner la esfera antes que el calibre (el marco siguiente parpadea suave para guiar).
 - **Pieza correcta** (del reloj elegido): el marco queda **verde fijo** y aparece un ✔.
-- **Pieza de otro reloj:** se puede poner, pero el marco se vuelve **amarillo** con el aviso «Pieza de otro reloj: −1 rareza, −25 % valor, ingreso y suerte» (propuesta R-008). Con 3 o más ajenas, el marco es **naranja**.
+- **Pieza de otro reloj:** se puede poner, pero el marco se vuelve **amarillo** con el aviso «de otro reloj: −1 rareza y −25 %» (decidido en DEC-028). Si las 4 piezas son ajenas, sale un «Reloj Genérico» que vale el 10 %.
 - **Vista previa en vivo:** rareza final, valor, ingreso por minuto y suerte, recalculados al poner cada pieza. Si baja algo, se muestra en rojo con una flecha ↓.
 - **Ordenar la bandeja:**
   - **Por reloj** (por defecto): agrupa las piezas del mismo reloj y pone primero los relojes completos o casi completos.
@@ -171,7 +188,9 @@ Cuanto más rara la pieza o el reloj, más épico. Si el reloj es **completo** (
 | Épico | + campanilla | + engranajes morados que giran detrás y la cámara se acerca un poco | 2,0 s |
 | Legendario | + destello dorado | + rayos de luz dorados (Beams) y monedas que saltan | 2,5 s |
 | Mítico | + pulso rojo | + «el tiempo se detiene»: desaturación breve y vórtice de engranajes | 3,0 s |
-| Divino | + halo cian | + mini cinemática: cielo con estrellas, las manecillas giran hacia atrás y luego hacia adelante, y un rayo de luz desde arriba | 4,0 s |
+| Divino y Celestial | + halo del color de la rareza | + mini cinemática: cielo con estrellas, las manecillas giran hacia atrás y luego hacia adelante, y un rayo de luz desde arriba | 4,0 s |
+| Cósmico, Eterno y Ancestral | + halo y estela del color | + la cinemática de Divino con su color y su efecto (nebulosa, rayos dorados o runas) | 4,0 s |
+| Atemporal | + destello arcoíris | + la cinemática completa en arcoíris; el reloj gira presentado | 4,0 s |
 | **Reloj perfecto** (cualquier rareza) | — | Remate: texto «¡RELOJ PERFECTO!», confeti de engranajes y sonido especial | +0,8 s |
 
 Con **piezas de otro reloj**, la animación usa el nivel de la rareza **final** (rebajada) y no hay remate de «Reloj perfecto».
@@ -202,31 +221,31 @@ Cada asset en `ReplicatedStorage/Assets` con estos **nombres y atributos**:
 
 | Asset | Nombre | Atributos | Hijos obligatorios |
 |---|---|---|---|
-| Pieza suelta | `pz_<reloj>_<clase>` (ej.: `pz_cronografo_esfera`) | `Clase` = Caja/Calibre/Esfera/Manecillas · `Reloj` = id · `Rareza` | `PrimaryPart` en el centro |
+| Pieza suelta | `pz_<reloj>_<clase>` (ej.: `pz_chrono_dial`) | `Clase` = Caja/Calibre/Esfera/Manecillas · `Reloj` = id · `Rareza` | `PrimaryPart` en el centro |
 | Calibre | `pz_<reloj>_calibre` | además `TipoCalibre` = Cuarzo/Mecanico/Automatico | `Rotor` y `Engranaje*` si gira |
 | Reloj armado | `rlj_<reloj>_armado` | `Reloj`, `Rareza` | Mallas `Caja`, `Calibre`, `Esfera`, `Manecillas` · `Attachment` `Exp_Caja`, `Exp_Calibre`, `Exp_Esfera`, `Exp_Manecillas` (posición explosionada) |
 | Efecto | `vfx_armar_<rareza>` · `vfx_reloj_perfecto` | — | Emisores desactivados |
 
-Los ids de reloj usan los de `GameData.Watches` (`pocket`, `wrist`, `chrono`, `royal`, `millionaire`, `legacy`) y, para los nuevos, los que se aprueben en R-010.
+Los ids de reloj son los de la tabla de §4 (`GameData.Watches`). La clase va en inglés en el nombre, como en el código: `case`, `movement`, `dial` y `hands` (ej.: `pz_chrono_dial`). El código ya busca `pz_<reloj>_<clase>` con `AssetLibrary.dress`. Mientras no exista, la pieza se ve con una forma provisional (cilindro o barra) del color de su rareza. Los relojes armados usan los nombres `mdl_reloj_*` de `AssetLibrary.WATCH_ASSETS`.
 
 ---
 
-## 8. Lo que hará Jhonn en código (tarea DEV aparte; para que sepas qué esperar)
+## 8. Lo que ya está programado (DEV-025, 2026-11-21)
 
-**Esto no lo haces tú. Es para que el arte encaje:**
-- Nuevas piezas: `{ reloj, clase, rareza, tipoCalibre }` en el inventario y en el botín de las casas (cada zona da sobre todo piezas de sus relojes).
-- Panel de armado con los marcos, el orden y la vista previa (§6).
-- Penalización por pieza ajena (R-008), valor, ingreso pasivo y suerte.
-- Disparo de las animaciones (§7) con las plantillas de §7.3, solo en el cliente.
-- Conversión de las piezas antiguas al cargar los datos (R-007).
+**Esto no lo haces tú. Ya está en la place (v32) y en `game/src`:**
+- Piezas `reloj.clase.rareza` en el inventario y en el botín de las casas; la tirada depende de la zona, con el reloj exclusivo desde la zona 3.
+- Panel de la mesa con los 4 marcos en orden, la bandeja con los 3 modos de orden y la vista previa (§6). Es un panel de texto provisional: tu diseño y tus iconos lo sustituirán.
+- Penalización por pieza ajena, valor, ingreso pasivo y suerte.
+- Avisos desde Mítico.
+- Falta en código (cuando entregues el arte): disparar las animaciones de §7 con las plantillas de §7.3, solo en el cliente.
 
 ---
 
 ## 9. Pasos para ART-018 (Zadiel)
 
 1. **Reserva** (por ejemplo): `art/blender/**`, `art/texturas/fuentes/**`, `art/texturas/export/ico_pz_*.png`, `art/texturas/export/vfx_*.png`, `art/export/modelos/pz_*`, `art/export/modelos/rlj_*`, `art/audio/**`, `art/Pipeline-de-Arte.md`, `art/texturas/ids_roblox.md`, `12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md` y `10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md`.
-2. **Bocetos (Krita):** 1 lámina por reloj con sus 4 piezas y las 7 rarezas en miniatura. Súbela a `art/referencias/` y pide a Jhonn que la mire **antes** de modelar.
-3. **Modelos (Blender):** primero los 6 relojes actuales (4 piezas cada uno, más el modelo armado). Respeta §5.
+2. **Bocetos (Krita):** 1 lámina por reloj con sus 4 piezas y las 12 rarezas en miniatura. Súbela a `art/referencias/` y pide a Jhonn que la mire **antes** de modelar.
+3. **Modelos (Blender):** primero los 6 generales y luego los 10 exclusivos (4 piezas cada uno, más el modelo armado). Respeta §5.
 4. **Iconos (Krita):** los de §6.3.
 5. **Efectos (Krita + Studio):** flipbooks y Beams; plantillas `vfx_*` en `ReplicatedStorage/Assets/Vfx`.
 6. **Sonidos (Audacity):** los de §7.2, con su permiso de audio.
@@ -239,7 +258,7 @@ Los ids de reloj usan los de `GameData.Watches` (`pocket`, `wrist`, `chrono`, `r
 ## 10. Criterios de aceptación
 
 - [ ] Las 4 clases se distinguen a 20 studs y en móvil; los 3 tipos de calibre se reconocen.
-- [ ] 7 rarezas con colores y materiales de §3, sin marcas reales.
+- [ ] 12 rarezas con los colores y materiales de §3; relojes parecidos a sus originales, sin logos ni nombres de marca.
 - [ ] 6 relojes actuales con sus 4 piezas y su modelo armado dentro del presupuesto de §5.
 - [ ] Plantillas de efectos por rareza y de «Reloj perfecto», más épicas a mayor rareza.
 - [ ] Iconos de §6.3 y sonidos de §7.2 subidos, con permisos.

@@ -207,6 +207,7 @@ function HouseService.setBossParts(enabled)
 		end
 	end
 end
+
 -- DEC-029: renueva las piezas de todas las casas (al reiniciar la zona de carreras).
 function HouseService.resetAll()
 	for _, house in houses do

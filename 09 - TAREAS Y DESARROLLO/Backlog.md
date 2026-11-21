@@ -1211,7 +1211,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Gameplay / economía / interfaz.
 - **Prioridad:** Crítica.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de revisión de Zadiel).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1224,10 +1224,12 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Catálogo de 16 relojes (6 generales y 10 exclusivos), 4 clases de pieza y tirada de rareza por zona.
-- [ ] Robo, botín y mochila con piezas nuevas; los avisos desde Mítico funcionan.
-- [ ] Mesa de armado con marcos, orden, vista previa y penalización por pieza ajena.
-- [ ] Vender y exhibir relojes con rareza; ingreso y suerte según el reloj.
-- [ ] Piezas antiguas solo durante el Cronómetro.
-- [ ] Datos antiguos compatibles; pruebas actualizadas y en verde; prueba en Play.
-- [ ] Documento de Zadiel actualizado con las respuestas de Jhonn.
+- [x] Catálogo de 16 relojes (6 generales y 10 exclusivos), 4 clases de pieza y tirada de rareza por zona.
+- [x] Robo, botín y mochila con piezas nuevas; los avisos desde Mítico funcionan.
+- [x] Mesa de armado con marcos, orden, vista previa y penalización por pieza ajena.
+- [x] Vender y exhibir relojes con rareza; ingreso y suerte según el reloj.
+- [x] Piezas antiguas solo durante el Cronómetro.
+- [x] Datos antiguos compatibles; pruebas actualizadas y en verde; prueba en Play.
+- [x] Documento de Zadiel actualizado con las respuestas de Jhonn.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 32). 52/52 pruebas; 144 piezas de reloj en las casas y armado con pieza ajena comprobado en el servidor ([[Plan-de-Pruebas]] §31). [[PROMPT_PIEZAS_RELOJ_ZADIEL]] actualizado para ART-018. Faltan pruebas manuales: la mesa en pantalla, el aviso de piezas Míticas y las piezas antiguas durante el Cronómetro.

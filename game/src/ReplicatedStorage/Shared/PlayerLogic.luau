@@ -845,6 +845,7 @@ function PlayerLogic.craft(data, request)
 	end
 	return true, message, levelAfter > levelBefore
 end
+
 -- Elige una pieza al azar. roll es un número en [0, 1).
 -- zoneWeights (opcional): tabla [partId] = peso de una zona; si falta, usa el peso base.
 -- luckMultiplier multiplica el peso de las piezas que no son comunes.

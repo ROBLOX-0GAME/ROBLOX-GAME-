@@ -187,6 +187,7 @@ return function(t)
 		givePieces(legacy, keys)
 		t.ok(not PlayerLogic.craft(legacy, craftRequest("legacy", keys)), "sin la pieza del legado no arma otro")
 	end)
+
 	t.test("sell valida cantidad y paga", function()
 		local data = PlayerLogic.newData()
 		data.watches.pocket = 3
