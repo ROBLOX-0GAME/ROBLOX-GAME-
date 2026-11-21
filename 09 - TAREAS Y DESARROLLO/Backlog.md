@@ -1173,3 +1173,30 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Pruebas automáticas y prueba en Play.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 28). 51/51 pruebas y ciclo completo probado ([[Plan-de-Pruebas]] §29). El aviso de piezas Míticas se probará con las piezas nuevas (DEV-025).
+
+### DEV-024 — Pase Dinero ×2, ventajas VIP y ganancia offline
+
+- **ID:** DEV-024.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Monetización / economía.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** DEC-030.
+- Crear en Roblox el pase **Dinero ×2** (249 R$): monedas ×2 al vender, en el botín y en el plot; se combina con el VIP.
+- **VIP:**
+  - Premios por tiempo en un 30 % menos de tiempo (el tiempo jugado cuenta ×1,43).
+  - Etiqueta **[VIP]** dorada en el chat.
+  - Ganancia offline hasta 8 h.
+- **Ganancia offline para todos:** hasta 4 h sin VIP; al 50 % del ingreso del plot. Se paga al entrar.
+
+**Criterios de aceptación:**
+
+- [ ] Pase Dinero ×2 creado y en `Config`.
+- [ ] VIP: premios más rápidos, etiqueta en el chat y offline de 8 h.
+- [ ] Ganancia offline de 4 h para todos.
+- [ ] Pruebas automáticas y prueba en Play.
