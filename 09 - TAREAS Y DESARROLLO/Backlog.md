@@ -1233,3 +1233,28 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Documento de Zadiel actualizado con las respuestas de Jhonn.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 32). 52/52 pruebas; 144 piezas de reloj en las casas y armado con pieza ajena comprobado en el servidor ([[Plan-de-Pruebas]] §31). [[PROMPT_PIEZAS_RELOJ_ZADIEL]] actualizado para ART-018. Faltan pruebas manuales: la mesa en pantalla, el aviso de piezas Míticas y las piezas antiguas durante el Cronómetro.
+
+### DEV-026 — Mesa que se cierra sola, 12 relojes de lujo (uno por zona) y revisión de mecánicas
+
+- **ID:** DEV-026.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Gameplay / interfaz.
+- **Prioridad:** Crítica.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** pedido de Jhonn (2026-11-21).
+- **BUG:** el panel de la mesa de armado se cierra de repente. Causa: el cliente busca la estación `workshop` y acepta la de un plot libre (sin dueño), que está lejos, y el control de distancia cierra el panel.
+- **12 relojes de lujo, uno exclusivo por zona (1 a 12),** con nombres interpretados y aspecto parecido al original: Speedmaster, Santos, Reverso, Daytona, Overseas, Nautilus, Royal Oak, Big Bang, RM 11, Breguet Tourbillon, Grandmaster Chime y Astronomia. Sustituyen a los 10 exclusivos de DEV-025. Los 6 relojes generales siguen saliendo al azar en cualquier zona.
+- Añadir al prompt de Zadiel los 12 relojes con los materiales de cada zona.
+- Revisar que todas las mecánicas funcionen. El Renacer queda fuera por ahora.
+
+**Criterios de aceptación:**
+
+- [ ] La mesa no se cierra mientras estás junto a tu plot.
+- [ ] 12 exclusivos (zonas 1 a 12) en el juego y en el prompt, con materiales por zona.
+- [ ] Revisión de mecánicas con resultados reales en el Plan de Pruebas.
+- [ ] Pruebas automáticas en verde y prueba en Play.
