@@ -8,6 +8,32 @@
 
 ---
 
+## ✅ Respuestas de Jhonn (2026-11-21) — resumen
+
+Jhonn respondió en el chat. Se aplican en DEV-022 a DEV-025 y se registran como DEC-027 a DEC-030.
+
+| Punto | Respuesta |
+|---|---|
+| **R-001** Zonas altas | **Más niveles de caminadora: 30** (×2 cada uno). El precio sube por nivel y con dinero, nunca por zona. Calibrado para que un jugador sin pagar, con buenas mascotas, llegue al nivel 30 vendiendo el mejor reloj posible (reloj original con las 4 piezas Atemporales), que vale **1.500T–1.950T** y necesita mucha suerte. |
+| **R-002** Precios | **La zona no afecta a ningún precio.** Solo sube el nivel de cada mejora. |
+| **R-003** Mejoras | Solo quedan: **vitrinas** (el plot empieza con **4** y llega a **12**, +1 por mejora, ×10 por nivel desde 100), **carga por viaje** (3 mejoras, hasta 4 objetos, ×10 desde 100) y **caminadora** (30 niveles). **Se quitan** velocidad, salto y suerte (la suerte la dan solo las mascotas y los relojes exhibidos). **Mochila fija en 60 piezas** (más solo con Robux). |
+| **R-004** Mochila y Carga | El puesto vende solo la carga por viaje (la mochila ya no se mejora con monedas). |
+| **R-005** Cinemática | Se prueba con datos reiniciados (R-006). |
+| **R-006** Datos de desarrollo | **Reiniciar** los datos de la cuenta de Jhonn. |
+| **R-007** Piezas antiguas | Las 7 piezas actuales **solo salen cuando hay que reparar el Cronómetro** (evento del servidor en el que todos ayudan). |
+| **Piezas compartidas** | Las piezas de las casas son las mismas para todo el servidor: si alguien roba una manecilla de la casa 1, nadie más la ve ni la roba. |
+| **Reinicio de zonas** | Cada **5 min** se cierra la zona de carreras: 30 s de aviso, todos vuelven a la base con su botín guardado, se renuevan las piezas y se abre a los 10 s. |
+| **Aviso de piezas** | Aviso arriba para todo el servidor cuando sale una pieza **Mítica o superior**, con la zona; cada rareza con su mensaje y su color. |
+| **Rarezas** | **12**: Común (gris), Poco común (verde), Raro (azul), Épico (morado), Legendario (naranja/oro), Mítico (rojo), Divino (amarillo, contorno blanco), Celestial (cian, contorno blanco), Cósmico (morado-rosa), Eterno (blanco, contorno dorado), Ancestral (verde jade, contorno negro), Atemporal (arcoíris animado). |
+| **R-008** Pieza ajena | **−1 rareza y −25 %** de valor, ingreso y suerte por cada pieza de otro reloj. |
+| **R-009** Calibres | **Solo visuales** (cuarzo, mecánico y automático no cambian el valor). |
+| **R-010** Relojes | Cualquier pieza puede salir en cualquier zona por suerte (las zonas lejanas tienen más probabilidad de rarezas altas). **Desde la zona 3**, cada zona tiene además su **reloj famoso exclusivo** (sus piezas solo salen ahí). |
+| **Marcas reales** | Nombres **interpretados** (inspirados, sin marca real) pero con un aspecto **parecido a los originales** para que sea épico. Claude: parecido en forma y estilo, sin copiar logos, coronas ni nombres (es lo que más riesgo tiene). |
+| **Mascotas** | Dan monedas extra: **¼ de su bonus de velocidad**. |
+| **VIP** | Premios por tiempo en un 30 % menos de tiempo, etiqueta [VIP] en el chat y ganancia offline hasta **8 h con VIP y 4 h sin VIP** (al 50 % del ingreso del plot). Dinero ×2 a 249 R$. |
+
+---
+
 ## A. Velocidad, zonas y mejoras (DEV-020, DEV-021)
 
 ### R-001 — Con 8 niveles de caminadora no se llega a las zonas altas (importante)

@@ -321,7 +321,42 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-026 — Mejoras desde 100 monedas con crecimiento ×1,5 y Puesto de Mochila y Carga
 
-- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** el 2026-11-21 (DEV-021). Zadiel la revisa (DEC-020). **Área:** Economía. Reemplaza los precios de mejoras de DEC-003, DEC-010 y DEC-015.
+- **Fecha:** 2026-11-21. **Estado:** **Reemplazada en parte por DEC-027** (2026-11-21). **Área:** Economía. Reemplazaba los precios de mejoras de DEC-003, DEC-010 y DEC-015.
 - **Mejoras:** todas empiezan en 100 monedas y cada nivel cuesta un 50 % más (×1,5). Máximo 8 niveles por ahora (mochila, velocidad, salto, suerte, vitrinas y caminadora). La carga por viaje tiene 3 niveles (de 1 a 4 objetos).
 - **Mochila y Carga:** la mejora de la mochila sale de la Tienda y se compra, junto con la carga por viaje, en el puesto «Mochila y Carga».
 - **Ajustes de Claude para que 8 niveles no rompan límites (propuesta):** vitrinas +1 por nivel (3 + 8 = 11; el plot tiene 15 sitios) y salto +1 por nivel. Dudas en [[Recomendaciones-Claude]].
+
+#### DEC-027 — Solo tres mejoras con monedas, mochila fija y mascotas con dinero
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (respuestas a [[Recomendaciones-Claude]], DEV-022). Zadiel la revisa (DEC-020). **Área:** Economía. Reemplaza en parte DEC-026.
+- **Vitrinas del plot:** de 4 a 12, +1 por mejora (8 mejoras). Empiezan en 100 monedas y cada nivel cuesta ×10 (la última, 1B).
+- **Carga por viaje:** 3 mejoras (de 1 a 4 objetos). 100 y ×10.
+- **Caminadora:** 30 niveles, ×2 de entrenamiento cada uno. El precio sube por nivel y se calibra con el valor de los relojes: el mejor reloj (original con las 4 piezas Atemporales) vale 1.500T–1.950T.
+- **Mochila:** fija en 60 piezas; solo se amplía con el pase de Robux.
+- **Sin** mejoras de velocidad, salto ni suerte. La suerte la dan las mascotas y los relojes exhibidos.
+- **Mascotas:** dan monedas extra, ¼ de su bonus de velocidad.
+- **Precios:** solo dependen del nivel, nunca de la zona.
+
+#### DEC-028 — Piezas de reloj con 12 rarezas, relojes por zona y penalización por pieza ajena
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-025, pendiente de implementar). **Área:** Gameplay / arte. Desarrolla [[PROMPT_PIEZAS_RELOJ_ZADIEL]].
+- **Piezas:** Caja, Calibre, Esfera y Manecillas de un reloj concreto, con rareza. Las 7 piezas antiguas solo salen durante la reparación del Cronómetro.
+- **Rarezas (12):** Común, Poco común, Raro, Épico, Legendario, Mítico, Divino, Celestial, Cósmico, Eterno, Ancestral y Atemporal, cada una con su color.
+- **Reparto:** cualquier pieza puede salir en cualquier zona por suerte; las zonas lejanas dan rarezas más altas. Desde la zona 3, cada zona tiene un reloj famoso exclusivo.
+- **Pieza ajena:** −1 rareza y −25 % de valor, ingreso y suerte por cada una.
+- **Calibres:** cuarzo, mecánico y automático solo cambian el aspecto.
+- **Nombres:** interpretados (sin marcas reales), con un aspecto parecido a los originales y sin copiar logos ni nombres.
+
+#### DEC-029 — Piezas compartidas, reinicio de zonas cada 5 min y avisos de piezas raras
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-023). **Área:** Gameplay.
+- Las piezas de cada casa son únicas en el servidor: quien la roba primero se la lleva.
+- Cada 5 min se cierra la zona de carreras: 30 s de aviso, todos vuelven a la base con su botín guardado, se renuevan las piezas y se abre a los 10 s.
+- Aviso arriba para todo el servidor cuando aparece una pieza Mítica o superior, con la zona y el mensaje y color de su rareza.
+
+#### DEC-030 — Ventajas VIP, Dinero ×2 y ganancia offline
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-024). **Área:** Monetización.
+- **Dinero ×2:** pase de 249 R$ (monedas ×2 al vender y en el plot; se combina con el VIP).
+- **VIP:** premios por tiempo en un 30 % menos de tiempo, etiqueta [VIP] en el chat y ganancia offline hasta 8 h.
+- **Ganancia offline:** sin VIP, hasta 4 h; al 50 % del ingreso del plot.
