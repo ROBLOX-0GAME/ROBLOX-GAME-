@@ -1015,7 +1015,7 @@ ICON_IDS = {
 - **Revisor:** Zadiel.
 - **Área:** Gameplay / mundo / progresión.
 - **Prioridad:** Crítica.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (código). La carga en la place y la prueba en Play pasan a DEV-021.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -1023,14 +1023,16 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] DEC-024 en el Registro.
-- [ ] 12 zonas con su velocidad, largo creciente, casas y dueños.
-- [ ] Velocidad estadística, velocidad real con curva y topes (lobby 50, casas 40, zonas hasta 150).
-- [ ] Dueño dormido que despierta a los 15 s, lento dentro de la casa.
-- [ ] Botón de velocidad con barra deslizante.
-- [ ] Entrenamiento, mejoras y monedas reescalados; pruebas actualizadas y en verde.
-- [ ] Cinemática antes del tutorial comprobada con un jugador nuevo.
-- [ ] Código en la place y probado en Play.
+- [x] DEC-024 en el Registro.
+- [x] 12 zonas con su velocidad, largo creciente, casas y dueños.
+- [x] Velocidad estadística, velocidad real con curva y topes (lobby 50, casas 40, zonas hasta 150).
+- [x] Dueño dormido que despierta a los 15 s, lento dentro de la casa.
+- [x] Botón de velocidad con barra deslizante.
+- [x] Entrenamiento, mejoras y monedas reescalados; pruebas actualizadas y en verde.
+- [ ] Cinemática antes del tutorial comprobada con un jugador nuevo (pasa a DEV-021).
+- [ ] Código en la place y probado en Play (pasa a DEV-021; ya cargados Config y TrainingService).
+
+**Resultado (2026-11-21):** código en `main` (`71ac1d0`, numeración `f0a4520`). Revisión estática sin errores. Las pruebas automáticas aún no se ejecutaron en Studio. Reserva liberada a pedido de Jhonn; lo pendiente sigue en DEV-021.
 
 ### ART-016 — Pendientes de ART-015: UI-UX §12, permisos de sonido y asset 203785492
 
@@ -1063,4 +1065,49 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [ ] UI-UX §12 restante en `game/src` (esperando a DEV-020).
 - [ ] Plan de Pruebas: marcar BUG-004 como resuelto (la ruta es de DEV-020).
 - [x] Propuesta visual renumerada a DEC-025 en las notas libres.
-- [ ] DEC-025 en el título del Registro, en el Plan de Pruebas §26 y en 6 comentarios de `game/src` (rutas de DEV-020).
+- [x] DEC-025 en el título del Registro, en el Plan de Pruebas §26 y en los comentarios de `game/src` (hecho por Jhonn en DEV-020, `f0a4520`).
+
+### DEV-021 — Puesto de Mochila y Carga, mejoras ×1,5 desde 100 monedas y prueba de DEV-020 en la place
+
+- **ID:** DEV-021.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Economía / gameplay / pruebas.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** encargo de Jhonn (2026-11-21, trabajando sin preguntas; dudas en [[Recomendaciones-Claude]]).
+- La mejora de la Mochila (más espacio para piezas) pasa de la Tienda al Puesto de Carga, que se llama «Mochila y Carga».
+- Todas las mejoras empiezan en 100 monedas y suben un 50 % por nivel (×1,5). Máximo 8 niveles; la carga por viaje, 3 niveles (hasta 4 objetos). DEC-026.
+- Cargar en la place todo el código de DEV-020 y DEV-021, probar en Play (pruebas, 12 zonas, dueño dormido, barra de velocidad y cinemática antes del tutorial con un jugador nuevo) y guardar sin publicar.
+- Tener en cuenta el renderizado en todo (pocas instancias, nada pesado para móvil).
+
+**Criterios de aceptación:**
+
+- [ ] Puesto «Mochila y Carga» con las mejoras de mochila y de carga.
+- [ ] Mejoras: 100 monedas, ×1,5 por nivel, máximo 8 (carga 3). DEC-026 en el Registro.
+- [ ] Código de DEV-020 y DEV-021 en la place (hash igual a `main`).
+- [ ] Play: pruebas automáticas en verde y recorrido real anotado en el Plan de Pruebas.
+- [ ] Place guardada (sin publicar).
+
+### ART-017 — Documento para Zadiel: piezas de reloj robables, mesa de armado y animaciones por rareza
+
+- **ID:** ART-017.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Arte / diseño de juego.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** Jhonn pide un documento con todas las indicaciones para que Zadiel diseñe los objetos robables de las casas: Caja, Movimiento/calibre (cuarzo, mecánico o automático), Esfera y Manecillas. Incluye las animaciones épicas por rareza (Krita, Blender y Roblox Studio) y la mesa de armado: piezas ordenadas por reloj o por rareza y marcos verdes con el orden caja → calibre → esfera → manecillas. Una pieza de otro reloj se puede poner, pero baja la rareza, el valor, el ingreso pasivo y la suerte. Es un documento para revisar antes de ejecutarlo; el cambio del sistema de piezas en el código será otra tarea DEV.
+
+**Criterios de aceptación:**
+
+- [ ] `art/PROMPT_PIEZAS_RELOJ_ZADIEL.md` con el diseño, las herramientas, las animaciones y los criterios.
+- [ ] Preguntas abiertas en [[Recomendaciones-Claude]].
