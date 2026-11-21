@@ -1104,7 +1104,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Arte / diseño de juego.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (documento listo para revisar).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1112,5 +1112,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] `art/PROMPT_PIEZAS_RELOJ_ZADIEL.md` con el diseño, las herramientas, las animaciones y los criterios.
-- [ ] Preguntas abiertas en [[Recomendaciones-Claude]].
+- [x] `art/PROMPT_PIEZAS_RELOJ_ZADIEL.md` con el diseño, las herramientas, las animaciones y los criterios.
+- [x] Preguntas abiertas en [[Recomendaciones-Claude]].
+
+**Resultado (2026-11-21):** [[PROMPT_PIEZAS_RELOJ_ZADIEL]] con las 4 clases de pieza, los 3 calibres, 7 rarezas, 12 relojes propuestos, presupuesto de renderizado, mesa de armado con marcos verdes, 7 niveles de animación más «Reloj perfecto», herramientas (Krita, Blender, Studio) y el contrato de nombres para el código. Preguntas R-007 a R-010 en [[Recomendaciones-Claude]]. Siguiente: Jhonn lo revisa y Zadiel abre ART-018.
