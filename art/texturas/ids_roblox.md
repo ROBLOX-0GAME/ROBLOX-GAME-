@@ -195,7 +195,7 @@ Al insertarse llegan como **paquetes**. La escala, el anclaje y el `TextureID` s
 |  |  | | `sfx_entrenar` | 99286256408690 |
 |  |  | | `sfx_boton` | 83644407334698 |
 
-Los iconos y sonidos **no** están conectados al juego: hay que pegarlos en `Config.ICON_IDS` y `Config.SOUND_IDS` (tarea DEV-017 de Jhonn).
+Los iconos y sonidos **no** están conectados al juego: hay que pegarlos en `Config.ICON_IDS` y `Config.SOUND_IDS` (tarea DEV-018 de Jhonn).
 
 ### Script de montaje de los modelos de paleta
 
