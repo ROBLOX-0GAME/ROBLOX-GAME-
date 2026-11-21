@@ -380,3 +380,21 @@ Play en la place oficial (versión 17) el 2026-11-20 con los IDs de ART-013 en `
 | `buyProduct` abre la compra (Bolsa y Giro extra) | Manual (Studio) | **Ejecutada: «Abriendo la compra…»**; no se compró nada |
 | `buyPass` con la cuenta dueña | Manual (Studio) | **Ejecutada: «Ya tienes el pase»**, porque el creador de la experiencia posee sus pases. Falta probar la compra con otra cuenta en un servidor real |
 | `GetProductInfo` de Entrenamiento ×512 y Bolsa | Manual (Studio) | **Ejecutada: 1.199 R$ en venta y 25 R$** |
+
+## 26. Pruebas de ART-015 (presentación visual, propuesta DEC-024)
+
+Play en la place oficial el 2026-11-20, después de cargar los 8 scripts de `main` (`0b92ac5`): base comprobada y suma de control de cada resultado. Todavía sin guardar en Roblox.
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| `build.py --check` y `rojo build` | Automática | **Ejecutada: sin errores** (101 `require` verificados; Rojo 7.7.1) |
+| stylua y selene en `Vfx.luau`; selene en los archivos modificados | Automática | **Ejecutada: `Vfx` 0 errores y 0 avisos; el resto igual que en `main`** |
+| Pruebas automáticas en Play | Automática (Studio) | **Ejecutada: 48/48** |
+| Decoración por zona y torre | Servidor (Studio) | **Ejecutada:** torre en (0, 0, −70), sólida; 13/13 modelos nuevos colocados (81 setos, 15 topiarios, 7 álamos, 6 cipreses, 6 palmeras, 6 árboles redondos, fuente, estatua…) |
+| Carteles | Servidor (Studio) | **Ejecutada:** 41 carteles, 5 de estación con icono; distancias 60 (20 casas), 70 (5), 80 (1), 90 (6 plots) y 120 (9). En la captura de la salida, sin superposiciones |
+| `PreloadAsync` de los assets nuevos | Cliente | **Ejecutada: 31/31 Success** |
+| HUD | Cliente | **Ejecutada:** `BuildAWatchUI` cargado, 8 bordes de latón y botones con icono (captura) |
+| Efectos (`Vfx`) | Cliente | **Ejecutada:** cada efecto crea sus partes, el 4.º pedido seguido se ignora (límite de 3), una acción fallida no lanza nada y a los 2 s no queda ninguna parte. La estela aparece con botín y desaparece al guardarlo |
+| Brillo por rareza | Cliente | **Ejecutada:** 60 piezas con etiqueta (42 Comunes, 13 Poco comunes y 5 Raras). Junto a un rubí Raro: 1 `Highlight` sobre su modelo |
+| Rendimiento (`SceneAnalysisService`, cámara fija) | Cliente | **Ejecutada:** plaza 27.446 triángulos y 21 *draw calls*; salida 30.922 y 36; zona 5 3.962 y 12 |
+| Consola | Studio | Sin errores de scripts. Siguen `rbxassetid://203785492` y **BUG-004** (3 sonidos sin permiso), que ya existían |
