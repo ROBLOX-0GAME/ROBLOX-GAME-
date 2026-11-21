@@ -992,7 +992,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Código de presentación / arte en Studio.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -1000,8 +1000,10 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] DEC-024 en el Registro (Propuesta) y aprobada o rechazada por Zadiel y Jhonn.
-- [ ] Código de §12 aplicado sin tocar lógica, etiquetas, atributos ni red; `build.py --check` y 47/47 pruebas.
-- [ ] Assets de ART-014 subidos e insertados, con sus IDs en `ids_roblox.md`.
-- [ ] Prueba en Play: carteles sin superponerse, efectos breves y rendimiento medido (triángulos y *draw calls*).
+- [x] DEC-024 en el Registro (Propuesta). Falta que Zadiel y Jhonn la aprueben o la rechacen.
+- [x] Código de §12 aplicado sin tocar lógica, etiquetas, atributos ni red; `build.py --check`, `rojo build` y 48/48 pruebas.
+- [x] Assets de ART-014 subidos e insertados, con sus IDs en `ids_roblox.md`.
+- [x] Prueba en Play: carteles sin superponerse, efectos breves y rendimiento medido (triángulos y *draw calls*).
+
+**Resultado (2026-11-20):** place guardada en la **versión 21**, sin publicar. 18/18 assets *Approved*, 48/48 pruebas, `PreloadAsync` 31/31 y, como mucho, 30.922 triángulos y 36 *draw calls*. Detalle en el Plan de Pruebas §26 y el [[Changelog]] §30. Pendiente: aprobar DEC-024, BUG-004 (permisos de los sonidos) y lo no aplicado de [[UI-UX]] §12.
 

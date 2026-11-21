@@ -17,3 +17,4 @@
 - **Pendiente:** ART-015 (aplicar [[UI-UX]] §12 en `game/src` y subir a Studio los modelos e iconos de ART-014).
 
 - 2026-11-20 · ART-015 (Zadiel): [[UI-UX]] §12 aplicado en `game/src` (`0b92ac5`) como propuesta DEC-024, con `Client/Vfx.luau` nuevo. Pasa `build.py` y `rojo build`. Falta cargarlo completo en la place, probarlo en Play y guardar.
+- 2026-11-20 · ART-015 cerrada: cargado en la place y probado en Play (Plan de Pruebas §26). Place guardada en la versión 21, sin publicar. DEC-024 pendiente de aprobación.
