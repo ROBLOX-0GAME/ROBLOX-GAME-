@@ -1260,3 +1260,30 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Pruebas automáticas en verde y prueba en Play.
 
 **Resultado (2026-11-21):** en `main` y en la place (versión 34). La mesa ya no se cierra; 12 relojes de lujo en el juego y en [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §4.1 (DEC-031). Recorrido de mecánicas con 52/52 y un segundo fallo arreglado: el reinicio de zona no renovaba las piezas antiguas durante la avería ([[Plan-de-Pruebas]] §32).
+
+### DEV-027 — Textos del botín, permisos de sonido, recomendaciones respondidas y pruebas en Play
+
+- **ID:** DEV-027.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Gameplay / interfaz / documentación.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** pedido de Jhonn (2026-11-21): hacer todas las tareas posibles mientras él prueba después a mano.
+- El aviso de robo muestra las monedas sin multiplicar y al guardar se cobran multiplicadas; corregir los plurales («+1 piezas»).
+- BUG-004: intentar dar permiso de uso de los sonidos a la experiencia con Open Cloud.
+- Marcar R-001 a R-010 como respondidas.
+- Pruebas en Play que no necesitan a una persona: carga 1, cierre de zona con botín, ganancia offline, aviso de pieza Mítica y etiqueta [VIP].
+- Reiniciar los datos de prueba de Jhonn (pedido por Jhonn).
+
+**Criterios de aceptación:**
+
+- [ ] Textos del botín correctos y en verde.
+- [ ] BUG-004 resuelto o con el paso manual explicado.
+- [ ] Recomendaciones al día.
+- [ ] Resultados reales en el Plan de Pruebas.
+- [ ] Datos de Jhonn reiniciados.
