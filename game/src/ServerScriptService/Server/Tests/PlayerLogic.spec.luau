@@ -146,6 +146,25 @@ return function(t)
 		t.eq(PlayerLogic.backpackCapacity(data), Config.BASE_BACKPACK + 2 * upgrade.step, "capacidad mejorada")
 	end)
 
+	t.test("DEC-026: mejoras desde 100 monedas, ×1,5 por nivel, máximo 8 (carga 3)", function()
+		for upgradeId, upgrade in GameData.Upgrades do
+			t.eq(upgrade.baseCost, 100, upgradeId .. " empieza en 100 monedas")
+			t.eq(upgrade.growth, 1.5, upgradeId .. " sube un 50% por nivel")
+			if upgradeId == "carry" then
+				t.eq(upgrade.maxLevel, 3, "la carga tiene 3 mejoras")
+			else
+				t.eq(upgrade.maxLevel, 8, upgradeId .. " tiene 8 mejoras")
+			end
+		end
+		local data = PlayerLogic.newData()
+		data.upgrades.carry = 3
+		t.eq(PlayerLogic.carryCapacity(data), 4, "carga máxima: 4 objetos por viaje")
+		data.upgrades.treadmill = 1
+		t.eq(PlayerLogic.upgradeCost(data, "treadmill"), 150, "el nivel 2 cuesta 150")
+		t.ok(table.find(GameData.CarryUpgradeOrder, "backpack") ~= nil, "la mochila se compra en Mochila y Carga")
+		t.ok(not table.find(GameData.UpgradeOrder, "backpack"), "la mochila ya no está en la Tienda")
+	end)
+
 	t.test("museo: exhibir, límite de vitrinas, retirar e ingreso", function()
 		local data = PlayerLogic.newData()
 		local slots = PlayerLogic.museumSlots(data)
@@ -459,8 +478,8 @@ return function(t)
 		PlayerLogic.setPasses(data, { turboTreadmill = true })
 		t.eq(PlayerLogic.treadmillMultiplier(data), step * GameData.TURBO_TREADMILL_FACTOR, "el pase Turbo lo multiplica")
 		data.upgrades.treadmill = GameData.Upgrades.treadmill.maxLevel
-		t.ok(PlayerLogic.treadmillMultiplier(data) >= 2 ^ 40, "40 niveles = ×2^40 (zonas altas sin pagar)")
-		PlayerLogic.trainTick(data, 10 ^ 7)
+		t.ok(PlayerLogic.treadmillMultiplier(data) >= 2 ^ GameData.Upgrades.treadmill.maxLevel, "cada nivel duplica (DEC-026: 8 niveles)")
+		PlayerLogic.trainTick(data, 10 ^ 15)
 		t.eq(data.trained, Config.MAX_TRAINED, "tope de seguridad de velocidad entrenada")
 		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad física")
 		t.eq(PlayerLogic.reconcile({ trained = -5 }).trained, 0, "repara entrenamiento negativo")

@@ -318,3 +318,10 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
   - **Zonas:** cada una con identidad propia de vegetación y detalles, y torre de reloj como punto focal de la plaza.
   - Detalle en [[UI-UX]] §12 y en [[Pipeline-de-Arte]] (ART-014).
 - **Límites:** solo cambia la presentación. No toca nombres, puertas, límites, requisitos, economía, etiquetas, atributos existentes ni red, y si falta un asset se usa el genérico.
+
+#### DEC-026 — Mejoras desde 100 monedas con crecimiento ×1,5 y Puesto de Mochila y Carga
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** el 2026-11-21 (DEV-021). Zadiel la revisa (DEC-020). **Área:** Economía. Reemplaza los precios de mejoras de DEC-003, DEC-010 y DEC-015.
+- **Mejoras:** todas empiezan en 100 monedas y cada nivel cuesta un 50 % más (×1,5). Máximo 8 niveles por ahora (mochila, velocidad, salto, suerte, vitrinas y caminadora). La carga por viaje tiene 3 niveles (de 1 a 4 objetos).
+- **Mochila y Carga:** la mejora de la mochila sale de la Tienda y se compra, junto con la carga por viaje, en el puesto «Mochila y Carga».
+- **Ajustes de Claude para que 8 niveles no rompan límites (propuesta):** vitrinas +1 por nivel (3 + 8 = 11; el plot tiene 15 sitios) y salto +1 por nivel. Dudas en [[Recomendaciones-Claude]].

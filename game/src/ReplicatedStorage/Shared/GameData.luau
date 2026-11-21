@@ -347,81 +347,86 @@ GameData.WatchOrder = { "pocket", "wrist", "chrono", "legacy", "royal", "million
 
 -- Mejoras compradas con monedas. Precio del siguiente nivel:
 -- floor(baseCost * growth ^ nivelActual)
+-- Mejoras (DEC-026, Jhonn 2026-11-21): todas empiezan en 100 monedas y cada nivel
+-- cuesta un 50 % más que el anterior (growth 1.5). Máximo 8 niveles por ahora;
+-- la carga por viaje, 3 niveles (de 1 a 4 objetos).
+local UPGRADE_BASE_COST = 100
+local UPGRADE_GROWTH = 1.5
 GameData.Upgrades = {
 	backpack = {
 		id = "backpack",
 		name = "Mochila",
-		desc = "+10 espacios para piezas",
-		maxLevel = 5,
-		baseCost = 100,
-		growth = 2,
+		desc = "+10 espacios para guardar piezas",
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
 		step = 10,
 	},
 	speed = {
 		id = "speed",
 		name = "Velocidad",
 		desc = "+25% de velocidad por nivel (abre zonas más ricas)",
-		maxLevel = 10,
-		baseCost = 150,
-		growth = 6,
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
 		step = 0.25, -- DEC-024: multiplicador 1 + nivel × step
 	},
 	jump = {
 		id = "jump",
 		name = "Salto",
-		desc = "+1.5 de altura de salto",
-		maxLevel = 3,
-		baseCost = 200,
-		growth = 2,
-		step = 1.5,
+		desc = "+1 de altura de salto",
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
+		step = 1,
 	},
 	luck = {
 		id = "luck",
 		name = "Suerte",
 		desc = "+7.5% de probabilidad de robar 2 piezas en vez de 1",
-		maxLevel = 5,
-		baseCost = 250,
-		growth = 2.2,
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
 		step = 0.075,
 	},
 	-- Mejoras del plot personal (DEV-008). El id «museum» se conserva para no
-	-- perder datos guardados: ahora son las vitrinas del plot.
+	-- perder datos guardados: ahora son las vitrinas del plot (3 + 8 = 11 de 15 sitios).
 	museum = {
 		id = "museum",
 		name = "Vitrinas del plot",
-		desc = "+2 vitrinas en tu plot para exhibir relojes",
-		maxLevel = 6,
-		baseCost = 300,
-		growth = 2,
-		step = 2,
+		desc = "+1 vitrina en tu plot para exhibir relojes",
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
+		step = 1,
 	},
 	treadmill = {
 		id = "treadmill",
 		name = "Caminadora del plot",
 		desc = "Duplica lo que entrena tu caminadora (×2 por nivel)",
-		maxLevel = 40,
-		baseCost = 400,
-		growth = 2.2,
+		maxLevel = 8,
+		baseCost = UPGRADE_BASE_COST,
+		growth = UPGRADE_GROWTH,
 		step = 2, -- DEC-024: multiplicador step ^ nivel
 	},
 }
 -- Mejoras que se compran en la Tienda
-GameData.UpgradeOrder = { "backpack", "speed", "jump", "luck" }
--- Capacidad de carga (DEV-013): objetos robados por viaje. Se compra en el Puesto de Carga.
+GameData.UpgradeOrder = { "speed", "jump", "luck" }
+-- Capacidad de carga (DEV-013): objetos robados por viaje (de 1 a 4).
 GameData.Upgrades.carry = {
 	id = "carry",
 	name = "Capacidad de carga",
 	desc = "+1 objeto robado por viaje (máximo 4)",
 	maxLevel = 3,
-	baseCost = 500,
-	growth = 3,
+	baseCost = UPGRADE_BASE_COST,
+	growth = UPGRADE_GROWTH,
 	step = 1,
 }
 
 -- Mejoras que se compran en el propio plot
 GameData.PlotUpgradeOrder = { "museum", "treadmill" }
--- Mejoras que se compran en el Puesto de Carga
-GameData.CarryUpgradeOrder = { "carry" }
+-- Mejoras que se compran en el Puesto de Mochila y Carga (DEC-026: la mochila sale de la Tienda)
+GameData.CarryUpgradeOrder = { "backpack", "carry" }
 
 -- Ruleta diaria (DEV-013, PROPUESTA): un giro gratis al día (UTC) y giros extra
 -- comprados con Robux. weight: probabilidad relativa (se muestra en la ruleta).

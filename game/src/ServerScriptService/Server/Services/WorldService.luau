@@ -88,8 +88,8 @@ local STATIONS = {
 	},
 	{
 		id = "carry",
-		title = "Puesto de Carga",
-		action = "Más espacio por viaje",
+		title = "Mochila y Carga", -- DEC-026: aquí se compra la mochila y la carga por viaje
+		action = "Más espacio y más carga",
 		position = WorldService.WallSlots.carry,
 		color = Color3.fromRGB(200, 160, 60),
 	},
