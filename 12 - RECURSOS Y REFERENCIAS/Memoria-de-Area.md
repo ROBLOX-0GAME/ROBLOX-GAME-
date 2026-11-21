@@ -22,6 +22,7 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-016 (Zadiel): BUG-004 resuelto. Los audios de otra cuenta necesitan permiso `Use` para el universo; se dio con Open Cloud `asset-permissions` (procedimiento en `ids_roblox.md`). `rbxassetid://203785492` es «Pop Close Sound», de la interfaz interna de Roblox, no del juego.
 - 2026-11-20 · ART-014 (Zadiel): `art/blender/scripts/identidad_visual.py` genera 13 modelos originales y 5 iconos de estaciones (`ico_est_*`), con la paleta actual, sin recursos externos.
   - Los modelos van de 24 a 1.432 triángulos.
   - `iconos.py` ya se puede importar sin rehacer los 8 iconos del HUD.

@@ -257,3 +257,5 @@ Resultado real en ART-013: 36 modelos, 36 MeshParts con paleta, 0 faltantes.
 | `ico_robux` · `ico_carga` (ya existían) | 130773426233365 · 84558382393109 | `robux` · `carry` |
 
 Script de montaje: el de ART-013 con estas medidas (`REAL`).
+
+**Permisos de los audios (ART-016, BUG-004):** los 10 `sfx_*` son de zadiel799 y tienen permiso de uso (`Use`) para el universo 10778093657, concedido con Open Cloud el 2026-11-20. Si se sube un audio nuevo desde otra cuenta que no sea la dueña de la experiencia, hay que repetirlo: `PATCH /asset-permissions-api/v1/assets/permissions` con `{"subjectType":"Universe","subjectId":"10778093657","action":"Use","requests":[{"assetId":…}]}` (alcance `asset-permissions:write`). Las imágenes y los modelos no lo necesitan.

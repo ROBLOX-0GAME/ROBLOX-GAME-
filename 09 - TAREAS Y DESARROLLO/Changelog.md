@@ -525,3 +525,11 @@ Reglas:
 
 - **2026-11-20 · ART-015 · Paso 4 — Carga completa y prueba en Play.** Con la autorización de Zadiel se cargaron los 5 scripts que faltaban (`PetService`, `WorldService`, `Ui`, `Main` y el nuevo `Vfx`), con la misma comprobación de base y suma de control. Play: 48/48 pruebas, `PreloadAsync` 31/31 y sin errores de scripts. Detalle en el Plan de Pruebas §26. Capturas `art/export/vistas/studio_art015_{plaza,salida,zona4,rareza}.png`. Sigue BUG-004 (permisos de los sonidos).
 - **2026-11-20 · ART-015 · Paso 5 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 21**. No se publicó. DEC-024 sigue como Propuesta hasta que Zadiel y Jhonn la aprueben.
+
+## 31. ART-016 — Pendientes de ART-015
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · ART-016 · Paso 1 — BUG-004 resuelto.** Con Open Cloud (`PATCH /asset-permissions-api/v1/assets/permissions`, permiso `Use` para el universo 10778093657) los 10 audios de zadiel799 quedan autorizados en la experiencia de Jhonn: 10/10 correctos, 0 errores. Verificación en Play: `PreloadAsync` de los 10 sonidos, 10/10 *Success* (`sfx_entrenar` cargado, 1,01 s), y en la consola ya no hay «User is not authorized». No hizo falta guardar la place: el permiso es del asset.
+- **2026-11-20 · ART-016 · Paso 2 — `rbxassetid://203785492` identificado.** Es «Pop Close Sound», un audio de 2015 de otro usuario (userId 44821938). Lo busqué en todas las propiedades de contenido, atributos y scripts de la place, en edición (392 instancias) y en Play (3.210 en el cliente y 2.964 en el servidor): no aparece. Lo pide la interfaz interna de Roblox o de Studio como otro tipo de asset. No viene del juego ni lo afecta; no se corrige.
+- **Pendiente:** el resto de [[UI-UX]] §12 en `game/src`, cuando DEV-020 libere la ruta. También avisar a Jhonn de que el Registro tiene **dos DEC-024** (la visual de ART-014, `1ea6229`, y la de 12 zonas de DEV-020, `8647920`) y hay que renumerar una. Y de que `ZONE_STYLE` de `WorldService` define 5 estilos: con 12 zonas, de la 6 a la 12 usarán el de la zona 1 hasta ampliarlo.
