@@ -157,10 +157,10 @@ GameData.GamePasses = {
 		petSlots = 1,
 	},
 }
--- Multiplicadores de monedas (DEC-023, Jhonn 2026-11-20): ×2 … ×1024. Se usa el más
--- alto que tengas (no se suman entre sí) y se combina con el VIP. Afectan a las
--- ventas y al ingreso del plot, como el VIP.
-GameData.COIN_MULTIPLIER_PASSES = {
+-- Multiplicadores de ganancia de velocidad al entrenar (DEC-023, Jhonn 2026-11-20):
+-- ×2 … ×512. Se usa el más alto que tengas (no se suman entre sí) y se combina con
+-- la mejora de la caminadora y la Caminadora Turbo.
+GameData.SPEED_MULTIPLIER_PASSES = {
 	{ factor = 2, robux = 3 },
 	{ factor = 4, robux = 5 },
 	{ factor = 8, robux = 15 },
@@ -170,17 +170,16 @@ GameData.COIN_MULTIPLIER_PASSES = {
 	{ factor = 128, robux = 299 },
 	{ factor = 256, robux = 599 },
 	{ factor = 512, robux = 1199 },
-	{ factor = 1024, robux = 2499 },
 }
 GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "bigBackpack", "petSlot" }
-for _, tier in GameData.COIN_MULTIPLIER_PASSES do
-	local id = "coinsX" .. tier.factor
+for _, tier in GameData.SPEED_MULTIPLIER_PASSES do
+	local id = "speedX" .. tier.factor
 	GameData.GamePasses[id] = {
 		id = id,
-		name = string.format("Monedas ×%d", tier.factor),
-		desc = string.format("Monedas ×%d al vender y en tu plot, para siempre (se usa el multiplicador más alto que tengas)", tier.factor),
+		name = string.format("Entrenamiento ×%d", tier.factor),
+		desc = string.format("Ganas velocidad ×%d más rápido al entrenar, para siempre (se usa el multiplicador más alto que tengas)", tier.factor),
 		robux = tier.robux,
-		coinFactor = tier.factor,
+		trainFactor = tier.factor,
 	}
 	table.insert(GameData.GamePassOrder, id)
 end

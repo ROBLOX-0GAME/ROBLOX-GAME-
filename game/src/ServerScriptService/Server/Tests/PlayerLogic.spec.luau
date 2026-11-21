@@ -485,20 +485,20 @@ return function(t)
 		t.eq(next(PlayerLogic.reconcile(data).passes), nil, "los pases no se guardan: se consultan al entrar")
 	end)
 
-	t.test("DEC-023: multiplicadores de monedas (el más alto, combinado con VIP)", function()
+	t.test("DEC-023: pases de entrenamiento (el más alto, combinado con la caminadora)", function()
 		local data = PlayerLogic.newData()
-		t.eq(PlayerLogic.coinMultiplier(data), 1, "sin pases ×1")
-		PlayerLogic.setPasses(data, { coinsX2 = true, coinsX64 = true })
-		t.eq(PlayerLogic.coinMultiplier(data), 64, "se usa el más alto, no se suman")
-		PlayerLogic.setPasses(data, { coinsX1024 = true, vip = true })
-		t.eq(PlayerLogic.coinMultiplier(data), 1024 * GameData.GamePasses.vip.coinMultiplier, "se combina con VIP")
-		data.watches.pocket = 1
-		data.coins = 0
-		PlayerLogic.setPasses(data, { coinsX4 = true })
-		PlayerLogic.sell(data, "pocket", 1)
-		t.eq(data.coins, GameData.Watches.pocket.sell * 4, "×4 al vender")
-		for _, tier in GameData.COIN_MULTIPLIER_PASSES do
-			local id = "coinsX" .. tier.factor
+		t.eq(PlayerLogic.treadmillMultiplier(data), 1, "sin pases ×1")
+		PlayerLogic.setPasses(data, { speedX2 = true, speedX64 = true })
+		t.eq(PlayerLogic.treadmillMultiplier(data), 64, "se usa el más alto, no se suman")
+		PlayerLogic.setPasses(data, { speedX512 = true, turboTreadmill = true })
+		t.eq(PlayerLogic.treadmillMultiplier(data), 512 * GameData.TURBO_TREADMILL_FACTOR, "se combina con la Caminadora Turbo")
+		PlayerLogic.setPasses(data, { speedX4 = true })
+		data.trained = 0
+		local gained = PlayerLogic.trainTick(data, 1)
+		t.ok(math.abs(gained - Config.TRAIN_RATE * 4) < 1e-9, "×4 al entrenar")
+		t.eq(PlayerLogic.coinMultiplier(data), 1, "no cambia las monedas")
+		for _, tier in GameData.SPEED_MULTIPLIER_PASSES do
+			local id = "speedX" .. tier.factor
 			t.ok(GameData.GamePasses[id] ~= nil and Config.GAMEPASS_IDS[id] ~= nil, id .. " en GameData y Config")
 		end
 		local priced = true
