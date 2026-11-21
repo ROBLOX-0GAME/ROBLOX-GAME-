@@ -325,10 +325,10 @@ Registra aquí el resultado real de cada prueba al ejecutarla.
 `** |
 | `build.py --check` detecta la cadena sin cerrar en el código anterior | Automática | **Ejecutada 2026-11-20: «Revisión fallida: 1 error»** |
 | `build.py` con el arreglo | Automática | **Ejecutada 2026-11-20: sin errores; place generada** |
-| `AssetLibrary.place` sin `parent` devuelve una copia viva (causa de «place apoya la base en el suelo») | Revisión de código | **Corregido**: la copia se sacaba del ancla antes de destruirla. Falta confirmarlo en Play |
-| 47/47 pruebas en Play | Automática (Studio) | Pendiente: cargar el código nuevo en la place y pulsar Play |
-| Cliente: HUD, menús e historia inicial cargan sin errores en Output | Manual (Studio) | Pendiente |
-| Origen de `rbxassetid://203785492` («Asset type does not match») | Investigación (Studio) | Pendiente: no está en el repositorio; buscarlo en la place |
+| `AssetLibrary.place` sin `parent` devuelve una copia viva (causa de «place apoya la base en el suelo») | Revisión de código | **Corregido y confirmado en Play (DEV-016, 2026-11-20)**: la prueba pasa |
+| 47/47 pruebas en Play | Automática (Studio) | **Ejecutada 2026-11-20 (DEV-016): 47 correctas, 0 fallidas** con el código de `main` cargado en la place (versión 13) |
+| Cliente: HUD, menús e historia inicial cargan sin errores en Output | Manual (Studio) | **Ejecutada 2026-11-20 (DEV-016)**: `BuildAWatchUI` e `Introduccion` cargan; Output sin errores |
+| Origen de `rbxassetid://203785492` («Asset type does not match») | Investigación (Studio) | **No se repite** en el Play de DEV-016 (Output sin errores); no se buscó su origen |
 
 ### BUG-002 — El cliente no carga la interfaz (`Ui.luau:766: Malformed string`)
 

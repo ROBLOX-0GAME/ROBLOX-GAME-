@@ -821,7 +821,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] Plan de Pruebas §22 corregido y actualizado.
+- [x] Plan de Pruebas §22 corregido y actualizado.
 - [ ] Jefe con aportes probado (puntos, y premio o devolución).
 - [ ] Zonas 2 a 5: robo permitido o rechazado según la velocidad, con resultado real.
 - [ ] Bugs corregidos o anotados.
