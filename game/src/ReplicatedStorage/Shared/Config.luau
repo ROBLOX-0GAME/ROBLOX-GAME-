@@ -153,6 +153,16 @@ local Config = {
 		ajustes = 115724324517779,
 		carga = 84558382393109,
 	},
+	-- Iconos de los carteles de estación (ART-015, propuesta DEC-024). 0 = cartel sin icono.
+	STATION_ICON_IDS = {
+		shop = 126558654621046, -- ico_est_tienda
+		robux = 130773426233365, -- ico_robux
+		pets = 98778607906214, -- ico_est_criadero
+		boss = 105138495197610, -- ico_est_cronometro
+		carry = 84558382393109, -- ico_carga
+		workshop = 137123513210346, -- ico_est_taller
+		museum = 90393594479879, -- ico_est_museo
+	},
 }
 
 return Config

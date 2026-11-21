@@ -96,32 +96,54 @@ local function makePart(props)
 end
 WorldService.makePart = makePart
 
-local function makeSign(parent, title, subtitle, height, maxDistance)
+-- Colores de los carteles (ART-015, propuesta DEC-024: marfil sobre contorno carbón)
+local SIGN_TEXT = Color3.fromRGB(242, 240, 234)
+local SIGN_SUBTEXT = Color3.fromRGB(242, 193, 78)
+local SIGN_STROKE = Color3.fromRGB(30, 31, 38)
+
+-- iconId (opcional, ART-015): imagen a la izquierda del título (0 o nil = sin icono).
+local function makeSign(parent, title, subtitle, height, maxDistance, iconId)
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "Cartel"
 	billboard.Size = UDim2.fromOffset(240, 70)
 	billboard.StudsOffset = Vector3.new(0, height, 0)
 	billboard.MaxDistance = maxDistance or 140
+	billboard.LightInfluence = 0 -- se lee igual de día, de noche y con sombras
 	billboard.Parent = parent
 
+	local textLeft = 0
+	if iconId and iconId ~= 0 then
+		local icon = Instance.new("ImageLabel")
+		icon.Name = "Icono"
+		icon.BackgroundTransparency = 1
+		icon.Image = "rbxassetid://" .. iconId
+		icon.Size = UDim2.fromScale(0.25, 0.85)
+		icon.SizeConstraint = Enum.SizeConstraint.RelativeYY
+		icon.Parent = billboard
+		textLeft = 0.27
+	end
+
 	local titleLabel = Instance.new("TextLabel")
-	titleLabel.Size = UDim2.fromScale(1, 0.6)
+	titleLabel.Size = UDim2.fromScale(1 - textLeft, 0.6)
+	titleLabel.Position = UDim2.fromScale(textLeft, 0)
 	titleLabel.BackgroundTransparency = 1
 	titleLabel.Font = Enum.Font.GothamBold
 	titleLabel.TextScaled = true
-	titleLabel.TextColor3 = Color3.new(1, 1, 1)
-	titleLabel.TextStrokeTransparency = 0.4
+	titleLabel.TextColor3 = SIGN_TEXT
+	titleLabel.TextStrokeColor3 = SIGN_STROKE
+	titleLabel.TextStrokeTransparency = 0.2
 	titleLabel.Text = title
 	titleLabel.Parent = billboard
 
 	local subtitleLabel = Instance.new("TextLabel")
-	subtitleLabel.Size = UDim2.fromScale(1, 0.4)
-	subtitleLabel.Position = UDim2.fromScale(0, 0.6)
+	subtitleLabel.Size = UDim2.fromScale(1 - textLeft, 0.4)
+	subtitleLabel.Position = UDim2.fromScale(textLeft, 0.6)
 	subtitleLabel.BackgroundTransparency = 1
-	subtitleLabel.Font = Enum.Font.Gotham
+	subtitleLabel.Font = Enum.Font.GothamMedium
 	subtitleLabel.TextScaled = true
-	subtitleLabel.TextColor3 = Color3.fromRGB(235, 235, 235)
-	subtitleLabel.TextStrokeTransparency = 0.5
+	subtitleLabel.TextColor3 = SIGN_SUBTEXT
+	subtitleLabel.TextStrokeColor3 = SIGN_STROKE
+	subtitleLabel.TextStrokeTransparency = 0.3
 	subtitleLabel.Text = subtitle
 	subtitleLabel.Parent = billboard
 	return billboard
@@ -163,7 +185,7 @@ function WorldService.buildStation(info)
 		}).Parent = model
 	end
 
-	makeSign(base, info.title, info.action, 10)
+	makeSign(base, info.title, info.action, 10, 70, Config.STATION_ICON_IDS[info.id]) -- ART-015: con icono y a menos distancia
 
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.Name = "Abrir"
