@@ -1116,3 +1116,32 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Preguntas abiertas en [[Recomendaciones-Claude]].
 
 **Resultado (2026-11-21):** [[PROMPT_PIEZAS_RELOJ_ZADIEL]] con las 4 clases de pieza, los 3 calibres, 7 rarezas, 12 relojes propuestos, presupuesto de renderizado, mesa de armado con marcos verdes, 7 niveles de animación más «Reloj perfecto», herramientas (Krita, Blender, Studio) y el contrato de nombres para el código. Preguntas R-007 a R-010 en [[Recomendaciones-Claude]]. Siguiente: Jhonn lo revisa y Zadiel abre ART-018.
+
+### DEV-022 — Respuestas de Jhonn a las recomendaciones: mejoras nuevas y dinero de las mascotas
+
+- **ID:** DEV-022.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Economía / progresión.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** Jhonn respondió a [[Recomendaciones-Claude]] (2026-11-21). Esta tarea aplica DEC-027:
+- Solo quedan dos mejoras con monedas:
+  - **Vitrinas del plot:** de 4 a 12, +1 por nivel, 8 niveles; empiezan en 100 y cada nivel cuesta ×10.
+  - **Carga por viaje:** 3 niveles (de 1 a 4); 100 y ×10.
+- **Caminadora:** 30 niveles, ×2 de entrenamiento cada uno. Su precio sube por nivel (nunca por zona) y se calibra con el valor de los relojes.
+- **Mochila:** fija en 60 piezas; solo se amplía con el pase de Robux.
+- Se quitan las mejoras de **velocidad**, **salto** y **suerte**. La suerte viene solo de las mascotas y de los relojes exhibidos.
+- **Mascotas:** dan monedas extra, ¼ de su bonus de velocidad (sumadas las equipadas).
+- **Precios:** solo dependen del nivel, nunca de la zona.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-027 en el Registro y respuestas en [[Recomendaciones-Claude]].
+- [ ] Mejoras y mochila como arriba; pruebas actualizadas.
+- [ ] Mascotas con bonus de monedas.
+- [ ] Código en la place y probado en Play.
