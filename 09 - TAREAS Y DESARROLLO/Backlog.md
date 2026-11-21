@@ -825,3 +825,34 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [ ] Jefe con aportes probado (puntos, y premio o devolución).
 - [ ] Zonas 2 a 5: robo permitido o rechazado según la velocidad, con resultado real.
 - [ ] Bugs corregidos o anotados.
+
+### DEV-018 — Conectar los iconos y sonidos de ART-013 (Config.ICON_IDS y Config.SOUND_IDS)
+
+- **ID:** DEV-018.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Código / interfaz y sonido.
+- **Prioridad:** Media.
+- **Estado:** Pendiente (la abre Jhonn; creada por ART-013).
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** ART-013 subió los 8 iconos y los 10 sonidos, todos *Approved* en la cuenta zadiel799. Hay que pegar los IDs en `game/src/ReplicatedStorage/Shared/Config.luau` (con 0 no se muestran ni suenan), cargar el código en la place y comprobar en Play el HUD y los sonidos. Los IDs están en `art/texturas/ids_roblox.md`.
+
+```lua
+SOUND_IDS = {
+	robar = 136358381895007, alarma_dueno = 101439249349776, atrapado = 121771660127526,
+	guardar_botin = 102296286128091, comprar = 127864647773254, abrir_capsula = 119271899636402,
+	ruleta = 137255558095184, subir_nivel = 85030530372481, entrenar = 99286256408690, boton = 83644407334698,
+},
+ICON_IDS = {
+	monedas = 110143721253053, velocidad = 85592491428255, mochila = 72587806417673, premios = 107634380113502,
+	ruleta = 135014274216635, robux = 130773426233365, ajustes = 115724324517779, carga = 84558382393109,
+},
+```
+
+**Criterios de aceptación:**
+
+- [ ] IDs en `Config.luau` y cargados en la place.
+- [ ] Play: los 8 iconos se ven en el HUD y los 10 sonidos suenan sin errores de carga en Output.
