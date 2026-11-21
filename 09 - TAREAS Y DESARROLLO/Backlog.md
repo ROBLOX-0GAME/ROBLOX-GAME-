@@ -957,3 +957,24 @@ ICON_IDS = {
 - [ ] Multiplicadores en `GameData`, `PlayerLogic.coinMultiplier`, prueba automática y tienda Robux.
 - [ ] 16 pases y 7 productos creados en Roblox con su precio; IDs en `Config`.
 - [ ] Código cargado en la place; Play: pruebas en verde y la tienda abre la compra.
+
+### ART-014 — Identidad visual «taller de relojería fantástico» (arte y diseño de presentación)
+
+- **ID:** ART-014.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arte / mundo / interfaz.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** auditoría visual y mejora de la presentación con una identidad original («taller de relojería fantástico»: madera cálida, carbón, marfil, latón y oro, acentos cian), conservando low-poly, DEC-018 y DEC-022. **Bloque B (esta tarea):** arte nuevo en `art/` con Blender y Krita: identidad de las 5 zonas (vegetación y detalles), torre de reloj para la plaza e iconos de estaciones. **Bloque A (código en `game/src`):** queda diseñado para una tarea posterior porque `game/src/**` está reservado por DEV-019. No se toca la place ni se publica.
+
+**Criterios de aceptación:**
+
+- [ ] Auditoría y propuesta DEC-024 redactadas (Memoria del área 06; al Registro cuando DEV-019 lo libere).
+- [ ] Modelos nuevos exportados en `art/export/modelos/` con vistas previas.
+- [ ] Iconos de estaciones en `art/texturas/export/`.
+- [ ] Diseño del Bloque A listo para aplicar en `game/src`.
