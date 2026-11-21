@@ -414,3 +414,14 @@ Play en la place oficial el 2026-11-21 con el MCP de Studio, con el código de `
 | Puesto «Mochila y Carga» y botón «Velocidad» en el HUD | Manual (Studio) | **Ejecutada: existen** |
 | Cinemática antes del tutorial con un jugador nuevo | Manual (Studio) | **Pendiente:** verificada por código (el tutorial espera a `introDone`); falta verla con una cuenta nueva. Ver [[Recomendaciones-Claude]] R-005 |
 | Barra deslizante con ratón, táctil y mando | Manual | Pendiente (necesita una persona) |
+
+## 28. Pruebas de DEV-022 (mejoras nuevas) y cinemática con datos reiniciados
+
+Play en la place oficial el 2026-11-21 (versión 27, sin publicar). Antes se borraron los datos guardados de la cuenta de Jhonn (R-006).
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Pruebas automáticas, incluida la nueva de DEC-027 | Automática (Studio) | **Ejecutada: 50 correctas, 0 fallidas** |
+| Jugador nuevo: la cinemática muestra los 4 textos de la historia | Manual (Studio) | **Ejecutada: correcta** (R-005 cerrada) |
+| El tutorial no aparece hasta recoger la pieza del legado y entonces empieza en el paso 1 | Manual (Studio) | **Ejecutada: `tutorial=false` durante la introducción; tras recoger la pieza, paso 1/6** |
+| Plot con 4 vitrinas y mochila de 60 (+20 del pase de creador = 80) | Manual (Studio) | **Ejecutada: correcto** |

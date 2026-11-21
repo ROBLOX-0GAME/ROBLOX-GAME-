@@ -1125,7 +1125,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Economía / progresión.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1141,7 +1141,9 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] DEC-027 en el Registro y respuestas en [[Recomendaciones-Claude]].
-- [ ] Mejoras y mochila como arriba; pruebas actualizadas.
-- [ ] Mascotas con bonus de monedas.
-- [ ] Código en la place y probado en Play.
+- [x] DEC-027 en el Registro y respuestas en [[Recomendaciones-Claude]].
+- [x] Mejoras y mochila como arriba; pruebas actualizadas.
+- [x] Mascotas con bonus de monedas.
+- [x] Código en la place y probado en Play.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 27). 50/50 pruebas; cinemática y tutorial verificados con datos reiniciados ([[Plan-de-Pruebas]] §28).
