@@ -278,3 +278,12 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-008). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
 - **Propuesta:** la MacBook de Zadiel usa Roblox Studio, con su MCP y Open Cloud, para trabajar en la place oficial por Team Create: importar assets, montar `SurfaceAppearance` y hacer pruebas en Play. Así se hizo ART-008. Amplía DEC-019 («sin Roblox Studio») y contradice la línea de `.claude/CLAUDE.md` y [[Arquitectura-General]] («la MacBook queda para Obsidian…»), que no se editan hasta que se apruebe.
 - **Límites:** no se conecta Rojo a la place oficial desde la Mac (`servePlaceIds` sigue vacío), no se publica sin el OK de Jhonn y el código sigue entrando solo por `game/src`.
+
+#### DEC-022 — Iluminación de la place para los PBR y el low-poly colorido
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-013). Aplicada en la place con el OK de Zadiel (versión 16); falta que Jhonn la apruebe. **Área:** Arte / dirección visual. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Propuesta:** `Lighting.Technology = Future` (se pone a mano), `Brightness` 2,5, `ClockTime` 14,5, `GlobalShadows` activado con `ShadowSoftness` 0,2, `Ambient` 70/70/80, `OutdoorAmbient` 128/128/140 y `EnvironmentDiffuseScale` y `EnvironmentSpecularScale` a 1 (antes en 0: los metales PBR no reflejaban nada).
+  - `Atmosphere`: densidad 0,25, Offset 0,1, Color 199/220/255, Decay 106/112/125, Glare 0,2 y Haze 1.
+  - `ColorCorrection`: saturación +0,15, contraste +0,08, brillo +0,02 y tinte 255/250/242.
+  - `Bloom` suave: intensidad 0,4, tamaño 24 y umbral 1,6.
+- **Motivo:** los reflejos y el bloom hacen lucir los relojes y las piezas PBR, y la saturación y la luz cálida mantienen el estilo low-poly colorido. Para volver atrás: los valores anteriores eran `Brightness` 1, `ClockTime` 14, sin sombras, `Ambient` y `OutdoorAmbient` 128/128/128, escalas de entorno en 0 y sin efectos.

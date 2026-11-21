@@ -176,6 +176,22 @@ Lo aprendido:
 - Los mapas metálicos de un solo color se comparten: 1 imagen blanca para todos los metales, y ninguna para los no metálicos.
 - La primera `screen_capture` tras insertar sale vacía porque las mallas aún cargan; hay que repetirla.
 
+### Arte de paleta, iconos y sonidos con el MCP (ART-013)
+
+Mismo método que ART-008, desde la MacBook de Zadiel:
+
+1. **Subida:** `tex_paleta` (Image), 36 FBX (Model), 8 iconos (Image) y 10 OGG (Audio), todos *Approved*. IDs en `art/texturas/ids_roblox.md`.
+2. **Inserción** en `ReplicatedStorage/Assets` (llegan como paquetes), con las piezas ancladas y `TextureID` = `tex_paleta` en cada MeshPart (1 por modelo).
+3. **Escala:** Studio limita un MeshPart a **2048 studs por eje**. Un FBX en centímetros de más de 20,48 studs llega reducido de forma uniforme y ×0,01 deja el modelo pequeño. El script de `ids_roblox.md` escala cada modelo hasta su medida real del FBX: 27 quedan en ×0,01 y 9 en otro factor (plot, casas, muro, cartel de salida y poste).
+4. **Comprobaciones:** 47/47 pruebas, `PreloadAsync` 55/55 *Success*, `AssetLibrary.dress` viste los 27 modelos de mundo, y 30.555 triángulos y 43 *draw calls* con la cámara por defecto. La place se guardó como **versión 16**, sin publicar.
+5. **Iluminación:** propuesta DEC-022, aplicada en la place (`Technology = Future` a mano).
+
+Lo aprendido:
+- Medir el FBX en Blender antes de escalar: la medida de Studio no sirve en los modelos grandes.
+- Los iconos se precargan como `ImageLabel`. Pasados como texto suelto a `PreloadAsync` dan *Failure*.
+- Una imagen recién aprobada puede tardar unos minutos en servirse («content representation is being generated»).
+- El texto del arco provisional de la salida se mezcla con `mdl_cartel_salida` (anotado para Jhonn).
+
 ## 6. Control de recursos
 
 Según [[Recursos-y-Referencias]] §8, todo recurso externo anota su procedencia, autor, licencia y permisos. Los assets hechos por el equipo o generados por script son propios. Las referencias externas van a `art/referencias/` con su fuente.
@@ -188,13 +204,13 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 
 | Asset | Sustituye a | Medida | Estado |
 |---|---|---|---|
-| `mdl_caminadora` | Caminadora del plot (PlotService) | 5 × 1 × 8 | ✅ Base generada (152 triángulos) |
-| `mdl_plot_suelo`, `mdl_taller`, `mdl_vitrina`, `mdl_panel_plot` | Piezas del plot | 34×40 · 14×3,5×4 · 2×2,5×2 · 4×4×2 | ✅ Base (72 / 268 / 48 / 36 triángulos) |
-| `mdl_estacion_tienda`, `_robux`, `_criadero`, `_cronometro`, `_carga` | Mostradores del muro (WorldService) | 14 × 5 × 8, más techo | ✅ Base (216 / 136 / 444 / 524 / 156) |
-| `mdl_muro_frontal`, `mdl_cartel_salida` | Muro frontal | segmentos de 116 × 18 × 2 | ✅ Base (444 / 48) |
-| `mdl_casa_z1` … `mdl_casa_z5`, `mdl_pedestal` | Casas por zona (HouseService) | 26 × 12 × 24 (puerta 8 × 9) | ✅ Base: madera, ladrillo, moderna, mansión y dorada con cúpula (128–336); pedestal 36 |
+| `mdl_caminadora` | Caminadora del plot (PlotService) | 5 × 1 × 8 | ✅ En la place (ART-013): modelo 5 × 4,5 × 8 |
+| `mdl_plot_suelo`, `mdl_taller`, `mdl_vitrina`, `mdl_panel_plot` | Piezas del plot | 34×40 · 14×3,5×4 · 2×2,5×2 · 4×4×2 | ✅ En la place (ART-013): 34 × 40 ✓ · taller 14 × 7 × 4 · vitrina 2,2 × 2,7 × 2,2 · panel 4 × 4,4 × 1,47 |
+| `mdl_estacion_tienda`, `_robux`, `_criadero`, `_cronometro`, `_carga` | Mostradores del muro (WorldService) | 14 × 5 × 8, más techo | ✅ En la place (ART-013): 18 × 11,5 × 12,4 (cronómetro 18 × 20,3 × 13,05), más grandes que la tabla |
+| `mdl_muro_frontal`, `mdl_cartel_salida` | Muro frontal | segmentos de 116 × 18 × 2 | ✅ En la place (ART-013): muro 116 × 19,2 × 2,8 · cartel 31 × 17,6 × 1,7 |
+| `mdl_casa_z1` … `mdl_casa_z5`, `mdl_pedestal` | Casas por zona (HouseService) | 26 × 12 × 24 (puerta 8 × 9) | ✅ En la place (ART-013): 28 × 14–18 × 26–28, más grandes que la tabla; pedestal 2,6 × 2,15 × 2,6 |
 | `mdl_pieza_engranaje`, `_resorte`, `_tornillo`, `_cristal`, `_correa`, `_rubi`, `_diamante` | Esferas robables | ≈ 1,4 | ✅ PBR (ART-009, 66–776) |
-| `mdl_puerta_velocidad_poste` | Extremos de la barrera de zona (la barrera sigue siendo la pieza del código) | 2 × 2 × 40 | ✅ Base (132) |
+| `mdl_puerta_velocidad_poste` | Extremos de la barrera de zona (la barrera sigue siendo la pieza del código) | 2 × 2 × 40 | ✅ En la place (ART-013): 2,4 × 42,2 × 2,4 |
 
 **Prioridad 2 — progresión y recompensas**
 
@@ -204,14 +220,14 @@ Medidas en studs, tomadas de las piezas provisionales del código.
 | `mdl_capsula_plata`, `_oro`, `_cosmica` | Cápsulas | ✅ PBR (ART-009: 596 / 596 / 668) |
 | `mdl_reloj_bolsillo`, `_pulsera`, `_cronografo`, `_legado`, `_real`, `_millonario` | Marcadores de las vitrinas | ✅ Detallados con materiales PBR (ART-006): Model con una malla por material, 960–2.090 triángulos |
 | `mdl_legado_espiral`, `_corona`, `_rotor` | Pieza luminosa de la introducción | ✅ PBR (ART-009: 714 / 410 / 832) |
-| `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ Base (96–450) |
+| `mdl_mascota_raton`, `_gato`, `_zorro`, `_halcon`, `_dragon`, `_fenix`, `_titan`, `_senor_tiempo`, `_suprema` | Esferas de mascota (PetService) | ✅ En la place (ART-013), 0,6–2,6 studs |
 | Dueños de las casas | NPC de bloques (OwnerNpc) | Pendiente: personaje R15 con skins originales «al estilo» de Roblox, sin copiar personajes reales |
 
 **Prioridad 3 — ambiente, interfaz y sonido** (ART-004)
 
 | Asset | Uso | Estado |
 |---|---|---|
-| `mdl_arbol`, `mdl_arbusto`, `mdl_farola`, `mdl_banca`, `mdl_valla`, `mdl_roca`, `mdl_cartel_zona`, `mdl_caja_madera` | Ambiente de la base y de las zonas | ✅ Base (36–126 triángulos) |
+| `mdl_arbol`, `mdl_arbusto`, `mdl_farola`, `mdl_banca`, `mdl_valla`, `mdl_roca`, `mdl_cartel_zona`, `mdl_caja_madera` | Ambiente de la base y de las zonas | ✅ En la place (ART-013) |
 | `ico_monedas`, `ico_velocidad`, `ico_mochila`, `ico_premios`, `ico_ruleta`, `ico_robux`, `ico_ajustes`, `ico_carga` | Iconos del HUD (PNG 256×256 con transparencia, en `art/texturas/export/`) | ✅ Retocados en ART-010 (propuesta): contorno oscuro de 7 px, sombra suave, transformación «Standard» y formas nuevas en monedas, mochila, carga (cajas apiladas) y robux (gema verde original, sin parecido con el logotipo oficial). Retoque opcional en Krita (`.kra` en `art/texturas/fuentes/`) |
 | `sfx_robar`, `sfx_alarma_dueno`, `sfx_atrapado`, `sfx_guardar_botin`, `sfx_comprar`, `sfx_abrir_capsula`, `sfx_ruleta`, `sfx_subir_nivel`, `sfx_entrenar` (bucle de 1 s), `sfx_boton` | Efectos (OGG en `art/audio/export/`) | ✅ Base sintetizada (`art/audio/sonidos.py` → `convertir_ogg.py`). ART-010: `sonidos.py` pule cada efecto al guardarlo (recorta el silencio final dejando 20 ms, fundidos de 3 ms al entrar y 10 ms al salir, pico a −1 dBFS y RMS máximo de −10 dB; `sfx_entrenar` queda intacto para el bucle de 1 s). Todos duran menos de 2 s (`sfx_ruleta`, 1,50 s). Audacity queda para retoques opcionales |
 | `mus_base`, `mus_persecucion` | Música | Pendiente: hacerla a mano o con licencia; no se sintetiza |

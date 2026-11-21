@@ -749,7 +749,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Jhonn.
 - **Área:** Arte / integración visual.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -757,11 +757,11 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 
 **Criterios de aceptación:**
 
-- [ ] `tex_paleta` y los 36 modelos subidos e insertados, con sus IDs en `art/texturas/ids_roblox.md`.
-- [ ] Medidas comparadas con el Pipeline §7 (diferencias anotadas, sin corregirlas en código).
-- [ ] 8 iconos y 10 sonidos subidos (o anotados como rechazados) y tarea DEV para Jhonn con los IDs.
-- [ ] Iluminación propuesta como DEC-022 (aplicada solo si Zadiel lo confirma).
-- [ ] Verificación real: Play, consola, `PreloadAsync`, `AssetLibrary.dress`, capturas `studio_art013_*.png` y triángulos/memoria.
+- [x] `tex_paleta` y los 36 modelos subidos e insertados, con sus IDs en `art/texturas/ids_roblox.md`.
+- [x] Medidas comparadas con el Pipeline §7 (diferencias anotadas, sin corregirlas en código).
+- [x] 8 iconos y 10 sonidos subidos (o anotados como rechazados) y tarea DEV para Jhonn con los IDs.
+- [x] Iluminación propuesta como DEC-022 (aplicada solo si Zadiel lo confirma).
+- [x] Verificación real: Play, consola, `PreloadAsync`, `AssetLibrary.dress`, capturas `studio_art013_*.png` y triángulos/memoria.
 
 ### ART-012 — Prompt de integración visual para Zadiel
 
@@ -780,6 +780,8 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 **Criterios de aceptación:**
 
 - [x] Prompt guardado con reglas, herramientas, reparto de zonas en Team Create, tarea ART-013 (36 modelos de paleta, iconos, sonidos, iluminación como propuesta) y cierre.
+
+**Resultado (2026-11-20):** 55/55 assets *Approved* (0 rechazados), 36 modelos montados (9 con escala propia por el límite de 2048 studs), iluminación DEC-022 aplicada como propuesta, 47/47 pruebas, `PreloadAsync` 55/55 y place guardada en la **versión 16**, sin publicar. Detalle en [[Changelog]] §28. Pendiente: DEV-018 para Jhonn, aprobar DEC-022 y DEC-021, `Technology = Future` a mano y el texto del arco de salida que se mezcla con `mdl_cartel_salida`.
 
 ### DEV-016 — Cargar el código de main en la place y prueba completa en Play
 
