@@ -1031,3 +1031,34 @@ ICON_IDS = {
 - [ ] Entrenamiento, mejoras y monedas reescalados; pruebas actualizadas y en verde.
 - [ ] Cinemática antes del tutorial comprobada con un jugador nuevo.
 - [ ] Código en la place y probado en Play.
+
+### ART-016 — Pendientes de ART-015: UI-UX §12, permisos de sonido y asset 203785492
+
+- **ID:** ART-016.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel, Studio con MCP).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Interfaz / audio / pruebas.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** resolver lo pendiente de ART-015.
+- **(1) Lo que falta de [[UI-UX]] §12:**
+  - Carteles de vitrina y de mascota solo propios.
+  - Rótulo de puerta solo si falta velocidad.
+  - Aro de rareza en las vitrinas.
+  - Ajuste «Efectos sí/no».
+  - Panel de velocidad plegable.
+- **(2) BUG-004:** permisos de los sonidos.
+- **(3) Origen de `rbxassetid://203785492`.**
+
+La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cuando lo libere.
+
+**Criterios de aceptación:**
+
+- [x] BUG-004 resuelto: los 10 audios tienen permiso de uso para el universo 10778093657 (Open Cloud `asset-permissions`, 10/10 correctos). Play: 10/10 *Success* y sin errores de permisos.
+- [x] `203785492` investigado: es «Pop Close Sound» (audio de 2015 de otro usuario). No está en la place (0 coincidencias en edición, en el cliente ni en el servidor), así que lo pide la interfaz interna de Roblox. No afecta al juego.
+- [ ] UI-UX §12 restante en `game/src` (esperando a DEV-020).
+- [ ] Plan de Pruebas: marcar BUG-004 como resuelto (la ruta es de DEV-020).
