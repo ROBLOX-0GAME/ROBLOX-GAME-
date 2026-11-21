@@ -195,10 +195,20 @@ local SOUND_EFFECTS = {
 	end,
 }
 
+-- Ajuste «Efectos visuales» (ART-016). Con efectos desactivados solo queda un destello breve.
+local effectsOn = true
+
+local function finalFlash(root)
+	flash(root.Position, GOLD, 8, 0.4)
+end
+
 local function run(effect, seconds)
 	local root = getRoot()
 	if not effect or not root or not acquire(seconds) then
 		return
+	end
+	if not effectsOn then
+		effect = finalFlash
 	end
 	local ok, problem = pcall(effect, root)
 	if not ok then
@@ -258,9 +268,12 @@ function Vfx.onState(state)
 	if type(state) ~= "table" then
 		return
 	end
+	if type(state.settings) == "table" then
+		effectsOn = state.settings.effects ~= 0
+	end
 	local root = getRoot()
 	local carrying = (state.carriedCount or 0) > 0
-	if carrying and root then
+	if carrying and root and effectsOn then
 		if not trail or trail.root ~= root then
 			removeTrail()
 			addTrail(root)
@@ -295,7 +308,10 @@ local function updateGlows()
 	end
 	for _, item in CollectionService:GetTagged("PiezaRobable") do
 		local rarity = item:GetAttribute("Rarity")
-		local near = root and item:IsA("BasePart") and (item.Position - root.Position).Magnitude <= GLOW_DISTANCE
+		local near = effectsOn
+			and root
+			and item:IsA("BasePart")
+			and (item.Position - root.Position).Magnitude <= GLOW_DISTANCE
 		if rarity and not COMMON_RARITIES[rarity] and near then
 			if not glows[item] and count < MAX_GLOWS then
 				local highlight = Instance.new("Highlight")
@@ -318,6 +334,64 @@ local function updateGlows()
 	end
 end
 
+-- ---------------------------------------------------------------------------
+-- Carteles propios y aro de rareza en las vitrinas (ART-016)
+-- ---------------------------------------------------------------------------
+
+local RING_DROP = 3.15 -- del centro del reloj (y = 3,6 en el plot) a la base de la vitrina
+
+local function addRarityRing(marker, rarity)
+	local baseRing = Instance.new("Part")
+	baseRing.Name = "AroRareza"
+	baseRing.Shape = Enum.PartType.Cylinder
+	baseRing.Material = Enum.Material.Neon
+	baseRing.Color = GameData.RarityColors[rarity] or GOLD
+	baseRing.Transparency = 0.35
+	baseRing.Anchored = true
+	baseRing.CanCollide = false
+	baseRing.CanQuery = false
+	baseRing.CanTouch = false
+	baseRing.CastShadow = false
+	baseRing.Size = Vector3.new(0.08, 2.8, 2.8)
+	baseRing.CFrame = CFrame.new(marker.Position - Vector3.new(0, RING_DROP, 0)) * CFrame.Angles(0, 0, math.rad(90))
+	baseRing.Parent = marker -- se borra con la vitrina cuando el servidor la redibuja
+	-- Pulso suave en bucle (un solo tween por aro, sin RenderStepped)
+	TweenService:Create(
+		baseRing,
+		TweenInfo.new(1.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+		{ Transparency = 0.7 }
+	):Play()
+end
+
+local function updateOwnership()
+	local myId = player.UserId
+	-- Vitrinas: cartel y aro solo en las propias
+	for _, marker in CollectionService:GetTagged("RelojExhibido") do
+		local mine = marker:GetAttribute("OwnerUserId") == myId
+		local sign = marker:FindFirstChild("Cartel")
+		if sign then
+			sign.Enabled = mine
+		end
+		local existing = marker:FindFirstChild("AroRareza")
+		if mine and not existing and marker:IsA("BasePart") then
+			addRarityRing(marker, marker:GetAttribute("Rarity"))
+		elseif not mine and existing then
+			existing:Destroy()
+		end
+	end
+	-- Mascotas: cada jugador ve solo los nombres de las suyas
+	for _, other in Players:GetPlayers() do
+		local pets = other.Character and other.Character:FindFirstChild("Mascotas")
+		if pets then
+			for _, gui in pets:GetDescendants() do
+				if gui:IsA("BillboardGui") then
+					gui.Enabled = other == player
+				end
+			end
+		end
+	end
+end
+
 function Vfx.init()
 	task.spawn(function()
 		while true do
@@ -325,6 +399,10 @@ function Vfx.init()
 			local ok, problem = pcall(updateGlows)
 			if not ok then
 				warn("[Vfx] brillo omitido: " .. tostring(problem))
+			end
+			ok, problem = pcall(updateOwnership)
+			if not ok then
+				warn("[Vfx] carteles omitidos: " .. tostring(problem))
 			end
 		end
 	end)

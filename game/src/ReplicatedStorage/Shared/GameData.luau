@@ -247,6 +247,8 @@ GameData.ProductOrder = { "coinsSmall", "coinsMedium", "coinsLarge", "instantTra
 GameData.Settings = {
 	{ id = "guide", name = "Guía del tutorial", kind = "toggle", default = 1 },
 	{ id = "toasts", name = "Notificaciones", kind = "toggle", default = 1 },
+	-- ART-016 (DEC-025): con 0 solo se ve el destello final de cada efecto (móviles modestos)
+	{ id = "effects", name = "Efectos visuales", kind = "toggle", default = 1 },
 	{ id = "scale", name = "Tamaño de la interfaz", kind = "choice", options = { "Pequeño", "Normal", "Grande" }, default = 2 },
 	-- DEC-024: velocidad al caminar por la base (la barra del botón «Velocidad» del HUD)
 	{ id = "runSpeed", name = "Velocidad en la base", kind = "range", min = 16, max = 50, default = 50 },

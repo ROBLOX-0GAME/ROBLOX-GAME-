@@ -1820,6 +1820,12 @@ local function updateGates()
 			gate.Color = COLORS.error
 			gate.Transparency = 0.3
 		end
+		-- ART-016: el rótulo «Velocidad N» solo se ve si al jugador todavía le falta
+		local labelPart = gate.Parent and gate.Parent:FindFirstChild("Rotulo")
+		local sign = labelPart and labelPart:FindFirstChild("Cartel")
+		if sign then
+			sign.Enabled = not open
+		end
 	end
 end
 
@@ -1961,6 +1967,33 @@ local function buildHud()
 	for _, item in { hud.speed, hud.zone, hud.carry, hud.training, hud.loot, hud.museum } do
 		item.Parent = info
 	end
+	-- ART-016: panel plegable. Plegado deja solo la velocidad (y el entrenamiento o el botín
+	-- cuando aparecen); en pantallas táctiles empieza plegado para dejar sitio al juego.
+	local foldButton = new("TextButton", {
+		Name = "Plegar",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.fromScale(1, 0),
+		Size = UDim2.fromOffset(26, 22),
+		BackgroundColor3 = COLORS.row,
+		Font = Enum.Font.GothamBold,
+		TextSize = 14,
+		TextColor3 = COLORS.text,
+		Text = "▾",
+		Selectable = true,
+	}, { corner(6) })
+	local function setFolded(folded)
+		hud.statusFolded = folded
+		for _, item in { hud.zone, hud.carry, hud.museum } do
+			item.Visible = not folded
+		end
+		foldButton.Text = folded and "▸" or "▾"
+	end
+	foldButton.Activated:Connect(function()
+		Ui.playSound("boton")
+		setFolded(not hud.statusFolded)
+	end)
+	foldButton.Parent = hud.speed
+	setFolded(UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled)
 	info.Parent = left
 	left.Parent = gui
 

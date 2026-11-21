@@ -229,6 +229,10 @@ function PlotService.refresh(player)
 				CanCollide = false,
 			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
 			WorldService.makeSign(marker, info.name, "+" .. PlayerLogic.formatBig(PlayerLogic.watchIncomePerMinute(key)) .. " monedas/min", 1.5, 30) -- ART-015: antes 50
+			-- Presentación (ART-016): el cliente muestra el cartel solo al dueño y pone el aro de rareza
+			marker:SetAttribute("OwnerUserId", player.UserId)
+			marker:SetAttribute("Rarity", info.rarityName)
+			CollectionService:AddTag(marker, "RelojExhibido")
 			marker.Parent = plot.displays
 			AssetLibrary.dress(marker, AssetLibrary.WATCH_ASSETS[watchId], { facing = plot.cframe.LookVector })
 		end
