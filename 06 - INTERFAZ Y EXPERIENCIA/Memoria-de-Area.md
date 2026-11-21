@@ -18,3 +18,4 @@
 
 - 2026-11-20 · ART-015 (Zadiel): [[UI-UX]] §12 aplicado en `game/src` (`0b92ac5`) como propuesta DEC-025, con `Client/Vfx.luau` nuevo. Pasa `build.py` y `rojo build`. Falta cargarlo completo en la place, probarlo en Play y guardar.
 - 2026-11-20 · ART-015 cerrada: cargado en la place y probado en Play (Plan de Pruebas §26). Place guardada en la versión 21, sin publicar. DEC-025 pendiente de aprobación.
+- 2026-11-21 · ART-016 (Zadiel): [[UI-UX]] §12 terminado en `game/src` y probado en Play (53/53, Plan de Pruebas §34). Nuevo ajuste «Efectos visuales» (`effects`).

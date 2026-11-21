@@ -1978,7 +1978,7 @@ local function buildHud()
 		Font = Enum.Font.GothamBold,
 		TextSize = 14,
 		TextColor3 = COLORS.text,
-		Text = "▾",
+		Text = "-",
 		Selectable = true,
 	}, { corner(6) })
 	local function setFolded(folded)
@@ -1986,7 +1986,7 @@ local function buildHud()
 		for _, item in { hud.zone, hud.carry, hud.museum } do
 			item.Visible = not folded
 		end
-		foldButton.Text = folded and "▸" or "▾"
+		foldButton.Text = folded and "+" or "-" -- Gotham no tiene ▾/▸ (salían como «□»)
 	end
 	foldButton.Activated:Connect(function()
 		Ui.playSound("boton")

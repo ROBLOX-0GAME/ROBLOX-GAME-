@@ -113,7 +113,7 @@ Los diseños definitivos están pendientes de aprobación.
 
 ## 12. Propuesta ART-014 — presentación visual (Bloque A, pendiente de código)
 
-> **Estado (ART-015, 2026-11-20):** aplicado en `game/src` (commit `0b92ac5`) como propuesta DEC-025. **Sin aplicar todavía:** filtros de cartel solo en el plot propio y solo con velocidad insuficiente, aro de rareza en las vitrinas, ajuste «Efectos sí/no» (necesita un ajuste nuevo en el servidor), panel de velocidad plegable y `SurfaceGui` en el arco de salida (el rótulo va encima del arco). La guía del tutorial ya tenía un `Beam` (DEV-002) y los iconos del HUD ya existían (DEV-018).
+> **Estado (ART-015, 2026-11-20):** aplicado en `game/src` (commit `0b92ac5`) como propuesta DEC-025. **Completado en ART-016 (2026-11-21):** carteles de vitrina y de mascota solo propios, rótulo de puerta solo si falta velocidad, aro de rareza en las vitrinas, ajuste «Efectos visuales» y panel de estado plegable. Solo queda sin hacer el `SurfaceGui` del arco de salida: el rótulo va encima del arco y ya no se superpone.
 >
 > **Propuesta** (DEC-025), escrita el 2026-11-20 en ART-014. Se aplica en `game/src` cuando DEV-019 libere la ruta (tarea ART-015). Solo cambia la presentación: no toca etiquetas de CollectionService, atributos, prompts, colisiones, posiciones funcionales, economía, guardado ni red. Todo efecto nuevo corre **en el cliente** y se apaga si falta un asset.
 

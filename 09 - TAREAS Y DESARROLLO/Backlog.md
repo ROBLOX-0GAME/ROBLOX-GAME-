@@ -1062,8 +1062,8 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 - [x] BUG-004 resuelto: los 10 audios tienen permiso de uso para el universo 10778093657 (Open Cloud `asset-permissions`, 10/10 correctos). Play: 10/10 *Success* y sin errores de permisos.
 - [x] `203785492` investigado: es «Pop Close Sound» (audio de 2015 de otro usuario). No está en la place (0 coincidencias en edición, en el cliente ni en el servidor), así que lo pide la interfaz interna de Roblox. No afecta al juego.
-- [ ] UI-UX §12 restante en `game/src` (esperando a DEV-020).
-- [ ] Plan de Pruebas: marcar BUG-004 como resuelto (la ruta es de DEV-020).
+- [x] UI-UX §12 restante en `game/src` (commit `fb052c0`), probado en Play: 53/53 (Plan de Pruebas §34).
+- [x] Plan de Pruebas: BUG-004 marcado como resuelto (lo hizo DOC-001).
 - [x] Propuesta visual renumerada a DEC-025 en las notas libres.
 - [x] DEC-025 en el título del Registro, en el Plan de Pruebas §26 y en los comentarios de `game/src` (hecho por Jhonn en DEV-020, `f0a4520`).
 

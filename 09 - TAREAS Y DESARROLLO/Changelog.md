@@ -534,3 +534,11 @@ Reglas:
 - **2026-11-20 · ART-016 · Paso 2 — `rbxassetid://203785492` identificado.** Es «Pop Close Sound», un audio de 2015 de otro usuario (userId 44821938). Lo busqué en todas las propiedades de contenido, atributos y scripts de la place, en edición (392 instancias) y en Play (3.210 en el cliente y 2.964 en el servidor): no aparece. Lo pide la interfaz interna de Roblox o de Studio como otro tipo de asset. No viene del juego ni lo afecta; no se corrige.
 - **Pendiente:** el resto de [[UI-UX]] §12 en `game/src`, cuando DEV-020 libere la ruta. También avisar a Jhonn de que el Registro tiene **dos DEC-024** (la visual de ART-014, `1ea6229`, y la de 12 zonas de DEV-020, `8647920`) y hay que renumerar una. Y de que `ZONE_STYLE` de `WorldService` define 5 estilos: con 12 zonas, de la 6 a la 12 usarán el de la zona 1 hasta ampliarlo.
 - **2026-11-20 · ART-016 · Paso 3 — Renumeración.** Por decisión de Zadiel, la propuesta visual pasa de DEC-024 a **DEC-025** (la DEC-024 queda para las 12 zonas de DEV-020). Cambiada en `UI-UX.md`, en las memorias de las áreas 05 y 06, en `Pipeline-de-Arte.md`, en `identidad_visual.py` y en las líneas de ART-014/015 del Changelog y el Backlog. **Falta**, por estar reservado por DEV-020: el título en `Registro-de-Decisiones.md`, el Plan de Pruebas §26 y 6 comentarios en `game/src` (`Config`, `Ui`, `Vfx` y 3 en `WorldService`).
+- **2026-11-21 · ART-016 · Paso 4 — Resto de UI-UX §12** (commit `fb052c0`, más la corrección del botón).
+  - Carteles de vitrina y nombres de mascota solo para su dueño (`PlotService` pone `OwnerUserId`, `Rarity` y la etiqueta `RelojExhibido` en cada reloj exhibido).
+  - Rótulo de la puerta de zona solo si falta velocidad.
+  - Aro de rareza con pulso suave en las vitrinas propias.
+  - Ajuste «Efectos visuales» en `GameData.Settings` (sin efectos, solo el destello final).
+  - Tarjeta «Estado» plegable, plegada de inicio en pantallas táctiles.
+  - Verificación en Play: 53/53 y Plan de Pruebas §34.
+

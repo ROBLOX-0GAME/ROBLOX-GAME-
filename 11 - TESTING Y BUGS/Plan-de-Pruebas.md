@@ -510,3 +510,19 @@ Play en la place oficial el 2026-11-21 (versión 35, sin publicar), con el jugad
 | Ganancia offline | **Correcto:** reloj exhibido (45/min × 3,2 de multiplicador), ~1,9 min fuera → «Mientras no estabas, tu plot ganó 136 monedas (0 h 1 min)», el 50 % esperado |
 | Reinicio de los datos de Jhonn | **Hecho:** clave `player_2311077683` borrada; al entrar, 0 monedas, nivel 1, sin piezas y la cinemática pendiente. Se volvió a borrar tras la prueba |
 | BUG-004 (sonidos) | **Resuelto** (lo hizo Zadiel en ART-016). Comprobado en DOC-001: 10/10 sonidos *Success* con `PreloadAsync` en Play |
+
+## 34. Pruebas de ART-016 (resto de UI-UX §12)
+
+Play en la place oficial el 2026-11-21 con los 4 scripts de `main` cargados (`GameData`, `PlotService`, `Ui` y `Vfx`): base comprobada y suma de control; `Ui` coincide byte a byte con el repositorio. Todavía sin guardar en Roblox.
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| `build.py --check` y `rojo build` | Automática | **Ejecutada: sin errores** (111 `require`) |
+| selene | Automática | **Ejecutada:** `Vfx`, `PlotService` y `GameData` sin errores ni avisos; `Ui` igual que en `main` (1 error y 11 avisos que ya existían) |
+| Pruebas automáticas en Play | Automática (Studio) | **Ejecutada: 53/53** |
+| Ajuste «Efectos visuales» | Automática (lógica) | **Ejecutada:** por defecto 1, admite 0 y rechaza 7 («Valor no válido») |
+| Con efectos / sin efectos | Cliente | **Ejecutada:** subir de nivel crea 3 partes con efectos y 1 sin ellos (solo el destello con su luz). Sin efectos no hay estela aunque se lleve botín, ni brillos de rareza |
+| Carteles de vitrina y aro de rareza | Cliente (vitrinas de prueba locales) | **Ejecutada:** propia, con cartel visible y aro del color de su rareza (Legendario, naranja); ajena, sin cartel ni aro |
+| Rótulo de la puerta de zona | Cliente | **Ejecutada:** con velocidad 75 (la zona 1 pide 100) se ven los 12 rótulos, como corresponde. Al alcanzar la velocidad de una puerta, su rótulo se oculta (se calcula en `updateGates`) |
+| Nombres de mascota | Cliente | Solo el jugador local: los nombres de sus mascotas siguen visibles. Ocultar las de otro jugador necesita 2 clientes y **queda sin probar** |
+| Panel de estado plegable | Cliente (clic real) | **Ejecutada:** el botón pasa de «-» a «+» y la tarjeta baja de 4 líneas a 1 (captura `studio_art016_hud_plegado.png`). Corregido: los símbolos ▾/▸ no existen en Gotham y salían como «□» |
