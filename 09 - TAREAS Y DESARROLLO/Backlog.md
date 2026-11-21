@@ -1269,7 +1269,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Gameplay / interfaz / documentación.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de revisión de Zadiel).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1282,8 +1282,10 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Textos del botín correctos y en verde.
-- [ ] BUG-004 resuelto o con el paso manual explicado.
-- [ ] Recomendaciones al día.
-- [ ] Resultados reales en el Plan de Pruebas.
-- [ ] Datos de Jhonn reiniciados.
+- [x] Textos del botín correctos y en verde.
+- [x] BUG-004: lo arregla Zadiel, dueño de los audios (decisión de Jhonn); los pasos están en [[Plan-de-Pruebas]].
+- [x] Recomendaciones al día.
+- [x] Resultados reales en el Plan de Pruebas.
+- [x] Datos de Jhonn reiniciados.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 35). 53/53. Textos del botín corregidos y probados; carga, cierre con botín, avisos de piezas raras, prefijo [VIP] y ganancia offline comprobados en Play ([[Plan-de-Pruebas]] §33). R-001 a R-010 marcadas como respondidas. Datos de Jhonn reiniciados.

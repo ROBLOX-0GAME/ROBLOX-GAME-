@@ -438,7 +438,7 @@ Play en la place oficial el 2026-11-21 (versión 28, sin publicar).
 | Al cerrar: el jugador que estaba en la zona vuelve a la plaza y las puertas quedan sólidas | Manual (Studio) | **Ejecutada: de z = 300 a z = −32; puerta sólida** |
 | Reapertura a los 10 s con piezas nuevas | Manual (Studio) | **Ejecutada: cerrada a los 297 s, reabierta a los 307 s, 144 piezas** |
 | Aviso de pieza Mítica o superior | Manual | **Pendiente:** con las piezas actuales (hasta Legendario) no salta; se probará con las piezas nuevas (DEV-025) |
-| El botín se guarda al volver por el cierre | Manual | Pendiente de probar con botín encima (por código: al llegar a la base se guarda, como siempre) |
+| El botín se guarda al volver por el cierre | Manual | **Ejecutada en DEV-027 (§33)** |
 
 ## 30. Pruebas de DEV-024 (Dinero ×2, VIP y ganancia offline)
 
@@ -450,8 +450,8 @@ Play en la place oficial el 2026-11-21 (versión 29, sin publicar).
 | Pase Dinero ×2 a la venta por 249 R$ | Manual (Studio) | **Ejecutada: `GetProductInfo` correcto** |
 | Atributo VIP para la etiqueta del chat (cuenta creadora) | Manual (Studio) | **Ejecutada: `VIP = true`** |
 | Multiplicador de monedas con mascota suprema + VIP + Dinero ×2 | Manual (Studio) | **Ejecutada: ×2,436 (1,015 × 1,2 × 2)** |
-| Etiqueta [VIP] visible en el chat | Manual | Pendiente (necesita escribir en el chat) |
-| Ganancia offline real al volver a entrar con relojes exhibidos | Manual | Pendiente (necesita una sesión con relojes exhibidos, salir y volver tras más de 1 min) |
+| Etiqueta [VIP] visible en el chat | Manual | **Prefijo comprobado en DEV-027 (§33)**; falta verlo en pantalla |
+| Ganancia offline real al volver a entrar con relojes exhibidos | Manual | **Ejecutada en DEV-027 (§33)** |
 
 ## 31. Pruebas de DEV-025 (piezas de reloj, 12 rarezas y mesa de armado)
 
@@ -463,7 +463,7 @@ Play en la place oficial el 2026-11-21 (versión 32, sin publicar).
 | Piezas en las casas al iniciar | Manual (Studio, servidor) | **Ejecutada: 144 piezas de reloj (79 Común, 39 Poco común, 17 Raro, 3 Épico, 4 Legendario, 1 Mítico, 1 Celestial); luz solo en 26 (Raro o más); 0 piezas antiguas fuera del Cronómetro** |
 | Armar con 1 pieza ajena (Cronógrafo con piezas Raras y unas manecillas de pulsera) | Manual (Studio, servidor) | **Ejecutada: «Cronógrafo (Poco común) · 1 pieza(s) ajena(s)»** |
 | Mesa de armado en el cliente (marcos, orden, bandeja, vista previa, botón ARMAR) | Manual | **Ejecutada en DEV-026 (§32)** |
-| Aviso arriba de la pantalla con piezas Míticas o mejores | Manual | Pendiente de verlo en pantalla (salieron una Mítica y una Celestial al iniciar) |
+| Aviso arriba de la pantalla con piezas Míticas o mejores | Manual | **Evento comprobado en DEV-027 (§33)**; falta verlo en pantalla |
 | Piezas antiguas durante el Cronómetro y que desaparezcan al repararlo | Manual | **Ejecutada en DEV-026 (§32)** |
 | Relojes guardados antes de DEC-028 (Común, sin ajenas) | Automática | **Ejecutada en la prueba de valores** |
 
@@ -492,3 +492,20 @@ Play en la place oficial el 2026-11-21 (versión 34, sin publicar). Las acciones
 | Pieza del legado | Correcto: pide estar en la plaza (por diseño) |
 
 **Detalles menores vistos (sin cambiar):** el aviso de robo muestra las monedas sin multiplicar («y 10 monedas») y al guardar se cobran ya multiplicadas («+32»); y algunos textos dicen «+1 piezas». Los dejo anotados para una tarea de textos.
+
+## 33. Pruebas de DEV-027 (textos del botín y pruebas que no necesitan a una persona)
+
+Play en la place oficial el 2026-11-21 (versión 35, sin publicar), con el jugador real: remotes del cliente y `ProximityPrompt` de verdad.
+
+| Prueba | Resultado |
+|---|---|
+| Pruebas automáticas (con la nueva de DEV-027) | **53 correctas, 0 fallidas** |
+| Aviso de robo con las monedas que se cobrarán | **Correcto:** «Robaste 1 × … y 32 monedas» y al guardar «+1 pieza y +32 monedas» |
+| Plurales («1 pieza» / «2 piezas») | **Correcto** en guardar, atrapado y caída |
+| Límite de carga por viaje | **Correcto:** con capacidad 2, la tercera pieza se rechaza con su aviso |
+| Cierre de zona con botín encima | **Correcto:** a los 5 min te lleva a la base y guarda el botín |
+| Avisos de piezas Míticas o mejores | **Correcto (evento):** al renovar la zona llegan con rareza, pieza y zona. Los de las piezas creadas al iniciar el servidor llegan antes de que entre nadie (es normal). **Mejora posible:** a veces llegan 4 o 5 a la vez |
+| Etiqueta [VIP] en el chat | **Correcto (mensaje):** el prefijo llega como «[VIP]» dorado delante del nombre. La ventana del chat no sale en las capturas: falta verlo en pantalla |
+| Ganancia offline | **Correcto:** reloj exhibido (45/min × 3,2 de multiplicador), ~1,9 min fuera → «Mientras no estabas, tu plot ganó 136 monedas (0 h 1 min)», el 50 % esperado |
+| Reinicio de los datos de Jhonn | **Hecho:** clave `player_2311077683` borrada; al entrar, 0 monedas, nivel 1, sin piezas y la cinemática pendiente. Se volvió a borrar tras la prueba |
+| BUG-004 (sonidos) | **Sigue abierto:** solo lo puede arreglar Zadiel, dueño de los audios (decisión de Jhonn) |
