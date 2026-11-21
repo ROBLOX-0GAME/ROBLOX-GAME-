@@ -936,3 +936,24 @@ ICON_IDS = {
 **Criterios de aceptación:**
 
 - [x] DEC-021 marcada como Aprobada por Zadiel y Jhonn.
+
+### DEV-019 — Pases y productos de Robux: precios, multiplicadores ×2–×1024 y creación en Roblox
+
+- **ID:** DEV-019.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Economía / monetización.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Jhonn fija los precios (DEC-023): productos con la propuesta estándar, pases un 15–20 % más caros y 10 pases nuevos de multiplicador de monedas (×2 por 3 R$ … ×1024 por 2.499 R$). Se añaden al código (se aplica el multiplicador más alto, combinado con el VIP), se crean en el universo 10778093657 con Open Cloud, se ponen los IDs en `Config`, se cargan en la place y se prueban en Play. No se publica.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-023 en el Registro.
+- [ ] Multiplicadores en `GameData`, `PlayerLogic.coinMultiplier`, prueba automática y tienda Robux.
+- [ ] 16 pases y 7 productos creados en Roblox con su precio; IDs en `Config`.
+- [ ] Código cargado en la place; Play: pruebas en verde y la tienda abre la compra.
