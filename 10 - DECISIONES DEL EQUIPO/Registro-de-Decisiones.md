@@ -296,3 +296,16 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Pases de entrenamiento (nuevos):** ×2 3 · ×4 5 · ×8 15 · ×16 35 · ×32 75 · ×64 149 · ×128 299 · ×256 599 · ×512 1.199 R$. Multiplican la **velocidad ganada al entrenar** en la caminadora, que hará falta para llegar más lejos. Se usa el más alto que tengas (no se suman entre sí) y se combina con la mejora de la caminadora y la Caminadora Turbo. Por ahora llegan hasta ×512 (el ×1024 queda para más adelante).
 - **Productos (repetibles):** Bolsa 25 · Cofre 99 · Bóveda 399 · Entrenamiento instantáneo 49 · Cápsula de Oro 49 · Cápsula Cósmica 149 · Giro extra 19 R$.
 - **Pendiente de revisar (Claude, sin decidir):** el entrenamiento tiene tope `Config.MAX_TRAINED` = 30 de velocidad. Con ×512 (0,01 × 512 = 5,12 por segundo) se llega al tope en unos 6 s, así que los pases altos solo rinden si se sube ese tope y se añaden zonas más lejanas.
+
+#### DEC-024 — Dirección visual «taller de relojería fantástico»
+
+- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-014; se aplica en ART-015 para poder probarla). **Área:** Arte / mundo / interfaz. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Propuesta:** identidad original de taller de relojería fantástico. Conserva el low-poly colorido (DEC-016), los PBR (DEC-018) y la iluminación (DEC-022).
+  - **Acentos:** madera cálida, carbón `#1E1F26`, marfil `#F2F0EA`, latón `#C27B3A`, oro `#F2C14E` y cian `#5BD5E0`, todos de la paleta actual.
+  - **Lectura:** carteles por contexto, a menos distancia y sin superponerse.
+  - **Efectos breves solo en el cliente:** fabricar, vender, subir de nivel, abrir cápsula, recompensa rara, tutorial y carrera.
+  - **Rarezas:** brillo a partir de Raro.
+  - **HUD:** compacto, con iconos.
+  - **Zonas:** cada una con identidad propia de vegetación y detalles, y torre de reloj como punto focal de la plaza.
+  - Detalle en [[UI-UX]] §12 y en [[Pipeline-de-Arte]] (ART-014).
+- **Límites:** solo cambia la presentación. No toca nombres, puertas, límites, requisitos, economía, etiquetas, atributos existentes ni red, y si falta un asset se usa el genérico.
