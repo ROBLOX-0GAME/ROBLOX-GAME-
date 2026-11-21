@@ -57,9 +57,11 @@ local PANEL_TITLES = {
 	settings = "Ajustes",
 	carry = "Puesto de Carga — Capacidad por viaje",
 	robux = "Tienda Robux — Pases y productos",
+	speed = "Velocidad", -- DEC-025: barra para elegir la velocidad en la base
 }
 
-local HUD_PANELS = { backpack = true, robux = true, rewards = true, spin = true, settings = true }
+local HUD_PANELS = { backpack = true, robux = true, rewards = true, spin = true, settings = true, speed = true }
+local sliderDragging = false -- mientras se arrastra la barra de velocidad no se redibuja el menú
 local state = nil
 local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
 local lastBossKey = ""
@@ -190,7 +192,11 @@ local function button(text, enabled, onActivated)
 end
 
 local function formatNumber(value)
-	local text = tostring(math.floor(value))
+	-- DEC-025: las cifras crecen hasta billones; desde un millón se abrevian (1,2M · 99,9T)
+	if math.abs(value) >= 1e6 then
+		return PlayerLogic.formatBig(value)
+	end
+	local text = string.format("%d", math.floor(value))
 	local formatted = text:reverse():gsub("(%d%d%d)", "%1."):reverse()
 	if formatted:sub(1, 1) == "." then
 		formatted = formatted:sub(2)
@@ -481,10 +487,10 @@ local function renderPlotUpgrades()
 	addHeader("Mejoras del plot")
 	addRow(
 		string.format(
-			"Caminadora ×%.1f · velocidad entrenada %.1f / %d · suerte del plot +%.1f%%",
-			state.treadmillMultiplier,
-			state.trained,
-			Config.MAX_TRAINED,
+			"Caminadora ×%s (+%s/s) · velocidad entrenada %s · suerte del plot +%.1f%%",
+			PlayerLogic.formatBig(state.treadmillMultiplier),
+			PlayerLogic.formatBig(state.trainPerSecond),
+			PlayerLogic.formatBig(state.trained),
 			state.plotLuck * 100
 		)
 	)
@@ -1059,7 +1065,17 @@ local replayIntroHandler = nil
 local function renderSettings()
 	for _, setting in GameData.Settings do
 		local value = state.settings[setting.id]
-		if setting.kind == "toggle" then
+		if setting.kind == "range" then
+			-- DEC-025: la velocidad en la base se elige con la barra del botón «Velocidad»
+			addRow(string.format("<b>%s</b>: %d", setting.name, value), {
+				{
+					text = "Cambiar",
+					onActivated = function()
+						Ui.openPanel("speed")
+					end,
+				},
+			})
+		elseif setting.kind == "toggle" then
 			local onText = "Activado"
 			if value == 0 then
 				onText = "Desactivado"
@@ -1139,7 +1155,169 @@ local function bossKey()
 	return string.format("%s|%d|%d|%d", tostring(info.active), info.points, info.goal, info.mine)
 end
 
+-- Velocidad (DEC-025): tu velocidad, la de cada lugar y la barra para elegir la de la base.
+local function nextZone()
+	for index, zone in GameData.Zones do
+		if state.speed < zone.minSpeed then
+			return index, zone
+		end
+	end
+	return nil, nil
+end
+
+local function renderSpeed()
+	addHeader(string.format("Tu velocidad: %s", PlayerLogic.formatBig(state.speed)))
+	local zoneIndex, zone = nextZone()
+	if zone then
+		addRow(string.format(
+			"Siguiente zona: <b>%d · %s</b> — necesitas <b>%s</b> (te faltan %s).",
+			zoneIndex,
+			zone.name,
+			PlayerLogic.formatBig(zone.minSpeed),
+			PlayerLogic.formatBig(zone.minSpeed - state.speed)
+		))
+	else
+		addRow(string.format(
+			"¡Abriste las 12 zonas! Con <b>%s</b> se abrirá un mundo nuevo en una próxima actualización.",
+			PlayerLogic.formatBig(GameData.NEXT_WORLD_SPEED)
+		))
+	end
+	addRow(string.format(
+		"Corres a <b>%.0f</b> en las zonas · <b>%d</b> dentro de las casas · entrenas <b>+%s/s</b> en tu caminadora.",
+		state.walkSpeed,
+		math.min(state.walkSpeed, Config.HOUSE_WALKSPEED),
+		PlayerLogic.formatBig(state.trainPerSecond)
+	))
+
+	-- Barra deslizante: velocidad al caminar por la base (16 a 50, o tu máximo si es menor)
+	local setting
+	for _, item in GameData.Settings do
+		if item.id == "runSpeed" then
+			setting = item
+		end
+	end
+	local minValue = setting.min
+	local maxValue = math.max(minValue, math.min(setting.max, math.floor(state.walkSpeed)))
+	local value = math.clamp(state.settings.runSpeed or setting.default, minValue, maxValue)
+
+	local row = addRow(string.format("<b>Velocidad en la base</b> (de %d a %d)", minValue, maxValue))
+	local valueLabel = label(string.format("<b>%d</b>", value), 22, COLORS.accent, { LayoutOrder = 2 })
+	valueLabel.Parent = row
+	local track = new("Frame", {
+		Name = "Barra",
+		Size = UDim2.new(1, -20, 0, 14),
+		BackgroundColor3 = COLORS.buttonOff,
+		LayoutOrder = 3,
+		Active = true,
+	}, { corner(7) })
+	local fill = new("Frame", {
+		Size = UDim2.fromScale(0, 1),
+		BackgroundColor3 = COLORS.accent,
+	}, { corner(7) })
+	fill.Parent = track
+	local knob = new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0, 0.5),
+		Size = UDim2.fromOffset(28, 28),
+		BackgroundColor3 = COLORS.text,
+		ZIndex = 2,
+	}, { corner(14) })
+	knob.Parent = track
+	track.Parent = row
+
+	local function show(newValue)
+		value = math.clamp(math.floor(newValue + 0.5), minValue, maxValue)
+		local fraction = 0
+		if maxValue > minValue then
+			fraction = (value - minValue) / (maxValue - minValue)
+		end
+		fill.Size = UDim2.fromScale(fraction, 1)
+		knob.Position = UDim2.fromScale(fraction, 0.5)
+		valueLabel.Text = string.format("<b>%d</b>", value)
+	end
+	local function save()
+		if value ~= state.settings.runSpeed then
+			request("setSetting", "runSpeed", value)
+		end
+	end
+	local function fromInput(x)
+		local width = track.AbsoluteSize.X
+		if width <= 0 then
+			return
+		end
+		show(minValue + (maxValue - minValue) * math.clamp((x - track.AbsolutePosition.X) / width, 0, 1))
+	end
+	show(value)
+
+	track.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			sliderDragging = true
+			fromInput(input.Position.X)
+		end
+	end)
+	local moveConnection, endConnection
+	moveConnection = UserInputService.InputChanged:Connect(function(input)
+		if not track.Parent then
+			moveConnection:Disconnect()
+			return
+		end
+		if
+			sliderDragging
+			and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch)
+		then
+			fromInput(input.Position.X)
+		end
+	end)
+	endConnection = UserInputService.InputEnded:Connect(function(input)
+		if not track.Parent then
+			endConnection:Disconnect()
+			return
+		end
+		if
+			sliderDragging
+			and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch)
+		then
+			sliderDragging = false
+			save()
+		end
+	end)
+
+	-- Botones para mando y para ajustes rápidos
+	addRow("Ajuste rápido:", {
+		{
+			text = "−5",
+			onActivated = function()
+				show(value - 5)
+				save()
+			end,
+		},
+		{
+			text = "+5",
+			onActivated = function()
+				show(value + 5)
+				save()
+			end,
+		},
+		{
+			text = "Lento (16)",
+			onActivated = function()
+				show(minValue)
+				save()
+			end,
+		},
+		{
+			text = "Máximo",
+			onActivated = function()
+				show(maxValue)
+				save()
+			end,
+		},
+	})
+	addRow("La barra cambia tu velocidad en la base. En las zonas corres siempre a tu máximo y dentro de las casas a 40 o menos.")
+end
+
 local RENDERERS = {
+	speed = renderSpeed,
 	workshop = renderWorkshop,
 	shop = renderShop,
 	plot = function()
@@ -1286,8 +1464,23 @@ local function updateHud()
 		hud.xpText.Text = "Nivel máximo"
 	end
 	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
-	hud.speed.Text = string.format("<b>Velocidad %.1f</b>  (×%.2f)", state.walkSpeed, state.speedMultiplier)
-	hud.zone.Text = "Zona máx.: " .. GameData.Zones[state.highestZone].name
+	-- DEC-025: la velocidad es una estadística; se muestra abreviada y con su velocidad física
+	hud.speed.Text = string.format(
+		"<b>Velocidad %s</b>  (corres a %.0f)",
+		PlayerLogic.formatBig(state.speed),
+		state.walkSpeed
+	)
+	local reached = GameData.Zones[state.highestZone]
+	local following = GameData.Zones[state.highestZone + 1]
+	if following then
+		hud.zone.Text = string.format(
+			"Zona máx.: %s · siguiente: %s",
+			reached and reached.name or "ninguna",
+			PlayerLogic.formatBig(following.minSpeed)
+		)
+	else
+		hud.zone.Text = "Zona máx.: " .. (reached and reached.name or "ninguna")
+	end
 	hud.carry.Text = string.format(
 		"Carga %d/%d · Mochila %d/%d",
 		state.carriedCount,
@@ -1360,7 +1553,7 @@ local function updateGates()
 		return
 	end
 	for _, gate in CollectionService:GetTagged("SpeedGate") do
-		local open = state.walkSpeed >= (gate:GetAttribute("MinSpeed") or 0)
+		local open = state.speed >= (gate:GetAttribute("MinSpeed") or 0) -- DEC-025: estadística
 		gate.CanCollide = not open
 		if open then
 			gate.Color = COLORS.ok
@@ -1442,6 +1635,7 @@ end
 
 local RAIL_BUTTONS = {
 	{ id = "backpack", text = "Mochila", key = "B", icon = "mochila" },
+	{ id = "speed", text = "Velocidad", key = "V", icon = "velocidad" }, -- DEC-025
 	{ id = "rewards", text = "Premios", key = "P", icon = "premios" },
 	{ id = "spin", text = "Ruleta", key = "R", icon = "ruleta" },
 	{ id = "robux", text = "Robux", key = "M", icon = "robux" },
@@ -1682,10 +1876,9 @@ local function watchDistance()
 			if player:GetAttribute("Training") and state then
 				hud.training.Visible = true
 				hud.training.Text = string.format(
-					"Entrenando ×%.1f: %.1f / %d (pulsa la caminadora para parar)",
-					state.treadmillMultiplier,
-					state.trained,
-					Config.MAX_TRAINED
+					"Entrenando +%s/s · velocidad %s (pulsa la caminadora para parar)",
+					PlayerLogic.formatBig(state.trainPerSecond),
+					PlayerLogic.formatBig(state.speed)
 				)
 			else
 				hud.training.Visible = false
@@ -1747,6 +1940,7 @@ function Ui.init(remote)
 	-- navegar dentro del menú con el mando.
 	local shortcuts = {
 		[Enum.KeyCode.P] = "rewards",
+		[Enum.KeyCode.V] = "speed", -- DEC-025
 		[Enum.KeyCode.R] = "spin",
 		[Enum.KeyCode.M] = "robux",
 		[Enum.KeyCode.O] = "settings",
@@ -1776,7 +1970,7 @@ function Ui.setState(newState)
 	state = newState
 	updateHud()
 	updateGates()
-	if openPanelId then
+	if openPanelId and not sliderDragging then
 		render(true)
 	end
 end

@@ -25,6 +25,7 @@ local Workspace = game:GetService("Workspace")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared.Config)
 local GameData = require(Shared.GameData)
+local PlayerLogic = require(Shared.PlayerLogic)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local AssetLibrary = require(Shared.AssetLibrary)
@@ -37,10 +38,20 @@ WorldService.Stations = {} -- [stationId] = BasePart
 -- Medidas del mapa
 local HALF_WIDTH = 130 -- el mapa va de X = -130 a X = 130 (DEV-010: cabe la media luna)
 local ZONE_START = 30 -- Z donde empieza la zona 1
-local ZONE_LENGTH = 140 -- distancia entre el inicio de dos zonas
-local ZONE_DEPTH = 130 -- largo útil de cada zona
-local MAP_END = ZONE_START + #GameData.Zones * ZONE_LENGTH
+-- DEC-025: cada zona es Config.ZONE_DEPTH_GROWTH veces más larga que la anterior,
+-- con Config.ZONE_GAP entre zonas (ahí va la puerta de velocidad).
+local ZONE_BOUNDS = {} -- [zona] = { inicio, fin } en Z
+do
+	local z = ZONE_START
+	for index in GameData.Zones do
+		local depth = math.floor(Config.ZONE_BASE_DEPTH * Config.ZONE_DEPTH_GROWTH ^ (index - 1))
+		ZONE_BOUNDS[index] = { z, z + depth }
+		z += depth + Config.ZONE_GAP
+	end
+end
+local MAP_END = ZONE_BOUNDS[#GameData.Zones][2] + 20
 local MAP_BACK = -205 -- fondo de la base: detrás de los plots en media luna (DEV-010)
+local MAX_PART_LENGTH = 2000 -- Roblox no permite piezas de más de 2048 studs
 
 -- Muro frontal de la base (DEV-010): separa la base de la zona de carrera,
 -- con una abertura central para salir a correr. Las estaciones compartidas
@@ -95,6 +106,22 @@ local function makePart(props)
 	return part
 end
 WorldService.makePart = makePart
+
+-- Pieza larga a lo largo de Z, partida en tramos de MAX_PART_LENGTH (DEC-025).
+-- props.Size da el ancho (X) y el alto (Y); fromZ/toZ el largo.
+local function makeLongPart(parent, props, fromZ, toZ)
+	local size = props.Size
+	local z = fromZ
+	while z < toZ do
+		local length = math.min(MAX_PART_LENGTH, toZ - z)
+		local chunk = table.clone(props)
+		chunk.Size = Vector3.new(size.X, size.Y, length)
+		chunk.Position = Vector3.new(props.Position.X, props.Position.Y, z + length / 2)
+		makePart(chunk).Parent = parent
+		z += length
+	end
+end
+WorldService.makeLongPart = makeLongPart
 
 -- Colores de los carteles (ART-015, propuesta DEC-024: marfil sobre contorno carbón)
 local SIGN_TEXT = Color3.fromRGB(242, 240, 234)
@@ -214,8 +241,18 @@ end
 
 -- Inicio y fin (en Z) de una zona.
 function WorldService.zoneBounds(zoneIndex)
-	local startZ = ZONE_START + (zoneIndex - 1) * ZONE_LENGTH
-	return startZ, startZ + ZONE_DEPTH
+	local bounds = ZONE_BOUNDS[zoneIndex]
+	return bounds[1], bounds[2]
+end
+
+-- Zona en la que está una posición (nil en la base o fuera de las zonas).
+function WorldService.zoneAt(position)
+	for index, bounds in ZONE_BOUNDS do
+		if position.Z >= bounds[1] - Config.ZONE_GAP and position.Z <= bounds[2] then
+			return index
+		end
+	end
+	return nil
 end
 
 function WorldService.isInHub(position)
@@ -227,14 +264,14 @@ local function buildZone(folder, zoneIndex, zone)
 	local model = Instance.new("Model")
 	model.Name = string.format("Zona%d_%s", zoneIndex, zone.id)
 
-	makePart({
+	makeLongPart(model, {
 		Name = "Terreno",
-		Size = Vector3.new(HALF_WIDTH * 2, 0.2, endZ - startZ),
-		Position = Vector3.new(0, 0.1, (startZ + endZ) / 2),
+		Size = Vector3.new(HALF_WIDTH * 2, 0.2, 1),
+		Position = Vector3.new(0, 0.1, 0),
 		Color = zone.color:Lerp(Color3.fromRGB(106, 168, 79), 0.55),
 		Material = Enum.Material.Grass,
 		CanCollide = false,
-	}).Parent = model
+	}, startZ, endZ)
 
 	-- Cartel de la zona a la entrada del camino
 	local signPost = makePart({
@@ -250,14 +287,14 @@ local function buildZone(folder, zoneIndex, zone)
 		makeSign(
 			signPost,
 			zone.name,
-			string.format("Zona %d · velocidad mínima %d", zoneIndex, zone.minSpeed),
+			string.format("Zona %d · velocidad %s", zoneIndex, PlayerLogic.formatBig(zone.minSpeed)),
 			6,
 			120
 		)
 	end
 	signPost.Parent = model
 
-	-- Puerta de velocidad (la zona 1 no tiene)
+	-- Puerta de velocidad (DEC-025: todas las zonas tienen; la 1 pide 100)
 	if zone.minSpeed > 0 then
 		local gate = Instance.new("Model")
 		gate.Name = "PuertaDeVelocidad"
@@ -286,7 +323,7 @@ local function buildZone(folder, zoneIndex, zone)
 			Transparency = 1,
 			CanCollide = false,
 		})
-		makeSign(label, string.format("Velocidad %d", zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 120)
+		makeSign(label, "Velocidad " .. PlayerLogic.formatBig(zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 120)
 		label.Parent = gate
 		gate.Parent = model
 	end
@@ -301,13 +338,13 @@ function WorldService.init()
 	WorldService.Folder = folder
 
 	-- Suelo general (0.1 sobre una Baseplate estándar para evitar parpadeo)
-	makePart({
+	makeLongPart(folder, {
 		Name = "Suelo",
-		Size = Vector3.new(HALF_WIDTH * 2 + 20, 2, MAP_END - MAP_BACK + 20),
-		Position = Vector3.new(0, -0.9, (MAP_END + MAP_BACK) / 2),
+		Size = Vector3.new(HALF_WIDTH * 2 + 20, 2, 1),
+		Position = Vector3.new(0, -0.9, 0),
 		Color = Color3.fromRGB(106, 168, 79),
 		Material = Enum.Material.Grass,
-	}).Parent = folder
+	}, MAP_BACK - 10, MAP_END + 10)
 
 	-- Base segura
 	makePart({
@@ -330,14 +367,14 @@ function WorldService.init()
 	baseSign.Parent = folder
 
 	-- Camino central
-	makePart({
+	makeLongPart(folder, {
 		Name = "Camino",
-		Size = Vector3.new(22, 0.2, MAP_END - Config.HUB_MAX_Z),
-		Position = Vector3.new(0, 0.25, (MAP_END + Config.HUB_MAX_Z) / 2),
+		Size = Vector3.new(22, 0.2, 1),
+		Position = Vector3.new(0, 0.25, 0),
 		Color = Color3.fromRGB(70, 70, 75),
 		Material = Enum.Material.Asphalt,
 		CanCollide = false,
-	}).Parent = folder
+	}, Config.HUB_MAX_Z, MAP_END)
 
 	-- Muro frontal con abertura para salir a correr
 	local wallLength = HALF_WIDTH - FRONT_OPENING
@@ -371,9 +408,15 @@ function WorldService.init()
 	exitSign.Parent = folder
 
 	-- Muros invisibles alrededor del mapa
+	for _, side in { -1, 1 } do
+		makeLongPart(folder, {
+			Name = "Limite",
+			Size = Vector3.new(2, 80, 1),
+			Position = Vector3.new(side * (HALF_WIDTH + 1), 40, 0),
+			Transparency = 1,
+		}, MAP_BACK - 10, MAP_END + 10)
+	end
 	for _, wall in {
-		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(-HALF_WIDTH - 1, 40, (MAP_END + MAP_BACK) / 2) },
-		{ Vector3.new(2, 80, MAP_END - MAP_BACK + 20), Vector3.new(HALF_WIDTH + 1, 40, (MAP_END + MAP_BACK) / 2) },
 		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_BACK - 1) },
 		{ Vector3.new(HALF_WIDTH * 2 + 4, 80, 2), Vector3.new(0, 40, MAP_END + 1) },
 	} do
@@ -446,8 +489,10 @@ local ZONE_STYLE = {
 }
 
 -- Zona a la que pertenece una coordenada Z del camino (1 si está antes de la primera).
+-- DEC-025: las zonas tienen largos distintos; las que no tienen estilo propio usan el de la 5.
 local function zoneAt(z)
-	return math.clamp(math.floor((z - ZONE_START) / ZONE_LENGTH) + 1, 1, #GameData.Zones)
+	local index = WorldService.zoneAt(Vector3.new(0, 0, z)) or 1
+	return math.min(index, #ZONE_STYLE)
 end
 
 -- Coloca el primer asset disponible de la lista; si no hay ninguno, no coloca nada.
@@ -464,15 +509,15 @@ end
 function WorldService.placeDecor(folder)
 	local decor = Instance.new("Folder")
 	decor.Name = "Decoracion"
-	-- Farolas a ambos lados del camino
-	for z = ZONE_START, MAP_END - 20, 40 do
+	-- Farolas a ambos lados del camino (DEC-025: más separadas; el mapa mide ~13.000 studs)
+	for z = ZONE_START, MAP_END - 20, 60 do
 		for _, side in { -1, 1 } do
 			AssetLibrary.place("mdl_farola", Vector3.new(side * 14, 0, z), Vector3.new(-side, 0, 0), decor)
 		end
 	end
 	-- Vegetación junto a los muros laterales, propia de cada zona (ART-015, propuesta DEC-024)
 	local index = 0
-	for z = ZONE_START + 10, MAP_END - 10, 22 do
+	for z = ZONE_START + 10, MAP_END - 10, 40 do
 		local style = ZONE_STYLE[zoneAt(z)] or ZONE_STYLE[1]
 		for _, side in { -1, 1 } do
 			index += 1
@@ -481,7 +526,7 @@ function WorldService.placeDecor(folder)
 	end
 	-- Detalles de cada zona, entre las casas y la vegetación (x = ±100)
 	for zoneIndex in GameData.Zones do
-		local style = ZONE_STYLE[zoneIndex]
+		local style = ZONE_STYLE[math.min(zoneIndex, #ZONE_STYLE)]
 		local startZ = WorldService.zoneBounds(zoneIndex)
 		if style and style.details then
 			for i, z in { startZ + 25, startZ + 70, startZ + 115 } do
@@ -518,7 +563,7 @@ function WorldService.placeDecor(folder)
 	for zoneIndex in GameData.Zones do
 		local startZ = WorldService.zoneBounds(zoneIndex)
 		AssetLibrary.place("mdl_cartel_zona", Vector3.new(-14, 0, startZ + 4), Vector3.new(0, 0, -1), decor)
-		local fence = (ZONE_STYLE[zoneIndex] or ZONE_STYLE[1]).fence
+		local fence = ZONE_STYLE[math.min(zoneIndex, #ZONE_STYLE)].fence
 		for x = -HALF_WIDTH + 8, HALF_WIDTH - 8, 8 do
 			if math.abs(x) > 14 then
 				placeAny(fence, Vector3.new(x, 0, startZ + 0.5), Vector3.new(0, 0, -1), decor)

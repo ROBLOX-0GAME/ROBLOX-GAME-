@@ -207,12 +207,12 @@ return function(t)
 		local data = PlayerLogic.newData()
 		local steps = GameData.Tutorial
 		t.eq(data.tutorial, 1, "empieza en el paso 1")
-		data.trained = 1
+		data.trained = 100 - Config.START_SPEED -- DEC-025: el paso 1 pide 100 de velocidad
 		t.eq(#PlayerLogic.advanceTutorial(data), 0, "sin la introducción no avanza")
 		t.eq(PlayerLogic.buildView(data).tutorial, false, "la vista no muestra el tutorial aún")
 		t.ok(PlayerLogic.claimLegacy(data, 0), "recoge la pieza del legado")
 		PlayerLogic.advanceTutorial(data)
-		t.eq(data.tutorial, 2, "entrenar +0.5 completa el paso 1")
+		t.eq(data.tutorial, 2, "llegar a 100 de velocidad completa el paso 1")
 		t.eq(data.coins, steps[1].reward, "paga el premio del paso 1")
 		PlayerLogic.advanceTutorial(data)
 		t.eq(data.coins, steps[1].reward, "no paga dos veces")
@@ -230,7 +230,7 @@ return function(t)
 	t.test("DEV-002: el tutorial termina y los datos antiguos se reparan", function()
 		local data = PlayerLogic.newData()
 		data.introDone = true
-		data.trained = 5
+		data.trained = 100 - Config.START_SPEED
 		data.stats.collected = 99
 		data.stats.crafted = 9
 		data.stats.sold = 9
@@ -283,29 +283,63 @@ return function(t)
 		t.eq(PlayerLogic.reconcile(lucky).carried.gear, nil, "al cargar datos el botín se descarta")
 	end)
 
-	t.test("DEV-003: zonas y velocidad", function()
+	t.test("DEC-025: 12 zonas, velocidad estadística y velocidad física", function()
 		local data = PlayerLogic.newData()
-		t.ok(PlayerLogic.canEnterZone(data, 1), "zona 1 siempre abierta")
-		t.ok(not PlayerLogic.canEnterZone(data, 2), "zona 2 necesita velocidad")
+		t.eq(#GameData.Zones, 12, "hay 12 zonas")
+		t.eq(PlayerLogic.speed(data), Config.START_SPEED, "se empieza con 75 de velocidad")
+		t.ok(not PlayerLogic.canEnterZone(data, 1), "la zona 1 pide 100")
+		t.eq(PlayerLogic.highestZone(data), 0, "al empezar no hay zona abierta")
+		data.trained = 100 - Config.START_SPEED
+		t.ok(PlayerLogic.canEnterZone(data, 1), "con 100 se abre la zona 1")
+		t.ok(not PlayerLogic.canEnterZone(data, 2), "la zona 2 pide más")
 		t.ok(not PlayerLogic.canEnterZone(data, 99), "zona inexistente cerrada")
-		t.eq(PlayerLogic.highestZone(data), 1, "empieza en la zona 1")
-		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
-		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "respeta el tope de velocidad")
-		local previousMin = -1
-		for index, zone in GameData.Zones do
-			t.ok(zone.minSpeed > previousMin, "las zonas piden más velocidad en orden")
-			t.ok(zone.ownerSpeed < math.max(zone.minSpeed, Config.BASE_WALKSPEED), zone.name .. ": el dueño es alcanzable")
+		t.eq(GameData.Zones[5].minSpeed, 1e6, "la zona 5 pide 1M")
+		t.eq(GameData.Zones[12].minSpeed, 9.99e13, "la zona 12 pide 99,9T")
+		local previousMin = 0
+		for zoneIndex, zone in GameData.Zones do
+			t.ok(zone.minSpeed > previousMin, zone.name .. ": pide más velocidad que la anterior")
+			t.ok(zone.lootCoins > 0, zone.name .. ": el botín trae monedas")
 			for partId in zone.weights do
 				t.ok(GameData.Parts[partId] ~= nil, zone.name .. " usa pieza válida " .. partId)
 			end
+			-- Quien cumple el requisito corre más que el dueño de esa zona
+			t.ok(
+				PlayerLogic.runSpeed(zone.minSpeed) > PlayerLogic.ownerSpeed(zoneIndex),
+				zone.name .. ": el dueño es alcanzable con la velocidad justa"
+			)
 			previousMin = zone.minSpeed
 			t.eq(#zone.owners, 4, zone.name .. " tiene 4 dueños")
-			t.ok(index >= 1, "índice válido")
 		end
-		t.ok(
-			PlayerLogic.walkSpeed(data) >= GameData.Zones[#GameData.Zones].minSpeed,
-			"la mejora de velocidad al máximo alcanza la última zona"
-		)
+		-- Velocidad física: curva con tope (DEC-025)
+		t.eq(PlayerLogic.runSpeed(75), 30, "75 corre a 30")
+		t.eq(PlayerLogic.runSpeed(1e6), 85, "1M corre a 85")
+		t.eq(PlayerLogic.runSpeed(9.99e13), Config.MAX_WALKSPEED, "99,9T corre al tope")
+		t.eq(PlayerLogic.runSpeed(1e30), Config.MAX_WALKSPEED, "nunca pasa del tope")
+		t.ok(PlayerLogic.runSpeed(1e4) > PlayerLogic.runSpeed(1e3), "más velocidad, más rápido")
+		data.trained = 1e12
+		t.ok(PlayerLogic.lobbySpeed(data) <= Config.LOBBY_MAX_WALKSPEED, "en la base como máximo 50")
+		t.ok(PlayerLogic.houseSpeed(data) <= Config.HOUSE_WALKSPEED, "en las casas como máximo 40")
+		PlayerLogic.setSetting(data, "runSpeed", 20)
+		t.eq(PlayerLogic.lobbySpeed(data), 20, "la barra elige la velocidad en la base")
+		t.ok(not PlayerLogic.setSetting(data, "runSpeed", 51), "la barra no pasa de 50")
+		t.eq(PlayerLogic.formatBig(1500), "1,5K", "formato 1,5K")
+		t.eq(PlayerLogic.formatBig(9.99e13), "99,9T", "formato 99,9T")
+		t.eq(PlayerLogic.formatBig(1.4e7), "14M", "formato 14M")
+	end)
+
+	t.test("DEC-025: el botín trae monedas que se cobran en la base", function()
+		local data = PlayerLogic.newData()
+		PlayerLogic.stealPart(data, "gear", 0.99, 80)
+		t.eq(data.carriedCoins, 80, "las monedas van con el botín")
+		local saved, coins = PlayerLogic.depositLoot(data)
+		t.eq(saved, 1, "guarda la pieza")
+		t.eq(coins, 80, "cobra las monedas")
+		t.eq(data.coins, 80, "suma a tus monedas")
+		data.upgrades.carry = GameData.Upgrades.carry.maxLevel
+		PlayerLogic.stealPart(data, "gear", 0.99, 640)
+		PlayerLogic.loseLoot(data)
+		t.eq(data.carriedCoins, 0, "atrapado: se pierden las monedas del botín")
+		t.eq(data.coins, 80, "lo cobrado no se pierde")
 	end)
 
 	t.test("DEV-003: zonas ricas dan piezas más raras", function()
@@ -404,9 +438,11 @@ return function(t)
 		data.upgrades.speed = GameData.Upgrades.speed.maxLevel
 		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "velocidad con tope")
 		local fresh = PlayerLogic.newData()
+		fresh.trained = 10 -- 85 de velocidad: no llega a la zona 1 (DEC-025)
+		t.ok(not PlayerLogic.canEnterZone(fresh, 1), "con 85 no abre la zona 1")
 		fresh.pets.fox = 1
 		fresh.equipped.fox = 1
-		t.ok(PlayerLogic.canEnterZone(fresh, 2), "un zorro (+20%) abre el Barrio Obrero")
+		t.ok(PlayerLogic.canEnterZone(fresh, 1), "un zorro (+20%) la abre: 85 × 1,2 = 102")
 	end)
 
 	t.test("DEV-008: caminadora del plot, mejoras y pase Turbo", function()
@@ -419,14 +455,16 @@ return function(t)
 		data.coins = 10 ^ 7
 		t.ok(PlayerLogic.buyUpgrade(data, "treadmill"), "mejora la caminadora")
 		local step = GameData.Upgrades.treadmill.step
-		t.eq(PlayerLogic.treadmillMultiplier(data), 1 + step, "el nivel sube el multiplicador")
+		t.eq(PlayerLogic.treadmillMultiplier(data), step, "DEC-025: cada nivel multiplica por step (×2)")
 		PlayerLogic.setPasses(data, { turboTreadmill = true })
-		t.eq(PlayerLogic.treadmillMultiplier(data), (1 + step) * GameData.TURBO_TREADMILL_FACTOR, "el pase Turbo lo multiplica")
+		t.eq(PlayerLogic.treadmillMultiplier(data), step * GameData.TURBO_TREADMILL_FACTOR, "el pase Turbo lo multiplica")
+		data.upgrades.treadmill = GameData.Upgrades.treadmill.maxLevel
+		t.ok(PlayerLogic.treadmillMultiplier(data) >= 2 ^ 40, "40 niveles = ×2^40 (zonas altas sin pagar)")
 		PlayerLogic.trainTick(data, 10 ^ 7)
-		t.eq(data.trained, Config.MAX_TRAINED, "tope de velocidad entrenada")
-		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad total")
+		t.eq(data.trained, Config.MAX_TRAINED, "tope de seguridad de velocidad entrenada")
+		t.ok(PlayerLogic.walkSpeed(data) <= Config.MAX_WALKSPEED, "tope de velocidad física")
 		t.eq(PlayerLogic.reconcile({ trained = -5 }).trained, 0, "repara entrenamiento negativo")
-		t.eq(PlayerLogic.reconcile({ trained = 999 }).trained, Config.MAX_TRAINED, "limita entrenamiento")
+		t.eq(PlayerLogic.reconcile({ trained = 1e20 }).trained, Config.MAX_TRAINED, "limita entrenamiento")
 	end)
 
 	t.test("DEV-008: datos de caminadoras antiguas se adaptan al plot", function()
@@ -552,7 +590,11 @@ return function(t)
 		t.ok(PlayerLogic.grantProduct(data, "coinsSmall", 0), "entrega monedas")
 		t.eq(data.coins, GameData.Products.coinsSmall.coins, "cantidad correcta")
 		t.ok(PlayerLogic.grantProduct(data, "instantTraining", 0), "entrega entrenamiento")
-		t.eq(data.trained, GameData.Products.instantTraining.trained, "velocidad entrenada")
+		t.eq(
+			data.trained,
+			Config.TRAIN_RATE * GameData.Products.instantTraining.trainSeconds,
+			"DEC-025: 5 minutos de entrenamiento con tu caminadora"
+		)
 		t.ok(PlayerLogic.grantProduct(data, "goldEgg", 0), "entrega la cápsula")
 		t.eq(data.capsules.gold, 1, "la cápsula comprada va a la Mochila")
 		t.ok(not PlayerLogic.grantProduct(data, "falso", 0), "rechaza productos desconocidos")
@@ -739,6 +781,8 @@ return function(t)
 		local trainedData = PlayerLogic.newData()
 		PlayerLogic.giveReward(trainedData, { trained = 1 })
 		t.eq(trainedData.trained, 1, "premio de velocidad entrenada")
+		PlayerLogic.giveReward(trainedData, { trainSeconds = 60 })
+		t.eq(trainedData.trained, 1 + Config.TRAIN_RATE * 60, "DEC-025: premio de 1 minuto de entrenamiento")
 		t.eq(PlayerLogic.reconcile({ spin = { extra = 10 ^ 6 } }).spin.extra, Config.MAX_EXTRA_SPINS, "tope de giros extra")
 	end)
 

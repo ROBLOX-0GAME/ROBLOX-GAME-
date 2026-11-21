@@ -297,7 +297,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Productos (repetibles):** Bolsa 25 · Cofre 99 · Bóveda 399 · Entrenamiento instantáneo 49 · Cápsula de Oro 49 · Cápsula Cósmica 149 · Giro extra 19 R$.
 - **Pendiente de revisar (Claude, sin decidir):** el entrenamiento tiene tope `Config.MAX_TRAINED` = 30 de velocidad. Con ×512 (0,01 × 512 = 5,12 por segundo) se llega al tope en unos 6 s, así que los pases altos solo rinden si se sube ese tope y se añaden zonas más lejanas.
 
-#### DEC-024 — 12 zonas, velocidad como estadística y dueños dormidos
+#### DEC-025 — 12 zonas, velocidad como estadística y dueños dormidos
 
 - **Fecha:** 2026-11-20. **Estado:** **Decidida por Jhonn** el 2026-11-20 (DEV-020). Zadiel la revisa (DEC-020). **Área:** Gameplay / mundo / progresión. Reemplaza las velocidades de zona de DEC-005 y el entrenamiento con tope de DEC-008.
 - **Zonas (velocidad necesaria):** 1: 100 · 2: 1K · 3: 10K · 4: 100K · 5: 1M · 6: 14M · 7: 200M · 8: 2,8B · 9: 40B · 10: 560B · 11: 7,5T · 12: 99,9T. Con 100T se abrirá un mundo nuevo en una actualización futura. Los jugadores empiezan con 75.

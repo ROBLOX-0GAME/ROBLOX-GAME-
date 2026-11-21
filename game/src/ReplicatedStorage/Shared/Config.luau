@@ -21,7 +21,15 @@ local Config = {
 	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
 	BASE_CARRY = 1, -- objetos robados que puedes llevar por viaje (DEV-013; hasta 4 con 3 mejoras)
 	BASE_WALKSPEED = 16,
-	MAX_WALKSPEED = 80, -- tope de seguridad para la física
+	-- Velocidad (DEC-025): la «Velocidad» es una estadística (75, 1M, 99,9T…). La
+	-- velocidad física sale de SPEED_CURVE y nunca pasa de MAX_WALKSPEED.
+	START_SPEED = 75, -- velocidad (estadística) con la que empieza todo jugador
+	MAX_WALKSPEED = 150, -- tope físico en las zonas (más rápido falla la física)
+	LOBBY_MAX_WALKSPEED = 50, -- tope en la base; el jugador elige su velocidad con la barra del HUD
+	HOUSE_WALKSPEED = 40, -- tope dentro de las casas, para buscar piezas con comodidad
+	-- Curva por tramos en escala logarítmica: { estadística, velocidad física }
+	SPEED_CURVE = { { 75, 30 }, { 1e6, 85 }, { 9.99e13, 150 } },
+	SPEED_CONTEXT_SECONDS = 0.25, -- cada cuánto se ajusta la velocidad según dónde estás
 	BASE_JUMPHEIGHT = 7.2,
 	BASE_MUSEUM_SLOTS = 3, -- vitrinas iniciales del plot
 	MAX_WATCHES_PER_TYPE = 999,
@@ -41,10 +49,18 @@ local Config = {
 	LEGACY_CLAIM_DISTANCE = 80, -- distancia máxima a la aparición para recoger la pieza del legado
 
 	-- Robo y persecución (DEV-003)
-	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en salir tras de ti
-	CHASE_MAX_SECONDS = 25, -- el dueño se rinde después de este tiempo
-	CHASE_LOSE_DISTANCE = 140, -- el dueño se rinde si te alejas tanto
+	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en levantarse tras despertar
+	OWNER_WAKE_SECONDS = 15, -- DEC-025: el dueño duerme; despierta si pasas esto dentro de su casa
+	OWNER_HOUSE_SPEED = 12, -- velocidad del dueño dentro de su casa (lento)
+	OWNER_SPEED_FACTOR = 0.92, -- fuera de casa corre como la velocidad que exige su zona × esto
+	CHASE_MAX_SECONDS = 40, -- el dueño se rinde después de este tiempo
+	CHASE_LOSE_DISTANCE = 160, -- el dueño se rinde si te alejas tanto
 	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
+
+	-- Zonas (DEC-025): cada una es un 35 % más larga que la anterior
+	ZONE_BASE_DEPTH = 130, -- largo de la zona 1
+	ZONE_DEPTH_GROWTH = 1.35,
+	ZONE_GAP = 10, -- espacio entre zonas (ahí va la puerta de velocidad)
 
 	-- Jefe cooperativo: Cronómetro Maestro (DEV-004)
 	BOSS_FIRST_DELAY_SECONDS = 90, -- primera avería tras iniciar el servidor
@@ -69,8 +85,8 @@ local Config = {
 	MAX_EXTRA_PART_CHANCE = 0.6, -- tope total de probabilidad de robar 2 piezas
 
 	-- Entrenamiento de velocidad en caminadoras (DEV-006)
-	TRAIN_RATE = 0.01, -- velocidad permanente ganada por segundo con multiplicador ×1
-	MAX_TRAINED = 30, -- velocidad máxima que se puede ganar entrenando
+	TRAIN_RATE = 0.5, -- velocidad ganada por segundo con multiplicador ×1 (DEC-025)
+	MAX_TRAINED = 1e15, -- tope de seguridad (el mundo nuevo empezará en 100T)
 	TRAIN_TICK_SECONDS = 1,
 	TREADMILL_DISTANCE = 8, -- si te alejas más, dejas de entrenar
 

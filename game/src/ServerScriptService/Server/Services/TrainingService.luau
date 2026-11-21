@@ -62,7 +62,10 @@ local function start(player)
 	CharacterService.apply(player)
 	Net.notify(
 		player,
-		string.format("Entrenando ×%.1f. Pulsa la caminadora otra vez para parar.", PlayerLogic.treadmillMultiplier(data)),
+		string.format(
+			"Entrenando: +%s de velocidad por segundo. Pulsa la caminadora otra vez para parar.",
+			PlayerLogic.formatBig(Config.TRAIN_RATE * PlayerLogic.treadmillMultiplier(data))
+		),
 		"ok"
 	)
 end

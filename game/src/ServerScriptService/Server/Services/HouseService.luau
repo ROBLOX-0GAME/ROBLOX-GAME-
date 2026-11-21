@@ -1,14 +1,17 @@
 --[[
 	HouseService — casas, robo de piezas y persecución (DEV-003).
 
-	Flujo:
-	  1. Entras a una casa y mantienes el botón sobre una pieza → va a tu botín
-	     (lo llevas encima, todavía no es tuyo).
-	  2. Al SALIR de la casa con botín, el dueño sale tras de ti.
-	  3. Si llegas a la base segura, el botín se guarda en tu mochila.
-	     Si el dueño te atrapa (o caes), pierdes todo el botín que llevabas.
+	Flujo (DEC-025):
+	  1. El dueño DUERME. Entras a su casa y mantienes el botón sobre una pieza
+	     → va a tu botín (lo llevas encima, todavía no es tuyo) junto con las
+	     monedas que trae en esa zona.
+	  2. Si pasas más de Config.OWNER_WAKE_SECONDS dentro, el dueño despierta y
+	     te persigue: dentro de su casa es lento; fuera corre casi como la
+	     velocidad que exige su zona.
+	  3. Si llegas a la base segura, el botín se guarda en tu mochila y cobras
+	     sus monedas. Si el dueño te atrapa (o caes), pierdes el botín y te echa.
 	  4. El dueño se rinde si llegas a la base, si te alejas demasiado o tras
-	     Config.CHASE_MAX_SECONDS.
+	     Config.CHASE_MAX_SECONDS, y vuelve a dormir.
 
 	Cada zona tiene 4 casas con 3 piezas. Las piezas reaparecen tras
 	Config.HOUSE_SPOT_RESPAWN_SECONDS con una rareza nueva según la zona.
@@ -112,12 +115,12 @@ local function spawnSpot(house, spot)
 		if not PlayerLogic.canEnterZone(data, house.zoneIndex) then
 			Net.notify(
 				player,
-				string.format("Necesitas velocidad %d para robar en %s.", house.zone.minSpeed, house.zone.name),
+				string.format("Necesitas velocidad %s para robar en %s.", PlayerLogic.formatBig(house.zone.minSpeed), house.zone.name),
 				"error"
 			)
 			return
 		end
-		local ok, message = PlayerLogic.stealPart(data, partId, random:NextNumber())
+		local ok, message = PlayerLogic.stealPart(data, partId, random:NextNumber(), house.zone.lootCoins)
 		if not ok then
 			Net.notify(player, message, "error")
 			return
@@ -217,13 +220,13 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		ownerSpawn = Vector3.new(centerX + side * 6, 0, centerZ),
 		doorOutside = Vector3.new(frontX - side * 4, 0, centerZ),
 		spots = {},
-		thieves = {}, -- [Player] = true mientras roba dentro
-		queue = {}, -- ladrones que salieron y esperan persecución
+		thieves = {}, -- [Player] = true si robó en esta visita
+		visitors = {}, -- [Player] = os.clock() al entrar (DEC-025: el dueño despierta a los 15 s)
 		chasing = nil,
 	}
 
 	-- Arte (DEV-014): la casa mira hacia el camino (la puerta da a -side en X)
-	AssetLibrary.dress(model, "mdl_casa_z" .. zoneIndex, { facing = Vector3.new(-side, 0, 0) })
+	AssetLibrary.dress(model, zone.houseAsset or ("mdl_casa_z" .. zoneIndex), { facing = Vector3.new(-side, 0, 0) })
 
 	for _, offset in SPOT_OFFSETS do
 		local position = Vector3.new(centerX + side * offset[1], 0, centerZ + offset[2])
@@ -249,6 +252,7 @@ end
 -- Persecución
 -- ---------------------------------------------------------------------------
 
+-- El dueño despertó (DEC-025): persigue al jugador que se quedó demasiado en su casa.
 local function chase(house, player)
 	house.chasing = player
 	local zone = house.zone
@@ -257,10 +261,11 @@ local function chase(house, player)
 		zone.color:Lerp(Color3.new(0, 0, 0), 0.4),
 		house.ownerSpawn,
 		npcFolder,
-		"npc_dueno_z" .. house.zoneIndex
+		"npc_dueno_z" .. math.min(house.zoneIndex, 5)
 	)
-	npc.humanoid.WalkSpeed = zone.ownerSpeed
-	Net.notify(player, string.format("¡%s te vio! Corre a la base con tu botín.", house.ownerName), "error")
+	local outsideSpeed = PlayerLogic.ownerSpeed(house.zoneIndex)
+	npc.humanoid.WalkSpeed = Config.OWNER_HOUSE_SPEED
+	Net.notify(player, string.format("¡%s se despertó y te busca! Sal y corre a la base.", house.ownerName), "error")
 	Net.sound(player, "alarma_dueno")
 
 	task.wait(Config.OWNER_REACTION_SECONDS)
@@ -278,9 +283,11 @@ local function chase(house, player)
 			result = "gone"
 			break
 		end
-		if PlayerLogic.carriedCount(data) == 0 then
-			result = "gone"
-			break
+		-- Dentro de su casa el dueño es lento; fuera corre como su zona (DEC-025)
+		if isInside(house, npc.root.Position) then
+			npc.humanoid.WalkSpeed = Config.OWNER_HOUSE_SPEED
+		else
+			npc.humanoid.WalkSpeed = outsideSpeed
 		end
 		if WorldService.isInHub(root.Position) then
 			result = "escaped"
@@ -296,10 +303,16 @@ local function chase(house, player)
 			result = "escaped"
 			break
 		end
-		if not leftHouse then
-			-- Primero sale por la puerta para no atascarse en las paredes.
-			npc.humanoid:MoveTo(house.doorOutside)
-			if flatDistance(npc.root.Position, house.doorOutside) < 3 or elapsed > 4 then
+		local inside = isInside(house, root.Position)
+		if inside or not leftHouse then
+			-- Dentro de la casa va directo al jugador; si el jugador ya salió, primero
+			-- sale por la puerta para no atascarse en las paredes.
+			if inside then
+				npc.humanoid:MoveTo(root.Position)
+			else
+				npc.humanoid:MoveTo(house.doorOutside)
+			end
+			if not inside and (flatDistance(npc.root.Position, house.doorOutside) < 3 or elapsed > 6) then
 				leftHouse = true
 			end
 		else
@@ -310,67 +323,82 @@ local function chase(house, player)
 
 	if result == "caught" and data then
 		local lost = PlayerLogic.loseLoot(data)
-		Net.notify(player, string.format("¡%s te atrapó! Perdiste %d piezas robadas.", house.ownerName, lost), "error")
+		if lost > 0 then
+			Net.notify(player, string.format("¡%s te atrapó! Perdiste %d piezas robadas.", house.ownerName, lost), "error")
+		else
+			Net.notify(player, string.format("¡%s te atrapó y te echó de su casa!", house.ownerName), "error")
+		end
 		Net.sound(player, "atrapado")
+		-- Te echa fuera de su casa
+		local character = player.Character
+		if character and character.PrimaryPart and isInside(house, character.PrimaryPart.Position) then
+			character:PivotTo(CFrame.new(house.doorOutside + Vector3.new(0, 3, 0)))
+		end
 		DataService.replicate(player)
 	elseif result == "escaped" then
-		Net.notify(player, string.format("%s dejó de perseguirte.", house.ownerName), "info")
+		Net.notify(player, string.format("%s dejó de perseguirte y volvió a dormir.", house.ownerName), "info")
 	end
 
 	npc.model:Destroy()
+	house.visitors[player] = nil
 	house.chasing = nil
 end
 
-local function startNextChase(house)
-	while #house.queue > 0 do
-		local player = table.remove(house.queue, 1)
-		local data = DataService.get(player)
-		local root = getRoot(player)
-		if
-			player.Parent
-			and data
-			and root
-			and PlayerLogic.carriedCount(data) > 0
-			and not WorldService.isInHub(root.Position)
-		then
-			house.chasing = player
-			task.spawn(chase, house, player)
-			return
+-- ¿En qué casa está una posición? (para la velocidad dentro de las casas, DEC-025)
+function HouseService.houseAt(position)
+	for _, house in houses do
+		if isInside(house, position) then
+			return house
 		end
 	end
+	return nil
 end
 
--- Revisa salidas de casas, inicia persecuciones y guarda botín en la base.
+-- Cuenta el tiempo de cada jugador dentro de cada casa, despierta al dueño a los
+-- Config.OWNER_WAKE_SECONDS (DEC-025) y guarda el botín al llegar a la base.
 local function tick()
+	local now = os.clock()
+	local roots = {}
+	for _, player in Players:GetPlayers() do
+		roots[player] = getRoot(player)
+	end
 	for _, house in houses do
-		for player in house.thieves do
-			local root = getRoot(player)
-			if not player.Parent or not root then
-				house.thieves[player] = nil
-			elseif not isInside(house, root.Position) then
-				house.thieves[player] = nil
-				local data = DataService.get(player)
-				if
-					data
-					and PlayerLogic.carriedCount(data) > 0
-					and house.chasing ~= player
-					and not table.find(house.queue, player)
-				then
-					table.insert(house.queue, player)
-				end
+		for player in house.visitors do
+			local root = roots[player]
+			if not player.Parent or not root or not isInside(house, root.Position) then
+				house.visitors[player] = nil
+			end
+		end
+		for player, root in roots do
+			if isInside(house, root.Position) and not house.visitors[player] then
+				house.visitors[player] = now
 			end
 		end
 		if not house.chasing then
-			startNextChase(house)
+			for player, enteredAt in house.visitors do
+				if now - enteredAt >= Config.OWNER_WAKE_SECONDS then
+					house.chasing = player
+					task.spawn(chase, house, player)
+					break
+				end
+			end
 		end
 	end
 
 	DataService.forEach(function(player, data)
 		if PlayerLogic.carriedCount(data) > 0 then
-			local root = getRoot(player)
+			local root = roots[player]
 			if root and WorldService.isInHub(root.Position) then
-				local saved = PlayerLogic.depositLoot(data)
-				Net.notify(player, string.format("Botín guardado: +%d piezas en tu mochila.", saved), "ok")
+				local saved, coins = PlayerLogic.depositLoot(data)
+				if coins > 0 then
+					Net.notify(
+						player,
+						string.format("Botín guardado: +%d piezas y +%s monedas.", saved, PlayerLogic.formatBig(coins)),
+						"ok"
+					)
+				else
+					Net.notify(player, string.format("Botín guardado: +%d piezas en tu mochila.", saved), "ok")
+				end
 				Net.sound(player, "guardar_botin")
 				DataService.replicate(player)
 			end
@@ -402,10 +430,11 @@ function HouseService.init()
 	npcFolder.Parent = WorldService.Folder
 
 	for zoneIndex, zone in GameData.Zones do
-		local startZ = WorldService.zoneBounds(zoneIndex)
+		local startZ, endZ = WorldService.zoneBounds(zoneIndex)
 		local zoneModel = WorldService.ZonesFolder:FindFirstChild(string.format("Zona%d_%s", zoneIndex, zone.id))
 		local houseIndex = 0
-		for _, rowZ in { startZ + 35, startZ + 95 } do
+		-- DEC-025: una fila al inicio y otra al fondo de la zona (más lejos cuanto más larga)
+		for _, rowZ in { startZ + 35, math.max(startZ + 95, endZ - 35) } do
 			for _, side in { -1, 1 } do
 				houseIndex += 1
 				buildHouse(zoneModel, zoneIndex, zone, houseIndex, rowZ, side)

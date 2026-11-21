@@ -25,6 +25,7 @@ function PlayerLogic.newData()
 		xp = 0,
 		parts = {}, -- [partId] = cantidad guardada (segura)
 		carried = {}, -- [partId] = botín robado que llevas encima; se pierde si te atrapan
+		carriedCoins = 0, -- monedas que trae el botín (DEC-025); se cobran en la base
 		watches = {}, -- [watchId] = cantidad en inventario
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
@@ -78,6 +79,7 @@ function PlayerLogic.reconcile(data)
 	data.parts = cleanCounts(data.parts, GameData.Parts)
 	-- El botín no guardado en la base se pierde al salir del juego.
 	data.carried = {}
+	data.carriedCoins = 0
 
 	-- Mascotas: nunca más equipadas que poseídas ni más del límite.
 	data.pets = cleanCounts(data.pets, GameData.Pets)
@@ -312,26 +314,92 @@ function PlayerLogic.petMultiplier(data)
 	return 1 + bonus
 end
 
--- Multiplicador total: mascotas × pase Corredor VIP.
+-- Multiplicador total: mascotas × pase Corredor VIP × mejora de Velocidad (DEC-025).
 function PlayerLogic.speedMultiplier(data)
 	local multiplier = PlayerLogic.petMultiplier(data)
 	if PlayerLogic.hasPass(data, "runner") then
 		multiplier *= GameData.GamePasses.runner.speedMultiplier
 	end
+	multiplier *= 1 + PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
 	return multiplier
 end
 
--- Velocidad base: inicial + mejoras compradas + velocidad entrenada.
+-- Velocidad base (estadística): la inicial + la entrenada (DEC-025).
 function PlayerLogic.baseSpeed(data)
-	return Config.BASE_WALKSPEED
-		+ PlayerLogic.upgradeLevel(data, "speed") * GameData.Upgrades.speed.step
-		+ data.trained
+	return Config.START_SPEED + data.trained
 end
 
--- Velocidad = base × multiplicadores, redondeada a 1 decimal y con tope de seguridad.
+-- Velocidad (estadística) = base × multiplicadores. Es la que abre zonas (DEC-025).
+function PlayerLogic.speed(data)
+	return PlayerLogic.baseSpeed(data) * PlayerLogic.speedMultiplier(data)
+end
+
+-- Velocidad física para una velocidad estadística: curva por tramos en escala
+-- logarítmica (Config.SPEED_CURVE) con tope Config.MAX_WALKSPEED (DEC-025).
+function PlayerLogic.runSpeed(stat)
+	local curve = Config.SPEED_CURVE
+	if stat <= curve[1][1] then
+		return curve[1][2] * math.max(0, stat) / curve[1][1]
+	end
+	local physical = curve[#curve][2]
+	for index = 1, #curve - 1 do
+		local a, b = curve[index], curve[index + 1]
+		if stat <= b[1] then
+			local t = (math.log10(stat) - math.log10(a[1])) / (math.log10(b[1]) - math.log10(a[1]))
+			physical = a[2] + (b[2] - a[2]) * t
+			break
+		end
+	end
+	physical = math.max(Config.BASE_WALKSPEED, physical)
+	return math.min(Config.MAX_WALKSPEED, math.floor(physical * 10 + 0.5) / 10)
+end
+
+-- Velocidad física en las zonas (la más alta que puede alcanzar).
 function PlayerLogic.walkSpeed(data)
-	local speed = PlayerLogic.baseSpeed(data) * PlayerLogic.speedMultiplier(data)
-	return math.min(Config.MAX_WALKSPEED, math.floor(speed * 10 + 0.5) / 10)
+	return PlayerLogic.runSpeed(PlayerLogic.speed(data))
+end
+
+-- Velocidad física en la base: la que el jugador eligió en la barra, con tope (DEC-025).
+function PlayerLogic.lobbySpeed(data)
+	local chosen = PlayerLogic.getSetting(data, "runSpeed") or Config.LOBBY_MAX_WALKSPEED
+	return math.min(PlayerLogic.walkSpeed(data), Config.LOBBY_MAX_WALKSPEED, math.max(Config.BASE_WALKSPEED, chosen))
+end
+
+-- Velocidad física dentro de una casa: más lenta para buscar con comodidad (DEC-025).
+function PlayerLogic.houseSpeed(data)
+	return math.min(PlayerLogic.walkSpeed(data), Config.HOUSE_WALKSPEED)
+end
+
+-- Velocidad del dueño de una zona fuera de su casa (DEC-025).
+function PlayerLogic.ownerSpeed(zoneIndex)
+	local zone = GameData.Zones[zoneIndex]
+	if not zone then
+		return Config.OWNER_HOUSE_SPEED
+	end
+	return PlayerLogic.runSpeed(zone.minSpeed) * Config.OWNER_SPEED_FACTOR
+end
+
+-- Número grande corto para la interfaz: 950 · 1,5K · 14M · 2,8B · 99,9T (DEC-025).
+local BIG_SUFFIXES = { { 1e12, "T" }, { 1e9, "B" }, { 1e6, "M" }, { 1e3, "K" } }
+function PlayerLogic.formatBig(value)
+	value = tonumber(value) or 0
+	for _, entry in BIG_SUFFIXES do
+		if math.abs(value) >= entry[1] then
+			local short = value / entry[1]
+			local text
+			if short >= 100 then
+				text = string.format("%d", math.floor(short))
+			else
+				text = string.format("%.1f", math.floor(short * 10) / 10):gsub("%.0$", "")
+			end
+			return (text:gsub("%.", ",")) .. entry[2]
+		end
+	end
+	if value % 1 ~= 0 and math.abs(value) < 100 then
+		local text = string.format("%.1f", math.floor(value * 10) / 10):gsub("%.0$", "")
+		return (text:gsub("%.", ","))
+	end
+	return tostring(math.floor(value))
 end
 
 -- Multiplicador de monedas por ventas y museo (pase VIP).
@@ -348,12 +416,12 @@ function PlayerLogic.canEnterZone(data, zoneIndex)
 	if not zone then
 		return false
 	end
-	return PlayerLogic.walkSpeed(data) >= zone.minSpeed
+	return PlayerLogic.speed(data) >= zone.minSpeed
 end
 
--- Zona más lejana a la que puede entrar.
+-- Zona más lejana a la que puede entrar (0 si todavía ninguna).
 function PlayerLogic.highestZone(data)
-	local highest = 1
+	local highest = 0
 	for index in GameData.Zones do
 		if PlayerLogic.canEnterZone(data, index) and index > highest then
 			highest = index
@@ -383,7 +451,8 @@ end
 
 -- Multiplicador de entrenamiento de la caminadora del plot (DEV-008).
 function PlayerLogic.treadmillMultiplier(data)
-	local multiplier = 1 + PlayerLogic.upgradeLevel(data, "treadmill") * GameData.Upgrades.treadmill.step
+	-- DEC-025: cada nivel de la mejora multiplica por step (×2)
+	local multiplier = GameData.Upgrades.treadmill.step ^ PlayerLogic.upgradeLevel(data, "treadmill")
 	if PlayerLogic.hasPass(data, "turboTreadmill") then
 		multiplier *= GameData.TURBO_TREADMILL_FACTOR
 	end
@@ -513,6 +582,8 @@ end
 function PlayerLogic.tutorialValue(data, stat)
 	if stat == "trained10" then
 		return math.floor(data.trained * 10 + 1e-6)
+	elseif stat == "speed" then
+		return math.floor(PlayerLogic.speed(data) + 1e-6) -- DEC-025
 	elseif stat == "museum" then
 		return PlayerLogic.museumCount(data)
 	elseif stat == "upgrades" then
@@ -583,8 +654,12 @@ function PlayerLogic.buildView(data, now)
 		parts = table.clone(data.parts),
 		carried = table.clone(data.carried),
 		carriedCount = PlayerLogic.carriedCount(data),
+		carriedCoins = data.carriedCoins,
 		freeSpace = PlayerLogic.freeSpace(data),
 		walkSpeed = PlayerLogic.walkSpeed(data),
+		speed = PlayerLogic.speed(data), -- estadística que abre zonas (DEC-025)
+		lobbySpeed = PlayerLogic.lobbySpeed(data),
+		trainPerSecond = Config.TRAIN_RATE * PlayerLogic.treadmillMultiplier(data),
 		highestZone = PlayerLogic.highestZone(data),
 		watches = table.clone(data.watches),
 		museum = table.clone(data.museum),
@@ -656,8 +731,9 @@ end
 
 -- Roba una pieza en una casa: va al botín que llevas encima (DEV-003).
 -- bonusRoll en [0, 1): si es menor que la suerte, roba 2 (si caben).
+-- lootCoins (opcional): monedas que trae cada pieza en esa zona (DEC-025).
 -- Devuelve ok, mensaje, cantidad.
-function PlayerLogic.stealPart(data, partId, bonusRoll)
+function PlayerLogic.stealPart(data, partId, bonusRoll, lootCoins)
 	local part = GameData.Parts[partId]
 	if not part then
 		return false, "Pieza desconocida.", 0
@@ -678,11 +754,23 @@ function PlayerLogic.stealPart(data, partId, bonusRoll)
 		amount = 2
 	end
 	data.carried[partId] = (data.carried[partId] or 0) + amount
+	local coins = math.max(0, math.floor(lootCoins or 0)) * amount
+	data.carriedCoins = (data.carriedCoins or 0) + coins
 	local message = string.format("Robaste %d %s (%s). ¡Llévalo a la base!", amount, part.name, part.rarity)
+	if coins > 0 then
+		message = string.format(
+			"Robaste %d %s (%s) y %s monedas. ¡Llévalo a la base!",
+			amount,
+			part.name,
+			part.rarity,
+			PlayerLogic.formatBig(coins)
+		)
+	end
 	return true, message, amount
 end
 
--- Guarda el botín al llegar a la base. Devuelve cuántas piezas se guardaron.
+-- Guarda el botín al llegar a la base. Devuelve las piezas guardadas y las
+-- monedas cobradas (con el multiplicador de monedas; DEC-025).
 function PlayerLogic.depositLoot(data)
 	local total = 0
 	for partId, amount in data.carried do
@@ -691,13 +779,20 @@ function PlayerLogic.depositLoot(data)
 	end
 	data.carried = {}
 	data.stats.collected += total
-	return total
+	local coins = math.floor((data.carriedCoins or 0) * PlayerLogic.coinMultiplier(data))
+	data.carriedCoins = 0
+	if coins > 0 then
+		data.coins += coins
+		data.stats.earned += coins
+	end
+	return total, coins
 end
 
 -- El dueño te atrapó (o caíste): se pierde el botín. Devuelve cuántas piezas se perdieron.
 function PlayerLogic.loseLoot(data)
 	local total = PlayerLogic.carriedCount(data)
 	data.carried = {}
+	data.carriedCoins = 0
 	return total
 end
 
@@ -1099,7 +1194,12 @@ function PlayerLogic.grantProduct(data, productId, roll)
 	end
 	if product.trained then
 		data.trained = math.min(Config.MAX_TRAINED, data.trained + product.trained)
-		return true, string.format("Compra recibida: velocidad entrenada %.1f/%d.", data.trained, Config.MAX_TRAINED)
+		return true, string.format("Compra recibida: +%s de velocidad entrenada.", PlayerLogic.formatBig(product.trained))
+	end
+	if product.trainSeconds then
+		-- DEC-025: minutos de entrenamiento al instante, con el multiplicador de tu caminadora
+		local gained = PlayerLogic.trainTick(data, product.trainSeconds)
+		return true, string.format("Compra recibida: +%s de velocidad entrenada.", PlayerLogic.formatBig(gained))
 	end
 	if product.spins then
 		data.spin.extra = math.min(Config.MAX_EXTRA_SPINS, data.spin.extra + product.spins)
@@ -1130,7 +1230,12 @@ function PlayerLogic.giveReward(data, reward)
 	end
 	if reward.trained then
 		data.trained = math.min(Config.MAX_TRAINED, data.trained + reward.trained)
-		return true, string.format("+%d de velocidad entrenada", reward.trained)
+		return true, string.format("+%s de velocidad entrenada", PlayerLogic.formatBig(reward.trained))
+	end
+	if reward.trainSeconds then
+		-- DEC-025: tiempo de entrenamiento al instante con el multiplicador de tu caminadora
+		local gained = PlayerLogic.trainTick(data, reward.trainSeconds)
+		return true, string.format("+%s de velocidad entrenada", PlayerLogic.formatBig(gained))
 	end
 	local capsule = GameData.Eggs[reward.capsule]
 	if capsule then
@@ -1147,7 +1252,10 @@ function PlayerLogic.rewardText(reward)
 		return string.format("%d monedas", reward.coins)
 	end
 	if reward.trained then
-		return string.format("+%d de velocidad", reward.trained)
+		return string.format("+%s de velocidad", PlayerLogic.formatBig(reward.trained))
+	end
+	if reward.trainSeconds then
+		return string.format("%d s de entrenamiento", reward.trainSeconds)
 	end
 	local capsule = GameData.Eggs[reward.capsule]
 	return string.format("%d× %s", reward.amount or 1, capsule and capsule.name or "?")
@@ -1303,6 +1411,9 @@ function PlayerLogic.validSetting(setting, value)
 	end
 	if setting.kind == "toggle" then
 		return value == 0 or value == 1
+	end
+	if setting.kind == "range" then
+		return value >= setting.min and value <= setting.max -- DEC-025
 	end
 	return value >= 1 and value <= #setting.options
 end

@@ -193,8 +193,8 @@ GameData.Products = {
 		id = "instantTraining",
 		robux = 49,
 		name = "Entrenamiento instantáneo",
-		desc = "+5 de velocidad entrenada",
-		trained = 5,
+		desc = "5 minutos de entrenamiento al instante (con el multiplicador de tu caminadora)",
+		trainSeconds = 300,
 	},
 	goldEgg = {
 		id = "goldEgg",
@@ -225,6 +225,8 @@ GameData.Settings = {
 	{ id = "guide", name = "Guía del tutorial", kind = "toggle", default = 1 },
 	{ id = "toasts", name = "Notificaciones", kind = "toggle", default = 1 },
 	{ id = "scale", name = "Tamaño de la interfaz", kind = "choice", options = { "Pequeño", "Normal", "Grande" }, default = 2 },
+	-- DEC-025: velocidad al caminar por la base (la barra del botón «Velocidad» del HUD)
+	{ id = "runSpeed", name = "Velocidad en la base", kind = "range", min = 16, max = 50, default = 50 },
 }
 
 -- Cápsulas de mascota (DEV-009; antes «huevos»; los ids se conservan).
@@ -358,11 +360,11 @@ GameData.Upgrades = {
 	speed = {
 		id = "speed",
 		name = "Velocidad",
-		desc = "+2 de velocidad (abre zonas más ricas)",
+		desc = "+25% de velocidad por nivel (abre zonas más ricas)",
 		maxLevel = 10,
 		baseCost = 150,
-		growth = 1.8,
-		step = 2,
+		growth = 6,
+		step = 0.25, -- DEC-025: multiplicador 1 + nivel × step
 	},
 	jump = {
 		id = "jump",
@@ -396,11 +398,11 @@ GameData.Upgrades = {
 	treadmill = {
 		id = "treadmill",
 		name = "Caminadora del plot",
-		desc = "+0.5 al multiplicador de entrenamiento de tu caminadora",
-		maxLevel = 10,
+		desc = "Duplica lo que entrena tu caminadora (×2 por nivel)",
+		maxLevel = 40,
 		baseCost = 400,
-		growth = 1.75,
-		step = 0.5,
+		growth = 2.2,
+		step = 2, -- DEC-025: multiplicador step ^ nivel
 	},
 }
 -- Mejoras que se compran en la Tienda
@@ -429,21 +431,26 @@ GameData.SpinPrizes = {
 	{ label = "Cápsula de Latón", weight = 20, reward = { capsule = "brass", amount = 1 } },
 	{ label = "1.500 monedas", weight = 12, reward = { coins = 1500 } },
 	{ label = "Cápsula de Plata", weight = 8, reward = { capsule = "silver", amount = 1 } },
-	{ label = "+1 de velocidad entrenada", weight = 4, reward = { trained = 1 } },
+	{ label = "1 minuto de entrenamiento", weight = 4, reward = { trainSeconds = 60 } },
 	{ label = "Cápsula de Oro", weight = 1, reward = { capsule = "gold", amount = 1 } },
 }
 
--- Zonas de robo (DEV-003, PROPUESTA). Se recorren en línea recta desde la base.
--- minSpeed: velocidad necesaria para cruzar la puerta de la zona y robar en ella
--- ownerSpeed: velocidad del dueño que te persigue (algo menor que minSpeed:
---   quien apenas cumple el mínimo puede escapar si no se deja alcanzar)
+-- Zonas de robo (DEC-025). Se recorren en línea recta desde la base y cada una es
+-- un 35 % más larga que la anterior (Config.ZONE_DEPTH_GROWTH).
+-- minSpeed: velocidad (estadística) para cruzar la puerta y robar en la zona
+-- lootCoins: monedas que trae cada pieza robada (se cobran al llegar a la base)
+-- houseAsset: modelo de casa de ReplicatedStorage/Assets
 -- weights: probabilidad relativa de cada pieza en las casas de la zona
+-- El dueño corre como la velocidad física de minSpeed × Config.OWNER_SPEED_FACTOR.
+-- Con GameData.NEXT_WORLD_SPEED se abrirá un mundo nuevo en una actualización futura.
+GameData.NEXT_WORLD_SPEED = 1e14
 GameData.Zones = {
 	{
 		id = "humble",
 		name = "Barrio Humilde",
-		minSpeed = 0,
-		ownerSpeed = 14,
+		minSpeed = 100,
+		lootCoins = 10,
+		houseAsset = "mdl_casa_z1",
 		color = Color3.fromRGB(150, 120, 90),
 		owners = { "Don Tomás", "Doña Rosa", "Don Pepe", "Doña Lupe" },
 		weights = { gear = 40, spring = 30, screw = 30, crystal = 4, strap = 4 },
@@ -451,8 +458,9 @@ GameData.Zones = {
 	{
 		id = "worker",
 		name = "Barrio Obrero",
-		minSpeed = 18,
-		ownerSpeed = 17,
+		minSpeed = 1e3,
+		lootCoins = 80,
+		houseAsset = "mdl_casa_z2",
 		color = Color3.fromRGB(170, 110, 80),
 		owners = { "Señor Ramírez", "Señora Ortiz", "Señor Vega", "Señora Luna" },
 		weights = { gear = 30, spring = 25, screw = 25, crystal = 12, strap = 10, ruby = 1 },
@@ -460,8 +468,9 @@ GameData.Zones = {
 	{
 		id = "residential",
 		name = "Zona Residencial",
-		minSpeed = 22,
-		ownerSpeed = 21,
+		minSpeed = 1e4,
+		lootCoins = 640,
+		houseAsset = "mdl_casa_z3",
 		color = Color3.fromRGB(200, 200, 205),
 		owners = { "Licenciado Mora", "Doctora Paz", "Ingeniero Soto", "Arquitecta Real" },
 		weights = { gear = 20, spring = 20, screw = 15, crystal = 20, strap = 18, ruby = 5, diamond = 0.5 },
@@ -469,8 +478,9 @@ GameData.Zones = {
 	{
 		id = "mansions",
 		name = "Mansiones",
-		minSpeed = 28,
-		ownerSpeed = 26,
+		minSpeed = 1e5,
+		lootCoins = 5120,
+		houseAsset = "mdl_casa_z4",
 		color = Color3.fromRGB(235, 225, 200),
 		owners = { "Magnate Duarte", "Condesa Ibarra", "Barón Salcedo", "Duquesa Alba" },
 		weights = { gear = 10, spring = 10, screw = 10, crystal = 25, strap = 25, ruby = 14, diamond = 3 },
@@ -478,11 +488,82 @@ GameData.Zones = {
 	{
 		id = "millionaires",
 		name = "Colina de los Millonarios",
-		minSpeed = 34,
-		ownerSpeed = 32,
+		minSpeed = 1e6,
+		lootCoins = 40960,
+		houseAsset = "mdl_casa_z5",
 		color = Color3.fromRGB(240, 200, 90),
 		owners = { "Sir Oro", "Lady Platino", "Rey del Tiempo", "Reina del Cuarzo" },
 		weights = { gear = 5, spring = 5, screw = 5, crystal = 20, strap = 20, ruby = 30, diamond = 10 },
+	},
+	{
+		id = "yachts",
+		name = "Puerto de los Yates",
+		minSpeed = 1.4e7,
+		lootCoins = 327680,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(90, 170, 220),
+		owners = { "Capitán Brisa", "Almirante Coral", "Doña Marea", "Don Velero" },
+		weights = { gear = 4, spring = 4, screw = 4, crystal = 20, strap = 20, ruby = 32, diamond = 12 },
+	},
+	{
+		id = "financial",
+		name = "Distrito Financiero",
+		minSpeed = 2e8,
+		lootCoins = 2621440,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(120, 130, 150),
+		owners = { "Banquero Cifuentes", "Inversora Plata", "Corredor Bolsa", "Directora Valor" },
+		weights = { gear = 3, spring = 3, screw = 3, crystal = 18, strap = 18, ruby = 34, diamond = 15 },
+	},
+	{
+		id = "island",
+		name = "Isla Privada",
+		minSpeed = 2.8e9,
+		lootCoins = 20971520,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(80, 190, 150),
+		owners = { "Magnate Palmera", "Baronesa Arena", "Señor Laguna", "Dama Coral" },
+		weights = { gear = 2, spring = 2, screw = 2, crystal = 16, strap = 16, ruby = 36, diamond = 18 },
+	},
+	{
+		id = "crystalcity",
+		name = "Ciudad de Cristal",
+		minSpeed = 4e10,
+		lootCoins = 167772160,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(170, 220, 240),
+		owners = { "Conde Prisma", "Duquesa Vidrio", "Marqués Reflejo", "Lady Cuarzo" },
+		weights = { gear = 2, spring = 2, screw = 2, crystal = 14, strap = 14, ruby = 36, diamond = 22 },
+	},
+	{
+		id = "goldenvalley",
+		name = "Valle Dorado",
+		minSpeed = 5.6e11,
+		lootCoins = 1342177280,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(230, 180, 60),
+		owners = { "Barón Lingote", "Reina Áurea", "Príncipe Quilate", "Dama Pepita" },
+		weights = { gear = 1, spring = 1, screw = 1, crystal = 12, strap = 12, ruby = 36, diamond = 27 },
+	},
+	{
+		id = "imperial",
+		name = "Palacio Imperial",
+		minSpeed = 7.5e12,
+		lootCoins = 10737418240,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(150, 60, 140),
+		owners = { "Emperador Segundero", "Emperatriz Minuta", "Gran Visir Hora", "Archiduque Tic" },
+		weights = { gear = 1, spring = 1, screw = 1, crystal = 10, strap = 10, ruby = 35, diamond = 32 },
+	},
+	{
+		id = "timecitadel",
+		name = "Ciudadela del Tiempo",
+		minSpeed = 9.99e13,
+		lootCoins = 85899345920,
+		houseAsset = "mdl_casa_z5",
+		color = Color3.fromRGB(60, 50, 110),
+		owners = { "Guardián del Tiempo", "Señora del Reloj", "Maestro Cronos", "Dama Eternidad" },
+		weights = { gear = 1, spring = 1, screw = 1, crystal = 8, strap = 8, ruby = 33, diamond = 40 },
 	},
 }
 
@@ -493,9 +574,9 @@ GameData.Zones = {
 GameData.Tutorial = {
 	{
 		id = "train",
-		text = "Gana velocidad: entrena en la caminadora delante de tu plot (+0.5)",
-		stat = "trained10",
-		target = 5,
+		text = "Entrena en la caminadora de tu plot hasta tener 100 de velocidad: abre la zona 1",
+		stat = "speed",
+		target = 100,
 		reward = 20,
 		guide = "treadmill",
 	},
