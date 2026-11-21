@@ -542,3 +542,14 @@ Reglas:
   - Tarjeta «Estado» plegable, plegada de inicio en pantallas táctiles.
   - Verificación en Play: 53/53 y Plan de Pruebas §34.
 - **2026-11-21 · ART-016 · Paso 5 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 37**. No se publicó.
+
+## 32. ART-018 — Arte de las piezas de reloj y de los 18 relojes
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-21 · ART-018 · Paso 1 — Bocetos para validar el estilo** ([[PROMPT_PIEZAS_RELOJ_ZADIEL]] §9.2 y §11.4). Nuevo `art/blender/scripts/piezas_reloj.py`: construye las 4 piezas (caja, calibre, esfera y manecillas) con los materiales PBR ya existentes y genera una lámina por reloj con las piezas, el reloj armado y las 12 rarezas.
+  - `art/referencias/boceto_lunamaster.png` (Omigo Lunamaster, zona 1): caja 772, calibre mecánico 740, esfera 688, manecillas 72 y armado 2.272 triángulos.
+  - `art/referencias/boceto_pocket.png` (reloj de bolsillo): caja 548, calibre 740, esfera 556, manecillas 72 y armado 1.916.
+  - Todo dentro de §5 (pieza ≤ 800, armado ≤ 3.000). Diseños por tipo de reloj, sin logos, textos ni coronas de marcas.
+  - **Esperando a que Jhonn los revise antes de modelar el resto** (§9.2).
+

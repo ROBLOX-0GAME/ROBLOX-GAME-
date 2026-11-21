@@ -1349,7 +1349,8 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:** los de §10 del prompt.
 
-- [ ] Bocetos del Lunamaster y del bolsillo en `art/referencias/`, revisados por Jhonn.
+- [x] Bocetos del Lunamaster y del bolsillo en `art/referencias/` (`boceto_lunamaster.png`, `boceto_pocket.png`).
+- [ ] Jhonn revisa los bocetos (requisito antes de modelar el resto).
 - [ ] 18 relojes × 4 piezas y su modelo armado, dentro de §5.
 - [ ] Iconos de §6.3.
 - [ ] Efectos `vfx_armar_<rareza>` (12) y `vfx_reloj_perfecto`.
