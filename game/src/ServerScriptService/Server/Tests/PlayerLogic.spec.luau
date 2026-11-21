@@ -116,19 +116,29 @@ return function(t)
 	end)
 
 	t.test("DEC-028: valores, mejor reloj y relojes antiguos", function()
-		t.eq(#GameData.WatchOrder, 16, "16 relojes (6 generales y 10 exclusivos)")
+		t.eq(#GameData.WatchOrder, 18, "18 relojes (6 generales y 12 de lujo, DEV-026)")
 		local exclusive = 0
 		for _, watchId in GameData.WatchOrder do
 			local watch = GameData.Watches[watchId]
 			t.ok(watch.base > 0 and watch.caliber ~= nil, watch.name .. " tiene valor y calibre")
 			if watch.zone then
 				exclusive += 1
-				t.ok(watch.zone >= 3 and watch.zone <= 12, watch.name .. ": exclusivo de las zonas 3 a 12")
+				t.ok(watch.zone >= 1 and watch.zone <= 12, watch.name .. ": exclusivo de una zona de 1 a 12")
+				t.ok(string.find(watch.name, "&") == nil, watch.name .. ": sin «&» (rompe el texto enriquecido)")
 			end
 		end
-		t.eq(exclusive, 10, "un reloj exclusivo por zona desde la 3")
-		local best = PlayerLogic.watchInfo(PlayerLogic.watchKey("tourbillon", 12, 0))
+		t.eq(exclusive, 12, "un reloj de lujo exclusivo en cada zona")
+		local zones = {}
+		for _, watchId in GameData.WatchOrder do
+			local zone = GameData.Watches[watchId].zone
+			if zone then
+				t.ok(not zones[zone], "un solo exclusivo en la zona " .. zone)
+				zones[zone] = true
+			end
+		end
+		local best = PlayerLogic.watchInfo(PlayerLogic.watchKey("astronomia", 12, 0))
 		t.ok(best.sell >= 1.5e12 and best.sell <= 1.95e12, "el mejor reloj vale entre 1.500T y 1.950T")
+		t.ok(PlayerLogic.watchInfo(PlayerLogic.watchKey("rm11", 3, 1)) ~= nil, "lee claves de relojes con dígitos (rm11)")
 		local old = PlayerLogic.watchInfo("pocket")
 		t.ok(old ~= nil and old.rarity == 1 and old.foreign == 0, "un reloj guardado antes es Común y sin ajenas")
 		local data = PlayerLogic.reconcile({ watches = { pocket = 2, ["chrono|3|1"] = 1, ["malo|1|0"] = 4 } })
@@ -154,7 +164,7 @@ return function(t)
 		local exclusiveSeen, foreignExclusive = false, false
 		for _ = 1, 500 do
 			local watchId = PlayerLogic.parsePieceKey(PlayerLogic.rollPiece(10, 0, nextNumber))
-			if watchId == "nautil" then
+			if watchId == "tourbillon" then
 				exclusiveSeen = true
 			elseif GameData.Watches[watchId].zone then
 				foreignExclusive = true

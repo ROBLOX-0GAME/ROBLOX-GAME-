@@ -325,14 +325,22 @@ end
 
 -- Parte de una estación por id (etiqueta "Station" que pone el servidor).
 -- Las estaciones de los plots (DEV-008) llevan OwnerUserId: solo vale la propia.
+-- Estación con ese id: primero la del plot propio. Solo si no hay ninguna propia,
+-- una sin dueño (las de la plaza). DEV-026: antes podía devolver la mesa de un
+-- plot libre y lejano, y el control de distancia cerraba el panel de golpe.
 local function stationById(stationId)
+	local free = nil
 	for _, part in CollectionService:GetTagged("Station") do
-		local owner = part:GetAttribute("OwnerUserId")
-		if part:GetAttribute("StationId") == stationId and (owner == nil or owner == player.UserId) then
-			return part
+		if part:GetAttribute("StationId") == stationId then
+			local owner = part:GetAttribute("OwnerUserId")
+			if owner == player.UserId then
+				return part
+			elseif owner == nil and not free then
+				free = part
+			end
 		end
 	end
-	return nil
+	return free
 end
 
 local function formatTime(seconds)

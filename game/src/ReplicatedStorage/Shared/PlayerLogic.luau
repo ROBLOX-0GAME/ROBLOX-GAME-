@@ -674,7 +674,7 @@ function PlayerLogic.rarityUpChance(zoneIndex, luck)
 end
 
 -- Tira una pieza para una casa. rng() devuelve números en [0, 1).
--- Desde la zona 3 puede salir el reloj exclusivo de la zona; si no, uno general.
+-- Puede salir el reloj exclusivo de la zona (DEV-026: uno en cada zona); si no, uno general.
 function PlayerLogic.rollPiece(zoneIndex, luck, rng)
 	local exclusive = nil
 	for _, watchId in GameData.WatchOrder do
@@ -723,7 +723,7 @@ function PlayerLogic.parseWatchKey(key)
 	if GameData.Watches[key] then
 		return key, 1, 0
 	end
-	local id, r, f = key:match("^(%a+)|(%d+)|(%d+)$")
+	local id, r, f = key:match("^([%w_]+)|(%d+)|(%d+)$") -- DEV-026: ids con dígitos (rm11)
 	r, f = tonumber(r), tonumber(f)
 	if not id or not GameData.Watches[id] or not r or not GameData.Rarities[r] or not f or f > #GameData.PieceClasses then
 		return nil

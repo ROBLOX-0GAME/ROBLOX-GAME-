@@ -37,17 +37,19 @@ AssetLibrary.WATCH_ASSETS = {
 	legacy = "mdl_reloj_legado",
 	royal = "mdl_reloj_real",
 	millionaire = "mdl_reloj_millonario",
-	-- DEC-028: relojes exclusivos por zona (arte ART-018)
-	fechador = "mdl_reloj_fechador",
+	-- DEV-026: 12 relojes de lujo, uno exclusivo por zona (arte ART-018)
 	lunamaster = "mdl_reloj_lunamaster",
-	tanque = "mdl_reloj_tanque",
-	submar = "mdl_reloj_submar",
-	roblereal = "mdl_reloj_roblereal",
-	luminosa = "mdl_reloj_luminosa",
-	fusion = "mdl_reloj_fusion",
+	santo = "mdl_reloj_santo",
+	reverso = "mdl_reloj_reverso",
+	daytona = "mdl_reloj_daytona",
+	overseas = "mdl_reloj_overseas",
 	nautil = "mdl_reloj_nautil",
-	patrimonio = "mdl_reloj_patrimonio",
+	roblereal = "mdl_reloj_roblereal",
+	bigbang = "mdl_reloj_bigbang",
+	rm11 = "mdl_reloj_rm11",
 	tourbillon = "mdl_reloj_tourbillon",
+	granmaestro = "mdl_reloj_granmaestro",
+	astronomia = "mdl_reloj_astronomia",
 }
 AssetLibrary.PET_ASSETS = {
 	mouse = "mdl_mascota_raton",
