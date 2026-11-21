@@ -259,3 +259,36 @@ Resultado real en ART-013: 36 modelos, 36 MeshParts con paleta, 0 faltantes.
 Script de montaje: el de ART-013 con estas medidas (`REAL`).
 
 **Permisos de los audios (ART-016, BUG-004):** los 10 `sfx_*` son de zadiel799 y tienen permiso de uso (`Use`) para el universo 10778093657, concedido con Open Cloud el 2026-11-20. Si se sube un audio nuevo desde otra cuenta que no sea la dueña de la experiencia, hay que repetirlo: `PATCH /asset-permissions-api/v1/assets/permissions` con `{"subjectType":"Universe","subjectId":"10778093657","action":"Use","requests":[{"assetId":…}]}` (alcance `asset-permissions:write`). Las imágenes y los modelos no lo necesitan.
+
+## Piezas de reloj y 18 relojes armados (ART-018)
+
+> ✅ **Subido y montado el 2026-11-21 (ART-018).** 18 FBX `rlj_<reloj>.fbx` subidos a zadiel799, **18/18 Approved**. Cada FBX lleva las 4 piezas en su sitio, con mallas `Clase__material`. En Studio se repartieron en **72 piezas** `pz_<reloj>_<case|movement|dial|hands>` y **18 relojes armados** `mdl_reloj_<reloj>` (los nombres de `AssetLibrary.WATCH_ASSETS`), dentro de `ReplicatedStorage/Assets`.
+
+| Reloj | Asset ID (FBX) | Reloj armado |
+|---|---|---|
+| `pocket` | 122075146822653 | `mdl_reloj_bolsillo` |
+| `wrist` | 136442919396877 | `mdl_reloj_pulsera` |
+| `chrono` | 132400118443244 | `mdl_reloj_cronografo` |
+| `legacy` | 140130676200033 | `mdl_reloj_legado` |
+| `royal` | 102743389166721 | `mdl_reloj_real` |
+| `millionaire` | 91604027658913 | `mdl_reloj_millonario` |
+| `lunamaster` | 109177387290300 | `mdl_reloj_lunamaster` |
+| `santo` | 73032003740690 | `mdl_reloj_santo` |
+| `reverso` | 72214014619639 | `mdl_reloj_reverso` |
+| `daytona` | 73836400208507 | `mdl_reloj_daytona` |
+| `overseas` | 102020801808972 | `mdl_reloj_overseas` |
+| `nautil` | 116531465787753 | `mdl_reloj_nautil` |
+| `roblereal` | 125278886140947 | `mdl_reloj_roblereal` |
+| `bigbang` | 84014453689821 | `mdl_reloj_bigbang` |
+| `rm11` | 135798911304275 | `mdl_reloj_rm11` |
+| `tourbillon` | 91932359220386 | `mdl_reloj_tourbillon` |
+| `granmaestro` | 137765712599239 | `mdl_reloj_granmaestro` |
+| `astronomia` | 127378302583626 | `mdl_reloj_astronomia` |
+
+**Montaje:**
+- Escala ×0,01, piezas ancladas, `RenderFidelity = Automatic` y un `SurfaceAppearance` por material (los 14 mapas PBR de arriba; sin texturas nuevas). Cristal con `Transparency = 0,8`.
+- **Orientación:** el importador dio a cada malla una orientación torcida (−76,9°, 90°, 90°). Se giró cada modelo hasta dejarla en 0 y el `PivotOffset` de su `PrimaryPart` quedó recto y en el centro. Si no, `AssetLibrary.dress` (que usa `PivotTo`) los vuelve a tumbar. Resultado: frente a −Z y corona a la derecha vista de frente.
+- **Contrato de §7.3:** piezas con los atributos `Clase` (Caja, Calibre, Esfera o Manecillas), `Reloj`, `Rareza` («Común», el código la cambia) y, en los calibres, `TipoCalibre`. Relojes armados con los grupos `Caja`, `Calibre`, `Esfera` y `Manecillas` y los `Attachment` `Exp_Caja`, `Exp_Calibre`, `Exp_Esfera` y `Exp_Manecillas` en escalera de 1,5 studs sobre el pivote.
+- **Falta del contrato:** el rotor y los engranajes no son mallas separadas (van unidos por material), así que todavía no se pueden girar por separado.
+- Los 6 relojes generales anteriores (ART-006) siguen en la place, renombrados `mdl_reloj_*_art006`, por si hay que volver a ellos.
+- Triángulos: piezas de 72 a 796 y armados de 748 a 2.272 (presupuesto de §5: 800 y 3.000).
