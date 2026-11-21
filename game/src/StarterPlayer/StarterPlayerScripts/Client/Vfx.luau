@@ -1,5 +1,5 @@
 --[[
-	Vfx — efectos visuales breves, solo en el cliente (ART-015, propuesta DEC-024).
+	Vfx — efectos visuales breves, solo en el cliente (ART-015, propuesta DEC-025).
 
 	Refuerzan acciones que ya existen; no deciden nada ni hablan con el servidor:
 	  - Vfx.onAction(action, result): la acción pedida por la interfaz salió bien

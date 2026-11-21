@@ -381,7 +381,7 @@ Play en la place oficial (versión 17) el 2026-11-20 con los IDs de ART-013 en `
 | `buyPass` con la cuenta dueña | Manual (Studio) | **Ejecutada: «Ya tienes el pase»**, porque el creador de la experiencia posee sus pases. Falta probar la compra con otra cuenta en un servidor real |
 | `GetProductInfo` de Entrenamiento ×512 y Bolsa | Manual (Studio) | **Ejecutada: 1.199 R$ en venta y 25 R$** |
 
-## 26. Pruebas de ART-015 (presentación visual, propuesta DEC-024)
+## 26. Pruebas de ART-015 (presentación visual, propuesta DEC-025)
 
 Play en la place oficial el 2026-11-20, después de cargar los 8 scripts de `main` (`0b92ac5`): base comprobada y suma de control de cada resultado. Todavía sin guardar en Roblox.
 

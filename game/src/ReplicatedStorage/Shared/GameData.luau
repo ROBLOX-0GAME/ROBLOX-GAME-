@@ -225,7 +225,7 @@ GameData.Settings = {
 	{ id = "guide", name = "Guía del tutorial", kind = "toggle", default = 1 },
 	{ id = "toasts", name = "Notificaciones", kind = "toggle", default = 1 },
 	{ id = "scale", name = "Tamaño de la interfaz", kind = "choice", options = { "Pequeño", "Normal", "Grande" }, default = 2 },
-	-- DEC-025: velocidad al caminar por la base (la barra del botón «Velocidad» del HUD)
+	-- DEC-024: velocidad al caminar por la base (la barra del botón «Velocidad» del HUD)
 	{ id = "runSpeed", name = "Velocidad en la base", kind = "range", min = 16, max = 50, default = 50 },
 }
 
@@ -364,7 +364,7 @@ GameData.Upgrades = {
 		maxLevel = 10,
 		baseCost = 150,
 		growth = 6,
-		step = 0.25, -- DEC-025: multiplicador 1 + nivel × step
+		step = 0.25, -- DEC-024: multiplicador 1 + nivel × step
 	},
 	jump = {
 		id = "jump",
@@ -402,7 +402,7 @@ GameData.Upgrades = {
 		maxLevel = 40,
 		baseCost = 400,
 		growth = 2.2,
-		step = 2, -- DEC-025: multiplicador step ^ nivel
+		step = 2, -- DEC-024: multiplicador step ^ nivel
 	},
 }
 -- Mejoras que se compran en la Tienda
@@ -435,7 +435,7 @@ GameData.SpinPrizes = {
 	{ label = "Cápsula de Oro", weight = 1, reward = { capsule = "gold", amount = 1 } },
 }
 
--- Zonas de robo (DEC-025). Se recorren en línea recta desde la base y cada una es
+-- Zonas de robo (DEC-024). Se recorren en línea recta desde la base y cada una es
 -- un 35 % más larga que la anterior (Config.ZONE_DEPTH_GROWTH).
 -- minSpeed: velocidad (estadística) para cruzar la puerta y robar en la zona
 -- lootCoins: monedas que trae cada pieza robada (se cobran al llegar a la base)

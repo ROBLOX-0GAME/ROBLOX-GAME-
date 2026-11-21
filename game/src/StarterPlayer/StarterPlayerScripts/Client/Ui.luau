@@ -28,7 +28,7 @@ local player = Players.LocalPlayer
 
 local Ui = {}
 
--- Paleta «taller de relojería fantástico» (ART-015, propuesta DEC-024): carbón, marfil,
+-- Paleta «taller de relojería fantástico» (ART-015, propuesta DEC-025): carbón, marfil,
 -- latón y oro, con cian para el foco. Mismos colores que tex_paleta.
 local COLORS = {
 	panel = Color3.fromRGB(30, 31, 38), -- carbón
@@ -57,7 +57,7 @@ local PANEL_TITLES = {
 	settings = "Ajustes",
 	carry = "Puesto de Carga — Capacidad por viaje",
 	robux = "Tienda Robux — Pases y productos",
-	speed = "Velocidad", -- DEC-025: barra para elegir la velocidad en la base
+	speed = "Velocidad", -- DEC-024: barra para elegir la velocidad en la base
 }
 
 local HUD_PANELS = { backpack = true, robux = true, rewards = true, spin = true, settings = true, speed = true }
@@ -192,7 +192,7 @@ local function button(text, enabled, onActivated)
 end
 
 local function formatNumber(value)
-	-- DEC-025: las cifras crecen hasta billones; desde un millón se abrevian (1,2M · 99,9T)
+	-- DEC-024: las cifras crecen hasta billones; desde un millón se abrevian (1,2M · 99,9T)
 	if math.abs(value) >= 1e6 then
 		return PlayerLogic.formatBig(value)
 	end
@@ -1066,7 +1066,7 @@ local function renderSettings()
 	for _, setting in GameData.Settings do
 		local value = state.settings[setting.id]
 		if setting.kind == "range" then
-			-- DEC-025: la velocidad en la base se elige con la barra del botón «Velocidad»
+			-- DEC-024: la velocidad en la base se elige con la barra del botón «Velocidad»
 			addRow(string.format("<b>%s</b>: %d", setting.name, value), {
 				{
 					text = "Cambiar",
@@ -1155,7 +1155,7 @@ local function bossKey()
 	return string.format("%s|%d|%d|%d", tostring(info.active), info.points, info.goal, info.mine)
 end
 
--- Velocidad (DEC-025): tu velocidad, la de cada lugar y la barra para elegir la de la base.
+-- Velocidad (DEC-024): tu velocidad, la de cada lugar y la barra para elegir la de la base.
 local function nextZone()
 	for index, zone in GameData.Zones do
 		if state.speed < zone.minSpeed then
@@ -1464,7 +1464,7 @@ local function updateHud()
 		hud.xpText.Text = "Nivel máximo"
 	end
 	hud.xpFill.Size = UDim2.fromScale(fraction, 1)
-	-- DEC-025: la velocidad es una estadística; se muestra abreviada y con su velocidad física
+	-- DEC-024: la velocidad es una estadística; se muestra abreviada y con su velocidad física
 	hud.speed.Text = string.format(
 		"<b>Velocidad %s</b>  (corres a %.0f)",
 		PlayerLogic.formatBig(state.speed),
@@ -1553,7 +1553,7 @@ local function updateGates()
 		return
 	end
 	for _, gate in CollectionService:GetTagged("SpeedGate") do
-		local open = state.speed >= (gate:GetAttribute("MinSpeed") or 0) -- DEC-025: estadística
+		local open = state.speed >= (gate:GetAttribute("MinSpeed") or 0) -- DEC-024: estadística
 		gate.CanCollide = not open
 		if open then
 			gate.Color = COLORS.ok
@@ -1635,7 +1635,7 @@ end
 
 local RAIL_BUTTONS = {
 	{ id = "backpack", text = "Mochila", key = "B", icon = "mochila" },
-	{ id = "speed", text = "Velocidad", key = "V", icon = "velocidad" }, -- DEC-025
+	{ id = "speed", text = "Velocidad", key = "V", icon = "velocidad" }, -- DEC-024
 	{ id = "rewards", text = "Premios", key = "P", icon = "premios" },
 	{ id = "spin", text = "Ruleta", key = "R", icon = "ruleta" },
 	{ id = "robux", text = "Robux", key = "M", icon = "robux" },
@@ -1940,7 +1940,7 @@ function Ui.init(remote)
 	-- navegar dentro del menú con el mando.
 	local shortcuts = {
 		[Enum.KeyCode.P] = "rewards",
-		[Enum.KeyCode.V] = "speed", -- DEC-025
+		[Enum.KeyCode.V] = "speed", -- DEC-024
 		[Enum.KeyCode.R] = "spin",
 		[Enum.KeyCode.M] = "robux",
 		[Enum.KeyCode.O] = "settings",

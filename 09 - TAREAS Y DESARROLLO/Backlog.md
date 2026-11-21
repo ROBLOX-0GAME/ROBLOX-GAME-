@@ -1019,11 +1019,11 @@ ICON_IDS = {
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
-**Descripción:** decisión de Jhonn (DEC-025). 12 zonas: 100 · 1K · 10K · 100K · 1M · 14M · 200M · 2,8B · 40B · 560B · 7,5T · 99,9T de velocidad (con 100T se abrirá un mundo nuevo en el futuro). Los jugadores empiezan con 75. La «Velocidad» es una estadística; la velocidad real sigue una curva con tope (zona 5 = 85, zona 12 = 150), 50 como máximo en el lobby y 40 dentro de las casas. Cada zona es un 35 % más larga que la anterior. El dueño de cada casa duerme y se despierta si pasas más de 15 s dentro; dentro de la casa es lento. Botón «Velocidad» en el HUD con barra deslizante para la velocidad del lobby. El entrenamiento y la economía se reescalan para llegar a esas cifras sin pagar. Se comprueba que la cinemática inicial va antes del tutorial. El pase Dinero ×2 y las ventajas VIP van en DEV-021; el Renacer, después.
+**Descripción:** decisión de Jhonn (DEC-024). 12 zonas: 100 · 1K · 10K · 100K · 1M · 14M · 200M · 2,8B · 40B · 560B · 7,5T · 99,9T de velocidad (con 100T se abrirá un mundo nuevo en el futuro). Los jugadores empiezan con 75. La «Velocidad» es una estadística; la velocidad real sigue una curva con tope (zona 5 = 85, zona 12 = 150), 50 como máximo en el lobby y 40 dentro de las casas. Cada zona es un 35 % más larga que la anterior. El dueño de cada casa duerme y se despierta si pasas más de 15 s dentro; dentro de la casa es lento. Botón «Velocidad» en el HUD con barra deslizante para la velocidad del lobby. El entrenamiento y la economía se reescalan para llegar a esas cifras sin pagar. Se comprueba que la cinemática inicial va antes del tutorial. El pase Dinero ×2 y las ventajas VIP van en DEV-021; el Renacer, después.
 
 **Criterios de aceptación:**
 
-- [ ] DEC-025 en el Registro.
+- [ ] DEC-024 en el Registro.
 - [ ] 12 zonas con su velocidad, largo creciente, casas y dueños.
 - [ ] Velocidad estadística, velocidad real con curva y topes (lobby 50, casas 40, zonas hasta 150).
 - [ ] Dueño dormido que despierta a los 15 s, lento dentro de la casa.

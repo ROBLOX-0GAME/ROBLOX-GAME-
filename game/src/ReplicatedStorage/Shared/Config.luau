@@ -21,7 +21,7 @@ local Config = {
 	BASE_BACKPACK = 20, -- piezas que caben (guardadas + botín que llevas encima)
 	BASE_CARRY = 1, -- objetos robados que puedes llevar por viaje (DEV-013; hasta 4 con 3 mejoras)
 	BASE_WALKSPEED = 16,
-	-- Velocidad (DEC-025): la «Velocidad» es una estadística (75, 1M, 99,9T…). La
+	-- Velocidad (DEC-024): la «Velocidad» es una estadística (75, 1M, 99,9T…). La
 	-- velocidad física sale de SPEED_CURVE y nunca pasa de MAX_WALKSPEED.
 	START_SPEED = 75, -- velocidad (estadística) con la que empieza todo jugador
 	MAX_WALKSPEED = 150, -- tope físico en las zonas (más rápido falla la física)
@@ -50,14 +50,14 @@ local Config = {
 
 	-- Robo y persecución (DEV-003)
 	OWNER_REACTION_SECONDS = 1.2, -- el dueño tarda esto en levantarse tras despertar
-	OWNER_WAKE_SECONDS = 15, -- DEC-025: el dueño duerme; despierta si pasas esto dentro de su casa
+	OWNER_WAKE_SECONDS = 15, -- DEC-024: el dueño duerme; despierta si pasas esto dentro de su casa
 	OWNER_HOUSE_SPEED = 12, -- velocidad del dueño dentro de su casa (lento)
 	OWNER_SPEED_FACTOR = 0.92, -- fuera de casa corre como la velocidad que exige su zona × esto
 	CHASE_MAX_SECONDS = 40, -- el dueño se rinde después de este tiempo
 	CHASE_LOSE_DISTANCE = 160, -- el dueño se rinde si te alejas tanto
 	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
 
-	-- Zonas (DEC-025): cada una es un 35 % más larga que la anterior
+	-- Zonas (DEC-024): cada una es un 35 % más larga que la anterior
 	ZONE_BASE_DEPTH = 130, -- largo de la zona 1
 	ZONE_DEPTH_GROWTH = 1.35,
 	ZONE_GAP = 10, -- espacio entre zonas (ahí va la puerta de velocidad)
@@ -85,7 +85,7 @@ local Config = {
 	MAX_EXTRA_PART_CHANCE = 0.6, -- tope total de probabilidad de robar 2 piezas
 
 	-- Entrenamiento de velocidad en caminadoras (DEV-006)
-	TRAIN_RATE = 0.5, -- velocidad ganada por segundo con multiplicador ×1 (DEC-025)
+	TRAIN_RATE = 0.5, -- velocidad ganada por segundo con multiplicador ×1 (DEC-024)
 	MAX_TRAINED = 1e15, -- tope de seguridad (el mundo nuevo empezará en 100T)
 	TRAIN_TICK_SECONDS = 1,
 	TREADMILL_DISTANCE = 8, -- si te alejas más, dejas de entrenar
@@ -169,7 +169,7 @@ local Config = {
 		ajustes = 115724324517779,
 		carga = 84558382393109,
 	},
-	-- Iconos de los carteles de estación (ART-015, propuesta DEC-024). 0 = cartel sin icono.
+	-- Iconos de los carteles de estación (ART-015, propuesta DEC-025). 0 = cartel sin icono.
 	STATION_ICON_IDS = {
 		shop = 126558654621046, -- ico_est_tienda
 		robux = 130773426233365, -- ico_robux

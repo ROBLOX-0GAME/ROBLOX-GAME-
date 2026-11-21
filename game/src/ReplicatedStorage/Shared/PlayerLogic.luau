@@ -25,7 +25,7 @@ function PlayerLogic.newData()
 		xp = 0,
 		parts = {}, -- [partId] = cantidad guardada (segura)
 		carried = {}, -- [partId] = botín robado que llevas encima; se pierde si te atrapan
-		carriedCoins = 0, -- monedas que trae el botín (DEC-025); se cobran en la base
+		carriedCoins = 0, -- monedas que trae el botín (DEC-024); se cobran en la base
 		watches = {}, -- [watchId] = cantidad en inventario
 		museum = {}, -- [watchId] = cantidad exhibida
 		upgrades = {}, -- [upgradeId] = nivel
@@ -314,7 +314,7 @@ function PlayerLogic.petMultiplier(data)
 	return 1 + bonus
 end
 
--- Multiplicador total: mascotas × pase Corredor VIP × mejora de Velocidad (DEC-025).
+-- Multiplicador total: mascotas × pase Corredor VIP × mejora de Velocidad (DEC-024).
 function PlayerLogic.speedMultiplier(data)
 	local multiplier = PlayerLogic.petMultiplier(data)
 	if PlayerLogic.hasPass(data, "runner") then
@@ -324,18 +324,18 @@ function PlayerLogic.speedMultiplier(data)
 	return multiplier
 end
 
--- Velocidad base (estadística): la inicial + la entrenada (DEC-025).
+-- Velocidad base (estadística): la inicial + la entrenada (DEC-024).
 function PlayerLogic.baseSpeed(data)
 	return Config.START_SPEED + data.trained
 end
 
--- Velocidad (estadística) = base × multiplicadores. Es la que abre zonas (DEC-025).
+-- Velocidad (estadística) = base × multiplicadores. Es la que abre zonas (DEC-024).
 function PlayerLogic.speed(data)
 	return PlayerLogic.baseSpeed(data) * PlayerLogic.speedMultiplier(data)
 end
 
 -- Velocidad física para una velocidad estadística: curva por tramos en escala
--- logarítmica (Config.SPEED_CURVE) con tope Config.MAX_WALKSPEED (DEC-025).
+-- logarítmica (Config.SPEED_CURVE) con tope Config.MAX_WALKSPEED (DEC-024).
 function PlayerLogic.runSpeed(stat)
 	local curve = Config.SPEED_CURVE
 	if stat <= curve[1][1] then
@@ -359,18 +359,18 @@ function PlayerLogic.walkSpeed(data)
 	return PlayerLogic.runSpeed(PlayerLogic.speed(data))
 end
 
--- Velocidad física en la base: la que el jugador eligió en la barra, con tope (DEC-025).
+-- Velocidad física en la base: la que el jugador eligió en la barra, con tope (DEC-024).
 function PlayerLogic.lobbySpeed(data)
 	local chosen = PlayerLogic.getSetting(data, "runSpeed") or Config.LOBBY_MAX_WALKSPEED
 	return math.min(PlayerLogic.walkSpeed(data), Config.LOBBY_MAX_WALKSPEED, math.max(Config.BASE_WALKSPEED, chosen))
 end
 
--- Velocidad física dentro de una casa: más lenta para buscar con comodidad (DEC-025).
+-- Velocidad física dentro de una casa: más lenta para buscar con comodidad (DEC-024).
 function PlayerLogic.houseSpeed(data)
 	return math.min(PlayerLogic.walkSpeed(data), Config.HOUSE_WALKSPEED)
 end
 
--- Velocidad del dueño de una zona fuera de su casa (DEC-025).
+-- Velocidad del dueño de una zona fuera de su casa (DEC-024).
 function PlayerLogic.ownerSpeed(zoneIndex)
 	local zone = GameData.Zones[zoneIndex]
 	if not zone then
@@ -379,7 +379,7 @@ function PlayerLogic.ownerSpeed(zoneIndex)
 	return PlayerLogic.runSpeed(zone.minSpeed) * Config.OWNER_SPEED_FACTOR
 end
 
--- Número grande corto para la interfaz: 950 · 1,5K · 14M · 2,8B · 99,9T (DEC-025).
+-- Número grande corto para la interfaz: 950 · 1,5K · 14M · 2,8B · 99,9T (DEC-024).
 local BIG_SUFFIXES = { { 1e12, "T" }, { 1e9, "B" }, { 1e6, "M" }, { 1e3, "K" } }
 function PlayerLogic.formatBig(value)
 	value = tonumber(value) or 0
@@ -451,7 +451,7 @@ end
 
 -- Multiplicador de entrenamiento de la caminadora del plot (DEV-008).
 function PlayerLogic.treadmillMultiplier(data)
-	-- DEC-025: cada nivel de la mejora multiplica por step (×2)
+	-- DEC-024: cada nivel de la mejora multiplica por step (×2)
 	local multiplier = GameData.Upgrades.treadmill.step ^ PlayerLogic.upgradeLevel(data, "treadmill")
 	if PlayerLogic.hasPass(data, "turboTreadmill") then
 		multiplier *= GameData.TURBO_TREADMILL_FACTOR
@@ -583,7 +583,7 @@ function PlayerLogic.tutorialValue(data, stat)
 	if stat == "trained10" then
 		return math.floor(data.trained * 10 + 1e-6)
 	elseif stat == "speed" then
-		return math.floor(PlayerLogic.speed(data) + 1e-6) -- DEC-025
+		return math.floor(PlayerLogic.speed(data) + 1e-6) -- DEC-024
 	elseif stat == "museum" then
 		return PlayerLogic.museumCount(data)
 	elseif stat == "upgrades" then
@@ -657,7 +657,7 @@ function PlayerLogic.buildView(data, now)
 		carriedCoins = data.carriedCoins,
 		freeSpace = PlayerLogic.freeSpace(data),
 		walkSpeed = PlayerLogic.walkSpeed(data),
-		speed = PlayerLogic.speed(data), -- estadística que abre zonas (DEC-025)
+		speed = PlayerLogic.speed(data), -- estadística que abre zonas (DEC-024)
 		lobbySpeed = PlayerLogic.lobbySpeed(data),
 		trainPerSecond = Config.TRAIN_RATE * PlayerLogic.treadmillMultiplier(data),
 		highestZone = PlayerLogic.highestZone(data),
@@ -731,7 +731,7 @@ end
 
 -- Roba una pieza en una casa: va al botín que llevas encima (DEV-003).
 -- bonusRoll en [0, 1): si es menor que la suerte, roba 2 (si caben).
--- lootCoins (opcional): monedas que trae cada pieza en esa zona (DEC-025).
+-- lootCoins (opcional): monedas que trae cada pieza en esa zona (DEC-024).
 -- Devuelve ok, mensaje, cantidad.
 function PlayerLogic.stealPart(data, partId, bonusRoll, lootCoins)
 	local part = GameData.Parts[partId]
@@ -770,7 +770,7 @@ function PlayerLogic.stealPart(data, partId, bonusRoll, lootCoins)
 end
 
 -- Guarda el botín al llegar a la base. Devuelve las piezas guardadas y las
--- monedas cobradas (con el multiplicador de monedas; DEC-025).
+-- monedas cobradas (con el multiplicador de monedas; DEC-024).
 function PlayerLogic.depositLoot(data)
 	local total = 0
 	for partId, amount in data.carried do
@@ -1197,7 +1197,7 @@ function PlayerLogic.grantProduct(data, productId, roll)
 		return true, string.format("Compra recibida: +%s de velocidad entrenada.", PlayerLogic.formatBig(product.trained))
 	end
 	if product.trainSeconds then
-		-- DEC-025: minutos de entrenamiento al instante, con el multiplicador de tu caminadora
+		-- DEC-024: minutos de entrenamiento al instante, con el multiplicador de tu caminadora
 		local gained = PlayerLogic.trainTick(data, product.trainSeconds)
 		return true, string.format("Compra recibida: +%s de velocidad entrenada.", PlayerLogic.formatBig(gained))
 	end
@@ -1233,7 +1233,7 @@ function PlayerLogic.giveReward(data, reward)
 		return true, string.format("+%s de velocidad entrenada", PlayerLogic.formatBig(reward.trained))
 	end
 	if reward.trainSeconds then
-		-- DEC-025: tiempo de entrenamiento al instante con el multiplicador de tu caminadora
+		-- DEC-024: tiempo de entrenamiento al instante con el multiplicador de tu caminadora
 		local gained = PlayerLogic.trainTick(data, reward.trainSeconds)
 		return true, string.format("+%s de velocidad entrenada", PlayerLogic.formatBig(gained))
 	end
@@ -1413,7 +1413,7 @@ function PlayerLogic.validSetting(setting, value)
 		return value == 0 or value == 1
 	end
 	if setting.kind == "range" then
-		return value >= setting.min and value <= setting.max -- DEC-025
+		return value >= setting.min and value <= setting.max -- DEC-024
 	end
 	return value >= 1 and value <= #setting.options
 end

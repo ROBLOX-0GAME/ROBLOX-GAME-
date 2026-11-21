@@ -1,7 +1,7 @@
 --[[
 	HouseService — casas, robo de piezas y persecución (DEV-003).
 
-	Flujo (DEC-025):
+	Flujo (DEC-024):
 	  1. El dueño DUERME. Entras a su casa y mantienes el botón sobre una pieza
 	     → va a tu botín (lo llevas encima, todavía no es tuyo) junto con las
 	     monedas que trae en esa zona.
@@ -221,7 +221,7 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		doorOutside = Vector3.new(frontX - side * 4, 0, centerZ),
 		spots = {},
 		thieves = {}, -- [Player] = true si robó en esta visita
-		visitors = {}, -- [Player] = os.clock() al entrar (DEC-025: el dueño despierta a los 15 s)
+		visitors = {}, -- [Player] = os.clock() al entrar (DEC-024: el dueño despierta a los 15 s)
 		chasing = nil,
 	}
 
@@ -252,7 +252,7 @@ end
 -- Persecución
 -- ---------------------------------------------------------------------------
 
--- El dueño despertó (DEC-025): persigue al jugador que se quedó demasiado en su casa.
+-- El dueño despertó (DEC-024): persigue al jugador que se quedó demasiado en su casa.
 local function chase(house, player)
 	house.chasing = player
 	local zone = house.zone
@@ -283,7 +283,7 @@ local function chase(house, player)
 			result = "gone"
 			break
 		end
-		-- Dentro de su casa el dueño es lento; fuera corre como su zona (DEC-025)
+		-- Dentro de su casa el dueño es lento; fuera corre como su zona (DEC-024)
 		if isInside(house, npc.root.Position) then
 			npc.humanoid.WalkSpeed = Config.OWNER_HOUSE_SPEED
 		else
@@ -344,7 +344,7 @@ local function chase(house, player)
 	house.chasing = nil
 end
 
--- ¿En qué casa está una posición? (para la velocidad dentro de las casas, DEC-025)
+-- ¿En qué casa está una posición? (para la velocidad dentro de las casas, DEC-024)
 function HouseService.houseAt(position)
 	for _, house in houses do
 		if isInside(house, position) then
@@ -355,7 +355,7 @@ function HouseService.houseAt(position)
 end
 
 -- Cuenta el tiempo de cada jugador dentro de cada casa, despierta al dueño a los
--- Config.OWNER_WAKE_SECONDS (DEC-025) y guarda el botín al llegar a la base.
+-- Config.OWNER_WAKE_SECONDS (DEC-024) y guarda el botín al llegar a la base.
 local function tick()
 	local now = os.clock()
 	local roots = {}
@@ -433,7 +433,7 @@ function HouseService.init()
 		local startZ, endZ = WorldService.zoneBounds(zoneIndex)
 		local zoneModel = WorldService.ZonesFolder:FindFirstChild(string.format("Zona%d_%s", zoneIndex, zone.id))
 		local houseIndex = 0
-		-- DEC-025: una fila al inicio y otra al fondo de la zona (más lejos cuanto más larga)
+		-- DEC-024: una fila al inicio y otra al fondo de la zona (más lejos cuanto más larga)
 		for _, rowZ in { startZ + 35, math.max(startZ + 95, endZ - 35) } do
 			for _, side in { -1, 1 } do
 				houseIndex += 1

@@ -38,7 +38,7 @@ WorldService.Stations = {} -- [stationId] = BasePart
 -- Medidas del mapa
 local HALF_WIDTH = 130 -- el mapa va de X = -130 a X = 130 (DEV-010: cabe la media luna)
 local ZONE_START = 30 -- Z donde empieza la zona 1
--- DEC-025: cada zona es Config.ZONE_DEPTH_GROWTH veces más larga que la anterior,
+-- DEC-024: cada zona es Config.ZONE_DEPTH_GROWTH veces más larga que la anterior,
 -- con Config.ZONE_GAP entre zonas (ahí va la puerta de velocidad).
 local ZONE_BOUNDS = {} -- [zona] = { inicio, fin } en Z
 do
@@ -107,7 +107,7 @@ local function makePart(props)
 end
 WorldService.makePart = makePart
 
--- Pieza larga a lo largo de Z, partida en tramos de MAX_PART_LENGTH (DEC-025).
+-- Pieza larga a lo largo de Z, partida en tramos de MAX_PART_LENGTH (DEC-024).
 -- props.Size da el ancho (X) y el alto (Y); fromZ/toZ el largo.
 local function makeLongPart(parent, props, fromZ, toZ)
 	local size = props.Size
@@ -123,7 +123,7 @@ local function makeLongPart(parent, props, fromZ, toZ)
 end
 WorldService.makeLongPart = makeLongPart
 
--- Colores de los carteles (ART-015, propuesta DEC-024: marfil sobre contorno carbón)
+-- Colores de los carteles (ART-015, propuesta DEC-025: marfil sobre contorno carbón)
 local SIGN_TEXT = Color3.fromRGB(242, 240, 234)
 local SIGN_SUBTEXT = Color3.fromRGB(242, 193, 78)
 local SIGN_STROKE = Color3.fromRGB(30, 31, 38)
@@ -294,7 +294,7 @@ local function buildZone(folder, zoneIndex, zone)
 	end
 	signPost.Parent = model
 
-	-- Puerta de velocidad (DEC-025: todas las zonas tienen; la 1 pide 100)
+	-- Puerta de velocidad (DEC-024: todas las zonas tienen; la 1 pide 100)
 	if zone.minSpeed > 0 then
 		local gate = Instance.new("Model")
 		gate.Name = "PuertaDeVelocidad"
@@ -456,7 +456,7 @@ function WorldService.init()
 	end
 end
 
--- Identidad de cada zona (ART-015, propuesta DEC-024). Cada entrada es una lista de
+-- Identidad de cada zona (ART-015, propuesta DEC-025). Cada entrada es una lista de
 -- alternativas: se usa el primer asset que exista, y el último es el genérico de siempre.
 local ZONE_STYLE = {
 	{ -- 1 Barrio Humilde
@@ -489,7 +489,7 @@ local ZONE_STYLE = {
 }
 
 -- Zona a la que pertenece una coordenada Z del camino (1 si está antes de la primera).
--- DEC-025: las zonas tienen largos distintos; las que no tienen estilo propio usan el de la 5.
+-- DEC-024: las zonas tienen largos distintos; las que no tienen estilo propio usan el de la 5.
 local function zoneAt(z)
 	local index = WorldService.zoneAt(Vector3.new(0, 0, z)) or 1
 	return math.min(index, #ZONE_STYLE)
@@ -509,13 +509,13 @@ end
 function WorldService.placeDecor(folder)
 	local decor = Instance.new("Folder")
 	decor.Name = "Decoracion"
-	-- Farolas a ambos lados del camino (DEC-025: más separadas; el mapa mide ~13.000 studs)
+	-- Farolas a ambos lados del camino (DEC-024: más separadas; el mapa mide ~13.000 studs)
 	for z = ZONE_START, MAP_END - 20, 60 do
 		for _, side in { -1, 1 } do
 			AssetLibrary.place("mdl_farola", Vector3.new(side * 14, 0, z), Vector3.new(-side, 0, 0), decor)
 		end
 	end
-	-- Vegetación junto a los muros laterales, propia de cada zona (ART-015, propuesta DEC-024)
+	-- Vegetación junto a los muros laterales, propia de cada zona (ART-015, propuesta DEC-025)
 	local index = 0
 	for z = ZONE_START + 10, MAP_END - 10, 40 do
 		local style = ZONE_STYLE[zoneAt(z)] or ZONE_STYLE[1]

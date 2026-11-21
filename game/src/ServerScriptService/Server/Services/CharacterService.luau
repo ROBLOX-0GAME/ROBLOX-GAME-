@@ -2,7 +2,7 @@
 	CharacterService — aplica las mejoras de velocidad y salto al personaje.
 	El progreso no depende del personaje: morir o reaparecer no pierde nada.
 
-	DEC-025: la velocidad física depende de dónde estés:
+	DEC-024: la velocidad física depende de dónde estés:
 	  - en la base: la elegida con la barra del HUD (máximo Config.LOBBY_MAX_WALKSPEED)
 	  - dentro de una casa: como máximo Config.HOUSE_WALKSPEED
 	  - en las zonas: la de tu velocidad (estadística) según Config.SPEED_CURVE
@@ -73,7 +73,7 @@ function CharacterService.init()
 	DataService.onLoaded(function(player)
 		CharacterService.apply(player)
 	end)
-	-- DEC-025: ajusta la velocidad al pasar entre la base, las casas y las zonas.
+	-- DEC-024: ajusta la velocidad al pasar entre la base, las casas y las zonas.
 	task.spawn(function()
 		while true do
 			task.wait(Config.SPEED_CONTEXT_SECONDS)
