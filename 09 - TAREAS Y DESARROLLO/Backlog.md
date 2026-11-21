@@ -987,12 +987,12 @@ ICON_IDS = {
 ### ART-015 — Aplicar la presentación visual de ART-014 (código y Studio)
 
 - **ID:** ART-015.
-- **Cuenta Claude:** Claude — Cuenta A.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel, Studio con MCP).
 - **Responsable:** Zadiel.
 - **Revisor:** Jhonn.
 - **Área:** Código de presentación / arte en Studio.
 - **Prioridad:** Alta.
-- **Estado:** Pendiente (empieza cuando DEV-019 libere `game/src/**` y el Registro).
+- **Estado:** En desarrollo.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
