@@ -1311,3 +1311,22 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] BUG-004 marcado como resuelto en el Plan de Pruebas.
 
 **Resultado (2026-11-21):** [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §11 con la lista completa de Zadiel: revisión de DEC-028 a DEC-031, permisos automáticos de audios nuevos para su Claude (Open Cloud `asset-permissions` + comprobación con `PreloadAsync` y plan B), lo que falta de ART-016, ART-018 y propuestas de UX. Se corrigieron en el prompt los nombres de §7.3 (`pz_<reloj>_movement`, `mdl_reloj_*`), los 12 sonidos por rareza, DEC-032 como siguiente número libre y los 18 relojes de §10. BUG-004 marcado como resuelto en el [[Plan-de-Pruebas]] (10/10 *Success*). **Corrección:** en DEV-027 se dijo por error que BUG-004 seguía abierto.
+
+### DOC-002 — Revisión de Zadiel de las decisiones de Jhonn (§11.1 del prompt de piezas)
+
+- **ID:** DOC-002.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Decisiones del equipo.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-21.
+
+**Descripción:** Zadiel revisa y aprueba DEC-024, DEC-027, DEC-028, DEC-029, DEC-030 y DEC-031 ([[PROMPT_PIEZAS_RELOJ_ZADIEL]] §11.1).
+
+**Criterios de aceptación:**
+
+- [ ] Las 6 decisiones pasan en el Registro a «Aprobada por Jhonn y Zadiel (2026-11-21)».
+- [ ] Recomendación de Claude sobre DEC-031 anotada (no cambia la decisión).
