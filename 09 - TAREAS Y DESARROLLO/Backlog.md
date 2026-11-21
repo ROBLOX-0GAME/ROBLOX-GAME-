@@ -1042,7 +1042,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Interfaz / audio / pruebas.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -1066,6 +1066,8 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - [x] Plan de Pruebas: BUG-004 marcado como resuelto (lo hizo DOC-001).
 - [x] Propuesta visual renumerada a DEC-025 en las notas libres.
 - [x] DEC-025 en el título del Registro, en el Plan de Pruebas §26 y en los comentarios de `game/src` (hecho por Jhonn en DEV-020, `f0a4520`).
+
+**Resultado (2026-11-21):** BUG-004 resuelto, origen de `203785492` identificado, propuesta visual renumerada a DEC-025 y [[UI-UX]] §12 terminado y probado (53/53). Place guardada en la **versión 37**, sin publicar. Sin probar: ocultar los nombres de las mascotas de otros jugadores (necesita 2 clientes).
 
 ### DEV-021 — Puesto de Mochila y Carga, mejoras ×1,5 desde 100 monedas y prueba de DEV-020 en la place
 

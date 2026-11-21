@@ -541,4 +541,4 @@ Reglas:
   - Ajuste «Efectos visuales» en `GameData.Settings` (sin efectos, solo el destello final).
   - Tarjeta «Estado» plegable, plegada de inicio en pantallas táctiles.
   - Verificación en Play: 53/53 y Plan de Pruebas §34.
-
+- **2026-11-21 · ART-016 · Paso 5 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 37**. No se publicó.
