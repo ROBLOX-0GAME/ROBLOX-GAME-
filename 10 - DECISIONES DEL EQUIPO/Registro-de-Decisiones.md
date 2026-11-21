@@ -282,7 +282,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-022 — Iluminación de la place para los PBR y el low-poly colorido
 
-- **Fecha:** 2026-11-20. **Estado:** Propuesta (ART-013). Aplicada en la place con el OK de Zadiel (versión 16); falta que Jhonn la apruebe. **Área:** Arte / dirección visual. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Fecha:** 2026-11-20. **Estado:** **Aprobada** por Zadiel y Jhonn el 2026-11-20 (INFRA-006; antes, Propuesta de ART-013). Aplicada en la place (versión 16). **Área:** Arte / dirección visual. **Deciden:** Zadiel y Jhonn (DEC-020).
 - **Propuesta:** `Lighting.Technology = Future` (se pone a mano), `Brightness` 2,5, `ClockTime` 14,5, `GlobalShadows` activado con `ShadowSoftness` 0,2, `Ambient` 70/70/80, `OutdoorAmbient` 128/128/140 y `EnvironmentDiffuseScale` y `EnvironmentSpecularScale` a 1 (antes en 0: los metales PBR no reflejaban nada).
   - `Atmosphere`: densidad 0,25, Offset 0,1, Color 199/220/255, Decay 106/112/125, Glare 0,2 y Haze 1.
   - `ColorCorrection`: saturación +0,15, contraste +0,08, brillo +0,02 y tinte 255/250/242.
