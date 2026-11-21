@@ -28,17 +28,21 @@ local player = Players.LocalPlayer
 
 local Ui = {}
 
+-- Paleta «taller de relojería fantástico» (ART-015, propuesta DEC-024): carbón, marfil,
+-- latón y oro, con cian para el foco. Mismos colores que tex_paleta.
 local COLORS = {
-	panel = Color3.fromRGB(28, 30, 38),
-	row = Color3.fromRGB(42, 45, 56),
-	text = Color3.fromRGB(240, 240, 245),
-	muted = Color3.fromRGB(170, 172, 185),
-	accent = Color3.fromRGB(240, 196, 80),
+	panel = Color3.fromRGB(30, 31, 38), -- carbón
+	row = Color3.fromRGB(48, 50, 60),
+	text = Color3.fromRGB(242, 240, 234), -- marfil
+	muted = Color3.fromRGB(176, 172, 160),
+	accent = Color3.fromRGB(242, 193, 78), -- oro
+	brass = Color3.fromRGB(194, 123, 58), -- latón (bordes)
+	focus = Color3.fromRGB(91, 213, 224), -- cian (selección con mando)
 	ok = Color3.fromRGB(76, 175, 106),
 	error = Color3.fromRGB(214, 84, 84),
-	info = Color3.fromRGB(80, 130, 210),
-	button = Color3.fromRGB(80, 130, 210),
-	buttonOff = Color3.fromRGB(88, 90, 102),
+	info = Color3.fromRGB(44, 79, 128),
+	button = Color3.fromRGB(44, 79, 128), -- azul oscuro: contraste alto con el marfil
+	buttonOff = Color3.fromRGB(80, 82, 92),
 }
 
 local PANEL_TITLES = {
@@ -60,6 +64,7 @@ local state = nil
 local bossTimerLabel = nil -- etiqueta del menú del jefe que se actualiza cada medio segundo
 local lastBossKey = ""
 local actionRemote = nil
+local actionHandler = nil -- función (action, result) tras una acción correcta (ART-015)
 local busy = false
 local openPanelId = nil
 
@@ -225,7 +230,7 @@ function Ui.toast(text, kind)
 			table.insert(items, child)
 		end
 	end
-	if #items > 4 then
+	if #items > 3 then -- ART-015: como mucho 3 a la vez (antes 4)
 		items[1]:Destroy()
 	end
 end
@@ -250,6 +255,9 @@ local function request(action, id, amount)
 	local kind = "error"
 	if result.ok then
 		kind = "ok"
+		if actionHandler then -- efectos visuales (Client/Vfx, ART-015); no cambian el resultado
+			task.spawn(actionHandler, action, result)
+		end
 	end
 	Ui.toast(result.message, kind)
 	return result
@@ -1423,6 +1431,7 @@ local function card(name, props)
 	}, {
 		corner(10),
 		padding(8),
+		new("UIStroke", { Color = COLORS.brass, Thickness = 1.5, Transparency = 0.25 }), -- ART-015
 		new("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
 	for key, value in props or {} do
@@ -1555,6 +1564,14 @@ local function buildHud()
 		item.Name = "Boton" .. info.text
 		item.LayoutOrder = index
 		item.Size = UDim2.fromOffset(120, 44)
+		-- ART-015: carbón con borde de latón (antes bloques azules); el icono da el color
+		item.BackgroundColor3 = COLORS.panel
+		item.BackgroundTransparency = 0.1
+		new("UIStroke", {
+			Color = COLORS.brass,
+			Thickness = 2,
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		}).Parent = item
 		local icon = iconImage(info.icon, 30)
 		if icon then
 			icon.AnchorPoint = Vector2.new(0, 0.5)
@@ -1705,6 +1722,11 @@ end
 -- Ajustes → «Ver historia» llama a esta función (la pone Main con Intro).
 function Ui.onReplayIntro(handler)
 	replayIntroHandler = handler
+end
+
+-- Main conecta aquí los efectos visuales (Vfx.onAction) tras cada acción correcta.
+function Ui.onAction(handler)
+	actionHandler = handler
 end
 
 -- Otros módulos del cliente (Intro) piden acciones por aquí.

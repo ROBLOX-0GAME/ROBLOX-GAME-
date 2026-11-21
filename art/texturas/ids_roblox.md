@@ -226,3 +226,34 @@ end
 ```
 
 Resultado real en ART-013: 36 modelos, 36 MeshParts con paleta, 0 faltantes.
+
+## Identidad visual: plaza, zonas e iconos de estación (ART-015)
+
+> ✅ **Subido y montado el 2026-11-20 (ART-015).** 18 assets subidos con Open Cloud a la cuenta **zadiel799**, todos con moderación **Approved** (0 rechazados): 13 modelos de ART-014 y 5 iconos. Los modelos están insertados en `ReplicatedStorage/Assets`, con las piezas ancladas y `tex_paleta` en su `TextureID`. La torre se escaló a 0,01296 por el límite de 2048 studs; el resto, a ×0,01.
+
+| Modelo | Asset ID | Medida (studs) |
+|---|---|---|
+| `mdl_torre_reloj` | 117280448483412 | 9 × 26,55 × 9 |
+| `mdl_z1_tendedero` | 83303715696707 | 6,3 × 4 × 1,65 |
+| `mdl_z2_alamo` | 127101916350499 | 2,97 × 11,8 × 2,89 |
+| `mdl_z2_barriles` | 109393930245251 | 3,4 × 3,6 × 2,54 |
+| `mdl_z3_arbol_redondo` | 76813047837465 | 5,43 × 8,2 × 4,95 |
+| `mdl_z3_seto` | 81220563987070 | 8 × 2,4 × 1,6 |
+| `mdl_z3_buzon` | 74358858926918 | 1 × 4,2 × 1,6 |
+| `mdl_z4_cipres` | 132623325667108 | 2,6 × 10,1 × 2,6 |
+| `mdl_z4_fuente` | 73369122566282 | 7 × 4,35 × 7 |
+| `mdl_z4_topiario` | 113259119623075 | 2,09 × 5,1 × 2,09 |
+| `mdl_z5_palmera` | 78447245989561 | 8,05 × 9,25 × 8,21 |
+| `mdl_z5_estatua_reloj` | 134739194445144 | 3,3 × 7,29 × 3,3 |
+| `mdl_z5_farol_dorado` | 130135219448668 | 1,6 × 8 × 1,6 |
+
+| Icono de estación | ID | Clave en `Config.STATION_ICON_IDS` |
+|---|---|---|
+| `ico_est_tienda` | 126558654621046 | `shop` |
+| `ico_est_criadero` | 98778607906214 | `pets` |
+| `ico_est_cronometro` | 105138495197610 | `boss` |
+| `ico_est_taller` | 137123513210346 | `workshop` |
+| `ico_est_museo` | 90393594479879 | `museum` |
+| `ico_robux` · `ico_carga` (ya existían) | 130773426233365 · 84558382393109 | `robux` · `carry` |
+
+Script de montaje: el de ART-013 con estas medidas (`REAL`).

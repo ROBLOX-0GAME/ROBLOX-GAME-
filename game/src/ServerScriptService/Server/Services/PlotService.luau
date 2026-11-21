@@ -62,7 +62,7 @@ local function setSign(plot, title, subtitle)
 	if billboard then
 		billboard:Destroy()
 	end
-	WorldService.makeSign(plot.sign, title, subtitle, 2, 160)
+	WorldService.makeSign(plot.sign, title, subtitle, 2, 90) -- ART-015: antes 160
 end
 
 -- Solo el dueño puede usar las partes de su plot.
@@ -222,7 +222,7 @@ function PlotService.refresh(player)
 				Material = Enum.Material.Neon,
 				CanCollide = false,
 			}, CFrame.new(column, 3.6, row) * CFrame.Angles(0, math.rad(90), 0))
-			WorldService.makeSign(marker, watch.name, string.format("+%.1f monedas/min", PlayerLogic.watchIncomePerMinute(watchId)), 1.5, 50)
+			WorldService.makeSign(marker, watch.name, string.format("+%.1f monedas/min", PlayerLogic.watchIncomePerMinute(watchId)), 1.5, 30) -- ART-015: antes 50
 			marker.Parent = plot.displays
 			AssetLibrary.dress(marker, AssetLibrary.WATCH_ASSETS[watchId], { facing = plot.cframe.LookVector })
 		end

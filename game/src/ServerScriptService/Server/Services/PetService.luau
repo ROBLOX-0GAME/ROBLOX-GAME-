@@ -42,7 +42,7 @@ local function makeFollower(root, petId, offset)
 	local billboard = Instance.new("BillboardGui")
 	billboard.Size = UDim2.fromOffset(120, 24)
 	billboard.StudsOffset = Vector3.new(0, 1.4, 0)
-	billboard.MaxDistance = 60
+	billboard.MaxDistance = 30 -- ART-015: antes 60 (menos rótulos a la vez)
 	billboard.Parent = ball
 	local text = Instance.new("TextLabel")
 	text.Size = UDim2.fromScale(1, 1)

@@ -86,6 +86,9 @@ local function spawnSpot(house, spot)
 		light.Parent = item
 	end
 	item.Position = spot.position
+	-- Presentación (ART-015): el cliente resalta las piezas Raras o mejores (Client/Vfx)
+	item:SetAttribute("Rarity", info.rarity)
+	CollectionService:AddTag(item, "PiezaRobable")
 
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = "Robar"
@@ -197,7 +200,7 @@ local function buildHouse(parent, zoneIndex, zone, houseIndex, centerZ, side)
 		CanCollide = false,
 		CanQuery = false,
 	})
-	WorldService.makeSign(door, "Casa de " .. ownerName, zone.name, 7, 120)
+	WorldService.makeSign(door, "Casa de " .. ownerName, zone.name, 7, 60) -- ART-015: antes 120
 	door.Parent = model
 	if zoneIndex == 1 and houseIndex == 1 then
 		CollectionService:AddTag(door, "GuideHouse")

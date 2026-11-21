@@ -244,13 +244,17 @@ local function buildZone(folder, zoneIndex, zone)
 		Color = Color3.fromRGB(90, 70, 50),
 		Material = Enum.Material.Wood,
 	})
-	makeSign(
-		signPost,
-		zone.name,
-		string.format("Zona %d · velocidad mínima %d", zoneIndex, zone.minSpeed),
-		6,
-		220
-	)
+	-- ART-015: la zona 1 empieza justo en la salida, cuyo cartel ya lo indica; sin rótulo
+	-- aquí no se superponen los dos. Las demás, a 120 studs (antes 220).
+	if zoneIndex > 1 then
+		makeSign(
+			signPost,
+			zone.name,
+			string.format("Zona %d · velocidad mínima %d", zoneIndex, zone.minSpeed),
+			6,
+			120
+		)
+	end
 	signPost.Parent = model
 
 	-- Puerta de velocidad (la zona 1 no tiene)
@@ -282,7 +286,7 @@ local function buildZone(folder, zoneIndex, zone)
 			Transparency = 1,
 			CanCollide = false,
 		})
-		makeSign(label, string.format("Velocidad %d", zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 220)
+		makeSign(label, string.format("Velocidad %d", zone.minSpeed), "Necesaria para entrar a " .. zone.name, 2, 120)
 		label.Parent = gate
 		gate.Parent = model
 	end
@@ -317,11 +321,12 @@ function WorldService.init()
 	local baseSign = makePart({
 		Name = "CartelBase",
 		Size = Vector3.new(1, 1, 1),
-		Position = Vector3.new(0, 6, WorldService.PlazaCenter.Z + 25),
+		-- ART-015: a un lado de la plaza para no tapar la torre de reloj ni la salida
+		Position = Vector3.new(-18, 5, WorldService.PlazaCenter.Z + 25),
 		Transparency = 1,
 		CanCollide = false,
 	})
-	makeSign(baseSign, "BASE SEGURA", "Aquí el botín se guarda y nadie te persigue", 2, 200)
+	makeSign(baseSign, "BASE SEGURA", "Aquí el botín se guarda y nadie te persigue", 2, 80)
 	baseSign.Parent = folder
 
 	-- Camino central
@@ -348,15 +353,21 @@ function WorldService.init()
 		AssetLibrary.dress(wallPart, "mdl_muro_frontal")
 	end
 	-- Arco de la salida (solo visual, si existe el asset)
-	AssetLibrary.place("mdl_cartel_salida", Vector3.new(0, 0, FRONT_WALL_Z), Vector3.new(0, 0, -1), folder)
+	local exitArch = AssetLibrary.place("mdl_cartel_salida", Vector3.new(0, 0, FRONT_WALL_Z), Vector3.new(0, 0, -1), folder)
+	-- ART-015: con el arco puesto, el rótulo va por encima de él (antes se mezclaba con el modelo)
+	local exitHeight = 14
+	if exitArch then
+		local _, archSize = exitArch:GetBoundingBox()
+		exitHeight = archSize.Y + 1
+	end
 	local exitSign = makePart({
 		Name = "CartelSalida",
 		Size = Vector3.new(1, 1, 1),
-		Position = Vector3.new(0, 14, FRONT_WALL_Z),
+		Position = Vector3.new(0, exitHeight, FRONT_WALL_Z),
 		Transparency = 1,
 		CanCollide = false,
 	})
-	makeSign(exitSign, "SALIDA", "¡A correr! Las zonas ricas están adelante", 2, 220)
+	makeSign(exitSign, "SALIDA", "¡A correr! Las zonas ricas están adelante", 2, 120)
 	exitSign.Parent = folder
 
 	-- Muros invisibles alrededor del mapa
@@ -402,6 +413,53 @@ function WorldService.init()
 	end
 end
 
+-- Identidad de cada zona (ART-015, propuesta DEC-024). Cada entrada es una lista de
+-- alternativas: se usa el primer asset que exista, y el último es el genérico de siempre.
+local ZONE_STYLE = {
+	{ -- 1 Barrio Humilde
+		plants = { { "mdl_arbol" }, { "mdl_arbusto" }, { "mdl_arbol" }, { "mdl_roca" } },
+		details = { "mdl_z1_tendedero", "mdl_caja_madera" },
+		fence = { "mdl_valla" },
+	},
+	{ -- 2 Barrio Obrero
+		plants = { { "mdl_z2_alamo", "mdl_arbol" }, { "mdl_roca" }, { "mdl_z2_alamo", "mdl_arbol" }, { "mdl_arbusto" } },
+		details = { "mdl_z2_barriles", "mdl_caja_madera" },
+		fence = { "mdl_valla" },
+	},
+	{ -- 3 Zona Residencial
+		plants = { { "mdl_z3_arbol_redondo", "mdl_arbol" }, { "mdl_arbusto" } },
+		details = { "mdl_z3_buzon" },
+		fence = { "mdl_z3_seto", "mdl_valla" },
+	},
+	{ -- 4 Mansiones
+		plants = { { "mdl_z4_cipres", "mdl_arbol" }, { "mdl_z4_topiario", "mdl_arbusto" } },
+		details = { "mdl_z4_topiario" },
+		landmark = "mdl_z4_fuente",
+		fence = { "mdl_z3_seto", "mdl_valla" },
+	},
+	{ -- 5 Colina de los Millonarios
+		plants = { { "mdl_z5_palmera", "mdl_arbol" }, { "mdl_z4_topiario", "mdl_arbusto" } },
+		details = { "mdl_z5_farol_dorado" },
+		landmark = "mdl_z5_estatua_reloj",
+		fence = { "mdl_z3_seto", "mdl_valla" },
+	},
+}
+
+-- Zona a la que pertenece una coordenada Z del camino (1 si está antes de la primera).
+local function zoneAt(z)
+	return math.clamp(math.floor((z - ZONE_START) / ZONE_LENGTH) + 1, 1, #GameData.Zones)
+end
+
+-- Coloca el primer asset disponible de la lista; si no hay ninguno, no coloca nada.
+local function placeAny(names, position, facing, parent)
+	for _, name in names do
+		if AssetLibrary.find(name) then
+			return AssetLibrary.place(name, position, facing, parent)
+		end
+	end
+	return nil
+end
+
 -- Decoración (DEV-014): solo aparece si los assets existen; no afecta al juego.
 function WorldService.placeDecor(folder)
 	local decor = Instance.new("Folder")
@@ -412,13 +470,38 @@ function WorldService.placeDecor(folder)
 			AssetLibrary.place("mdl_farola", Vector3.new(side * 14, 0, z), Vector3.new(-side, 0, 0), decor)
 		end
 	end
-	-- Árboles, arbustos y rocas junto a los muros laterales
-	local kinds = { "mdl_arbol", "mdl_arbusto", "mdl_arbol", "mdl_roca" }
+	-- Vegetación junto a los muros laterales, propia de cada zona (ART-015, propuesta DEC-024)
 	local index = 0
 	for z = ZONE_START + 10, MAP_END - 10, 22 do
+		local style = ZONE_STYLE[zoneAt(z)] or ZONE_STYLE[1]
 		for _, side in { -1, 1 } do
 			index += 1
-			AssetLibrary.place(kinds[index % #kinds + 1], Vector3.new(side * (HALF_WIDTH - 8), 0, z), nil, decor)
+			placeAny(style.plants[index % #style.plants + 1], Vector3.new(side * (HALF_WIDTH - 8), 0, z), nil, decor)
+		end
+	end
+	-- Detalles de cada zona, entre las casas y la vegetación (x = ±100)
+	for zoneIndex in GameData.Zones do
+		local style = ZONE_STYLE[zoneIndex]
+		local startZ = WorldService.zoneBounds(zoneIndex)
+		if style and style.details then
+			for i, z in { startZ + 25, startZ + 70, startZ + 115 } do
+				local side = (i % 2 == 0) and 1 or -1
+				AssetLibrary.place(style.details[(i - 1) % #style.details + 1], Vector3.new(side * 100, 0, z), Vector3.new(-side, 0, 0), decor)
+			end
+		end
+		if style and style.landmark then -- una pieza destacada por zona (fuente, estatua)
+			AssetLibrary.place(style.landmark, Vector3.new(-100, 0, startZ + 48), Vector3.new(1, 0, 0), decor)
+		end
+	end
+	-- Torre de reloj: punto focal de la plaza (ART-015)
+	-- Mira hacia la aparición y la salida (+Z). Es sólida para que no se atraviese; está
+	-- en el centro de la plaza, lejos de la aparición (40 studs) y de los plots (95).
+	local tower = AssetLibrary.place("mdl_torre_reloj", WorldService.PlazaCenter, Vector3.new(0, 0, 1), decor)
+	if tower then
+		for _, part in tower:GetDescendants() do
+			if part:IsA("BasePart") then
+				part.CanCollide = true
+			end
 		end
 	end
 	-- Bancas en la plaza
@@ -435,9 +518,10 @@ function WorldService.placeDecor(folder)
 	for zoneIndex in GameData.Zones do
 		local startZ = WorldService.zoneBounds(zoneIndex)
 		AssetLibrary.place("mdl_cartel_zona", Vector3.new(-14, 0, startZ + 4), Vector3.new(0, 0, -1), decor)
+		local fence = (ZONE_STYLE[zoneIndex] or ZONE_STYLE[1]).fence
 		for x = -HALF_WIDTH + 8, HALF_WIDTH - 8, 8 do
 			if math.abs(x) > 14 then
-				AssetLibrary.place("mdl_valla", Vector3.new(x, 0, startZ + 0.5), Vector3.new(0, 0, -1), decor)
+				placeAny(fence, Vector3.new(x, 0, startZ + 0.5), Vector3.new(0, 0, -1), decor)
 			end
 		end
 	end
