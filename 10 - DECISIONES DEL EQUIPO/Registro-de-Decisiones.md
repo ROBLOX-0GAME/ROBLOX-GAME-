@@ -275,10 +275,10 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 
 #### DEC-021 — La MacBook de Zadiel sirve para todo el desarrollo
 
-- **Fecha:** 2026-11-20 (Propuesta en ART-008; ampliada en INFRA-005). **Estado:** **Aprobada** por Zadiel el 2026-11-20 (INFRA-005); falta la revisión de Jhonn (DEC-020). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
+- **Fecha:** 2026-11-20 (Propuesta en ART-008; ampliada en INFRA-005). **Estado:** **Aprobada** por Zadiel y Jhonn el 2026-11-20 (INFRA-005 e INFRA-008). **Área:** Arquitectura / equipo. **Deciden:** Zadiel y Jhonn (DEC-020).
 - **Decisión:** la MacBook de Zadiel se puede usar para **todo** el trabajo del proyecto, igual que las PC Windows: Obsidian y Git, arte (Blender, Material Maker, Krita y Audacity), Roblox Studio con su MCP y Open Cloud en la place oficial por Team Create, código en `game/src` con Rojo y pruebas en Play. Ya se usó así en ART-008 y ART-013. Reemplaza a DEC-019 («sin Roblox Studio ni Rojo»).
 - **Se mantiene:** el código entra solo por `game/src` (el repositorio es la fuente de verdad), no se publica sin el OK de Zadiel y Jhonn, y no se guarda la place a la vez desde dos equipos en Team Create.
-- **Pendiente de alinear:** `.claude/CLAUDE.md`, `AGENTS.md` y [[Arquitectura-General]] todavía dicen «la MacBook queda para Obsidian y tareas escolares». Se actualizan en una tarea con esas rutas reservadas.
+- **Notas alineadas** en INFRA-007: `.claude/CLAUDE.md`, `AGENTS.md` y [[Arquitectura-General]].
 
 #### DEC-022 — Iluminación de la place para los PBR y el low-poly colorido
 

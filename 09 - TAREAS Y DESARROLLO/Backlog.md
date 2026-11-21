@@ -927,7 +927,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Arquitectura / equipo.
 - **Prioridad:** Baja.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -935,4 +935,4 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] DEC-021 marcada como Aprobada por Zadiel y Jhonn.
+- [x] DEC-021 marcada como Aprobada por Zadiel y Jhonn.
