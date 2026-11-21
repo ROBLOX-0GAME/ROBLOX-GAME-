@@ -804,3 +804,24 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - [x] Errores encontrados corregidos o anotados como bug.
 
 **Resultado (2026-11-20):** place guardada en Roblox, versión 13, sin publicar. 47/47 pruebas, HUD cargado y consola sin errores. Bucle principal recorrido en Play sin bugs nuevos (detalle en la memoria del área 04). Pendiente: jefe con aportes, zonas 2–5, pases y productos de Robux (IDs en 0).
+
+### DEV-017 — Prueba del jefe y de las zonas 2 a 5; Plan de Pruebas al día
+
+- **ID:** DEV-017.
+- **Cuenta Claude:** Claude — Cuenta A (PC Windows de Jhonn).
+- **Responsable:** Jhonn.
+- **Revisor:** Zadiel.
+- **Área:** Código / pruebas.
+- **Prioridad:** Alta.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** siguiente paso tras DEV-016. En Play sobre la place oficial: el Cronómetro Maestro con aportes de piezas (puntos, premio o devolución) y el robo en las zonas 2 a 5, incluida la defensa del servidor si no tienes la velocidad mínima. Se pone al día el §22 del Plan de Pruebas (filas pendientes de DEV-015, ya probadas en DEV-016, y la celda rota por un salto de línea). Los bugs que salgan se corrigen en `game/src`. No se publica.
+
+**Criterios de aceptación:**
+
+- [ ] Plan de Pruebas §22 corregido y actualizado.
+- [ ] Jefe con aportes probado (puntos, y premio o devolución).
+- [ ] Zonas 2 a 5: robo permitido o rechazado según la velocidad, con resultado real.
+- [ ] Bugs corregidos o anotados.
