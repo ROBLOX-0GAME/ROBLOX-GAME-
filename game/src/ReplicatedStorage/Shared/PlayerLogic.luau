@@ -44,6 +44,7 @@ function PlayerLogic.newData()
 		settings = {}, -- [settingId] = valor (DEV-013)
 		daily = { streak = 0, lastDay = -1 }, -- racha de recompensa diaria
 		playtime = { day = -1, seconds = 0, claimed = {} }, -- tiempo jugado hoy
+		lastSeen = 0, -- os.time() de la última vez conectado (DEC-030: ganancia offline)
 	}
 end
 
@@ -156,6 +157,7 @@ function PlayerLogic.reconcile(data)
 
 	-- Introducción y pieza del legado (DEV-011)
 	data.introDone = data.introDone == true
+	data.lastSeen = nonNegativeInt(data.lastSeen) -- DEC-030
 	local validVariant = false
 	for _, piece in GameData.LegacyPieces do
 		if piece.id == data.legacyVariant then
@@ -409,7 +411,36 @@ function PlayerLogic.coinMultiplier(data)
 	if PlayerLogic.hasPass(data, "vip") then
 		multiplier *= GameData.GamePasses.vip.coinMultiplier
 	end
+	if PlayerLogic.hasPass(data, "moneyX2") then -- DEC-030
+		multiplier *= GameData.GamePasses.moneyX2.coinMultiplier
+	end
 	return multiplier
+end
+
+-- Velocidad a la que cuenta el tiempo jugado para los premios (DEC-030: VIP un 30 % antes).
+function PlayerLogic.playtimeRate(data)
+	if PlayerLogic.hasPass(data, "vip") then
+		return 1 / Config.VIP_PLAYTIME_FACTOR
+	end
+	return 1
+end
+
+-- Ganancia offline del plot (DEC-030): monedas y segundos que cuentan desde
+-- data.lastSeen hasta now, con tope de 4 h (8 h con VIP) y al OFFLINE_RATE.
+function PlayerLogic.offlineEarnings(data, now)
+	if (data.lastSeen or 0) <= 0 then
+		return 0, 0
+	end
+	local cap = Config.OFFLINE_MAX_SECONDS
+	if PlayerLogic.hasPass(data, "vip") then
+		cap = Config.OFFLINE_MAX_SECONDS_VIP
+	end
+	local seconds = math.clamp(now - data.lastSeen, 0, cap)
+	if seconds < Config.OFFLINE_MIN_SECONDS then
+		return 0, 0
+	end
+	local coins = math.floor(PlayerLogic.museumIncomePerMinute(data) * seconds / 60 * Config.OFFLINE_RATE)
+	return coins, seconds
 end
 
 -- ¿Tiene la velocidad necesaria para cruzar la puerta y robar en la zona?

@@ -2065,6 +2065,17 @@ function Ui.init(remote)
 		announceRemote.OnClientEvent:Connect(onAnnounce)
 	end
 	watchRace()
+	-- DEC-030: etiqueta [VIP] dorada en el chat (el servidor pone el atributo «VIP» al jugador)
+	local TextChatService = game:GetService("TextChatService")
+	TextChatService.OnIncomingMessage = function(message)
+		local properties = Instance.new("TextChatMessageProperties")
+		local source = message.TextSource
+		local sender = source and Players:GetPlayerByUserId(source.UserId)
+		if sender and sender:GetAttribute("VIP") then
+			properties.PrefixText = '<font color="#F2C14E"><b>[VIP]</b></font> ' .. message.PrefixText
+		end
+		return properties
+	end
 	ContextActionService:BindAction("AbrirMochila", function(_, inputState)
 		if inputState == Enum.UserInputState.Begin then
 			toggleBackpack()

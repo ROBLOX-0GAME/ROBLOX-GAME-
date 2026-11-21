@@ -67,7 +67,8 @@ function RewardService.init()
 				if data.playtime.day == PlayerLogic.dayNumber(now) then
 					before = data.playtime.seconds
 				end
-				local after = PlayerLogic.addPlaytime(data, now, Config.PLAYTIME_TICK_SECONDS)
+				-- DEC-030: con VIP el tiempo cuenta más rápido (premios un 30 % antes)
+				local after = PlayerLogic.addPlaytime(data, now, Config.PLAYTIME_TICK_SECONDS * PlayerLogic.playtimeRate(data))
 				announcePlaytime(player, before, after)
 				announceDaily(player, data)
 				DataService.replicate(player)

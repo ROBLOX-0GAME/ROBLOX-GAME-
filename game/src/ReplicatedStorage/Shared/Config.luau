@@ -57,6 +57,13 @@ local Config = {
 	CHASE_LOSE_DISTANCE = 160, -- el dueño se rinde si te alejas tanto
 	CATCH_DISTANCE = 4.5, -- distancia a la que el dueño te atrapa
 
+	-- VIP y ganancia offline (DEC-030)
+	VIP_PLAYTIME_FACTOR = 0.7, -- el VIP cumple los premios por tiempo en un 30 % menos de tiempo
+	OFFLINE_MAX_SECONDS = 4 * 3600, -- ganancia offline del plot sin VIP: hasta 4 h
+	OFFLINE_MAX_SECONDS_VIP = 8 * 3600, -- con VIP: hasta 8 h
+	OFFLINE_RATE = 0.5, -- se paga el 50 % del ingreso del plot
+	OFFLINE_MIN_SECONDS = 60, -- menos de esto fuera no cuenta
+
 	-- Reinicio de la zona de carreras (DEC-029)
 	RACE_RESET_SECONDS = 300, -- cada cuánto se cierra la zona y se renuevan las piezas
 	RACE_WARNING_SECONDS = 30, -- cuenta atrás antes del cierre
@@ -110,6 +117,7 @@ local Config = {
 		vip = 2092324975,
 		bigBackpack = 2094136992,
 		petSlot = 2093488974,
+		moneyX2 = 2096725041, -- DEC-030: Dinero ×2
 		-- Multiplicadores de ganancia de velocidad al entrenar (DEC-023)
 		speedX2 = 2096772933,
 		speedX4 = 2092372988,

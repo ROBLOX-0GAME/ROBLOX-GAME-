@@ -154,8 +154,16 @@ GameData.GamePasses = {
 		id = "vip",
 		robux = 349,
 		name = "VIP",
-		desc = "+20% de monedas al vender y en el museo",
+		desc = "+20% de monedas, premios por tiempo un 30% antes, etiqueta [VIP] en el chat y ganancia offline de 8 h",
 		coinMultiplier = 1.2,
+	},
+	-- DEC-030: monedas ×2 al vender, en el botín y en el plot (se combina con el VIP)
+	moneyX2 = {
+		id = "moneyX2",
+		robux = 249,
+		name = "Dinero ×2",
+		desc = "Monedas ×2 al vender, en el botín y en tu plot, para siempre",
+		coinMultiplier = 2,
 	},
 	bigBackpack = {
 		id = "bigBackpack",
@@ -186,7 +194,7 @@ GameData.SPEED_MULTIPLIER_PASSES = {
 	{ factor = 256, robux = 599 },
 	{ factor = 512, robux = 1199 },
 }
-GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "bigBackpack", "petSlot" }
+GameData.GamePassOrder = { "supremePet", "turboTreadmill", "runner", "vip", "moneyX2", "bigBackpack", "petSlot" }
 for _, tier in GameData.SPEED_MULTIPLIER_PASSES do
 	local id = "speedX" .. tier.factor
 	GameData.GamePasses[id] = {

@@ -26,6 +26,7 @@ local CharacterService = require(script.Parent.CharacterService)
 local DataService = require(script.Parent.DataService)
 local Net = require(script.Parent.Net)
 local PetService = require(script.Parent.PetService)
+local MuseumService = require(script.Parent.MuseumService)
 
 local MonetizationService = {}
 
@@ -44,6 +45,9 @@ for key, id in Config.PRODUCT_IDS do
 end
 
 local function refreshPlayer(player)
+	local data = DataService.get(player)
+	-- DEC-030: el cliente muestra la etiqueta [VIP] en el chat con este atributo
+	player:SetAttribute("VIP", data ~= nil and PlayerLogic.hasPass(data, "vip"))
 	CharacterService.apply(player)
 	PetService.refresh(player)
 	DataService.replicate(player)
@@ -87,6 +91,7 @@ local function syncPasses(player)
 	end
 	PlayerLogic.setPasses(data, owned)
 	refreshPlayer(player)
+	MuseumService.grantOffline(player) -- DEC-030: con los pases ya conocidos (tope VIP)
 	if testing then
 		Net.notify(player, "Modo de prueba: todos los pases activos (no se guardan).", "info")
 	end
