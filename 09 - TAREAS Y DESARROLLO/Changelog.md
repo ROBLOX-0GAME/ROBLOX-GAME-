@@ -485,3 +485,17 @@ Reglas:
 - **2026-11-20 · ART-013 · Paso 4 — Iconos, sonidos e iluminación.** Tarea **DEV-018** para Jhonn con los IDs listos para `Config.ICON_IDS` y `Config.SOUND_IDS` (commit `48f35f8`). Pase de iluminación **DEC-022 (Propuesta)** aplicado en `Lighting` con el OK de Zadiel. `Technology = Future` se pone a mano (el MCP no tiene permiso).
 - **2026-11-20 · ART-013 · Paso 5 — Verificación (ejecutada).** Play: servidor con **47/47 pruebas**. `PreloadAsync` en el cliente: **55/55 Success** (36 mallas, paleta, 10 sonidos y 8 iconos; los iconos dan *Success* como `ImageLabel` y *Failure* como texto suelto). `AssetLibrary.dress`: 27 de los 27 modelos de mundo vestidos (428 copias `Visual_*` en total, 149 sobre pieza provisional oculta). Las 9 mascotas se revisaron con una copia solo en el cliente. `SceneAnalysisService` con la cámara por defecto: 30.555 triángulos, 43 *draw calls*, 3.213 instancias y 2,8 MB de audio. Consola: `tex_paleta` tardó en procesarse al principio («content representation is being generated»); sigue el error de `rbxassetid://203785492`, que ya existía. Capturas `art/export/vistas/studio_art013_{plot,muro,casa,mascotas}.png` (commit `3b723c9`).
 - **2026-11-20 · ART-013 · Paso 6 — Guardado.** *Save to Roblox* con el OK de Zadiel: **versión 16**. No se publicó.
+
+## 29. ART-014 — Identidad visual «taller de relojería fantástico»
+
+- **Responsable:** Zadiel · **Revisor:** Jhonn · **Flujo:** directo en `main` (DEC-009)
+
+- **2026-11-20 · ART-014 · Paso 1 — Auditoría y reserva.** Auditoría de solo lectura de `game/src`, `art/` y las decisiones. `game/src/**` y el Registro estaban reservados por DEV-019, así que el código (Bloque A) queda diseñado y no se aplica. Reserva `ec5aea9`.
+- **2026-11-20 · ART-014 · Paso 2 — Arte (Bloque B).** Nuevo `art/blender/scripts/identidad_visual.py`.
+  - **Torre de reloj:** 1.432 triángulos, 9 × 26,6 × 9.
+  - **12 detalles de zona** (24–336 triángulos): tendedero; álamo y barriles; árbol redondo, seto y buzón; ciprés, fuente y topiario; palmera, estatua de reloj y farol dorado.
+  - **5 iconos de estaciones:** `ico_est_taller`, `_museo`, `_tienda`, `_criadero` y `_cronometro`.
+  - Se rehicieron las hojas de la palmera (la primera versión salía con las hojas sueltas).
+  - `iconos.py` ya se puede importar y la hoja de contactos solo junta modelos.
+  - Verificación ejecutada: exportación sin errores, vistas previas revisadas, iconos revisados sobre fondo oscuro y `tex_paleta.png` sin cambios. Commit `0559a51`.
+- **2026-11-20 · ART-014 · Paso 3 — Diseño del Bloque A.** [[UI-UX]] §12: carteles por contexto, módulo `Vfx.luau` solo en el cliente, brillo por rareza, HUD con la paleta de taller y reparto de los modelos por zona. Propuesta DEC-024 en la memoria del área 06, pendiente de pasar al Registro.

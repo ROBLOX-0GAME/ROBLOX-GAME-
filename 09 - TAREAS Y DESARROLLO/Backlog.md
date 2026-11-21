@@ -966,7 +966,7 @@ ICON_IDS = {
 - **Revisor:** Jhonn.
 - **Área:** Arte / mundo / interfaz.
 - **Prioridad:** Alta.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
@@ -974,7 +974,31 @@ ICON_IDS = {
 
 **Criterios de aceptación:**
 
-- [ ] Auditoría y propuesta DEC-024 redactadas (Memoria del área 06; al Registro cuando DEV-019 lo libere).
-- [ ] Modelos nuevos exportados en `art/export/modelos/` con vistas previas.
-- [ ] Iconos de estaciones en `art/texturas/export/`.
-- [ ] Diseño del Bloque A listo para aplicar en `game/src`.
+- [x] Auditoría y propuesta DEC-024 redactadas (Memoria del área 06; al Registro cuando DEV-019 lo libere).
+- [x] Modelos nuevos exportados en `art/export/modelos/` con vistas previas.
+- [x] Iconos de estaciones en `art/texturas/export/`.
+- [x] Diseño del Bloque A listo para aplicar en `game/src`.
+
+**Resultado (2026-11-20):** 13 modelos y 5 iconos originales exportados (commit `0559a51`). Diseño del Bloque A en [[UI-UX]] §12. Propuesta DEC-024 en la memoria del área 06, pendiente de pasar al Registro cuando DEV-019 lo libere. Sigue en ART-015.
+
+### ART-015 — Aplicar la presentación visual de ART-014 (código y Studio)
+
+- **ID:** ART-015.
+- **Cuenta Claude:** Claude — Cuenta A.
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Código de presentación / arte en Studio.
+- **Prioridad:** Alta.
+- **Estado:** Pendiente (empieza cuando DEV-019 libere `game/src/**` y el Registro).
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** aplicar [[UI-UX]] §12 en `game/src`: carteles por contexto, `Client/Vfx.luau`, brillo por rareza, HUD con la paleta de taller y decoración por zona en `WorldService` con respaldo genérico. Pasar DEC-024 al Registro como Propuesta. Con el OK de Zadiel y Jhonn: subir a Studio los 13 modelos y 5 iconos de ART-014 (método de ART-013), comprobar en Play y guardar sin publicar.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-024 en el Registro (Propuesta) y aprobada o rechazada por Zadiel y Jhonn.
+- [ ] Código de §12 aplicado sin tocar lógica, etiquetas, atributos ni red; `build.py --check` y 47/47 pruebas.
+- [ ] Assets de ART-014 subidos e insertados, con sus IDs en `ids_roblox.md`.
+- [ ] Prueba en Play: carteles sin superponerse, efectos breves y rendimiento medido (triángulos y *draw calls*).
+

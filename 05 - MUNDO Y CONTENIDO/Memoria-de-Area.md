@@ -22,6 +22,14 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-014 (Zadiel): propuesta de identidad por zona (DEC-024, propuesta). Nombres, puertas, límites y requisitos no cambian.
+  - Z1: tendedero.
+  - Z2: álamo y barriles.
+  - Z3: árbol redondo, seto y buzón.
+  - Z4: ciprés, fuente y topiario.
+  - Z5: palmera, estatua de reloj y farol dorado.
+  - Torre de reloj como punto focal de la plaza.
+  - Modelos en `art/export/modelos/`, sin subir aún. Reparto por zona en [[UI-UX]] §12.5.
 - 2026-11-20 · ART-001: estilo visual propuesto: low-poly colorido tipo simulador de Roblox, que se detallará a mano. [[Pipeline-de-Arte]].
 - Al cerrar tareas, anota decisión/estado, fecha, responsable, fuente y enlaces. Resume; no copies conversaciones.
 

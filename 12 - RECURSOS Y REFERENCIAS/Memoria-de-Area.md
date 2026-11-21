@@ -22,6 +22,11 @@
 
 ## Memoria reciente
 
+- 2026-11-20 · ART-014 (Zadiel): `art/blender/scripts/identidad_visual.py` genera 13 modelos originales y 5 iconos de estaciones (`ico_est_*`), con la paleta actual, sin recursos externos.
+  - Los modelos van de 24 a 1.432 triángulos.
+  - `iconos.py` ya se puede importar sin rehacer los 8 iconos del HUD.
+  - La hoja de contactos solo junta las vistas `mdl_*`.
+  - Falta subirlos e integrarlos en Studio (ART-015).
 - 2026-11-20 · ART-013 (Zadiel, MacBook con Studio y MCP): `tex_paleta`, 36 modelos de paleta, 8 iconos y 10 sonidos subidos (zadiel799, **55/55 Approved**) y montados en `ReplicatedStorage/Assets`; place guardada en la **versión 16**, sin publicar. Studio limita un MeshPart a 2048 studs, así que 9 modelos grandes necesitan otra escala (ver `ids_roblox.md`). Verificado: 47/47 pruebas, `PreloadAsync` 55/55, `AssetLibrary.dress` en los 27 modelos de mundo, 30.555 triángulos y 43 *draw calls*. Pendiente: DEV-018 (conectar iconos y sonidos), DEC-022 (iluminación) y DEC-021 por aprobar con Jhonn, y el texto del arco de salida mezclado con `mdl_cartel_salida`. Fuente: [[Changelog]] §28, [[Pipeline-de-Arte]] §5.
 - 2026-11-20 · ART-008 (Zadiel, MacBook con Studio y MCP): 20 modelos PBR y 43 mapas subidos por Open Cloud (zadiel799, todos *Approved*), montados en `ReplicatedStorage/Assets` de la place oficial 84500108687089 (78 `SurfaceAppearance`) y guardados (versión 9, sin publicar). Los FBX llegan ×100 (cm): `ScaleTo(0.01)`. El cliente carga los 78 contenidos. IDs en `art/texturas/ids_roblox.md`. Encontrado: `Ui.luau:766` rompe el cliente (tarea de código). Propuesta DEC-021.
 - 2026-11-20 · ART-009 (Zadiel, PC Windows): DEC-018 aprobada por Zadiel (DEC-020: deciden Zadiel y Jhonn). 14 modelos PBR (piezas, legado y cápsulas) con `piezas_detalladas.py` y 3 materiales nuevos (latón, plata, esmalte cósmico). En Windows, Material Maker no exporta el nodo `perlin`: se usa `fbm2`. Detalle en [[Pipeline-de-Arte]] y [[Changelog]] §25. Falta importar en Studio (ART-008).

@@ -192,6 +192,22 @@ Lo aprendido:
 - Una imagen recién aprobada puede tardar unos minutos en servirse («content representation is being generated»).
 - El texto del arco provisional de la salida se mezcla con `mdl_cartel_salida` (anotado para Jhonn).
 
+### Identidad «taller de relojería fantástico» (ART-014, propuesta DEC-024)
+
+`art/blender/scripts/identidad_visual.py` (mismo comando que los demás; con `-- <nombres>` genera solo esos) crea modelos de paleta y los iconos de estaciones:
+
+| Asset | Uso | Medida (ancho × alto × fondo) | Triángulos | Estado |
+|---|---|---|---|---|
+| `mdl_torre_reloj` | Punto focal de la plaza | 9 × 26,6 × 9 | 1.432 | Exportado, sin subir |
+| `mdl_z1_tendedero` | Zona 1 | 6,3 × 4 × 1,65 | 100 | Exportado, sin subir |
+| `mdl_z2_alamo`, `mdl_z2_barriles` | Zona 2 | 3 × 11,8 × 2,9 · 3,4 × 3,6 × 2,5 | 132 · 336 | Exportados, sin subir |
+| `mdl_z3_arbol_redondo`, `mdl_z3_seto`, `mdl_z3_buzon` | Zona 3 (el seto también sirve en Z4 y Z5) | 5,4 × 8,2 × 5 · 8 × 2,4 × 1,6 · 1 × 4,2 × 1,6 | 168 · 24 · 64 | Exportados, sin subir |
+| `mdl_z4_cipres`, `mdl_z4_fuente`, `mdl_z4_topiario` | Zona 4 | 2,6 × 10,1 × 2,6 · 7 × 4,35 × 7 · 2,1 × 5,1 × 2,1 | 48 · 284 · 182 | Exportados, sin subir |
+| `mdl_z5_palmera`, `mdl_z5_estatua_reloj`, `mdl_z5_farol_dorado` | Zona 5 | 8 × 9,25 × 8,2 · 3,3 × 7,3 × 3,3 · 1,6 × 8 × 1,6 | 300 · 288 · 156 | Exportados, sin subir |
+| `ico_est_taller`, `_museo`, `_tienda`, `_criadero`, `_cronometro` | Iconos de los carteles de estación | 256 × 256 | — | Exportados, sin subir |
+
+Todos caben en 20,48 studs salvo la torre (26,6 de alto): al subirla, escálala a su medida real como en ART-013 (`ids_roblox.md`). Reparto por zona y uso en el código: [[UI-UX]] §12.
+
 ## 6. Control de recursos
 
 Según [[Recursos-y-Referencias]] §8, todo recurso externo anota su procedencia, autor, licencia y permisos. Los assets hechos por el equipo o generados por script son propios. Las referencias externas van a `art/referencias/` con su fuente.
