@@ -879,3 +879,21 @@ ICON_IDS = {
 **Criterios de aceptación:**
 
 - [x] DEC-021 actualizada con el alcance completo y DEC-019 marcada como reemplazada.
+
+### INFRA-006 — DEC-022 aprobada (iluminación)
+
+- **ID:** INFRA-006.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arte / dirección visual.
+- **Prioridad:** Baja.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Zadiel informa de que Jhonn aprobó DEC-022 (iluminación de ART-013, ya aplicada en la place, versión 16). Se cambia su estado en el Registro.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-022 marcada como Aprobada por Zadiel y Jhonn.
