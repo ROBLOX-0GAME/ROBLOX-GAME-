@@ -1182,7 +1182,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Monetización / economía.
 - **Prioridad:** Media.
-- **Estado:** En desarrollo.
+- **Estado:** Completada.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1196,7 +1196,9 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] Pase Dinero ×2 creado y en `Config`.
-- [ ] VIP: premios más rápidos, etiqueta en el chat y offline de 8 h.
-- [ ] Ganancia offline de 4 h para todos.
-- [ ] Pruebas automáticas y prueba en Play.
+- [x] Pase Dinero ×2 creado y en `Config`.
+- [x] VIP: premios más rápidos, etiqueta en el chat y offline de 8 h.
+- [x] Ganancia offline de 4 h para todos.
+- [x] Pruebas automáticas y prueba en Play.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 29). 52/52 pruebas ([[Plan-de-Pruebas]] §30). Falta ver la etiqueta en el chat y una ganancia offline real.

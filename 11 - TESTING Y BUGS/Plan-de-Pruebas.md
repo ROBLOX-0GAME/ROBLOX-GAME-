@@ -439,3 +439,16 @@ Play en la place oficial el 2026-11-21 (versión 28, sin publicar).
 | Reapertura a los 10 s con piezas nuevas | Manual (Studio) | **Ejecutada: cerrada a los 297 s, reabierta a los 307 s, 144 piezas** |
 | Aviso de pieza Mítica o superior | Manual | **Pendiente:** con las piezas actuales (hasta Legendario) no salta; se probará con las piezas nuevas (DEV-025) |
 | El botín se guarda al volver por el cierre | Manual | Pendiente de probar con botín encima (por código: al llegar a la base se guarda, como siempre) |
+
+## 30. Pruebas de DEV-024 (Dinero ×2, VIP y ganancia offline)
+
+Play en la place oficial el 2026-11-21 (versión 29, sin publicar).
+
+| Prueba | Tipo | Estado |
+|---|---|---|
+| Pruebas automáticas (incluida la de DEC-030: ×2, VIP y offline de 4 h / 8 h) | Automática (Studio) | **Ejecutada: 52 correctas, 0 fallidas** |
+| Pase Dinero ×2 a la venta por 249 R$ | Manual (Studio) | **Ejecutada: `GetProductInfo` correcto** |
+| Atributo VIP para la etiqueta del chat (cuenta creadora) | Manual (Studio) | **Ejecutada: `VIP = true`** |
+| Multiplicador de monedas con mascota suprema + VIP + Dinero ×2 | Manual (Studio) | **Ejecutada: ×2,436 (1,015 × 1,2 × 2)** |
+| Etiqueta [VIP] visible en el chat | Manual | Pendiente (necesita escribir en el chat) |
+| Ganancia offline real al volver a entrar con relojes exhibidos | Manual | Pendiente (necesita una sesión con relojes exhibidos, salir y volver tras más de 1 min) |
