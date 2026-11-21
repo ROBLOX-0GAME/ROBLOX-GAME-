@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-026 (Jhonn): BUG de la mesa que se cerraba sola (el cliente tomaba la mesa de un plot libre; `stationById` ahora prioriza la propia). DEC-031: 12 relojes de lujo, uno exclusivo por zona (1 a 12) con el material de su zona; los 6 generales salen al azar. El reinicio de zona ahora renueva también las piezas antiguas durante la avería. Recorrido completo de mecánicas en Play, place v34 ([[Plan-de-Pruebas]] §32). El Renacer queda aparcado por decisión de Jhonn.
 - 2026-11-21 · DEV-025 (Jhonn): DEC-028. Las casas dan piezas de reloj `reloj.clase.rareza` (Caja, Calibre, Esfera, Manecillas) con 12 rarezas; desde la zona 3, un reloj exclusivo por zona (16 relojes). Mesa de armado en el plot: 4 marcos en orden, bandeja por reloj o rareza; cada pieza ajena: −1 rareza y −25 %. Relojes guardados con clave `id|rareza|ajenas` (los antiguos cuentan como Común). Piezas antiguas solo durante el Cronómetro (`HouseService.setBossParts`). Place v32, 52/52 ([[Plan-de-Pruebas]] §31). Arte: [[PROMPT_PIEZAS_RELOJ_ZADIEL]] (ART-018).
 - 2026-11-21 · DEV-023 (Jhonn): DEC-029. `RaceService` cierra la zona cada 5 min (30 s de aviso, vuelta a la plaza, piezas renovadas con `HouseService.resetAll`, reapertura a los 10 s). Las piezas ya no reaparecen solas. `GameData.Rarities` con 12 rarezas; aviso global (`Net.announce`, remoto `Announce`) desde Mítico. Place versión 28.
 

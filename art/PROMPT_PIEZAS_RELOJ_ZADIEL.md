@@ -1,5 +1,7 @@
 # Prompt — Piezas de reloj robables, mesa de armado y animaciones por rareza (Zadiel)
 
+> **Actualizado en DEV-026 (2026-11-21):** 12 relojes de lujo, uno por zona, con el material de cada zona (DEC-031, §4.1).
+>
 > **Actualizado en DEV-025 (2026-11-21)** con las respuestas de Jhonn (DEC-028): 12 rarezas, 16 relojes, calibre solo visual, visuales parecidas a los originales con nombres inventados, y el código ya programado (§8).
 >
 > Creado en **ART-017** (2026-11-21) por Claude en la PC de Jhonn, a partir de lo que pidió Jhonn. **Es un documento para revisar antes de ejecutarlo:** Jhonn puede cambiar cualquier cosa. Las dudas abiertas están en [[Recomendaciones-Claude]] (R-007 a R-010). Lo marcado como **Propuesta** necesita el visto bueno de Zadiel y Jhonn (DEC-020).
@@ -84,32 +86,45 @@ Desde **Mítico**, sale un aviso arriba de la pantalla para todo el servidor (ya
 
 ---
 
-## 4. Relojes (familias de piezas): decidido en DEC-028
+## 4. Relojes (familias de piezas): DEC-028 y DEC-031
 
-Cada reloj tiene **su** caja, **su** calibre, **su** esfera y **sus** manecillas. Las piezas del mismo reloj comparten **un motivo visual** para que el jugador vea que van juntas. Las piezas de los relojes generales pueden salir en cualquier zona; desde la zona 3, cada zona tiene además **un reloj exclusivo**.
+Cada reloj tiene **su** caja, **su** calibre, **su** esfera y **sus** manecillas. Las piezas del mismo reloj comparten **un motivo visual** para que el jugador vea que van juntas.
 
 **Nombres y visuales (respuesta de Jhonn):** los nombres son **interpretados** (inventados, sin marcas), pero el **aspecto debe parecerse al reloj original** en el que se inspira: misma silueta, forma de caja, bisel, disposición de la esfera y colores típicos. **Nunca** pongas logos, coronas, textos ni nombres de marca reales en la esfera; usa el logo inventado del juego.
 
-| # | Id | Nombre en el juego | Se parece a | Calibre | Dónde sale | Valor base (Común) |
-|---|---|---|---|---|---|---|
-| 1 | `pocket` | Reloj de bolsillo | Clásico de bolsillo con tapa | Mecánico | General | 60 |
-| 2 | `wrist` | Reloj de pulsera | Pulsera sencilla de diario | Cuarzo | General | 150 |
-| 3 | `chrono` | Cronógrafo | Cronógrafo deportivo de 3 subesferas | Mecánico | General | 400 |
-| 4 | `legacy` | Reloj del Legado | Reloj único con la pieza del legado | Automático | General (necesita la pieza del legado) | 1.000 |
-| 5 | `royal` | Reloj real de rubí | Reloj de gala con rubíes | Automático | General | 1.200 |
-| 6 | `millionaire` | Reloj del millonario | Bisel de diamantes y esfera dorada | Automático | General | 3.000 |
-| 7 | `fechador` | Rolando Fechamaster | Rolex Datejust (bisel estriado, lupa de fecha) | Automático | Zona 3 | 500 |
-| 8 | `lunamaster` | Omigo Lunamaster | Omega Speedmaster (cronógrafo negro, taquímetro) | Mecánico | Zona 4 | 800 |
-| 9 | `tanque` | Cartero Tanque | Cartier Tank (caja rectangular, números romanos) | Cuarzo | Zona 5 | 1.200 |
-| 10 | `submar` | Rolando Submar | Rolex Submariner (bisel giratorio de buceo) | Automático | Zona 6 | 1.600 |
-| 11 | `roblereal` | Audemar Roble Real | Audemars Piguet Royal Oak (bisel octogonal con tornillos, esfera de cuadros) | Automático | Zona 7 | 2.000 |
-| 12 | `luminosa` | Panerei Luminosa | Panerai Luminor (caja cojín, protector de corona) | Mecánico | Zona 8 | 2.500 |
-| 13 | `fusion` | Hublón Fusión de Cristal | Hublot Big Bang de zafiro (caja transparente) | Automático | Zona 9 | 3.000 |
-| 14 | `nautil` | Philippon Nautil | Patek Philippe Nautilus (caja con «orejas», esfera horizontal en relieve) | Automático | Zona 10 | 3.500 |
-| 15 | `patrimonio` | Vacherón Patrimonio | Vacheron Constantin Patrimony (de vestir, muy fino y limpio) | Mecánico | Zona 11 | 4.200 |
-| 16 | `tourbillon` | Ricardo Mil Tourbillon | Richard Mille (caja tonneau, tourbillon a la vista) | Mecánico | Zona 12 | 5.000 |
+### 4.1 Los 12 relojes de lujo: uno exclusivo por zona (DEC-031)
 
-El valor se multiplica por 6 en cada rareza. El mejor reloj del juego, el **Ricardo Mil Tourbillon Atemporal original** (sus 4 piezas propias y Atemporales), vale unos **1.800T** (rango acordado: 1.500T–1.950T). Su modelo armado debe ser el más espectacular.
+Lista elegida por Jhonn. Cada reloj **solo sale en su zona** y se hace con el **material de esa zona**, que además encaja con el ambiente de las casas. La rareza (§3) se suma encima: cambia el acabado y el brillo, pero el material base del reloj se reconoce siempre.
+
+| Zona | Id | Nombre en el juego | Se parece a | Rasgos que deben leerse | Material de la zona | Calibre | Valor base |
+|---|---|---|---|---|---|---|---|
+| 1 · Barrio Humilde | `lunamaster` | Omigo Lunamaster | Omega Speedmaster | Cronógrafo negro, 3 subesferas, bisel taquimétrico | Acero mate | Mecánico | 200 |
+| 2 · Barrio Obrero | `santo` | Cartero Santo | Cartier Santos | Caja cuadrada, 8 tornillos en el bisel, números romanos | Acero cepillado con tornillos vistos | Automático | 300 |
+| 3 · Zona Residencial | `reverso` | Jaguar-LeColtre Reversible | Jaeger-LeCoultre Reverso | Caja rectangular art déco con gallones; se da la vuelta | Acero y esmalte art déco | Mecánico | 500 |
+| 4 · Mansiones | `daytona` | Rolando Daytuna | Rolex Daytona | Cronógrafo, bisel taquimétrico, brazalete de 3 eslabones | Oro amarillo | Automático | 800 |
+| 5 · Colina de los Millonarios | `overseas` | Vacherón Ultramar | Vacheron Constantin Overseas | Bisel con 6 muescas (cruz de Malta), esfera con relieve solar | Oro rosa | Automático | 1.200 |
+| 6 · Puerto de los Yates | `nautil` | Philippon Nautil | Patek Philippe Nautilus | Bisel octogonal redondeado con «orejas», esfera azul con relieve horizontal | Acero con esfera azul | Automático | 1.600 |
+| 7 · Distrito Financiero | `roblereal` | Audemar Roble Real | Audemars Piguet Royal Oak | Bisel octogonal con 8 tornillos hexagonales, esfera de cuadros, brazalete integrado | Acero y oro blanco | Automático | 2.000 |
+| 8 · Isla Privada | `bigbang` | Hublón Gran Explosión | Hublot Big Bang | Caja robusta, bisel con 6 tornillos en H, correa de caucho | Cerámica y caucho | Automático | 2.500 |
+| 9 · Ciudad de Cristal | `rm11` | Ricardo Mil RM-11 | Richard Mille RM 11 | Caja tonneau, esfera calada que deja ver el calibre | Carbono y zafiro transparente | Automático | 3.000 |
+| 10 · Valle Dorado | `tourbillon` | Bregué Clásico Tourbillon | Breguet Classique Tourbillon | Caja redonda con canto acanalado, esfera guilloché, tourbillon a la vista, agujas de punta hueca | Oro con guilloché | Mecánico | 3.500 |
+| 11 · Palacio Imperial | `granmaestro` | Philippon Gran Maestro Campana | Patek Philippe Grandmaster Chime | Caja grabada a mano, dos esferas (reversible), complicaciones | Oro rosa y esmalte | Mecánico | 4.200 |
+| 12 · Ciudadela del Tiempo | `astronomia` | Jacobo y Cía. Astronomía | Jacob & Co. Astronomia | Cúpula de zafiro con globo terráqueo, luna y tourbillon que giran a la vista | Zafiro y gemas | Mecánico | 5.000 |
+
+**El mejor reloj del juego** es el **Jacobo y Cía. Astronomía Atemporal original** (sus 4 piezas propias y Atemporales): vale unos **1.800T** (rango acordado: 1.500T–1.950T). Su modelo armado debe ser el más espectacular, con el globo y el tourbillon girando (solo en el cliente, §5).
+
+### 4.2 Los 6 relojes generales: salen al azar en cualquier zona
+
+| # | Id | Nombre en el juego | Aspecto | Calibre | Valor base |
+|---|---|---|---|---|---|
+| 1 | `pocket` | Reloj de bolsillo | Clásico de bolsillo con tapa y cadena; números romanos | Mecánico | 60 |
+| 2 | `wrist` | Reloj de pulsera | Pulsera sencilla de diario; índices de barra | Cuarzo | 150 |
+| 3 | `chrono` | Cronógrafo | Deportivo de 3 subesferas con pulsadores | Mecánico | 400 |
+| 4 | `legacy` | Reloj del Legado | Único; usa la pieza del legado; esfera cósmica | Automático | 1.000 |
+| 5 | `royal` | Reloj real de rubí | De gala, con rubíes en los índices y bisel acanalado | Automático | 1.200 |
+| 6 | `millionaire` | Reloj del millonario | Bisel de diamantes y esfera dorada | Automático | 3.000 |
+
+El valor se multiplica por 6 en cada rareza (§3).
 
 ---
 
@@ -232,8 +247,8 @@ Los ids de reloj son los de la tabla de §4 (`GameData.Watches`). La clase va en
 
 ## 8. Lo que ya está programado (DEV-025, 2026-11-21)
 
-**Esto no lo haces tú. Ya está en la place (v32) y en `game/src`:**
-- Piezas `reloj.clase.rareza` en el inventario y en el botín de las casas; la tirada depende de la zona, con el reloj exclusivo desde la zona 3.
+**Esto no lo haces tú. Ya está en la place (v34) y en `game/src`:**
+- Piezas `reloj.clase.rareza` en el inventario y en el botín de las casas; la tirada depende de la zona, con el reloj de lujo exclusivo de cada zona (DEC-031).
 - Panel de la mesa con los 4 marcos en orden, la bandeja con los 3 modos de orden y la vista previa (§6). Es un panel de texto provisional: tu diseño y tus iconos lo sustituirán.
 - Penalización por pieza ajena, valor, ingreso pasivo y suerte.
 - Avisos desde Mítico.
@@ -245,7 +260,7 @@ Los ids de reloj son los de la tabla de §4 (`GameData.Watches`). La clase va en
 
 1. **Reserva** (por ejemplo): `art/blender/**`, `art/texturas/fuentes/**`, `art/texturas/export/ico_pz_*.png`, `art/texturas/export/vfx_*.png`, `art/export/modelos/pz_*`, `art/export/modelos/rlj_*`, `art/audio/**`, `art/Pipeline-de-Arte.md`, `art/texturas/ids_roblox.md`, `12 - RECURSOS Y REFERENCIAS/Memoria-de-Area.md` y `10 - DECISIONES DEL EQUIPO/Registro-de-Decisiones.md`.
 2. **Bocetos (Krita):** 1 lámina por reloj con sus 4 piezas y las 12 rarezas en miniatura. Súbela a `art/referencias/` y pide a Jhonn que la mire **antes** de modelar.
-3. **Modelos (Blender):** primero los 6 generales y luego los 10 exclusivos (4 piezas cada uno, más el modelo armado). Respeta §5.
+3. **Modelos (Blender):** primero los 6 generales y luego los 12 de lujo, de la zona 1 a la 12 (4 piezas cada uno, más el modelo armado). Respeta §5.
 4. **Iconos (Krita):** los de §6.3.
 5. **Efectos (Krita + Studio):** flipbooks y Beams; plantillas `vfx_*` en `ReplicatedStorage/Assets/Vfx`.
 6. **Sonidos (Audacity):** los de §7.2, con su permiso de audio.

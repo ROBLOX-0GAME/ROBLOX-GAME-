@@ -21,6 +21,7 @@
 
 ## Memoria reciente
 
+- 2026-11-21 · DEV-026 (Jhonn): DEC-031. Valores base de los 12 relojes de lujo: 200, 300, 500, 800, 1.200, 1.600, 2.000, 2.500, 3.000, 3.500, 4.200 y 5.000 (zonas 1 a 12). El mejor (Jacobo y Cía. Astronomía Atemporal) ≈ 1.800T.
 - 2026-11-21 · DEV-025 (Jhonn): DEC-028. Valor de un reloj = base × 6^(rareza−1) × factor de ajenas (−25 % por pieza; 4 ajenas = Genérico al 10 %). Bases de 60 a 5.000; el mejor (Ricardo Mil Tourbillon Atemporal) ≈ 1.800T. Pieza suelta: se vende por el 5 % del valor del reloj con su misma rareza. Suerte +25 % por rareza. Probabilidad de subir rareza: 20 % + 4 % por zona (tope 85 %).
 - 2026-11-21 · DEV-024 (Jhonn): DEC-030. Pase Dinero ×2 (ID 2096725041, 249 R$). VIP: premios por tiempo ×1,43 más rápidos, etiqueta [VIP] en el chat (atributo `VIP` y `TextChatService.OnIncomingMessage`) y ganancia offline de 8 h; sin VIP, 4 h; al 50 % del ingreso (`PlayerLogic.offlineEarnings`, `MuseumService.grantOffline`). Place versión 29.
 

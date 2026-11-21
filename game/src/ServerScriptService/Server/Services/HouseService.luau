@@ -194,7 +194,10 @@ end
 
 -- DEC-028: mientras el Cronómetro está averiado, cada casa tiene piezas antiguas
 -- extra (engranajes, resortes…) para repararlo. Al terminar, desaparecen.
+local bossPartsEnabled = false -- DEV-026: el reinicio de zona también las renueva
+
 function HouseService.setBossParts(enabled)
+	bossPartsEnabled = enabled
 	for _, house in houses do
 		for _, spot in house.bossSpots do
 			if spot.item then
@@ -219,6 +222,10 @@ function HouseService.resetAll()
 			end
 			spawnSpot(house, spot)
 		end
+	end
+	-- DEV-026: si el Cronómetro está averiado, renueva también las piezas antiguas
+	if bossPartsEnabled then
+		HouseService.setBossParts(true)
 	end
 end
 

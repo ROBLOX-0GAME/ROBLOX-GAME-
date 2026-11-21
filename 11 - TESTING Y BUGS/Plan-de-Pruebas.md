@@ -462,7 +462,33 @@ Play en la place oficial el 2026-11-21 (versión 32, sin publicar).
 | Pruebas automáticas (5 nuevas de DEC-028: armar, pieza ajena, valores y mejor reloj, tirada por zona, robar/vender/Legado) | Automática (Studio) | **Ejecutada: 52 correctas, 0 fallidas** |
 | Piezas en las casas al iniciar | Manual (Studio, servidor) | **Ejecutada: 144 piezas de reloj (79 Común, 39 Poco común, 17 Raro, 3 Épico, 4 Legendario, 1 Mítico, 1 Celestial); luz solo en 26 (Raro o más); 0 piezas antiguas fuera del Cronómetro** |
 | Armar con 1 pieza ajena (Cronógrafo con piezas Raras y unas manecillas de pulsera) | Manual (Studio, servidor) | **Ejecutada: «Cronógrafo (Poco común) · 1 pieza(s) ajena(s)»** |
-| Mesa de armado en el cliente (marcos, orden, bandeja, vista previa, botón ARMAR) | Manual | Pendiente (abrir la mesa del plot con piezas en la mochila) |
+| Mesa de armado en el cliente (marcos, orden, bandeja, vista previa, botón ARMAR) | Manual | **Ejecutada en DEV-026 (§32)** |
 | Aviso arriba de la pantalla con piezas Míticas o mejores | Manual | Pendiente de verlo en pantalla (salieron una Mítica y una Celestial al iniciar) |
-| Piezas antiguas durante el Cronómetro y que desaparezcan al repararlo | Manual | Pendiente (necesita el evento) |
+| Piezas antiguas durante el Cronómetro y que desaparezcan al repararlo | Manual | **Ejecutada en DEV-026 (§32)** |
 | Relojes guardados antes de DEC-028 (Común, sin ajenas) | Automática | **Ejecutada en la prueba de valores** |
+
+## 32. Revisión de mecánicas de DEV-026 (mesa, 12 relojes de lujo y recorrido completo)
+
+Play en la place oficial el 2026-11-21 (versión 34, sin publicar). Las acciones se lanzaron como el jugador real, con los mismos remotes del cliente (`Action`, `State`, `Notify`) y los `ProximityPrompt` de verdad. Studio da todos los pases a la cuenta creadora, así que la mochila marca 80 (60 + 20 del pase).
+
+| Mecánica | Resultado |
+|---|---|
+| Pruebas automáticas | **52 correctas, 0 fallidas** |
+| **BUG: la mesa se cerraba sola** | **Causa:** el cliente tomaba la mesa de un plot libre (a 148 studs) y el control de distancia cerraba el panel. **Arreglado:** ahora sigue abierta tras 6 s junto a la mesa propia (captura del panel correcta) |
+| 12 relojes de lujo por zona | **Correcto:** cada zona solo tiene su exclusivo (Z1 Omigo Lunamaster … Z12 Jacobo y Cía. Astronomía) junto a los generales |
+| Robar y guardar el botín | **Correcto:** 7 robos en las zonas 1 y 2; cada uno se guarda al volver a la base con sus monedas |
+| Armar en la mesa (remote real) | **Correcto:** bolsillo con 2 piezas ajenas → «Reloj de bolsillo (Común) · 2 pieza(s) ajena(s)» |
+| Exhibir y retirar en el plot | **Correcto** |
+| Vender reloj y pieza suelta en la tienda | **Correcto** |
+| Mejoras: vitrinas, caminadora (plot) y carga | **Correcto** (cada una solo en su sitio) |
+| Mascotas: cápsula y equipar las mejores | **Correcto** |
+| Premio diario, ruleta, premio por tiempo y abrir cápsula | **Correcto** (el diario no se repite el mismo día) |
+| Ajuste de velocidad para correr (30) | **Correcto:** WalkSpeed 30 en la base |
+| Caminadora del plot | **Correcto:** entrena y sube la velocidad; se para al volver a pulsar |
+| Puertas de velocidad | **Correcto:** abiertas hasta 10K con 24K de velocidad; todas cerradas durante el reinicio de zona |
+| Dueño dormido | **Correcto:** despierta a los 15,7 s, atrapa a los 17,2 s y se pierde el botín |
+| Cronómetro averiado | **Correcto:** a los 90 s salen 48 piezas antiguas (1 por casa); entregar suma puntos (1/30); al terminar desaparecen |
+| **BUG: el reinicio de zona no renovaba las piezas antiguas** durante la avería | **Arreglado** en `HouseService.resetAll`. Sin prueba en Play: hace falta que coincidan el reinicio y la avería |
+| Pieza del legado | Correcto: pide estar en la plaza (por diseño) |
+
+**Detalles menores vistos (sin cambiar):** el aviso de robo muestra las monedas sin multiplicar («y 10 monedas») y al guardar se cobran ya multiplicadas («+32»); y algunos textos dicen «+1 piezas». Los dejo anotados para una tarea de textos.

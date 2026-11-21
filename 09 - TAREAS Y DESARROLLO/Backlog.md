@@ -1242,7 +1242,7 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 - **Revisor:** Zadiel.
 - **Área:** Gameplay / interfaz.
 - **Prioridad:** Crítica.
-- **Estado:** En desarrollo.
+- **Estado:** Completada (pendiente de revisión de Zadiel).
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-21.
 
@@ -1254,7 +1254,9 @@ La parte (1) necesita `game/src/**`, reservado por DEV-020 (Jhonn): se aplica cu
 
 **Criterios de aceptación:**
 
-- [ ] La mesa no se cierra mientras estás junto a tu plot.
-- [ ] 12 exclusivos (zonas 1 a 12) en el juego y en el prompt, con materiales por zona.
-- [ ] Revisión de mecánicas con resultados reales en el Plan de Pruebas.
-- [ ] Pruebas automáticas en verde y prueba en Play.
+- [x] La mesa no se cierra mientras estás junto a tu plot.
+- [x] 12 exclusivos (zonas 1 a 12) en el juego y en el prompt, con materiales por zona.
+- [x] Revisión de mecánicas con resultados reales en el Plan de Pruebas.
+- [x] Pruebas automáticas en verde y prueba en Play.
+
+**Resultado (2026-11-21):** en `main` y en la place (versión 34). La mesa ya no se cierra; 12 relojes de lujo en el juego y en [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §4.1 (DEC-031). Recorrido de mecánicas con 52/52 y un segundo fallo arreglado: el reinicio de zona no renovaba las piezas antiguas durante la avería ([[Plan-de-Pruebas]] §32).

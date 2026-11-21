@@ -342,7 +342,7 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-025, pendiente de implementar). **Área:** Gameplay / arte. Desarrolla [[PROMPT_PIEZAS_RELOJ_ZADIEL]].
 - **Piezas:** Caja, Calibre, Esfera y Manecillas de un reloj concreto, con rareza. Las 7 piezas antiguas solo salen durante la reparación del Cronómetro.
 - **Rarezas (12):** Común, Poco común, Raro, Épico, Legendario, Mítico, Divino, Celestial, Cósmico, Eterno, Ancestral y Atemporal, cada una con su color.
-- **Reparto:** cualquier pieza puede salir en cualquier zona por suerte; las zonas lejanas dan rarezas más altas. Desde la zona 3, cada zona tiene un reloj famoso exclusivo.
+- **Reparto:** cualquier pieza puede salir en cualquier zona por suerte; las zonas lejanas dan rarezas más altas. Desde la zona 3, cada zona tiene un reloj famoso exclusivo. *(Cambiado por DEC-031: un reloj de lujo exclusivo en cada una de las 12 zonas.)*
 - **Pieza ajena:** −1 rareza y −25 % de valor, ingreso y suerte por cada una.
 - **Calibres:** cuarzo, mecánico y automático solo cambian el aspecto.
 - **Nombres:** interpretados (sin marcas reales), con un aspecto parecido a los originales y sin copiar logos ni nombres.
@@ -360,3 +360,11 @@ Propuestas de DEV-001 a DEV-006, integradas por DEV-007 y renumeradas para no ch
 - **Dinero ×2:** pase de 249 R$ (monedas ×2 al vender y en el plot; se combina con el VIP).
 - **VIP:** premios por tiempo en un 30 % menos de tiempo, etiqueta [VIP] en el chat y ganancia offline hasta 8 h.
 - **Ganancia offline:** sin VIP, hasta 4 h; al 50 % del ingreso del plot.
+
+#### DEC-031 — 12 relojes de lujo, uno exclusivo por zona, con el material de su zona
+
+- **Fecha:** 2026-11-21. **Estado:** **Decidida por Jhonn** (DEV-026). **Área:** Gameplay / arte. Cambia el reparto de DEC-028.
+- Cada una de las 12 zonas tiene un reloj de lujo exclusivo (antes, 10 exclusivos desde la zona 3). Los 6 relojes generales (bolsillo, pulsera, cronógrafo, Legado, real de rubí y millonario) siguen saliendo al azar en cualquier zona.
+- Lista de Jhonn y zona: Speedmaster (1), Santos (2), Reverso (3), Daytona (4), Overseas (5), Nautilus (6), Royal Oak (7), Big Bang (8), RM 11 (9), Breguet Classique Tourbillon (10), Grandmaster Chime (11) y Jacob & Co. Astronomia (12, el mejor).
+- Nombres interpretados sin marcas, con un aspecto parecido al original; cada reloj usa el material de su zona. Detalle en [[PROMPT_PIEZAS_RELOJ_ZADIEL]] §4.
+- Valores base de 200 (zona 1) a 5.000 (zona 12); el mejor reloj sigue rondando los 1.800T.
