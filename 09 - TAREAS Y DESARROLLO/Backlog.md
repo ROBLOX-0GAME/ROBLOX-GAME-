@@ -918,3 +918,21 @@ ICON_IDS = {
 
 - [x] Las 3 notas dicen que Studio y Rojo se usan en las PC Windows y en la MacBook de Zadiel (DEC-021).
 - [x] Arquitectura-General sin la propuesta DEC-019 (reemplazada) y con la place y `servePlaceIds` al día.
+
+### INFRA-008 — DEC-021 aprobada por Jhonn
+
+- **ID:** INFRA-008.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arquitectura / equipo.
+- **Prioridad:** Baja.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** Zadiel informa de que Jhonn aprobó DEC-021 (la MacBook sirve para todo). Se cambia su estado en el Registro.
+
+**Criterios de aceptación:**
+
+- [ ] DEC-021 marcada como Aprobada por Zadiel y Jhonn.
