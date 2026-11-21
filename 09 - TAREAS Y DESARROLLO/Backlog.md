@@ -899,3 +899,22 @@ ICON_IDS = {
 **Criterios de aceptación:**
 
 - [x] DEC-022 marcada como Aprobada por Zadiel y Jhonn.
+
+### INFRA-007 — Alinear las notas con DEC-021 (la MacBook sirve para todo)
+
+- **ID:** INFRA-007.
+- **Cuenta Claude:** Claude — Cuenta A (MacBook de Zadiel).
+- **Responsable:** Zadiel.
+- **Revisor:** Jhonn.
+- **Área:** Arquitectura / equipo.
+- **Prioridad:** Media.
+- **Estado:** En desarrollo.
+- **Flujo:** directo en `main` (DEC-009).
+- **Fecha de creación:** 2026-11-20.
+
+**Descripción:** `.claude/CLAUDE.md`, `AGENTS.md` y [[Arquitectura-General]] todavía dicen que la MacBook es solo para Obsidian y tareas escolares, lo que contradice DEC-021 (aprobada por Zadiel en INFRA-005). Se corrigen. En Arquitectura-General también se actualiza lo que ya no es cierto en la misma sección: la place existe (84500108687089) y `servePlaceIds` la tiene desde DEV-016.
+
+**Criterios de aceptación:**
+
+- [ ] Las 3 notas dicen que Studio y Rojo se usan en las PC Windows y en la MacBook de Zadiel (DEC-021).
+- [ ] Arquitectura-General sin la propuesta DEC-019 (reemplazada) y con la place y `servePlaceIds` al día.
