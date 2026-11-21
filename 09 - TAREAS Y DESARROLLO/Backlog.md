@@ -839,7 +839,7 @@ Empezar la parte artística con el estilo que Claude produce mejor, **low-poly c
 - **Revisor:** Zadiel.
 - **Área:** Código / interfaz y sonido.
 - **Prioridad:** Media.
-- **Estado:** Pendiente (la abre Jhonn; creada por ART-013).
+- **Estado:** En desarrollo.
 - **Flujo:** directo en `main` (DEC-009).
 - **Fecha de creación:** 2026-11-20.
 
